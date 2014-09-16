@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html >
+<head>
+    <title>$!app_name</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- 框架 -->
+    <link href="${base}/include/css/msg.css" rel="stylesheet" type="text/css"/>
+    <link href="${base}/include/css/default.css" rel="stylesheet" type="text/css"/>
+	<script type='text/javascript'>
+		var CONTEXTPATH = '${base}';
+	</script>
+    <script src="${base}/include/js/main.js"></script>
+    <script src="${base}/include/js/string.js"></script>
+	<!-- 分页  注意顺序 -->
+	<link href="${base}/include/css/themes/gray/easyui.css" rel="stylesheet" type="text/css"/> 	
+	<script src="${base}/include/js/jquery.easyui.min.js"></script>	
+    <!-- 树 -->
+    <script type="text/javascript" src="${base}/include/controls/ztree/jquery.ztree.core-3.5.min.js"></script> 
+	<link rel="stylesheet" href="${base}/include/controls/ztree/zTreeStyle/zTreeStyle.css" type="text/css">
+    <SCRIPT type="text/javascript">
+           <!--
+           function initButton(){
+        	   Page.initBtn();
+        	   $!initBtn
+           }
+           function getWidth(percent){
+        	   return document.body.clientWidth*percent;
+		   }
+           function loadGrid(){
+			   var SearchUserName=Page.getValue("SearchUserName");
+        	   $("#dg1").datagrid({  
+        	        width:"auto",
+        	   		height:"auto",
+        	        nowrap: false,  
+        	        striped: true,  
+        	        border: true,  
+        	        collapsible:false,//是否可折叠的  
+        	        fit: false,//自动大小  
+        	        url:"${base}/private/sys/user/loglist?SearchUserName="+SearchUserName,  
+        	        //sortName: 'code',  
+        	        //sortOrder: 'desc',  
+        	        remoteSort:false,   
+        	        idField:"id",
+        	        singleSelect:false,//是否单选  
+        	        pagination:true,//分页控件  
+        	        rownumbers:true,//行号  
+        	        fitColumns: true,//行自适应
+					pageSize: 10,
+        	        pageList:[5,10,15,20,30,40,50],
+        	        loadMsg:'数据加载中...',
+        	        columns:[[
+						{title : '用户名',field : 'loginname',width:getWidth(0.08),align : 'left'},
+						{title : '姓名',field : 'realname',width:getWidth(0.08),align : 'left'},
+						{title : '登陆时间',field : 'logintime',width:getWidth(0.10),align : 'left'},
+						{title : '登陆IP',field : 'loginip',width:getWidth(0.10),align : 'left'}
+        	        ]],
+        	        frozenColumns:[[  
+        	            {field:"id",checkbox:true}
+        	        ]]
+        	    });  
+        	    //设置分页控件  
+        	    var p = $("#dg1").datagrid("getPager");  
+        	    $(p).pagination({  
+        	        beforePageText: "第",//页数文本框前显示的汉字  
+        	        afterPageText: "页    共 {pages} 页",  
+        	        displayMsg: "当前显示 {from} - {to} 条记录   共 {total} 条记录",  
+        	        onBeforeRefresh:function(){ 
+        	            $(this).pagination('loading'); 
+        	             
+        	            $(this).pagination('loaded'); 
+        	        } 
+        	    });  
+           }
+           Page.onLoad(function() {
+        	   loadGrid();
+        	   initButton();
+               }); 
+           $(window).resize(function () {
+       		clearTimeout(timer);
+       		timer=setTimeout(function(){
+       		  $('#dg1').datagrid('resize');
+       		  $('div.panel-body').css('width','auto'); //////
+       		 },100);
+       		});
+           //-->
+       </SCRIPT>
+</head>
+<body leftmargin="0" topmargin="0"
+	style="overflow-x: hidden; overflow-y: auto">
+<table width="100%" border="0" cellspacing="6" cellpadding="0"
+		style="border-collapse: separate; border-spacing: 6px;">
+		<tr valign="top">
+			<td width="100%">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: separate; border-spacing: 0;">
+    <tr valign="top">
+      <td>
+	   <form name="form1" id="form1" method="post" > 
+        <input type="hidden" name="checkids" id="checkids" value="">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="blockTable">
+                                      <tr>
+                                        <td class="blockTd">
+                                        
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="6" >
+                                          <tr>
+                                            <td valign="middle"><img src="${base}/images/icons/icon021a1.gif" width="20" height="20" />
+                                            &nbsp;<span>登陆日志 </span></td>
+                                          </tr>
+                                          <tr>
+                                            <td style="padding:0 8px 4px;">              
+                  
+                                              &nbsp;
+                                              <input name="SearchUserName" type="text" id="SearchUserName"
+			value="" placeholder="请输入用户名或姓名" style="width:110px">
+                                              <input type="button" name="Submitbutton" id="Submitbutton" value="查询日志"
+			onClick="loadGrid()">
+									          
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td style="padding:0px 5px;">                                             
+                                            <table width="100%" height="100%" id="dg1" size="10" cellpadding="2" cellspacing="0">
+												<tr><td></td></tr>
+											</table>                                          
+                                            </td>
+                                          </tr>
+                                        </table></td>
+                                      </tr>
+                                    </table>
+                                    
+	   </form>
+	  </td>
+    </tr>
+ </table>
+ </td>
+    </tr>
+ </table>
+</body>
+</html>

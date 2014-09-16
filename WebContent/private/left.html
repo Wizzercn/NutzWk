@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>$!app_name</title>
+    <style type="text/css">
+        <!--
+        body, td, th {
+            color: #333333;
+            height:auto;
+        }
+
+        -->
+    </style>
+    <link rel="stylesheet" type="text/css" href="${base}/include/css/main.css"/>
+    <script type='text/javascript'>
+        var CONTEXTPATH = '${base}';
+    </script>
+    <script type="text/javascript" src="${base}/include/js/main.js"></script>
+    <!--[if IE 6]>
+    <script type="text/javascript" src="${base}/include/js/DD_belatedPNG.min.js"></script>
+    <![endif]-->
+</head>
+
+<body   style="overflow:hidden;margin:0px;">
+<div class="left_menu">
+    #set ($allcount =0 )
+    #foreach($menu in $menulist)
+    <div class="lmitem png"  id="topmenuid$!velocityCount">
+        <a href="javascript:;" onclick="tourl('$!menu.id','$!menu.url','$!menu.name');viewsub('$!velocityCount');dochangeClass($!velocityCount);">$!menu.name</a>
+    </div>
+    #if($threemenulist.get($!menu.id)&&$threemenulist.get($!menu.id).size()>0)
+    <div id="menudiv$!velocityCount" style="display:none">
+        <div class="lmitem_xm png">
+            <ul>
+                #foreach($submenu in $threemenulist.get($!menu.id))
+                #set ( $allcount =$allcount+1 )
+                <li>
+                    <a href="javascript:dosuburl('$!allcount','$!submenu.id','$!submenu.url','$!submenu.name');dochangeSubClass('$!velocityCount');" id=selectID$!velocityCount  title="$!submenu.name">
+                        #if($!{submenu.name.toString().length()} > 10)
+                        $!{submenu.name.toString().substring(0,10)}..
+                        #else
+                        $!{submenu.name.toString()}
+                        #end
+                    </a></li>
+                #end
+            </ul>
+        </div>
+    </div>
+    #end
+    #end
+</div>
+<script type="text/javascript">
+    function dosuburl(s1,s2,s3,s4){
+        tourl(s2,s3,s4);
+
+    }
+    function tourl(id, url, menuname)
+    {
+        if (url.length > 0)
+        {
+
+            if (url.indexOf(':') > 0)
+            {
+                parent.addTab(id,menuname,url);
+            }
+            else
+            {
+                parent.addTab(id,menuname,'${base}' + url + '?sys_menu=' + menuname + '&sys_menuid=' + id + '&sys_random=' + Math.random());
+            }
+
+        }
+
+    }
+
+    //选中子菜单时改变背景
+    var oldid = 1;
+    function dochangeClass(objid)
+    {
+        try
+        {
+            if (oldid == objid)
+            {
+                $("#topmenuid"+objid).attr("class","lmitem select png");
+                return;
+            }
+            $("#topmenuid"+objid).attr("class","lmitem select png");
+            $("#topmenuid"+oldid).attr("class","lmitem png");
+            oldid = objid;
+
+        }
+        catch(exception)
+        {
+        }
+    }
+
+    //选中子菜单时改变背景
+    var suboldid = 1;
+    function dochangeSubClass(subobjid)
+    {
+        try
+        {
+            if (suboldid == subobjid)
+            {
+                $("#selectID"+subobjid).attr("class","secselect");
+                return;
+            }
+            $("#selectID"+subobjid).attr("class","secselect");
+            $("#selectID"+suboldid).attr("class","");
+            suboldid = subobjid;
+        }
+        catch(exception)
+        {
+        }
+    }
+
+    //显示隐藏子菜单
+    var topoldid = 1;
+    var topimag1 = '${base}/images/private/sys/index_48.gif';
+    var topimag2 = '${base}/images/private/sys/index_45.gif';
+    function viewsub(objid)
+    {
+        try
+        {
+            if (objid == topoldid)  //当点击本身时
+            {
+
+                if ($("#topmenuid"+objid).attr("background") == topimag1)
+                {
+                    $("#topmenuid"+objid).attr("background",topimag2);
+                }
+                else
+                {
+                    $("#topmenuid"+objid).attr("background",topimag1);
+                }
+                if($("#menudiv"+objid).is(":hidden")){
+                    $("#menudiv"+objid).show();
+                }else{
+                    $("#menudiv"+objid).hide();
+                }
+                //显示下级菜单
+
+            }
+            else
+            {
+                $("#topmenuid"+objid).attr("background",topimag2);
+                $("#topmenuid"+topoldid).attr("background",topimag1);
+                $("#menudiv"+objid).show();
+                $("#menudiv"+topoldid).hide();
+            }
+            topoldid = objid;
+            #if($menulist.size()>0)
+            changefont('$menulist.get(0).id');
+        	#end
+        }
+        catch(exception)
+        {
+
+        }
+    }
+    var menuid = '';
+    function changefont(id){
+        if(id!=menuid){
+            document.getElementById(id).color = "#eaff00";
+            if(menuid!=''){
+                document.getElementById(menuid).color="";
+            }
+            menuid = id;
+        }
+    }
+
+    function setHeight(){
+        var ch = document.compatMode == "BackCompat" ? document.body.clientHeight : document.documentElement.clientHeight;
+        $("#table1").height(parseInt(ch)-10);
+        $("#table2").height(parseInt(ch)-10);
+    }
+    $(document).ready(function(){
+        viewsub(1);
+        dochangeClass(1);
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+
+    <title>$!app_name</title>
+     
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="${base}/include/css/msg.css" rel="stylesheet" type="text/css"/>
+
+    <link href="${base}/include/css/default.css" rel="stylesheet" type="text/css"/> 
+    <script type='text/javascript'>
+		var CONTEXTPATH = '${base}';
+	</script>
+    <script src="${base}/include/js/main.js"></script>
+    <script src="${base}/include/js/string.js"></script>
+    <script>
+    function update()
+    {
+    	
+  		 jQuery.ajax({
+				type: 'POST',
+    			url : "${base}/private/sys/safe/update" ,
+    			data : $("#form1").serialize(),
+    			success : function (res) {
+    				
+    				if(res=="true"){
+    					
+    					top.Dialog.alert("修改成功！");
+    					
+    		        	
+    				}else{
+    					top.Dialog.alert("修改失败！");
+    				}
+    				 
+    				return false;
+    			},
+    			fail : function(res) {
+    				top.Dialog.alert("系统错误?!");
+    			}
+    		});
+    }
+    Page.onLoad(function(){
+
+        Page.initBtn();
+    	$!initBtn
+
+    });
+    </script>
+<head>
+<body >
+
+<table width="100%" border="0" cellspacing="6" cellpadding="0" style="border-collapse: separate; border-spacing: 6px;">
+    <tr valign="top">
+      <td>
+	   <form name='form1' id="form1" method='post'>
+	   
+	    <input type="hidden" name="doAction" value="update">
+                                   
+                            <input type="hidden" name="sys_menuid" value="$!sys_menuid">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="blockTable">
+                              <tr>
+                                <td class="blockTd"><table width="100%" border="0" cellspacing="0" cellpadding="6">
+                                  <tr>
+                                    <td valign="middle"><img src="${base}/images/icons/icon022a1.gif" width="20" height="20" />&nbsp;访问控制</td>
+                                  </tr>
+                                  <tr>
+                                    <td style="padding:0 8px 4px;"><a href='javascript:void(0);' ztype='zPushBtn' class='zPushBtn' hidefocus='true' tabindex='-1' onselectstart='return false' id='BtnSave' onClick="update();return false;" ><img src="${base}/images/icons/icon022a2.gif" width="20" height="20"/><b>确定提交&nbsp;</b></a> </td>
+                                  </tr>
+                                  <tr>
+                                    
+                                     
+                                    <td style="padding:0px 5px;">
+                            <table width="100%" id="dg1" cellpadding="2" cellspacing="0" class="dataTable" afterdrag="sortMenu" sortstring="" page="false" size="0"  multiselect="true" autofill="true" scroll="false" lazy="false" cachesize="0">
+                           <tr>
+                                          <td nowrap colspan="2" >以下Ip地址将会被系统拒绝登陆(其他则许可)
+                                            <input type='radio' name="safetype" value="0" >
+                                          </td>
+                                        </tr>
+                            <tr>
+                            <td><textarea name='ip_refuse' style="width: 100%;" cols="80" rows="5">$!ip_refuse.note</textarea></td>
+                            <td>填写规则如：<br>
+                                            218.22.13.*<br>
+                                            192.168.2.*<br>
+                                            192.168.0.10<br>
+                                            <br>
+                                          </td>
+                            </tr>
+                         <tr>
+                                          <td colspan=2>以下Ip地址将会被系统许可登陆(其他则禁止)
+                                            <input type='radio'  name="safetype" value="1"></td>
+                                        </tr>
+                                        <tr>
+                            <td><textarea name='ip_safe' style="width: 100%;" cols="80" rows="5">$!ip_safe.note</textarea></td>
+                            <td>填写规则如：<br>
+                                            218.22.13.*<br>
+                                            192.168.2.*<br>
+                                            192.168.0.10<br>
+                                            <br>
+                                          </td>
+                            </tr>
+                             <script type="text/javascript">checked(document.form1.safetype,'$!sel')</script>
+                                 <tr ztype="blank" height="*">
+                                          <td>&nbsp;</td>
+                                          <td>&nbsp;</td>
+                                        </tr>
+                            </table></td>
+                              </tr>
+                            </table>
+                            
+	   </form>
+	  </td>
+    </tr>
+  </table>
+</body>
+</html>

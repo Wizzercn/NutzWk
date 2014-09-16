@@ -1,0 +1,400 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html style="overflow-y:auto">
+<head>
+    <title>$!app_name</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!-- 框架 -->
+    <link href="${base}/include/css/msg.css" rel="stylesheet" type="text/css"/>
+
+    <link href="${base}/include/css/default.css" rel="stylesheet" type="text/css"/>
+	<script type='text/javascript'>
+		var CONTEXTPATH = '${base}';
+	</script>
+    <script src="${base}/include/js/main.js"></script>
+    <script src="${base}/include/js/string.js"></script>
+	<!-- 分页  注意顺序 -->
+	<link href="${base}/include/css/themes/gray/easyui.css" rel="stylesheet" type="text/css"/> 	
+	<script src="${base}/include/js/jquery.easyui.min.js"></script>	
+    <!-- 树 -->
+    <script type="text/javascript" src="${base}/include/controls/ztree/jquery.ztree.core-3.5.min.js"></script> 
+	<link rel="stylesheet" href="${base}/include/controls/ztree/zTreeStyle/zTreeStyle.css" type="text/css">
+
+<script>
+	function getWidth(percent){
+        	   return document.body.clientWidth*percent;
+	}
+	function loadData(){
+		$("#dg1").treegrid({
+			width:"auto",
+        	height:"auto",
+        	nowrap: false,  
+        	striped: true,  
+        	border: true,  
+        	collapsible:false,//是否可折叠的 
+			url : "${base}/private/sys/res/listAll?subtype="+Page.getValue("subtype"),//首次查询路径
+			queryParams:{"id":""},//首次查询参数
+			idField:"id",
+			treeField:"name",
+			singleSelect:false,//是否单选 
+			rownumbers:true,//行号  
+			fit: true,//自动大小  
+			fitColumns: true,//行自适应
+			pagination:false,//分页控件  
+			loadMsg:'数据加载中...',
+			columns : [ [
+			{
+				field : "name",
+				title : "资源名称",
+				width : 120
+			},
+			{
+				field : "descript",
+				title : "资源说明",
+				width : getWidth(0.10)
+			} ,
+			{
+				field : "url",
+				title : "资源URL",
+				width : getWidth(0.15)
+			} ,
+			{
+				field : "bts",
+				title : "资源按钮",
+				width : getWidth(0.25)
+			} 
+			] ],
+        	 frozenColumns:[[  
+        	            {field:"id",checkbox:true}
+        	 ]],
+			 onDblClickRow:function(row)
+        	 {
+        	     toupdate(row.id);
+        	 }
+			//,
+        	// onLoadSuccess:function(){
+        	//	 initCheckbox();
+        	// }
+
+		});
+
+	}
+
+    //转到新增页面
+    function add()
+    {
+        var d = new Dialog("Add");
+        d.Width = 500;
+        d.Height = 330;
+        d.Title = "新建菜单";
+        d.URL = "${base}/private/sys/res/toAdd";
+        d.OKEvent = function() {
+            if ($DW.Verify.hasError()) {
+                return;
+            }
+            //var dc = $DW.Form.getData("form1");
+            addSave();
+        }
+        d.onLoad = function() {
+            $DW.$("name").focus();
+        }
+        d.show();
+    }
+    function addSave(){     
+		if($DW.Verify.hasError()){
+		  return;
+	     }
+		var bt="";
+		$DW.$("input[name='bt']:checked").each(function(){
+			 bt+=$(this).val();
+			
+		});
+		$DW.$("#button").val(bt);
+		jQuery.ajax({
+			 	type: 'POST',
+    			url : "${base}/private/sys/res/addSave" ,
+    			data : $DW.$("#form1").serialize(),
+    			success : function (res) { 
+    				if(res=="true"){
+    					$D.close();
+    					Dialog.alert("添加成功！");
+    					
+    					loadData();
+    				}else{
+    					Dialog.alert("添加失败！");
+    				}
+    				 
+    				return false;
+    			},
+    			fail : function(res) {
+    				Dialog.alert("系统错误?!");
+    			}
+    		}); 
+	}
+    //转到修改页面
+    function update()
+    {
+        var arr = DataGrid.getSelectedValueID("dg1");
+        if (!arr || arr.length == 0) {
+            Dialog.alert("请先选择要编辑的菜单！");
+            return;
+        }
+        var d = new Dialog("Update");
+        d.Width = 500;
+        d.Height = 300;
+        d.Title = "修改菜单";
+        d.URL = "${base}/private/sys/res/toupdate?id=" + arr[0];
+        d.OKEvent = function() {
+            if ($DW.Verify.hasError()) {
+                return;
+            }else{
+            	updateSave();
+            }
+            //var dc = $DW.Form.getData("form1");
+            $DW.$("form1").submit();
+        }
+        d.onLoad = function() {
+            $DW.$("#name").focus();
+        }
+        d.show();
+
+    }
+    //转到修改页面
+    function toupdate(id)
+    {
+        var d = new Dialog("Update");
+        d.Width = 500;
+        d.Height = 300;
+        d.Title = "修改菜单";
+        d.URL = "${base}/private/sys/res/toupdate?id="+id;
+       	d.onLoad = function(){
+       		$DW.$Z("name").focus();
+       	}
+       	d.OKEvent = function(){
+       		updateSave();
+       		
+       	};
+       	d.show();
+    
+
+    }
+    function updateSave(){     
+  		 if($DW.Verify.hasError()){
+  		  return;
+  	     }
+  		 jQuery.ajax({
+  				type: 'POST',
+      			url : "${base}/private/sys/res/updateSave" ,
+      			data : $DW.$("#form1").serialize(),
+      			success : function (res) { 
+      			
+      				if(res!=""){
+      					$D.close();
+      					Dialog.alert("修改成功！");
+      					loadData();
+      				}else{
+      					Dialog.alert("修改失败！");
+      				}
+      				
+      				return false;
+      			},
+      			fail : function(res) {
+      				Dialog.alert("系统错误?!");
+      			}
+      		});
+  		
+  	}
+    
+
+    //转到排序页面
+    function sort()
+    {
+        var d = new Dialog("Sort");
+        d.Width = 450;
+        d.Height = 370;
+        d.Title = "菜单排序";
+        d.URL = "${base}/private/sys/res/toSort";
+        d.OKEvent = function() {
+        	 $DW.getIdsTree();
+        	 sortUpdate();
+            
+           
+        }
+        //d.ShowMessageRow = true;
+        //d.MessageTitle = "菜单排序";
+        //d.Message = "只能改变同级的先后顺序，并要保证原先的上下级关系不变！";
+        d.show();
+    }
+    function sortUpdate(){
+    	if($DW.Verify.hasError()){
+    		  return;
+    	     }
+    	if($DW.$("#commit").val()==0){
+    		$DW.$("#commit").val(1);
+    		 jQuery.ajax({
+    				type: 'POST',
+        			url : "${base}/private/sys/res/sort" ,
+        			data : $DW.$("#form1").serialize(),
+        			success : function (res) { 
+        			
+        				if(res=="true"){
+        					$D.close();
+        					Dialog.alert("排序成功！");
+        					loadData();
+
+        				}else{
+        					Dialog.alert("排序失败！");
+        				}
+        				
+        				return false;
+        			},
+        			fail : function(res) {
+        				Dialog.alert("系统错误?!");
+        			}
+        		});
+    	}else{
+    		 Dialog.alert("正在提交，请稍候！");
+             return false;
+    	}
+    }
+    function del() {
+    	var ids = [];
+		var arr = $('#dg1').treegrid('getSelections');
+	    if (!arr || arr.length == 0) {
+	        Dialog.alert("请先选择要删除的资源菜单！");
+	        return;
+	    }
+	    for(var i=0; i<arr.length; i++){
+	        ids.push(arr[i].id);
+			if(arr[i].id.substring(0,4)=="0001"){
+				Dialog.alert("系统菜单不可删除！");
+				return;
+			}
+	    }
+          Dialog.confirm("注意：这是级联删除，下级菜单会被一起删除，您确认要删除吗？", function() {
+       	   jQuery.ajax({
+      			url : "${base}/private/sys/res/del?id="+ids,
+      		
+      			success : function (res) {  
+      				
+      				if(res=="true"){ 
+      					Dialog.alert("删除成功！");
+      					 
+      					loadData();
+      				}else{
+      					Dialog.alert("删除失败！");
+      				}
+      				 
+      				return false;
+      			},
+      			fail : function(res) {
+      				Dialog.alert("系统错误?!");
+      			}
+      		});
+       	   
+       	   
+          });
+      }
+    function sel(obj){
+         var id=obj.value;
+         var qx=document.getElementsByName("id");
+         for(var i = 0; i < qx.length; i ++)
+           {
+               if(qx[i].type == "checkbox")
+                {
+                  var v=qx[i].value;
+                  if(v!=""&&v.length>id.length&&v.startWith(id)){
+                      if(obj.checked){
+                          qx[i].checked=true;
+                      } else{
+                           qx[i].checked=false;
+                      }
+                  }
+                   if(v!=""&&v.length<id.length&&id.startWith(v)){
+                      if(obj.checked){
+                      } else{
+                           qx[i].checked=false;
+                      }
+                  }
+
+                }
+           }
+        
+    }
+	Page.onLoad(function() {
+	   loadData();
+	   
+     });
+	$(window).resize(function () {
+		clearTimeout(timer);
+		timer=setTimeout(function(){
+		  $('#dg1').datagrid('resize');
+		  $('div.panel-body').css('width','auto'); //////
+		 },100);
+		});
+</script>
+</head>
+<body leftmargin="0" topmargin="0"
+	style="overflow-x: hidden; overflow-y: auto">
+	<table width="100%" border="0" cellspacing="6" cellpadding="0"
+		style="border-collapse: separate; border-spacing: 6px;">
+		<tr valign="top">
+			<td>
+				<form name='form1' id="from1" method='post'>
+					<input type="hidden" name="doAction" value=""> <input
+						type="hidden" name="sys_menuid" value="$!sys_menuid"> <input
+						type="hidden" name="checkids" value=""> <input
+						type="hidden" name="deltype" value="1">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0"
+						class="blockTable">
+						<tr>
+							<td class="blockTd">
+								<table width="100%" border="0" cellspacing="0" cellpadding="6">
+									<tr>
+										<td valign="middle"><img
+											src="${base}/images/icons/icon042a4.gif"
+											width="20" height="20" />&nbsp;菜单列表</td>
+									</tr>
+									<tr>
+										<td style="padding: 0 8px 4px;"><a
+											href='javascript:void(0);' ztype='zPushBtn' class='zPushBtn'
+											hidefocus='true' tabindex='-1' onselectstart='return false'
+											id='a' onClick="add();"><img
+												src="${base}/images/icons/icon022a2.gif"
+												width="20" height="20" /><b>新建&nbsp;</b></a> <a
+											href='javascript:void(0);' ztype='zPushBtn' class='zPushBtn'
+											hidefocus='true' tabindex='-1' onselectstart='return false'
+											id='a' onClick="update();"><img
+												src="${base}/images/icons/icon022a4.gif"
+												width="20" height="20" /><b>编辑&nbsp;</b></a> <a
+											href='javascript:void(0);' ztype='zPushBtn' class='zPushBtn'
+											hidefocus='true' tabindex='-1' onselectstart='return false'
+											id='a' onClick="del();"><img
+												src="${base}/images/icons/icon022a3.gif"
+												width="22" height="20" /><b>删除&nbsp;</b></a> <a
+											href='javascript:void(0);' ztype='zPushBtn' class='zPushBtn'
+											hidefocus='true' tabindex='-1' onselectstart='return false'
+											id='a' onClick="sort();"><img
+												src="${base}/images/icons/icon_upwards.gif"
+												width="20" height="20" /><b>排序&nbsp;</b></a>
+												
+						&nbsp;&nbsp;<select name="subtype" id="subtype" onchange="loadData()" >
+	                        <option value="0">系统资源</option>
+	                        <option value="1">业务资源</option>
+                        </select>
+												</td>
+									</tr>
+									<tr>
+										<td style="padding: 0px 5px;" height="360" >
+											<div id="dg1" style="width:100%;height:100%;"></div>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</td>
+		</tr>
+	</table> 
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>$!app_name</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="${base}/include/css/msg.css" rel="stylesheet" type="text/css"/>
+    <link href="${base}/include/css/default.css" rel="stylesheet" type="text/css"/>
+	<script type='text/javascript'>
+		var CONTEXTPATH = '${base}';
+	</script>
+    <script src="${base}/include/js/main.js"></script>
+    <script src="${base}/include/js/string.js"></script>
+</head>
+<body class="dialogBody">
+<form name='form1' id="form1" method='post'
+      action='${base}/private/sys/unit/doAdd'>
+      <input type="hidden" id="id" name="id" value="$!obj.id">
+      <input type="hidden" id="location" name="location" value="$!obj.location">
+       <table width="100%" height="100%" align="center" cellpadding="2" cellspacing="0">
+        <tr>
+            <td height="10"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td width="360" valign="top">
+                <div id="con_one_1"> 
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+
+                            <tr>
+                                <td width="39%" height="30" align="right">机构名称：</td>
+                                <td width="61%">
+                                    <input type="text" name="name" id="name"  value="$!obj.name" maxlength="100" verify="机构名称|NotNull">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td width="39%" height="30" align="right">
+                                 		   机构编码：
+                                </td>
+                                <td width="61%">
+                                    <input type="text" name="unitcode" id="unitcode" value="$!obj.unitcode"  maxlength="10" >
+                                   
+                                </td>
+                            </tr>
+ 
+                            <tr>
+                                <td width="39%" height="30" align="right">联系电话：</td>
+                                <td width="61%"><input type="text" name="telephone" id="telephone" value="$!obj.telephone" 
+                                                       maxlength="100"></td>
+                            </tr>
+                            <tr>
+                                <td width="39%" height="30" align="right">联系地址：</td>
+                                <td width="61%"><input type="text" name="address" size="40" id="address" value="$!obj.address" 
+                                                       maxlength="255"></td>
+                            </tr>
+                            <tr>
+                                <td width="39%" height="30" align="right">电子邮件：</td>
+                                <td width="61%"><input type="text" name="email" id="email" value="$!obj.email"
+                                                       size="30" maxlength="100" verify="电子邮件|Email"></td>
+                            </tr>
+                            <tr>
+                                <td width="39%" height="30" align="right">
+                                    网&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：
+                                </td>
+                                <td width="61%">
+                                    <input type="text" name="website" id="website" value="$!obj.website" size="40" maxlength="100">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="39%" height="30" align="right">机构描述：</td>
+                                <td width="61%"><textarea rows="7" cols="40" name="descript"
+                                                          id="descript">$!obj.descript</textarea>
+                                </td>
+                            </tr>
+
+
+                        </table> 
+                </div>
+            </td>
+            </tr>
+            </table>
+      </form>
+
+</body>
+</html>

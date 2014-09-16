@@ -1,0 +1,407 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>$!app_name</title>
+    <link href="${base}/include/css/msg.css" rel="stylesheet" type="text/css"/>
+    <link href="${base}/include/css/easyui.css" rel="stylesheet" type="text/css">
+    <link href="${base}/include/css/index.css" rel="stylesheet" type="text/css"/>
+    <link href="${base}/include/css/main.css" rel="stylesheet" type="text/css">
+    <script type='text/javascript'>
+        var CONTEXTPATH = '${base}';
+    </script>
+    <script type="text/javascript" src="${base}/include/js/main.js"></script>
+    <script type="text/javascript" src="${base}/include/js/jquery.easyui.pack.js"></script>
+    <script type="text/javascript" src='${base}/include/js/tabpage.js'></script>
+    <script type="text/javascript" src='${base}/include/js/resize.js'></script>
+    <!--[if IE 6]>
+    <script type="text/javascript" src="${base}/include/js/DD_belatedPNG.min.js"></script>
+    <![endif]-->
+    <script src="${base}/include/js/jquery.prettyPhoto.js"></script>
+    <link href="${base}/include/css/prettyPhoto.css" rel="stylesheet" type="text/css"/>
+
+</head>
+<body class="easyui-layout" fit="false" style="overflow-y: hidden"  scroll="no">
+<a href="#" rel='prettyOne' style="display: none;">open it</a>
+
+<div region="north" split="false" border="false" style="height: 94px; overflow:visible; z-index: 11;">
+    <div class="m_topc">
+        <div class="m_topl">
+            <div class="m_topr">
+                <div class="m_toplink">
+                    <div class="toplink_logininfo"  id="dvonline"></div>
+                    <div class="toplink_userctr">
+                        <a href="javascript:lock();"><span class="iconimg icon_lock png"></span>锁定屏幕</a>
+                        <a href="javascript:changePassword();"><span class="iconimg icon_user png"></span>个人信息</a>
+                        <a href="javascript:logout();"><span class="iconimg icon_exit png"></span>退出登录</a>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="m_topmain">
+                    <div class="topmain_name png"><h2 id="CMS_name">
+
+                    </h2></div>
+                    <div class="topmain_right">
+                        <div class="top_rselect_l" id="CMS_select">
+                            <div class="top_rselect_r"><div class="top_rselect_c" id="CMS_slect_name"></div></div>
+                            <div class="top_rselect_XM" id="CMS_selectCon">
+                                <div class="top_rselect_XMtop"></div>
+                                <ul>
+                                    #foreach($modules in $moduleslist)
+                                    <li ><a href="javascript:selectMenu('$!modules.id')"><span style="color:#ffffff" >$!modules.name</span></a></li>
+                                    #if("$!resid"=="$!modules.id")
+                                    <script type="text/javascript">
+                                        $("#CMS_slect_name").html("$!modules.name");
+                                        $("#CMS_name").html("$!modules.name");
+                                    </script>
+                                    #end
+                                    #end
+                                </ul>
+                                <div class="clear"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="m_topmenu">
+                    <ul>
+                        #foreach($modules in $modulessublist)
+                        <li>
+                            <a href="javascript:dochange('$!modules.id','$!modules.url','$!modules.name');dochangeimg($!velocityCount)" class="Mmenu png" id=menuid$!velocityCount title="$!modules.name"><strong class="png"><span class="png">
+								#if($!{modules.name.toString().length()} > 6)
+									$!{modules.name.toString().substring(0,6)} #else
+									$!modules.name
+								#end
+							</span></strong></a>
+                        </li>
+                        #if($!velocityCount==1)
+                        <script type="text/javascript">
+                            $(document).ready(function(){
+                                dochange('$!modules.id', '$!modules.url', '$!modules.name');
+                            });
+                        </script>
+                        #end
+                        #end
+                        <!--Class Mmenu and Mmenu_this-->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div region="west" split="false" border="false" title="功能菜单" style="width:185px; overflow: hidden;" id="west" class="m_left">
+    <div class="easyui-accordion" fit="true" border="false">
+        <iframe name="leftFrame" id="leftFrame" width="100%" scrolling="no" frameborder="NO" style="width:100%;background-color:transparent;" allowTransparency="true"></iframe>
+    </div>
+</div>
+<div id="mainPanle" border="false" region="center" style="background: #eee; overflow:hidden; z-index: 10;"> <!--height:100%;-->
+    <div id="tabs" class="easyui-tabs"  fit="true" border="false" > <!--style="height:100%;"-->
+        <div title="欢迎使用" style="text-align:center;width:100%;height:100%;vertical-align:middle; text-align:center;" id="home">
+            <iframe name="mainFrame" scrolling="auto" height="99%" width="90%" frameborder="0"  src="${base}/private/welcome" ></iframe>
+        </div>
+    </div>
+</div>
+
+<div region="south" border="false" split="false" style="height: 29px;overflow:hidden" >
+    <div class="m_footer">
+        &copy; 2014&nbsp;&nbsp;<a href="http://www.xuetang.cn" target="_blank">学堂互动</a>&nbsp;&nbsp;
+    </div>
+</div>
+
+
+<div id="mm" class="easyui-menu" style="width:150px;">
+    <div id="mm-tabrefresh">刷新</div>
+    <div class="menu-sep"></div>
+    <div id="mm-tabclose">关闭</div>
+    <div id="mm-tabcloseall">全部关闭</div>
+    <div id="mm-tabcloseright">当前页右侧全部关闭</div>
+    <div id="mm-tabcloseleft">当前页左侧全部关闭</div>
+</div>
+
+<script type="text/javascript">
+<!--
+function DialogRefresh(id){
+    document.getElementById('_DialogFrame_'+id).contentWindow.location.reload();
+}
+function DialogToUrl(id,url){
+    document.getElementById('_DialogFrame_'+id).contentWindow.location=url;
+}
+function DialogFunc(id,fun){
+    document.getElementById('_DialogFrame_'+id).contentWindow[fun]();
+    //eval("document.getElementById('_DialogFrame_"+id+"').contentWindow."+fun+"()");
+}
+$(function () {
+        //点击展开层
+        $("#CMS_select").click(function(event){
+            var e=window.event || event;
+            if(e.stopPropagation){
+                e.stopPropagation();
+            }else{
+                e.cancelBubble = true;
+            }
+            $("#CMS_selectCon").show();
+        });
+        $("#CMS_selectCon").click(function(event){
+            var e=window.event || event;
+            if(e.stopPropagation){
+                e.stopPropagation();
+            }else{
+                e.cancelBubble = true;
+            }
+        });
+        document.onclick = function(){$("#CMS_selectCon").hide();};//点击其他区域关闭层
+        $("#CMS_selectCon").mouseover(function (event) { window.clearTimeout(setTimeout('$("#CMS_selectCon").hide()',4000));setTimeout('$("#CMS_selectCon").hide()',4000);});//移开层4秒后关闭层
+    });
+
+function selectMenu(id){
+    if(id!=""&&id!="$!resid"){
+        Page.MinMessage.Show({
+            text: '正在加载',
+            type: 'load',
+            timeout:600
+        });
+
+        jQuery.ajax({
+            type: 'POST',
+            url : "${base}/private/reload" ,
+            data : {"resid":id},
+            success : function (res) {
+                if(res=="true"){
+                    window.location.reload();
+                }
+                return false;
+
+            },
+            fail : function(res) {
+                Dialog.alert("系统错误?!");
+            }
+        });
+    }
+}
+function lock(){
+    top.Dialog.confirm("确定要锁屏吗，锁屏后只有重新输入密码才能解除。", function() {
+        openLockWindow();
+
+    });
+
+}
+function validate(){
+    $!validate
+}
+function unlock(){
+    if($DW.Verify.hasError()){
+        return;
+    }
+    jQuery.ajax({
+        type: 'POST',
+        url : "${base}/private/dounlock" ,
+        data : $DW.$("#form1").serialize(),
+        success : function (res) {
+            if(res=="true"){
+                $D.close();
+            }else{
+                Dialog.alert(res);
+            }
+            return false;
+
+        },
+        fail : function(res) {
+            Dialog.alert("系统错误?!");
+        }
+    });
+}
+function openLockWindow(){
+    var d = new top.Dialog("lock");
+    d.Width = 360;
+    d.Height = 160;
+    d.Title = "系统锁屏";
+    d.URL = "${base}/private/lock";
+    d.OKEvent = function(){
+        unlock();
+    };
+    d.CancelEvent = function(){
+        top.location.replace('logout');
+    };
+    d.onLoad = function() {
+        //$DW.$Z("password").focus();
+    }
+    d.ButtonCenter=true;
+    d.show();
+    d.OKButton.value=" 解锁 ";
+    d.CancelButton.value=" 注销 ";
+    $.post("${base}/private/dolock");
+
+}
+function changePassword(){
+    var d = new top.Dialog("ChangePassword");
+    d.Width = 390;
+    d.Height = 360;
+    d.Title = "个人信息";
+
+    d.URL = "${base}/private/sys/user/info";
+    d.OKEvent = function(){
+        doSave();
+    };
+    d.onLoad = function() {
+
+        $DW.$Z("oldpassword").focus();
+
+    }
+    d.ButtonCenter=true;
+    d.show();
+}
+function doSave(){
+    if($DW.Verify.hasError()){
+        return;
+    }
+    if($DW.$("#loginname").val()!="$!curuser.loginname"){
+        jQuery.ajax({
+            url : "${base}/private/sys/user/ajaxname",
+            data : $DW.$("#form1").serialize(),
+            type: "POST",
+            success : function (res) {
+                if(res=="true"){
+                    Dialog.alert("用户名已存在");
+                    return;
+                }else{
+                    doit();
+                }
+            },
+            fail : function(res) {
+                Dialog.alert("系统错误?!");
+            }
+        });
+    }else{
+        doit();
+    }
+}
+function doit(){
+    if ($DW.$("#oldpassword").val()=="")
+    {
+        top.Dialog.alert("请输入密码！");
+
+        $DW.$("#oldpassword").focus();
+        return ;
+    }
+    if ($DW.$("#password2").val()!="" && $DW.$("#password").val()=="")
+    {
+        top.Dialog.alert("请输入重复新密码！");
+        $DW.$("#password").focus();
+        return ;
+    }
+    jQuery.ajax({
+        type: 'POST',
+        url : "${base}/private/sys/user/updateInfo" ,
+        data : $DW.$("#form1").serialize(),
+        success : function (res) {
+            if(res=="relogin"){
+                $D.close();
+                top.Dialog.confirm("用户名或密码已修改，请重新登陆！",function(){
+                    window.top.location.href="${base}/private/login";
+                },function(){
+                    window.top.location.href="${base}/private/login";
+                });
+            }else if(res=="true"){
+                $D.close();
+                Dialog.alert("修改成功！");
+            }else if(res=="error"){
+
+                Dialog.alert("原密码不正确！");
+            }else{
+                Dialog.alert("修改失败！");
+            }
+        },
+        fail : function(res) {
+            Dialog.alert("系统错误?!");
+        }
+    });
+}
+function logout()
+{
+    top.Dialog.confirm("你确认要退出系统吗？", function() {
+        top.location.replace('logout');
+    });
+}
+function dochange(id, url, menuname)
+{
+    if (url == '' || url == 'null')
+    {
+        document.getElementById("leftFrame").src='${base}/private/left?sys_menu=' + menuname + '&sys_menuid=' + id + '&sys_random=' + Math.random();
+    }
+    else
+    {
+        if (url.indexOf("?") > 0)
+        {
+            document.getElementById("leftFrame").src='${base}' + url + '&sys_menu=' + menuname + '&sys_menuid=' + id + '&sys_random=' + Math.random();
+        }
+        else
+        {
+            document.getElementById("leftFrame").src='${base}' + url + '?sys_menu=' + menuname + '&sys_mneuid=' + id + '&sys_random=' + Math.random();
+        }
+    }
+}
+
+var oldid = 1;
+function dochangeimg(objid)
+{
+    try
+    {
+        if (objid == oldid)
+        {
+            $("#menuid" + objid).attr("class","Mmenu_this  png");
+            return;
+        }
+        else
+        {
+            $("#menuid" + objid).attr("class","Mmenu_this  png");
+            $("#menuid" + oldid).attr("class","Mmenu  png");
+            oldid = objid;
+        }
+
+    }
+    catch(exception)
+    {
+
+    }
+}
+
+var isOpen = true;
+function getOnline()
+{
+    jQuery.ajax({
+        url : "${base}/private/online?loginname=$!curuser.loginname&sys_random=" + Math.random(),
+        success : function (res) {
+            if(res==-2){
+                if(isOpen){
+                    isOpen = false;
+                    top.Dialog.confirm("用户登陆已失效，请重新登陆！",function(){
+                        window.top.location.href="${base}/private/login";
+                    },function(){
+                        window.top.location.href="${base}/private/login";
+                    });
+                }
+            }else if (res > 0) {
+                $('#dvonline').html("用户：$!curuser.realname&nbsp;&nbsp;单位：$!curuser.unitname&nbsp;&nbsp;");
+            } else {
+                $('#dvonline').html("用户：$!curuser.realname&nbsp;&nbsp;单位：$!curuser.unitname&nbsp;&nbsp;");
+            }
+            return false;
+        },
+        fail : function(res) {
+            Dialog.alert("系统错误?!");
+        }
+    });
+
+    //window.setTimeout('getOnline()', 1000 * 60 * 2);
+}
+Page.onLoad(function() {
+    validate();
+    getOnline();
+    dochangeimg(1);
+
+});
+//-->
+</script>
+
+</body>
+</html>

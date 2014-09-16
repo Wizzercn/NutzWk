@@ -1,0 +1,21 @@
+var ioc = {
+		upload : {
+			type : "org.nutz.mvc.upload.UploadAdaptor",
+			args : [{refer : "uploadCtx"}],
+			singleton:false
+		},
+		uploadCtx : {
+			type : "org.nutz.mvc.upload.UploadingContext",
+			args : [{refer: "filePool"}],
+			singleton : false,
+			fields : {
+				ignoreNull : true,
+				maxFileSize : 1048576000,
+				nameFilter : ".+(html|js|css|tpl|jpg|gif|png|jpeg|doc|docx|xls|xlsx|ppt|pptx|wps|pdf|txt|chm|mp3|mp4|3gp|rm|swf|flv|asf|wmv|wma|avi|7z|zip|rar|ios|jar)"
+			}
+		},
+		filePool : {
+			type : "cn.xuetang.common.file.FilePool",
+			args : ["/temp/", 2000]
+		}
+};

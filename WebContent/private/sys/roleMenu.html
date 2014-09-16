@@ -1,0 +1,336 @@
+<html>
+<head>
+    <title>$!app_name</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<!-- 框架 -->
+    <link href="${base}/include/css/msg.css" rel="stylesheet" type="text/css"/>
+    <link href="${base}/include/css/default.css" rel="stylesheet" type="text/css"/>
+	<script type='text/javascript'>
+		var CONTEXTPATH = '${base}';
+	</script>
+    <script src="${base}/include/js/main.js"></script>
+    <script src="${base}/include/js/string.js"></script>
+    <!-- 树 -->
+    <script type="text/javascript" src="${base}/include/controls/ztree/jquery.ztree.core-3.5.min.js"></script> 
+	<script type="text/javascript" src="${base}/include/controls/ztree/jquery.ztree.excheck-3.5.min.js"></script>
+	<script type="text/javascript" src="${base}/include/controls/ztree/jquery.ztree.exhide-3.5.min.js"></script>
+
+	<link rel="stylesheet" href="${base}/include/controls/ztree/zTreeStyle/zTreeStyle.css" type="text/css">
+
+</head>
+<SCRIPT type="text/javascript">
+          
+           var IDMark_Switch = "_switch",
+   		       IDMark_Icon = "_ico",
+   		       IDMark_Span = "_span",
+   		       IDMark_Input = "_input",
+   		       IDMark_Check = "_check",
+   		       IDMark_Edit = "_edit",
+   		       IDMark_Remove = "_remove",
+   		       IDMark_Ul = "_ul",
+   		       IDMark_A = "_a";
+   		
+              var setting = {
+			view: {
+				selectedMulti: false,
+                nameIsHTML: true,
+                addDiyDom: addDiyDom
+			},
+			check: {
+				enable: true
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			 },
+			 callback: {
+					onCheck: onCheck
+					//onExpand:onExpand
+				}
+		    };
+
+           //添加单选按钮
+           function addDiyDom(id, treeNode) {
+   			if (treeNode.id=='') return;
+   			var aObj = $("#" + treeNode.tId + IDMark_A);
+   			var editstr	='<div style="margin-left:30px;white-space:normal; width:380px;overflow:auto;">';
+   			var style ="";
+   			var checkid='';
+   			var radioAdd = '';
+   			var radioUpdate = '';
+   			var radioDel = '';
+   			var radioSort = '';
+   			var buttonArray = new Array();
+   			var checkbutton = isundefined(treeNode.button);
+   			var allbuttonArray = new Array();
+   			var distance = 45;
+   			var wordsize = 25;
+   			var allbutton = isundefined(treeNode.res_button);
+   			if(allbutton!=""){
+   				allbuttonArray = allbutton.split(";");   			   				
+   			}else{
+   				return;
+   			}   			
+   			if(treeNode.button != null){
+   				buttonArray = treeNode.button.split(",");
+   			}
+   			
+   				if(treeNode.id.length==4){
+   					distance =98;
+   					wordsize = treeNode.name.length;
+   					distance = distance - wordsize*12;
+   				    }
+   				if(treeNode.id.length==8){
+   					distance = 80;
+   					wordsize = treeNode.name.length;
+   					distance -= wordsize*12;
+   				}
+   				if(treeNode.id.length>=12){
+   					distance = 62;
+   					wordsize = treeNode.name.length;
+   					distance -= wordsize*12;
+   				}
+   				style="style=\"margin-left:"+distance+"px;\""; 
+   				var isfirst = 0;
+   				for(var i=0; i < allbuttonArray.length&&allbuttonArray[i]!="";i++){
+   					var strbutton = allbuttonArray[i].split("/");
+   					
+   					if(checkbutton.indexOf(strbutton[1])>=0){   				    	
+   				    	if(isfirst==0){
+   				   	editstr += "<input type='checkbox' id='"+strbutton[1]+treeNode.id+"' value='1' onclick='chkRadio(this)' checked='true' "+style+">"+strbutton[0]+"";
+   				    	}else{
+   		   		   	editstr += "<input type='checkbox' id='"+strbutton[1]+treeNode.id+"' value='1' onclick='chkRadio(this)' checked='true'>"+strbutton[0]+"";	
+   				    	}
+   				    	isfirst=1;
+   				    }else{     			    	
+   				    	if(isfirst==0){
+   	   				   	editstr += "<input type='checkbox' id='"+strbutton[1]+treeNode.id+"' value='0' onclick='chkRadio(this)'  "+style+">"+strbutton[0]+"";	
+   				    	}else{
+   	   	   			  	editstr += "<input type='checkbox' id='"+strbutton[1]+treeNode.id+"' value='0' onclick='chkRadio(this)' >"+strbutton[0]+"";		
+   				    	}
+   				    	isfirst=1;
+   				    }
+   				}   				   			   
+			    aObj.after(editstr+"</div>");   		   			
+   		}           
+           
+           //复选框事件处理 
+           function chkRadio(id) {  
+        	   var parentId = id.id;
+        	   parentId = parentId.replace(/[a-zA-Z]/g,"");
+        	   var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+        	   var node = treeObj.getNodeByParam("id", parentId, null);
+        	   
+        	   if(!node.checked){
+        		   Dialog.alert("该菜单未被选中!");
+        		   id.checked = false;
+        		   id.value = 0;
+        		   return;
+        	   }
+        	   if(id.value==1){
+        		 id.checked = false;
+        		 id.value = 0;
+        	   }else{
+        		 id.checked = true; 
+        		 id.value = 1;
+        	   }          
+           }
+
+           //复选框事件处理
+           function onCheck(e, treeId, treeNode) {
+        	   ergodicChilds(e, treeId, treeNode);        	   
+        	   ergodicParents(e, treeId, treeNode);        	  
+   		}   
+           //孩子节点处理
+           function ergodicChilds(e, treeId, treeNode){
+        	   var radiobutton = isundefined(treeNode.res_button);
+        	   var radioArr = radiobutton.split(";");
+        	   for(var i=0; i<radioArr.length&&radioArr[i]!="";i++){
+        		   var radiostr = radioArr[i].split("/");
+        	   if(treeNode.checked){   
+        		      document.getElementById(radiostr[1]+treeNode.id).checked=true;
+    			      document.getElementById(radiostr[1]+treeNode.id).value=1;     				
+     			}else{
+     				  document.getElementById(radiostr[1]+treeNode.id).checked=false;
+     				  document.getElementById(radiostr[1]+treeNode.id).value=0;     				
+     			} 
+        	   }
+       	   var childs;
+       	   if(treeNode.isParent&&treeNode.open){
+       		   childs = treeNode.children;   
+       	   }else{
+       		   return;
+       	   }       	        	 
+       	   var i=0;
+       	   for(i;i<childs.length;i++){         		  
+       		ergodicChilds(e,treeId,childs[i]); 
+       	   }
+           }
+           
+           //父节点处理
+           function ergodicParents(e, treeId, treeNode){
+        	   var parentId = treeNode.getParentNode();
+        	    if(parentId.id!=""){ 
+        	    	var radiobutton = isundefined(parentId.res_button);
+        	    	var radioArr = radiobutton.split(";");
+        	    	
+        	    	if(parentId.checked){            		
+        	    		var flagCheck=0;
+        	    		for(var i=0;i<radioArr.length&&radioArr[i]!="";i++){
+        	    			var radiostr = radioArr[i].split("/");
+        	    			if(document.getElementById(radiostr[1]+parentId.id).value==1){
+            	    			flagCheck=1;	
+            	    		}	        	    			      	    		
+        	    	}
+        	    		if(flagCheck==0){
+        	    			for(var i=0;i<radioArr.length&&radioArr[i]!="";i++){
+            	    			var radiostr = radioArr[i].split("/");
+            	    			document.getElementById(radiostr[1]+parentId.id).checked=true;
+                 				document.getElementById(radiostr[1]+parentId.id).value=1;	
+                	    		}         				
+        	    		}
+         			}else{
+         				for(var i=0;i<radioArr.length&&radioArr[i]!="";i++){
+        	    			var radiostr = radioArr[i].split("/");
+        	    			document.getElementById(radiostr[1]+parentId.id).checked=false;
+             				document.getElementById(radiostr[1]+parentId.id).value=0;
+            	    		}         				
+         			}         	    	
+        	    }else{
+        	    	return ;
+        	    }
+        	    ergodicParents(e, treeId, parentId);
+           }
+           
+           //节点展开处理   对孩子节点处理
+           function onExpand(event,treeId,treeNode){
+        	   var childs = treeNode.children;
+        	   var i = 0;
+        	   for(i;i<childs.length;i++){
+        		   if(childs[i].checked){   			
+         				document.getElementById("BtnAdd"+childs[i].id).checked=true;
+         				document.getElementById("BtnAdd"+childs[i].id).value=1;
+
+         				document.getElementById("BtnUpdate"+childs[i].id).checked=true;
+         				document.getElementById("BtnUpdate"+childs[i].id).value=1;
+         				
+         				document.getElementById("BtnDel"+childs[i].id).checked=true;
+         				document.getElementById("BtnDel"+childs[i].id).value=1;
+         				
+         				document.getElementById("BtnSort"+childs[i].id).checked=true;
+         				document.getElementById("BtnSort"+childs[i].id).value=1;
+         			}else{
+         				document.getElementById("BtnAdd"+childs[i].id).checked=false;
+         				document.getElementById("BtnAdd"+childs[i].id).value=0;
+         				
+         				document.getElementById("BtnUpdate"+childs[i].id).checked=false;
+         				document.getElementById("BtnUpdate"+childs[i].id).value=0;
+         				
+         				document.getElementById("BtnDel"+childs[i].id).checked=false;
+         				document.getElementById("BtnDel"+childs[i].id).value=0;
+         				
+         				document.getElementById("BtnSort"+childs[i].id).checked=false;
+         				document.getElementById("BtnSort"+childs[i].id).value=0;
+         			} 
+        	   }
+           }
+           var zNodes =#if($str)$!str #else [] #end ;
+           var ztreeObj;
+           jQuery(document).ready(function(){
+
+              ztreeObj= jQuery.fn.zTree.init(jQuery("#treeDemo"), setting,zNodes);
+           });
+           function getIdsTree(){
+        	  
+                       var nodes = ztreeObj.getCheckedNodes();
+                       var ids="";
+                     
+                       for(var i=0;i<nodes.length;i++){
+                          ids += nodes[i].id + ":";                       
+                          var radiobutton = isundefined(nodes[i].res_button);                        
+                          var radioArr = radiobutton.split(";");
+                          if(!nodes[i].getParentNode().open){                       	
+                        	for(var j=0; j<radioArr.length&&radioArr[j]!="";j++){
+                        		var radiostr = radioArr[j].split("/");
+                        	    ids += radiostr[1] + ",";
+                        	}
+                          }else{
+                        	  
+                        	  for(var k=0; k<radioArr.length&&radioArr[k]!="";k++){
+                          		var radiostr = radioArr[k].split("/");                        		
+                          		if(document.getElementById(radiostr[1]+nodes[i].id).value==1){
+                              	  ids +=  radiostr[1] +  "," ;　  
+                                }                        	  
+                          	}                          
+                              
+                          }
+                          ids +=  ";";
+                       }
+                       
+                       if(ids!=""&&ids!=","){
+                           document.getElementById("checkids").value=ids;
+                           return true;
+                       }
+                       return false;
+           }
+           function doSave(){
+
+                if (document.form1.commit.value == "0") {
+                    getIdsTree()
+                    document.form1.commit.value = "1";
+                    return true; 
+                } else {
+                    Dialog.alert("正在提交，请稍候！");
+                    return false;
+                }
+           }
+
+           function isundefined(value){
+        		 if(value){
+        			 return value;
+        		 }else{
+        			 return "" ;
+        		 }
+        	}
+           //-->
+       </SCRIPT>
+<body class="dialogBody">
+<form name='form1' id="form1" method='post'>
+    <input type="hidden" name="doAction" id="doAction" value="menu">
+    <input type="hidden" name="checkids" id="checkids" value="">
+    <input type="hidden" name="roleid" id="roleid" value="$!roleid">
+    <input type="hidden" name="pid" id="pid" value="$!pid">
+    <input type="hidden" name="commit" id="commit" value="0">
+
+    <table width="450" height="207" align="center" cellpadding="2" cellspacing="0">
+        <tr>
+            <td height="10"></td>
+            
+        </tr>
+        <tr>
+            <td align="center" width="100%" height="350" valign="top">
+                <fieldset>
+                    <legend><label>资源菜单</label></legend>
+                    <table width="100%" border="0" cellpadding="2" cellspacing="0">
+                        <tr>
+                            <td>
+                                <div ztype='_Tree' style='-moz-user-select:none;height:320px;width:500px;'
+                                     onselectstart='stopEvent(event);' id='tree1' class='treeItemN'>
+                                    <ul id="treeDemo" class="ztree"
+                                        style="height:300px;width:490px;overflow-x:hidden"></ul>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+
+
+
+</html>

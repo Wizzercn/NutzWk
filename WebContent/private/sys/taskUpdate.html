@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+
+    <title>$!app_name</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="${base}/include/css/default.css" rel="stylesheet" type="text/css"/>
+    <script type='text/javascript'>
+        var CONTEXTPATH = '${base}';
+    </script>
+    <script src="${base}/include/js/main.js"></script>
+    <script src="${base}/include/js/string.js"></script>
+    <script type="text/javascript">
+        <!--
+        function execycleSelect(){
+            var execycleValue=$("input[name='execycle']:checked").val();
+            if(execycleValue==1){
+                $("#cron_expression").attr("disabled","disabled");
+                $("#day_of_month").removeAttr("disabled");
+                $("#day_of_week").removeAttr("disabled");
+                $("#hour").removeAttr("disabled");
+                $("#minute").removeAttr("disabled");
+                $("#interval_hour").removeAttr("disabled");
+                $("#interval_minute").removeAttr("disabled");
+                $("#task_interval_unit").removeAttr("disabled");
+            }else{
+                $("#cron_expression").removeAttr("disabled");
+                $("#day_of_month").attr("disabled","disabled");
+                $("#day_of_week").attr("disabled","disabled");
+                $("#hour").attr("disabled","disabled");
+                $("#minute").attr("disabled","disabled");
+                $("#interval_hour").attr("disabled","disabled");
+                $("#interval_minute").attr("disabled","disabled");
+                $("#task_interval_unit").attr("disabled","disabled");
+            }
+        }
+        function selectUnit(){
+            var task_interval_unitValue=$("#task_interval_unit").val();
+            controlInput(task_interval_unitValue);
+        }
+        function controlInput(task_interval_unitValue){
+            $("span[id$='Span']").each(function(){
+                $(this).hide();
+            });
+            $("input[id$='Input']").each(function(){
+                $(this).attr("disabled","disabled");
+
+            });
+            if(task_interval_unitValue==1){
+                $("#interval_minuteSpan").show();
+                $("#interval_minute").removeAttr("disabled");
+
+            }else if(task_interval_unitValue==2){
+                $("#interval_hourSpan").show();
+                $("#interval_hour").removeAttr("disabled");
+            }else if(task_interval_unitValue==3){
+                $("#hourSpan").show();
+                $("#minuteSpan").show();
+                $("#hour").removeAttr("disabled");
+                $("#minute").removeAttr("disabled");
+            }else if(task_interval_unitValue==4){
+                $("#dayOfWeekSpan").show();
+                $("#hourSpan").show();
+                $("#minuteSpan").show();
+                $("#day_of_week").removeAttr("disabled");
+                $("#hour").removeAttr("disabled");
+                $("#minute").removeAttr("disabled");
+            }else if(task_interval_unitValue==5){
+                $("#dayOfMonthSpan").show();
+                $("#hourSpan").show();
+                $("#minuteSpan").show();
+                $("#day_of_month").removeAttr("disabled");
+                $("#hour").removeAttr("disabled");
+                $("#minute").removeAttr("disabled");
+            }
+        }
+        Page.onLoad(function(){
+            $("span[id$='Span']").each(function(){
+                $(this).hide();
+            });
+            selectUnit();
+            $("#site_id").val("$!obj.site_id");
+            #if($obj.task_type==2||$obj.task_type==3)
+                $("#channel_id").val("$!obj.param_value");
+            #end
+            execycleSelect();
+        });
+        -->
+    </script>
+</head>
+<body class="dialogBody">
+<form name='form1' id="form1" method='post'>
+    <input type="hidden" id="task_id" name="task_id" value="$!obj.task_id">
+    <input type="hidden" id="task_code" name="task_code" value="$!obj.task_code">
+    <table width="100%" height="100%" align="center" cellpadding="2" cellspacing="0">
+
+        <tr>
+            <td width="100%" valign="top">
+                <div id="con_one_1">
+                    <table width="99%" class="pn-ftable" cellpadding="2" cellspacing="1" border="0">
+
+                        <tr>
+                            <td width="20%" class="pn-flabel" align="right" height="30">任务名称：</td>
+                            <td colspan="4" width="80%" class="pn-fcontent">
+                                <input type="text" name="task_name" id="task_name" value="$!obj.task_name" maxlength="100" size="30" verify="任务名称|NotNull">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%" class="pn-flabel" align="right" height="30">执行类：</td>
+                            <td colspan="4" width="80%" class="pn-fcontent">
+                                <input type="text" name="job_class" id="job_class" value="$!obj.job_class" maxlength="100" size="40" verify="执行类|NotNull">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%" class="pn-flabel" align="right" height="30">执行参数：</td>
+                            <td colspan="4" width="80%" class="pn-fcontent">
+                                <input type="text" name="param_value" id="param_value" value="$!obj.param_value" maxlength="100" size="30" >
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%" class="pn-flabel" align="right" height="30">执行间隔：</td>
+                            <td colspan="4" width="80%" class="pn-fcontent">
+                                <input type="text" name="task_interval" id="task_interval" value="$!obj.task_interval" maxlength="10" size="30" >毫秒
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%" class="pn-flabel" align="right" height="30">并发线程数：</td>
+                            <td colspan="4" width="80%" class="pn-fcontent">
+                                <input type="text" name="task_threadnum" id="task_threadnum" value="$!obj.task_threadnum" maxlength="10" size="30" >
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%" class="pn-flabel" align="right" height="30">执行周期：</td>
+                            <td colspan="4" width="80%" class="pn-fcontent">
+                                <input name="execycle" type="radio" value="1" onclick="execycleSelect()"
+                                #if($obj.execycle==1)checked="checked"#end/>
+                                <select id="task_interval_unit" name="task_interval_unit" onchange="selectUnit()">
+                                    <option value="1" #if($obj.task_interval_unit==1)selected#end>分</option>
+                                    <option value="2" #if($obj.task_interval_unit==2)selected#end>时</option>
+                                    <option value="3" #if($obj.task_interval_unit==3)selected#end>日</option>
+                                    <option value="4" #if($obj.task_interval_unit==4)selected#end>周</option>
+                                    <option value="5" #if($obj.task_interval_unit==5)selected#end>月</option>
+                                </select>
+                                <span id="dayOfMonthSpan"><input size="8" name="day_of_month" id="day_of_month" value="$!obj.day_of_month"
+                                                                 verify="日|Number"/>日</span>
+                                <span id="dayOfWeekSpan"><input size="8" name="day_of_week" id="day_of_week" value="$!obj.day_of_week"
+                                                                verify="星期|Number"/>星期</span>
+                                <span id="hourSpan"><input size="8" name="hour" id="hour" value="$!obj.hour" verify="时|Number"/>时</span>
+                                <span id="minuteSpan"><input size="8" name="minute" id="minute" value="$!obj.minute"
+                                                             verify="分|Number"/>分</span>
+                                <span id="interval_hourSpan">间隔 <input size="8" name="interval_hour" verify="小时|Number"
+                                                                       id="interval_hour" value="$!obj.interval_hour"/>小时</span>
+                                <span id="interval_minuteSpan">间隔 <input size="8" name="interval_minute" verify="分钟|Number"
+                                                                         id="interval_minute" value="$!obj.interval_minute"/>分钟</span>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%" class="pn-flabel" align="right" height="30">cron表达式：</td>
+                            <td colspan="4" width="80%" class="pn-fcontent">
+                                <input name="execycle" #if($obj.execycle==2)checked="checked"#end  type="radio" value="2" onclick="execycleSelect()" />
+                                <input name="cron_expression" id="cron_expression" value="$!obj.cron_expression" disabled="disabled" />
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%" class="pn-flabel" align="right" height="30">状态：</td>
+                            <td colspan="4" width="80%" class="pn-fcontent">
+                                <label><input type="radio" value="0"  name="is_enable" #if($obj.is_enable==0)checked="checked"#end/>启用</label>
+                                <label><input type="radio" value="1" name="is_enable" #if($obj.is_enable==1)checked="checked"#end/>禁用</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%" class="pn-flabel" align="right" height="30">备注：</td>
+                            <td colspan="4" width="80%" class="pn-fcontent">
+                                <input type="text" name="task_remark"  value="$!obj.task_remark" size="40" maxlength="200"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </td>
+        </tr>
+    </table>
+
+</form>
+
+</body>
+</html>
