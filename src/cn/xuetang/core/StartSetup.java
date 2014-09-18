@@ -33,7 +33,6 @@ public class StartSetup implements Setup {
             Dao dao= Mvcs.getIoc().get(Dao.class);
             Globals.InitSysConfig(dao);//初始化系统参数
             Globals.InitDataDict(dao);//初始化数据字典
-            Globals.InitAppInfo(dao);//初始化app接口信息
             Globals.APP_NAME= Strings.sNull(Globals.SYS_CONFIG.get("app_name"));//项目名称
             Globals.FILE_POOL= new NutFilePool("~/tmp/myfiles", 10);//创建一个文件夹用于下载
             //初始化Quartz任务

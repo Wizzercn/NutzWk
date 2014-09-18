@@ -10,11 +10,8 @@ import javax.servlet.http.HttpSession;
 import cn.xuetang.common.action.BaseAction;
 import cn.xuetang.common.filter.GlobalsFilter;
 import cn.xuetang.common.filter.UserLoginFilter;
-import cn.xuetang.modules.app.bean.App_project;
 import cn.xuetang.modules.sys.bean.*;
 
-import cn.xuetang.modules.wx.bean.Weixin_channel;
-import cn.xuetang.modules.wx.bean.Weixin_channel_role;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.nutz.dao.Cnd;
@@ -98,7 +95,6 @@ public class RoleAction extends BaseAction {
 	@At
 	@Ok("->:/private/sys/roleAdd.html")
 	public void toadd( HttpServletRequest req) {
-        req.setAttribute("pro", daoCtl.list(dao, App_project.class, Cnd.where("1", "=", 1).asc("id")));
 
     }
 
@@ -123,7 +119,6 @@ public class RoleAction extends BaseAction {
 	public void toupdate(@Param("id") int id, HttpServletRequest req) {
 		Sys_role role = daoCtl.detailById(dao, Sys_role.class, id);
 		req.setAttribute("obj", role);
-        req.setAttribute("pro", daoCtl.list(dao, App_project.class, Cnd.where("1", "=", 1).asc("id")));
 
     }
 
@@ -422,82 +417,6 @@ public class RoleAction extends BaseAction {
 		return false;
 	}
 
-    /**
-     * 权限分配页面
-     */
-    @At
-    @Ok("->:/private/sys/roleMenu.html")
-    public void tochannel(@Param("roleid") int roleid, HttpSession session,
-                       HttpServletRequest req) {
-        try {
-            Sys_role role=daoCtl.detailById(dao,Sys_role.class,roleid);
-            Map<String,String> ht=daoCtl.getHashMap(dao,Sqls.create("select channel_id,role_id from weixin_channel_role where pid="+role.getPid()));
-            List<Weixin_channel> list = daoCtl.list(dao, Weixin_channel.class, Cnd.where("pid","=",role.getPid()).asc("location"));
-            List<Object> array=new ArrayList<Object>();
-            Map<String,Object> jsonroot=new HashMap<String, Object>();
-            jsonroot.put("id", "");
-            jsonroot.put("pId", "0");
-            jsonroot.put("name", "栏目列表");
-            jsonroot.put("checked", false);
-            jsonroot.put("nocheck", true);
-            jsonroot.put("button", "");
-            jsonroot.put("open", true);
-            jsonroot.put("icon", Globals.APP_BASE_NAME
-                    + "/images/icons/icon042a1.gif");
-            array.add(jsonroot);
-            for (int i = 0; i < list.size(); i++) {
-                Weixin_channel obj = list.get(i);
-                Map<String,Object> jsonobj = new HashMap<String, Object>();
-                jsonobj.put("id", obj.getId());
-                jsonobj.put("pId",
-                        obj.getId().substring(0, obj.getId().length() - 4));
-                jsonobj.put("name", obj.getName());
-                if (ht != null && !Strings.isBlank(ht.get(String.valueOf(obj.getId())))) {
-                    jsonobj.put("checked", true);
-                } else {
-                    jsonobj.put("checked", false);
-                }
-                array.add(jsonobj);
-            }
-            req.setAttribute("str", Json.toJson(array));
-            req.setAttribute("roleid", roleid);
-            req.setAttribute("pid", role.getPid());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 权限分配处理
-     */
-    @At
-    public boolean channel(@Param("checkids") String checkids,
-                           @Param("roleid") int roleid,
-                           @Param("pid") int pid) {
-        try {
-            if (!"".equals(checkids)) {
-                String[] ids =StringUtils.split(checkids, ";") ;
-                Condition c = Cnd.where("role_id", "=", roleid);
-                daoCtl.delete(dao, "weixin_channel_role", c);
-                for (int i = 0; i < ids.length; i++) {
-                    String[] id_Button = StringUtils.split(ids[i], ":");
-                    Weixin_channel_role resource = new Weixin_channel_role();
-                    resource.setRole_id(roleid);
-                    resource.setChannel_id(id_Button[0]);
-                    resource.setPid(pid);
-                    daoCtl.add(dao, resource);
-                }
-            } else {
-                Condition c = Cnd.where("role_id", "=", roleid);
-                daoCtl.delete(dao, "weixin_channel_role", c);
-            }
-            return true;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 	/**
 	 * 分配用户角色处理
 	 */

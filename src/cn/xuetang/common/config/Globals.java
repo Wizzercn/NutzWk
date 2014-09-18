@@ -1,7 +1,6 @@
 package cn.xuetang.common.config;
 
 import cn.xuetang.common.action.BaseAction;
-import cn.xuetang.modules.app.bean.App_info;
 import cn.xuetang.modules.sys.bean.Sys_config;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -32,29 +31,10 @@ public class Globals extends BaseAction {
     public static Map<String, String> SYS_CONFIG;
     //数据字典，根据ID分别初始化
     public static Map<String, Object> DATA_DICT;
-    //应用信息，用于通过mykey验证来源，放在内存里为了提高响应速度
-    public static Map<String, Object> APP_INFO;
     //定时任务实例
     public static Scheduler SCHEDULER;
     //文件池
     public static FilePool FILE_POOL;
-
-
-    public static void InitAppInfo(Dao dao) {
-        try {
-            if (APP_INFO == null) {
-                APP_INFO = new HashMap<String, Object>();
-            }
-            APP_INFO.clear();
-            List<App_info> appInfoList = dao.query(App_info.class, Cnd.orderBy().asc("ID"));
-            for (App_info appInfo : appInfoList) {
-                Globals.APP_INFO.put(appInfo.getMykey(), appInfo);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e);
-        }
-    }
 
     public static void InitSysConfig(Dao dao) {
         try {

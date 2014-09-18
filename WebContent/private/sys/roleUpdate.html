@@ -86,18 +86,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <td align="right">所属项目：</td>
-                        <td>&nbsp;</td>
-                        <td >
-                            <select name="pid" id="pid" >
-                                <option value="0">无</option>
-                                #foreach($o in $pro)
-                                <option value="$!o.id" #if($obj.pid==$o.id)selected#end>$!o.name</option>
-                                #end
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
                         <td align="right">角色描述：</td>
                         <td>&nbsp;</td>
                         <td><textarea rows="10" cols="40" name="descript" id="descript">$!obj.descript</textarea></td>
