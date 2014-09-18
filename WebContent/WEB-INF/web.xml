@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  	<display-name></display-name>
+  	<description></description>
+  	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+	<!-- Nutz Mvc -->
+	<filter>
+		<filter-name>nutz</filter-name>
+		<filter-class>org.nutz.mvc.NutFilter</filter-class>
+		<init-param>
+			<param-name>modules</param-name>
+			<param-value>cn.xuetang.modules.MainModule</param-value>
+		</init-param>
+        <init-param>
+            <param-name>ignore</param-name>
+            <param-value>^(.+[.])(jsp|png|gif|jpg|js|css|jspx|jpeg|html)$</param-value>
+        </init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>nutz</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+  	
+  	<!-- Velocity servlet -->
+	<servlet>
+		<servlet-name>velocity</servlet-name>
+		<servlet-class>
+			org.apache.velocity.tools.view.servlet.VelocityViewServlet
+		</servlet-class>
+		<init-param>
+			<param-name>org.apache.velocity.properties</param-name>
+			<param-value>velocity.properties</param-value>
+		</init-param>
+		<load-on-startup>10</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>velocity</servlet-name>
+		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
+	<!-- druid -->
+	<servlet>
+      <servlet-name>DruidStatView</servlet-name>
+      <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+  	</servlet>
+ 	<servlet-mapping>
+      	<servlet-name>DruidStatView</servlet-name>
+      	<url-pattern>/druid/*</url-pattern>
+    </servlet-mapping>
+	<!--yzm -->
+	<servlet>
+		<servlet-name>image</servlet-name>
+		<servlet-class>cn.xuetang.common.util.ImageUtil</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>image</servlet-name>
+		<url-pattern>/codeimg</url-pattern>
+	</servlet-mapping>
+	
+	<welcome-file-list>
+	    <welcome-file>index.html</welcome-file>
+	    <welcome-file>index.htm</welcome-file>
+	    <welcome-file>index.jsp</welcome-file>
+ 	</welcome-file-list>
+ 	<error-page>
+		<error-code>403</error-code>
+		<location>/WEB-INF/error/403.html</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/error/404.html</location>
+	</error-page>
+		<mime-mapping>
+		<extension>rar</extension>
+		<mime-type>application/zip</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>doc</extension>
+		<mime-type>application/zip</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>ppt</extension>
+		<mime-type>application/zip</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>txt</extension>
+		<mime-type>application/zip</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>pdf</extension>
+		<mime-type>application/zip</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>xls</extension>
+		<mime-type>application/zip</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>wps</extension>
+		<mime-type>application/zip</mime-type>
+	</mime-mapping>
+</web-app>
