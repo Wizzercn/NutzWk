@@ -35,7 +35,7 @@ a:hover{ color:#FF0000; text-decoration:underline;}
 .top_rselect_XM ul{ background:#2e7dd1; display:block; padding:5px; color:#ffffff;}
 .top_rselect_XM ul li{ line-height:14px; margin:5px 0px;}
 .m_topmenu{ height:30px; position:relative; z-index:12;}
-.m_topmenu ul{ float:right; position:absolute; height:32px; bottom:-5px; right:0px; padding-right:10px;}
+.m_topmenu ul{ float:right; position:absolute; height:32px; bottom:-5px; padding-right:10px;}
 .m_topmenu ul li{ float:left; height:32px;}
 .Mmenu,.Mmenu:link,.Mmenu:visited{ background:url(../../images/private/main/menu_1.png) no-repeat top left; height:27px; padding-left:10px; display:inline-block; *display:inline; *zoom:1; color:#ffffff; text-decoration:none; line-height:27px; font-size:13px;}
 .Mmenu:hover{ color:#ffff99;}
