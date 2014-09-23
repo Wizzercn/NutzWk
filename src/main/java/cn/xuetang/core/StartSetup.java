@@ -84,7 +84,7 @@ public class StartSetup implements Setup {
     }
 
     public void initDB(Dao dao) {
-        dao.drop(Sys_user.class);
+        //dao.drop(Sys_user.class);
         if (!dao.exists(Sys_user.class)) {
             log.info("数据库始化...");
             Daos.createTablesInPackage(dao, "cn.xuetang.modules", true);
