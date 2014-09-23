@@ -1,0 +1,572 @@
+/*文件类型*/
+.file-type {
+	position: relative;
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	background-image: url(../images/file_type/unknown.gif);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+}
+/*application*/
+.tp-bat {
+	background-image: url(../images/file_type/application/bat.gif);
+}
+.tp-exe {
+	background-image: url(../images/file_type/application/exe.gif);
+}
+.tp-ipa {
+	background-image: url(../images/file_type/application/ipa.gif);
+}
+.tp-apk {
+	background-image: url(../images/file_type/application/apk.gif);
+}
+.tp-msi {
+	background-image: url(../images/file_type/application/msi.gif);
+}
+/*archive*/
+.tp-dmg {
+	background-image: url(../images/file_type/archive/dmg.gif);
+}
+.tp-iso {
+	background-image: url(../images/file_type/archive/iso.gif);
+}
+.tp-rar {
+	background-image: url(../images/file_type/archive/rar.gif);
+}
+.tp-zip {
+	background-image: url(../images/file_type/archive/zip.gif);
+}
+.tp-7z {
+	background-image: url(../images/file_type/archive/7z.gif);
+}
+.tp-cab {
+	background-image: url(../images/file_type/archive/cab.gif);
+}
+/*code*/
+.tp-asp {
+	background-image: url(../images/file_type/code/asp.gif);
+}
+.tp-c,
+.tp-cpp {
+	background-image: url(../images/file_type/code/cpp.gif);
+}
+.tp-css {
+	background-image: url(../images/file_type/code/css.gif);
+}
+.tp-htm,
+.tp-html {
+	background-image: url(../images/file_type/code/html.gif);
+}
+.tp-js {
+	background-image: url(../images/file_type/code/js.gif);
+}
+.tp-php {
+	background-image: url(../images/file_type/code/php.gif);
+}
+.tp-tpl {
+	background-image: url(../images/file_type/code/tpl.gif);
+}
+.tp-xml {
+	background-image: url(../images/file_type/code/xml.gif);
+}
+.tp-h,
+.tp-cs,
+.tp-plist {
+	background-image: url(../images/file_type/code/code.gif);
+}
+/*document*/
+.tp-chm {
+	background-image: url(../images/file_type/document/chm.gif);
+}
+.tp-doc,
+.tp-docx,
+.tp-docm,
+.tp-dot,
+.tp-dotx,
+.tp-dotm {
+	background-image: url(../images/file_type/document/doc.gif);
+}
+.tp-log {
+	background-image: url(../images/file_type/document/log.gif);
+}
+.tp-pdf {
+	background-image: url(../images/file_type/document/pdf.gif);
+}
+.tp-ppt,
+.tp-pptx,
+.tp-pptm {
+	background-image: url(../images/file_type/document/ppt.gif);
+}
+.tp-txt {
+	background-image: url(../images/file_type/document/txt.gif);
+}
+.tp-xls,
+.tp-xlsx,
+.tp-xlsm,
+.tp-xltx,
+.tp-xltm,
+.tp-xlam,
+.tp-xlsb {
+	background-image: url(../images/file_type/document/xls.gif);
+}
+/*image*/
+.tp-gif {
+	background-image: url(../images/file_type/image/gif.gif);
+}
+.tp-jpg,
+.tp-jpeg {
+	background-image: url(../images/file_type/image/jpg.gif);
+}
+.tp-png {
+	background-image: url(../images/file_type/image/png.gif);
+}
+.tp-bmp,
+.tp-tiff,
+.tp-exif,
+.tp-raw {
+	background-image: url(../images/file_type/image/img.gif);
+}
+/*music*/
+.tp-mp3 {
+	background-image: url(../images/file_type/music/mp3.gif);
+}
+.tp-wma {
+	background-image: url(../images/file_type/music/wma.gif);
+}
+.tp-wav,
+.tp-midi,
+.tp-flac,
+.tp-ram,
+.tp-ra,
+.tp-mid,
+.tp-aac,
+.tp-m4a,
+.tp-ape,
+.tp-au,
+.tp-ogg {
+	background-image: url(../images/file_type/music/music.gif);
+}
+/*source*/
+.tp-ai {
+	background-image: url(../images/file_type/source/ai.gif);
+}
+.tp-fla {
+	background-image: url(../images/file_type/source/fla.gif);
+}
+.tp-psd {
+	background-image: url(../images/file_type/source/psd.gif);
+}
+.tp-swf {
+	background-image: url(../images/file_type/source/swf.gif);
+}
+/*video*/
+.tp-3g2,
+.tp-3gp,
+.tp-3gp2,
+.tp-3gpp {
+	background-image: url(../images/file_type/video/3gp.gif);
+}
+.tp-avi {
+	background-image: url(../images/file_type/video/avi.gif);
+}
+.tp-flv {
+	background-image: url(../images/file_type/video/flv.gif);
+}
+.tp-mov {
+	background-image: url(../images/file_type/video/mov.gif);
+}
+.tp-rm {
+	background-image: url(../images/file_type/video/rm.gif);
+}
+.tp-rmvb {
+	background-image: url(../images/file_type/video/rmvb.gif);
+}
+.tp-wmv {
+	background-image: url(../images/file_type/video/wmv.gif);
+}
+.tp-mpe,
+.tp-mpeg,
+.tp-mpg,
+.tp-mp4,
+.tp-mpeg4 {
+	background-image: url(../images/file_type/video/mpg.gif);
+}
+.tp-asf,
+.tp-ram,
+.tp-m1v,
+.tp-m2v,
+.tp-mpe,
+.tp-mpeg,
+.tp-mpg,
+.tp-m4b,
+.tp-m4p,
+.tp-m4v,
+.tp-vob,
+.tp-divx,
+.tp-mkv,
+.tp-ogm,
+.tp-webm,
+.tp-ass,
+.tp-srt,
+.tp-ssa {
+	background-image: url(../images/file_type/video/video.gif);
+}
+/*error*/
+.tp-error {
+	background-image: url(../images/file_type/error.gif);
+}
+/*folder*/
+.tp-folder {
+	background-image: url(../images/file_type/folder/folder.gif);
+}
+.tp-folder-shared {
+	background-image: url(../images/file_type/folder/folder_shared.gif);
+}
+.tp-folder-document {
+	background-image: url(../images/file_type/folder/folder_document.gif);
+}
+.tp-folder-photo {
+	background-image: url(../images/file_type/folder/folder_photo.gif);
+}
+.tp-folder-music {
+	background-image: url(../images/file_type/folder/folder_music.gif);
+}
+.tp-folder-video {
+	background-image: url(../images/file_type/folder/folder_video.gif);
+}
+.tp-folder-sync {
+	background-image: url(../images/file_type/folder/folder_sync.gif);
+}
+.tp-folder-message {
+	background-image: url(../images/file_type/folder/folder_message.gif);
+}
+.multi-files {
+	background-image: url(../images/file_type/multi_files.gif);
+}
+/**/
+
+/*文件缩略图*/
+.file-thumb {
+	position: relative;
+	display: block;
+	width: 100px;
+	height: 100px;
+	margin: auto;
+	background-image: url(../images/file_thumb/unknown.gif);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+}
+/*application*/
+.tb-bat {
+	background-image: url(../images/file_thumb/application/bat.gif);
+}
+.tb-exe {
+	background-image: url(../images/file_thumb/application/exe.gif);
+}
+.tb-ipa {
+	background-image: url(../images/file_thumb/application/ipa.gif);
+}
+.tb-apk {
+	background-image: url(../images/file_thumb/application/apk.gif);
+}
+.tb-msi {
+	background-image: url(../images/file_thumb/application/msi.gif);
+}
+/*archive*/
+.tb-dmg {
+	background-image: url(../images/file_thumb/archive/dmg.gif);
+}
+.tb-iso {
+	background-image: url(../images/file_thumb/archive/iso.gif);
+}
+.tb-rar {
+	background-image: url(../images/file_thumb/archive/rar.gif);
+}
+.tb-zip {
+	background-image: url(../images/file_thumb/archive/zip.gif);
+}
+.tb-7z {
+	background-image: url(../images/file_thumb/archive/7z.gif);
+}
+.tb-cab {
+	background-image: url(../images/file_thumb/archive/cab.gif);
+}
+/*code*/
+.tb-asp {
+	background-image: url(../images/file_thumb/code/asp.gif);
+}
+.tb-c,
+.tb-cpp {
+	background-image: url(../images/file_thumb/code/cpp.gif);
+}
+.tb-css {
+	background-image: url(../images/file_thumb/code/css.gif);
+}
+.tb-htm,
+.tb-html {
+	background-image: url(../images/file_thumb/code/html.gif);
+}
+.tb-js {
+	background-image: url(../images/file_thumb/code/js.gif);
+}
+.tb-php {
+	background-image: url(../images/file_thumb/code/php.gif);
+}
+.tb-tpl {
+	background-image: url(../images/file_thumb/code/tpl.gif);
+}
+.tb-xml {
+	background-image: url(../images/file_thumb/code/xml.gif);
+}
+.tb-h,
+.tb-cs,
+.tb-plist {
+	background-image: url(../images/file_thumb/code/code.gif);
+}
+/*document*/
+.tb-chm {
+	background-image: url(../images/file_thumb/document/chm.gif);
+}
+.tb-doc,
+.tb-docx,
+.tb-docm,
+.tb-dot,
+.tb-dotx,
+.tb-dotm {
+	background-image: url(../images/file_thumb/document/doc.gif);
+}
+.tb-log {
+	background-image: url(../images/file_thumb/document/log.gif);
+}
+.tb-pdf {
+	background-image: url(../images/file_thumb/document/pdf.gif);
+}
+.tb-ppt,
+.tb-pptx,
+.tb-pptm {
+	background-image: url(../images/file_thumb/document/ppt.gif);
+}
+.tb-txt {
+	background-image: url(../images/file_thumb/document/txt.gif);
+}
+.tb-xls,
+.tb-xlsx,
+.tb-xlsm,
+.tb-xltx,
+.tb-xltm,
+.tb-xlam,
+.tb-xlsb {
+	background-image: url(../images/file_thumb/document/xls.gif);
+}
+/*image*/
+.tb-gif {
+	background-image: url(../images/file_thumb/image/gif.gif);
+}
+.tb-jpg,
+.tb-jpeg {
+	background-image: url(../images/file_thumb/image/jpg.gif);
+}
+.tb-png {
+	background-image: url(../images/file_thumb/image/png.gif);
+}
+.tb-bmp,
+.tb-tiff,
+.tb-exif,
+.tb-raw {
+	background-image: url(../images/file_thumb/image/img.gif);
+}
+/*music*/
+.tb-mp3 {
+	background-image: url(../images/file_thumb/music/mp3.gif);
+}
+.tb-wma {
+	background-image: url(../images/file_thumb/music/wma.gif);
+}
+.tb-wav,
+.tb-midi,
+.tb-flac,
+.tb-ram,
+.tb-ra,
+.tb-mid,
+.tb-aac,
+.tb-m4a,
+.tb-ape,
+.tb-au,
+.tb-ogg {
+	background-image: url(../images/file_thumb/music/music.gif);
+}
+/*source*/
+.tb-ai {
+	background-image: url(../images/file_thumb/source/ai.gif);
+}
+.tb-fla {
+	background-image: url(../images/file_thumb/source/fla.gif);
+}
+.tb-psd {
+	background-image: url(../images/file_thumb/source/psd.gif);
+}
+.tb-swf {
+	background-image: url(../images/file_thumb/source/swf.gif);
+}
+/*video*/
+.tb-3g2,
+.tb-3gp,
+.tb-3gp2,
+.tb-3gpp {
+	background-image: url(../images/file_thumb/video/3gp.gif);
+}
+.tb-avi {
+	background-image: url(../images/file_thumb/video/avi.gif);
+}
+.tb-flv {
+	background-image: url(../images/file_thumb/video/flv.gif);
+}
+.tb-mov {
+	background-image: url(../images/file_thumb/video/mov.gif);
+}
+.tb-rm {
+	background-image: url(../images/file_thumb/video/rm.gif);
+}
+.tb-rmvb {
+	background-image: url(../images/file_thumb/video/rmvb.gif);
+}
+.tb-wmv {
+	background-image: url(../images/file_thumb/video/wmv.gif);
+}
+.tb-mpe,
+.tb-mpeg,
+.tb-mpg,
+.tb-mpeg4 {
+	background-image: url(../images/file_thumb/video/mpg.gif);
+}
+.tb-asf,
+.tb-ram,
+.tb-m1v,
+.tb-m2v,
+.tb-m4b,
+.tb-m4p,
+.tb-m4v,
+.tb-mp4,
+.tb-vob,
+.tb-divx,
+.tb-mkv,
+.tb-ogm,
+.tb-webm,
+.tb-ass,
+.tb-srt,
+.tb-ssa {
+	background-image: url(../images/file_thumb/video/video.gif);
+}
+/*error*/
+.tb-error {
+	background-image: url(../images/file_thumb/error.gif);
+}
+/*folder*/
+.tb-folder {
+	background-image: url(../images/file_thumb/folder/folder.gif);
+}
+.tb-folder-document {
+	background-image: url(../images/file_thumb/folder/folder_document.gif);
+}
+.tb-folder-photo {
+	background-image: url(../images/file_thumb/folder/folder_photo.gif);
+}
+.tb-folder-music {
+	background-image: url(../images/file_thumb/folder/folder_music.gif);
+}
+.tb-folder-video {
+	background-image: url(../images/file_thumb/folder/folder_video.gif);
+}
+.tb-folder-sync {
+	background-image: url(../images/file_thumb/folder/folder_sync.gif);
+}
+.tb-folder-message {
+	background-image: url(../images/file_thumb/folder/folder_message.gif);
+}
+.tb-folder-accessory {
+	background: url(../images/file_thumb/folder/folder_accessory.gif);
+}
+.tb-folder-recycle {
+	background: url(../images/file_thumb/folder/folder_recycle.gif);
+}
+.tb-folder-recent {
+	background: url(../images/file_thumb/folder/folder_recent.gif);
+}
+.tb-folder-shared {
+	background: url(../images/file_thumb/folder/folder_shared.gif);
+}
+.tb-folder-continue {
+	background: url(../images/file_thumb/folder/folder_continue.gif);
+}
+.tb-folder-favorite {
+	background: url(../images/file_thumb/folder/folder_favorite.gif);
+}
+.tb-folder-offline {
+	background: url(../images/file_thumb/folder/folder_offline.gif);
+}
+.tb-folder-search {
+	background: url(../images/file_thumb/folder/folder_search.gif);
+}
+.tb-folder-link {
+	background: url(../images/file_thumb/folder/folder_link.gif);
+}
+.tb-multi-files {
+	background: url(../images/file_thumb/multi_files.gif);
+}
+/**/
+.tb-cover {
+	background-image: url(../images/file_thumb/cover_box.gif);
+}
+.tb-cover i {
+	position: absolute;
+	top: 26px;
+	left: 10px;
+	width: 80px;
+	height: 60px;
+	overflow: hidden;
+}
+.tb-cover i img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	min-width: 80px;
+	min-height: 60px;
+}
+/*缩略图*/
+.photo-box {
+	width: 98px;
+	height: 98px;
+	margin: auto;
+	border: 1px solid #CCC;
+	background: #FFF;
+}
+.img-wrap {
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 92px;
+	height: 92px;
+	overflow: hidden;
+	background: #FFF;
+}
+.img-pos {
+	display: table-cell;
+	height: 92px;
+	padding-left: 46px;
+	vertical-align: middle;
+	*position:absolute;
+	*top:46px;
+	*left:46px;
+	*height:auto;
+	*padding-left:0;
+}
+.img-pos img {
+	position: relative;
+	left: -50%;
+	max-width: 92px;
+	max-height: 92px;
+	vertical-align: middle;
+	*float:left;
+	*top:-50%;
+}

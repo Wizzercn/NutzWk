@@ -35,7 +35,7 @@ public class SafeAction extends BaseAction {
 	 * 查询全部
 	 * */
 	@At("")
-	@Ok("->:/private/sys/safe.html")
+	@Ok("vm:template.private.sys.safe")
 	public void list(HttpServletRequest req){
 		int sel=0;
 		Sys_safeconfig ip_safe=daoCtl.detailByName(dao, Sys_safeconfig.class, "type","1");//允许

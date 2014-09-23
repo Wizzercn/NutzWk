@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import cn.xuetang.common.action.BaseAction;
+import cn.xuetang.common.dao.ObjectCtl;
 import cn.xuetang.common.filter.GlobalsFilter;
 import cn.xuetang.common.filter.UserLoginFilter;
 import cn.xuetang.modules.sys.bean.*;
@@ -53,7 +54,7 @@ public class RoleAction extends BaseAction {
 			@Param("page") int curPage, @Param("rows") int pageSize,
 			HttpSession session) {
 		Criteria cri = Cnd.cri();
-		cri.where().andInBySql("userid",
+		cri.where().andInBySql("uid",
 				"select userid from sys_user_role where roleid=%s", roleid);
 		cri.getOrderBy().asc("loginname");
 		return daoCtl.listPageJson(dao, Sys_user.class, curPage, pageSize, cri);
@@ -93,7 +94,7 @@ public class RoleAction extends BaseAction {
 	 * 增加角色页面
 	 */
 	@At
-	@Ok("->:/private/sys/roleAdd.html")
+	@Ok("vm:template.private.sys.roleAdd")
 	public void toadd( HttpServletRequest req) {
 
     }
@@ -115,7 +116,7 @@ public class RoleAction extends BaseAction {
 	 * 修改角色页面
 	 */
 	@At
-	@Ok("->:/private/sys/roleUpdate.html")
+	@Ok("vm:template.private.sys.roleUpdate")
 	public void toupdate(@Param("id") int id, HttpServletRequest req) {
 		Sys_role role = daoCtl.detailById(dao, Sys_role.class, id);
 		req.setAttribute("obj", role);
@@ -227,7 +228,7 @@ public class RoleAction extends BaseAction {
 	 * 增加角色用户页面
 	 */
 	@At
-	@Ok("->:/private/sys/roleUser.html")
+	@Ok("vm:template.private.sys.roleUser")
 	public void toaddroleuser(@Param("roleid") String roleid,
 			HttpServletRequest req, HttpSession session) {
 
@@ -316,7 +317,7 @@ public class RoleAction extends BaseAction {
 	 * 权限分配页面
 	 */
 	@At
-	@Ok("->:/private/sys/roleMenu.html")
+	@Ok("vm:template.private.sys.roleMenu")
 	public void tomenu(@Param("roleid") int roleid, HttpSession session,
 			HttpServletRequest req) {
 		Sys_user user = (Sys_user) session.getAttribute("userSession");
@@ -417,6 +418,7 @@ public class RoleAction extends BaseAction {
 		return false;
 	}
 
+
 	/**
 	 * 分配用户角色处理
 	 */
@@ -463,17 +465,16 @@ public class RoleAction extends BaseAction {
 	}
 
 	@At("")
-	@Ok("->:/private/sys/role.html")
+	@Ok("vm:template.private.sys.role")
 	public void role(HttpSession session, @Param("unitid") String unitid1,
 			HttpServletRequest req) {
 		Sys_user user = (Sys_user) session.getAttribute("userSession");
 		Sql sql = Sqls
 				.create("select roleid from sys_user_role where userid=@userid");
-		sql.params().set("userid", user.getUserid());
+		sql.params().set("userid", user.getUid());
 		req.setAttribute("roleid", daoCtl.getIntRowValue(dao, sql));
 	}
 
-	@SuppressWarnings("rawtypes")
 	@At
 	@Ok("raw")
 	public String tree(HttpSession session, @Param("id") String unitid1,
@@ -501,7 +502,7 @@ public class RoleAction extends BaseAction {
 							+ user.getUnitid() + "%') order by location,id asc");
 			sqlrole = Cnd
 					.wrap("(unitid is null or unitid='') and id in (select roleid from sys_user_role where userid='"
-							+ user.getUserid()
+							+ user.getUid()
 							+ "') order by location,id asc");
 		}
 		Sys_unit u = daoCtl.detailByName(dao, Sys_unit.class, unitid1);
@@ -509,7 +510,7 @@ public class RoleAction extends BaseAction {
 		unitlist = daoCtl.list(dao, Sys_unit.class, sqlunit);
 		req.setAttribute("sysrole", sysrole);
 		Hashtable<String, String> hm = new Hashtable<String, String>();
-        List array=new ArrayList();
+        List<Object> array=new ArrayList<Object>();
 		Map<String,Object> jsonroot = new HashMap<String, Object>();
 		jsonroot.put("id", "");
 		jsonroot.put("pId", "0");

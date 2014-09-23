@@ -1,0 +1,170 @@
+<html>
+<head>
+    <title>$!app_name</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<!-- 框架 -->
+    <link href="${base}/include/css/msg.css" rel="stylesheet" type="text/css"/>
+    <link href="${base}/include/css/default.css" rel="stylesheet" type="text/css"/>
+	<script type='text/javascript'>
+		var CONTEXTPATH = '${base}';
+	</script>
+    <script src="${base}/include/js/main.js"></script>
+    <script src="${base}/include/js/string.js"></script>
+    <!-- 树 -->
+    <script type="text/javascript" src="${base}/include/controls/ztree/jquery.ztree.core-3.5.min.js"></script> 
+	<script type="text/javascript" src="${base}/include/controls/ztree/jquery.ztree.excheck-3.5.min.js"></script>
+	<link rel="stylesheet" href="${base}/include/controls/ztree/zTreeStyle/zTreeStyle.css" type="text/css">
+
+</head>
+<SCRIPT type="text/javascript">
+           <!--           
+           var setting = {
+               async: {
+                   enable: true,
+                   url:"${base}/private/sys/role/ajaxunit",
+                   autoParam:["id", "name=n", "level=lv"]
+               },
+                check: {
+                    enable: true,
+				    chkStyle: "radio",
+                    radioType: "all"
+                },view :{
+                   nameIsHTML: true
+               }
+           };
+           var ztreeObj;
+		   function initTree(){
+        	 ztreeObj =jQuery.fn.zTree.init(jQuery("#treeDemo"), setting);
+		   } 
+           function getIdsTree(){
+                       var nodes = ztreeObj.getCheckedNodes();
+                       var ids="";
+                       for(var i=0;i<nodes.length;i++){
+                          ids += nodes[i].id + ",";
+                       }                    
+                       if(ids!=""&&ids!=","){
+                           document.getElementById("checkids").value=ids;
+                           return true;
+                       }
+                       return false;
+
+           }
+           function dosave(){
+                if(document.form1.nameflag.value==1){
+                	Dialog.alert("角色已存在");
+                	return;
+                }
+                if (document.form1.commit.value == "0") {
+                    getIdsTree();
+                    document.form1.commit.value = "1";
+                    return true;
+                } else {
+                    Dialog.alert("正在提交，请稍候！");
+                    return false;
+                }
+           }
+            function checkrolename()
+            {           	
+            	jQuery.ajax({
+            		type: 'POST',
+            		url : "${base}/private/sys/role/ajaxname",
+            		data : jQuery("#form1").serialize(),
+            		success : function (res) {	
+            			if(res=="true"){
+            				Dialog.alert("该角色名已存在",function(){
+                                document.form1.nameflag.value = 1;
+                            });	
+            			}
+            			else{
+            				    document.form1.nameflag.value = 0;
+            			}
+            		},
+            		fail : function(res) {
+            			Dialog.alert("系统错误?!");
+            		}
+            	});   
+            }  
+			Page.onLoad(function() {
+        	   initTree(); 
+			}); 
+           //-->
+       </SCRIPT>
+<body class="dialogBody">
+<form name='form1' id="form1" >
+    <input type="hidden" name="doAction" id="doAction" value="add">
+    <input type="hidden" name="checkids" id="checkids" value="">
+    <input type="hidden" name="commit" id="commit" value="0">
+    <input type="hidden" name="nameflag" id="nameflag" value = "0">
+
+    <table width="620" height="207" align="center" cellpadding="2" cellspacing="0">
+        <tr>
+            <td height="10"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td width="360" valign="top">
+                <div id="con_one_1">
+
+                    <fieldset>
+                        <legend><label>基本信息</label></legend>
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+
+                            <tr>
+                                <td width="39%" height="30" align="right">角色名称：</td>
+                                <td width="61%">
+                                    <input type="text" name="name" id="name" onblur="checkrolename()" maxlength="100" verify="机构名称|NotNull">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="39%" height="30" align="right">所属项目：</td>
+                                <td width="61%">
+                                    <select name="pid" id="pid" >
+                                        <option value="0">无</option>
+                                        #foreach($o in $pro)
+                                        <option value="$!o.id">$!o.name</option>
+                                        #end
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="39%" height="30" align="right">角色描述：</td>
+                                <td width="61%"><textarea rows="7" cols="35" name="descript"
+                                                          id="descript"></textarea>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td width="39%" height="240" align="right"></td>
+                                <td width="61%">
+                                </td>
+                            </tr>
+
+                        </table>
+                    </fieldset>
+                </div>
+            </td>
+            <td width="260" valign="top" align="right">
+                <fieldset>
+                    <legend><label>所属单位</label></legend>
+                    <table width="100%" border="0" cellpadding="2" cellspacing="0" height="382">
+                        <tr>
+                            <td>
+                                <div ztype='_Tree' style='-moz-user-select:none;height:370px;width:250px;'
+                                     onselectstart='stopEvent(event);' id='tree1' class='treeItemN'>
+                                    <ul id="treeDemo" class="ztree"
+                                        style="height:350px;width:220px;overflow-x:hidden"></ul>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+
+
+
+</html>

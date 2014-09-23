@@ -1,9 +1,13 @@
 package cn.xuetang.modules.sys.bean;
 
 import org.nutz.dao.entity.annotation.Column;
+import org.nutz.dao.entity.annotation.Index;
 import org.nutz.dao.entity.annotation.Table;
+import org.nutz.dao.entity.annotation.TableIndexes;
 
 @Table("sys_user_role")
+@TableIndexes({@Index(name = "INDEX_USERROLE", fields = {"userid","roleid"}, unique = true)})
+
 public class Sys_user_role {
 	@Column
 	private long userid;

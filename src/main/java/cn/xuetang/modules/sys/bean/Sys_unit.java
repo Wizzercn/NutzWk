@@ -2,10 +2,7 @@ package cn.xuetang.modules.sys.bean;
 
 import java.util.List;
 
-import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Many;
-import org.nutz.dao.entity.annotation.Name;
-import org.nutz.dao.entity.annotation.Table;
+import org.nutz.dao.entity.annotation.*;
 
 /**
  * @author Wizzer.cn
@@ -17,20 +14,28 @@ public class Sys_unit
 {
 	@Column
 	@Name
+    @ColDefine(type = ColType.VARCHAR, width = 100)
 	private String id;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
 	private String name;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 20)
 	private String unitcode;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 255)
 	private String descript;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
 	private String address;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 20)
 	private String telephone;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
 	private String email;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
 	private String website;
 	@Column
 	private int location;

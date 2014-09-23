@@ -1,10 +1,6 @@
 package cn.xuetang.modules.sys.bean;
 
-import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Table;
-import org.nutz.dao.entity.annotation.Id;
-import org.nutz.dao.entity.annotation.Prev;
-import org.nutz.dao.entity.annotation.SQL;
+import org.nutz.dao.entity.annotation.*;
 import org.nutz.dao.DB;
 
 /**
@@ -15,17 +11,19 @@ import org.nutz.dao.DB;
 public class Sys_task {
     @Column
     @Id
-    @Prev({
-            @SQL(db = DB.ORACLE, value = "SELECT SYS_TASK_S.nextval FROM dual")
-    })
+//    @Prev({
+//            @SQL(db = DB.ORACLE, value = "SELECT SYS_TASK_S.nextval FROM dual")
+//    })
     private int task_id;
     @Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
     private String task_code;
     @Column
     private int task_type;
     @Column
     private String task_name;
     @Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
     private String job_class;
     @Column
     private int execycle;
@@ -44,16 +42,19 @@ public class Sys_task {
     @Column
     private int task_interval_unit;
     @Column
+    @ColDefine(type = ColType.VARCHAR, width = 20)
     private String cron_expression;
     @Column
     private int is_enable;
     @Column
+    @ColDefine(type = ColType.VARCHAR, width = 255)
     private String task_remark;
     @Column
     private long user_id;
     @Column
     private String create_time;
     @Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
     private String param_value;
     @Column
     private int task_interval;

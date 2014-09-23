@@ -37,9 +37,9 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:https://github.com/Wizzercn/NutzWx.git</connection>
-		<developerConnection>scm:git:https://github.com/Wizzercn/NutzWx.git</developerConnection>
-		<url>https://github.com/Wizzercn/NutzWx.git</url>
+		<connection>scm:git:https://github.com/Wizzercn/NutzWk.git</connection>
+		<developerConnection>scm:git:https://github.com/Wizzercn/NutzWk.git</developerConnection>
+		<url>https://github.com/Wizzercn/NutzWk.git</url>
 	</scm>
 	<repositories>
 	</repositories>
@@ -367,6 +367,6 @@
 	</build>
 	<issueManagement>
 		<system>Github Issue</system>
-		<url>https://github.com/Wizzercn/NutzWx/issues</url>
+		<url>https://github.com/Wizzercn/NutzWk/issues</url>
 	</issueManagement>
 </project>

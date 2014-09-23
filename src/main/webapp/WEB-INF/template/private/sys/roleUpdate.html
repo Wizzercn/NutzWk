@@ -1,0 +1,114 @@
+<html>
+<head>
+    <title>$!app_name</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<!-- 框架 -->
+    <link href="${base}/include/css/msg.css" rel="stylesheet" type="text/css"/>
+    <link href="${base}/include/css/default.css" rel="stylesheet" type="text/css"/>
+	<script type='text/javascript'>
+		var CONTEXTPATH = '${base}';
+	</script>
+    <script src="${base}/include/js/main.js"></script>
+    <script src="${base}/include/js/string.js"></script>
+    <!-- 树 -->
+    <script type="text/javascript" src="${base}/include/controls/ztree/jquery.ztree.core-3.5.min.js"></script> 
+	<script type="text/javascript" src="${base}/include/controls/ztree/jquery.ztree.excheck-3.5.min.js"></script>
+	<link rel="stylesheet" href="${base}/include/controls/ztree/zTreeStyle/zTreeStyle.css" type="text/css">
+
+</head>
+<SCRIPT type="text/javascript">
+           <!-- 
+           
+           function doSave(){
+        	   if(document.form1.nameflag.value==1){
+        	    	Dialog.alert("角色已存在！");
+        	    	return false;
+        	    }
+        	   else{
+        		    return true;
+        	   }
+           }
+           
+           function checkrolename()
+            {  
+        	   var newname = document.form1.name.value.trim();
+        		if('$!obj.name' == newname){
+        			document.form1.nameflag.value = 0;
+        			return;
+        		}
+        	   
+        	 jQuery.ajax({
+         		type: 'POST',
+         		url : "${base}/private/sys/role/ajaxname",
+         		data : jQuery("#form1").serialize(),
+         		success : function (res) {	
+         			if(res=="true"){
+         				Dialog.alert("该角色名已存在",function(){
+       					 document.form1.nameflag.value = 1;
+                         });	
+         			}else{
+   				         document.form1.nameflag.value = 0;
+        			}		                      
+         		},
+         		fail : function(res) {
+         			Dialog.alert("系统错误?!");
+         		}
+         	});   
+            }
+          
+         //-->
+</SCRIPT>           
+<body class="dialogBody">
+<form name='form1' id="form1" method='post'>
+    <input type="hidden" name="id" id="id" value="$!obj.id">
+    <input type="hidden" name="type" id="type" value="$!obj.type">
+    <input type="hidden" name="unitid" id="unitid" value="$!obj.unitid">
+    <input type="hidden" name="syscode" id="syscode" value="$!obj.syscode">
+    <input type="hidden" name="location" id="location" value="$!obj.location"> 
+    <input type="hidden" name="nameflag" id="nameflag" value = "0">
+   
+   
+    <table width="100%" height="100%" border="0">
+        <tr>
+            <td valign="middle">
+                <table align="center" cellpadding="2"
+                       cellspacing="0">
+                    <tr>
+                        <td width="104" height="10"></td>
+                        <td width="6"></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td align="right">角色名称：</td>
+                        <td>&nbsp;</td>
+                        <td><input type="text" name="name" id="name" value="$!obj.name"  onblur="checkrolename()" maxlength="100" verify="角色名称|NotNull">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">所属项目：</td>
+                        <td>&nbsp;</td>
+                        <td >
+                            <select name="pid" id="pid" >
+                                <option value="0">无</option>
+                                #foreach($o in $pro)
+                                <option value="$!o.id" #if($obj.pid==$o.id)selected#end>$!o.name</option>
+                                #end
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">角色描述：</td>
+                        <td>&nbsp;</td>
+                        <td><textarea rows="10" cols="40" name="descript" id="descript">$!obj.descript</textarea></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" align="center" height="10"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

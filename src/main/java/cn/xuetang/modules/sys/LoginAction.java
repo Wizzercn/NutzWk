@@ -11,6 +11,9 @@ import cn.xuetang.common.util.OnlineUtil;
 import cn.xuetang.modules.sys.bean.Sys_safeconfig;
 import cn.xuetang.modules.sys.bean.Sys_user_log;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -54,7 +57,8 @@ public class LoginAction extends BaseAction {
             return "用户名不存在！";
         if (user.getState() == 1)
             return "用户被禁止登陆。请联系管理员！";
-        if (!Lang.digest("MD5", Strings.sNull(password).getBytes(), Strings.sNull(user.getSalt()).getBytes(), 3).equals(user.getPassword())) {
+        String hashedPasswordBase64 = new Sha256Hash(password, user.getSalt(), 1024).toBase64();
+        if (!hashedPasswordBase64.equals(user.getPassword())) {
             int all = 5;
             int count = NumberUtils.toInt(Strings.sNull(session
                     .getAttribute("errorlogincount")), 0);
@@ -78,12 +82,12 @@ public class LoginAction extends BaseAction {
         if (safe != null) {
             if (safe.getType() == 0) // 拒绝登陆IP
             {
-                if (safe.getNote() != null && safe.getNote().indexOf(ip) != -1) {
+                if (safe.getNote() != null && safe.getNote().contains(ip)) {
                     return "用户当前IP地址被禁止登陆。";
                 }
             } else // 允许登陆IP
             {
-                if (safe.getNote() != null && safe.getNote().indexOf(ip) == -1) {
+                if (safe.getNote() != null && safe.getNote().contains(ip)) {
                     return "用户当前IP地址被禁止登陆。";
                 }
             }
@@ -97,7 +101,7 @@ public class LoginAction extends BaseAction {
         user.setLogintype(0);
         daoCtl.update(dao, user);
         Sys_user_log log = new Sys_user_log();
-        log.setUserid(user.getUserid());
+        log.setUserid(user.getUid());
         log.setLoginip(ip);
         log.setType(0);
         log.setLoginname(user.getLoginname());
@@ -132,7 +136,7 @@ public class LoginAction extends BaseAction {
     }
 
     @At
-    @Ok("->:/private/login.html")
+    @Ok("vm:template.private.login")
     public void login() {
 
     }

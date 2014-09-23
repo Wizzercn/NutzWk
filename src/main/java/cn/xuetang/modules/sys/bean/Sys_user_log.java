@@ -1,11 +1,7 @@
 package cn.xuetang.modules.sys.bean;
 
 import org.nutz.dao.DB;
-import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Id;
-import org.nutz.dao.entity.annotation.Prev;
-import org.nutz.dao.entity.annotation.SQL;
-import org.nutz.dao.entity.annotation.Table;
+import org.nutz.dao.entity.annotation.*;
 
 /**
  * @author Wizzer.cn
@@ -16,23 +12,28 @@ import org.nutz.dao.entity.annotation.Table;
 public class Sys_user_log {
 	@Column 
 	@Id
-	@Prev({
-		@SQL(db = DB.ORACLE, value="SELECT SYS_USER_LOG_S.nextval FROM dual")
-	})
+//	@Prev({
+//		@SQL(db = DB.ORACLE, value="SELECT SYS_USER_LOG_S.nextval FROM dual")
+//	})
 	private long id;
 	@Column
 	private long userid;
 	@Column
 	private int type;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
 	private String loginname;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
 	private String realname;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
 	private String note;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 20)
 	private String logintime;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 255)
 	private String loginip;
 	public long getId() {
 		return id;

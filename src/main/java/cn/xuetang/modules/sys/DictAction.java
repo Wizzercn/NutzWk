@@ -42,13 +42,13 @@ public class DictAction extends BaseAction {
     @Inject
     protected Dao dao;
     @At("")
-    @Ok("->:/private/sys/dict.html")
+    @Ok("vm:template.private.sys.dict")
     public void index(HttpSession session, HttpServletRequest req) {
 
     }
 
     @At
-    @Ok("->:/private/sys/dictAdd.html")
+    @Ok("vm:template.private.sys.dictAdd")
     public void toadd(@Param("id") String id, HttpServletRequest req) {
         if (!Strings.isBlank(id)) {
             req.setAttribute("dict", daoCtl.detailByName(dao, Sys_dict.class, id));
@@ -75,7 +75,7 @@ public class DictAction extends BaseAction {
 
 
     @At
-    @Ok("->:/private/sys/dictUpdate.html")
+    @Ok("vm:template.private.sys.dictUpdate")
     public Sys_dict toupdate(@Param("id") String id, HttpServletRequest req) {
         if (!Strings.isBlank(id) && id.length() > 4) {
             req.setAttribute("dict", daoCtl.detailByName(dao, Sys_dict.class, id.substring(0, 4)));
@@ -87,6 +87,7 @@ public class DictAction extends BaseAction {
     public boolean update(@Param("..") Sys_dict sys_dict) {
         if (daoCtl.update(dao, sys_dict)) {
             Globals.InitDataDict(dao);
+
             return true;
         } else
             return false;
@@ -96,6 +97,7 @@ public class DictAction extends BaseAction {
     public boolean delete(@Param("id") String id) {
         if (daoCtl.deleteByName(dao, Sys_dict.class, id)) {
             Globals.InitDataDict(dao);
+
             return true;
         } else
             return false;
@@ -109,6 +111,7 @@ public class DictAction extends BaseAction {
                 daoCtl.delete(dao, "sys_dict", Cnd.where("id", "like", d + "%"));
             }
             Globals.InitDataDict(dao);
+
         } catch (Exception e) {
             return false;
         }
@@ -132,7 +135,7 @@ public class DictAction extends BaseAction {
     }
 
     @At
-    @Ok("->:/private/sys/dictSort.html")
+    @Ok("vm:template.private.sys.dictSort")
     public void toSort(@Param("id") String id, HttpServletRequest req) throws Exception {
         List<Object> array = new ArrayList<Object>();
         Criteria cri = Cnd.cri();

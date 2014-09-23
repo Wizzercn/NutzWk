@@ -1,6 +1,9 @@
 package cn.xuetang.common.util;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.lang.Strings;
 import java.util.List;
 
@@ -193,8 +196,12 @@ public class StringUtil {
 //            );
 //            NutIoc ioc = new NutIoc(loader);
 //            Dao dao = ioc.get(Dao.class);
-            int pageCount = (int) Math.ceil((double) 0 / 15);
-            System.out.println(pageCount);
+            RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+            String salt = rng.nextBytes().toBase64();
+            String hashedPasswordBase64 = new Sha256Hash("11", salt, 1024).toBase64();
+            String hashedPasswordBase2 = new Sha256Hash("11", salt, 1024).toBase64();
+            System.out.println(hashedPasswordBase64);
+            System.out.println(hashedPasswordBase2);
         } catch (Exception e) {
             e.printStackTrace();
         }

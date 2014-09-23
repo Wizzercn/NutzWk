@@ -43,7 +43,7 @@ public class ResourceAction extends BaseAction {
 	protected Dao dao;
 
 	@At("")
-	@Ok("->:/private/sys/resource.html")
+	@Ok("vm:template.private.sys.resource")
 	public void user(HttpSession session, HttpServletRequest req) {
 	}
 
@@ -114,7 +114,7 @@ public class ResourceAction extends BaseAction {
 	 * 修改前查找
 	 * */
 	@At
-	@Ok("->:/private/sys/resourceUpdate.html")
+	@Ok("vm:template.private.sys.resourceUpdate")
 	public void toupdate(@Param("id") String id, HttpServletRequest req) {
 		Sys_resource res = daoCtl.detailByName(dao, Sys_resource.class, id);
 		req.setAttribute("obj", res);
@@ -136,7 +136,7 @@ public class ResourceAction extends BaseAction {
 	 * 新建菜单，查找单位。
 	 * */
 	@At
-	@Ok("->:/private/sys/resourceAdd.html")
+	@Ok("vm:template.private.sys.resourceAdd")
 	public void toAdd() {
 
 	}
@@ -187,7 +187,7 @@ public class ResourceAction extends BaseAction {
 	 * 转到排序页面
 	 * */
 	@At
-	@Ok("->:/private/sys/resourceSort.html")
+	@Ok("vm:template.private.sys.resourceSort")
 	public void toSort(HttpServletRequest req) throws Exception {
         List<Object> array = new ArrayList<Object>();
 		Criteria cri = Cnd.cri();

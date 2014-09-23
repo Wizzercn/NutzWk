@@ -47,13 +47,13 @@ public class TaskAction extends BaseAction {
     private final static Log log = Logs.get();
 
     @At("")
-    @Ok("->:/private/sys/task.html")
+    @Ok("vm:template.private.sys.task")
     public void index(HttpSession session, HttpServletRequest req) {
 
     }
 
     @At
-    @Ok("->:/private/sys/taskAdd.html")
+    @Ok("vm:template.private.sys.taskAdd")
     public void toadd(HttpServletRequest req) {
     }
 
@@ -64,7 +64,7 @@ public class TaskAction extends BaseAction {
         int type = task.getTask_type();
         task.setTask_code(UUID.randomUUID().toString());
         task.setCreate_time(DateUtil.getCurDateTime());
-        task.setUser_id(user.getUserid());
+        task.setUser_id(user.getUid());
         Sys_task task1 = daoCtl.addT(dao, task);
         if (task != null && task.getIs_enable() == 0) {
             startTask(task1);
@@ -73,7 +73,7 @@ public class TaskAction extends BaseAction {
     }
 
     @At
-    @Ok("->:/private/sys/taskUpdate.html")
+    @Ok("vm:template.private.sys.taskUpdate")
     public Sys_task toupdate(@Param("task_id") int task_id, HttpServletRequest req) {
         return daoCtl.detailById(dao, Sys_task.class, task_id);//html:obj
     }
@@ -89,7 +89,7 @@ public class TaskAction extends BaseAction {
         }
         UUID uuid = UUID.randomUUID();
         task.setTask_code(uuid.toString());
-        task.setUser_id(user.getUserid());
+        task.setUser_id(user.getUid());
         boolean res = daoCtl.update(dao, task);
         if (res && task.getIs_enable() == 0) {
             log.info("Update Satrt...");
@@ -121,8 +121,8 @@ public class TaskAction extends BaseAction {
     @At
     @Ok("raw")
     public String list(@Param("page") int curPage, @Param("rows") int pageSize, HttpServletRequest req) {
-        Sql sql = Sqls.create("SELECT A.*,B.REALNAME FROM SYS_TASK A,SYS_USER B WHERE A.USER_ID=B.USERID ORDER BY A.TASK_ID");
-        Sql sql1 = Sqls.create("SELECT COUNT(*) FROM SYS_TASK A,SYS_USER B WHERE A.USER_ID=B.USERID");
+        Sql sql = Sqls.create("SELECT A.*,B.REALNAME FROM SYS_TASK A,SYS_USER B WHERE A.USER_ID=B.UID ORDER BY A.TASK_ID");
+        Sql sql1 = Sqls.create("SELECT COUNT(*) FROM SYS_TASK A,SYS_USER B WHERE A.USER_ID=B.UID");
         return daoCtl.listPageJsonSql(dao, sql, curPage, pageSize, daoCtl.getIntRowValue(dao, sql1));
     }
 

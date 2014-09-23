@@ -4,81 +4,88 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.nutz.dao.DB;
-import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Id;
-import org.nutz.dao.entity.annotation.Prev;
-import org.nutz.dao.entity.annotation.SQL;
-import org.nutz.dao.entity.annotation.Table;
+import org.nutz.dao.entity.annotation.*;
 
 /**
  * @author Wizzer.cn
  * @time 2012-9-13 上午10:54:04
  * 
  */
-@Table("sys_user") 
+@Table("sys_user")
+@TableIndexes({@Index(name = "INDEX_LONGINNAME", fields = {"loginname"}, unique = false)})
 public class Sys_user {
 	@Column 
 	@Id
-	@Prev({
-		@SQL(db = DB.ORACLE, value="SELECT SYS_USER_S.nextval FROM dual")
-	})
-	private long userid;
+//	@Prev({
+//		@SQL(db = DB.ORACLE, value="SELECT SYS_USER_S.nextval FROM dual")
+//	})
+	private long uid;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 120)
 	private String loginname;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
 	private String realname;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
 	private String unitid;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 50)
 	private String password;// transient 修饰符可让此字段不在对象里显示
     @Column
+    @ColDefine(type = ColType.VARCHAR, width = 50)
     private String salt;
 	@Column
+    @ColDefine(type = ColType.INT, width = 1)
 	private int state;
 	@Column
-	private String descript;
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String descript;
 	@Column
-	private String pozition;
+    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private String pozition;
 	@Column
-	private String address;
+    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private String address;
 	@Column
-	private String telephone;
+    @ColDefine(type = ColType.VARCHAR, width = 20)
+    private String telephone;
 	@Column
-	private String mobile;
+    @ColDefine(type = ColType.VARCHAR, width = 11)
+    private String mobile;
 	@Column
-	private String email;
+    @ColDefine(type = ColType.VARCHAR, width = 120)
+    private String email;
 	@Column
-	private int location;
+    @ColDefine(type = ColType.INT)
+    private int location;
 	@Column
-	private String style;
+    @ColDefine(type = ColType.VARCHAR, width = 20)
+    private String style;
 	@Column
-	private int logintype;
+    @ColDefine(type = ColType.INT)
+    private int logintype;
 	@Column
-	private String logintime;
+    @ColDefine(type = ColType.VARCHAR, width = 20)
+    private String logintime;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 50)
 	private String loginip;
 	@Column
-	private int logincount;
-	@Column 
-	private String loginresid;
+    @ColDefine(type = ColType.INT)
+    private int logincount;
 	@Column
-	private String linkqq;
+    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private String loginresid;
 	@Column
-	private String linkweb;
+    @ColDefine(type = ColType.VARCHAR, width = 20)
+    private String linkqq;
 	@Column
-	private String linkcity;
+    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private String linkweb;
 	@Column
-	private String sina_uid;
-	@Column
-	private String sina_nickname;
-	@Column
-	private String sina_logintime;
-	@Column
-	private String sina_access_token;
-	@Column
-	private String sina_token_secret;
-	@Column
-	private String sina_auth_end;
+    @ColDefine(type = ColType.VARCHAR, width =100)
+    private String linkcity;
 
 	private String unitname;
 
@@ -99,12 +106,12 @@ public class Sys_user {
         this.salt = salt;
     }
 
-    public long getUserid() {
-		return userid;
+    public long getUid() {
+		return uid;
 	}
 
-	public void setUserid(long userid) {
-		this.userid = userid;
+	public void setUid(long uid) {
+		this.uid = uid;
 	}
 
 	public String getLoginname() {
@@ -274,55 +281,6 @@ public class Sys_user {
 	public void setLinkcity(String linkcity) {
 		this.linkcity = linkcity;
 	}
-
-	public String getSina_uid() {
-		return sina_uid;
-	}
-
-	public void setSina_uid(String sina_uid) {
-		this.sina_uid = sina_uid;
-	}
-
-	public String getSina_nickname() {
-		return sina_nickname;
-	}
-
-	public void setSina_nickname(String sina_nickname) {
-		this.sina_nickname = sina_nickname;
-	}
-
-	public String getSina_logintime() {
-		return sina_logintime;
-	}
-
-	public void setSina_logintime(String sina_logintime) {
-		this.sina_logintime = sina_logintime;
-	}
-
-	public String getSina_access_token() {
-		return sina_access_token;
-	}
-
-	public void setSina_access_token(String sina_access_token) {
-		this.sina_access_token = sina_access_token;
-	}
-
-	public String getSina_token_secret() {
-		return sina_token_secret;
-	}
-
-	public void setSina_token_secret(String sina_token_secret) {
-		this.sina_token_secret = sina_token_secret;
-	}
-
-	public String getSina_auth_end() {
-		return sina_auth_end;
-	}
-
-	public void setSina_auth_end(String sina_auth_end) {
-		this.sina_auth_end = sina_auth_end;
-	}
-
 	public String getUnitname() {
 		return unitname;
 	}

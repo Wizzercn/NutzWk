@@ -23,22 +23,6 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- Velocity servlet -->
-    <servlet>
-        <servlet-name>velocity</servlet-name>
-        <servlet-class>
-            org.apache.velocity.tools.view.servlet.VelocityViewServlet
-        </servlet-class>
-        <init-param>
-            <param-name>org.apache.velocity.properties</param-name>
-            <param-value>velocity.properties</param-value>
-        </init-param>
-        <load-on-startup>10</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>velocity</servlet-name>
-        <url-pattern>*.html</url-pattern>
-    </servlet-mapping>
     <!-- druid -->
     <servlet>
         <servlet-name>DruidStatView</servlet-name>

@@ -1,8 +1,6 @@
 package cn.xuetang.modules.sys.bean;
 
-import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Name;
-import org.nutz.dao.entity.annotation.Table;
+import org.nutz.dao.entity.annotation.*;
 
 /**
  * @author Wizzer.cn
@@ -13,21 +11,30 @@ import org.nutz.dao.entity.annotation.Table;
 public class Sys_resource {
 	@Column
 	@Name
-	private String id;
+    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private String id;
 	@Column
-	private String name;
+    @ColDefine(type = ColType.VARCHAR, width = 50)
+    private String name;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 100)
 	private String url;
 	@Column
+    @ColDefine(type = ColType.INT, width = 1)
 	private int state;
 	@Column
 	private int subtype;
 	@Column
 	private int location;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 255)
 	private String descript;
 	@Column
+    @ColDefine(type = ColType.VARCHAR, width = 1000)
 	private String button;
+    @Column
+    @ColDefine(type = ColType.VARCHAR, width = 20)
+    private String style;
 	public String getId() {
 		return id;
 	}
@@ -76,8 +83,14 @@ public class Sys_resource {
 	public void setButton(String button) {
 		this.button = button;
 	}
-	
 
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
 }
 
 

@@ -33,13 +33,13 @@ public class ConfigAction extends BaseAction {
 	@Inject
 	protected Dao dao;
 	@At("")
-	@Ok("->:/private/sys/config.html")
+	@Ok("vm:template.private.sys.config")
 	public void sys_config(HttpSession session,HttpServletRequest req) {
 	
 	}
 	
 	@At
-	@Ok("->:/private/sys/configAdd.html")
+	@Ok("vm:template.private.sys.configAdd")
 	public void toadd() {
 	
 	}
@@ -47,18 +47,26 @@ public class ConfigAction extends BaseAction {
 	@At
 	@Ok("raw")
 	public boolean add(@Param("..") Sys_config sys_config) {
-        return daoCtl.add(dao,sys_config);
+		if(daoCtl.add(dao,sys_config)){
+            Globals.InitSysConfig(dao);
+            return true;
+        }else
+            return false;
 	}
 	
 	@At
-	@Ok("->:/private/sys/configUpdate.html")
+	@Ok("vm:template.private.sys.configUpdate")
 	public Sys_config toupdate(@Param("id") int id, HttpServletRequest req) {
 		return daoCtl.detailById(dao, Sys_config.class, id);
 	}
 	
 	@At
 	public boolean update(@Param("..") Sys_config sys_config) {
-        return daoCtl.update(dao, sys_config);
+		if(daoCtl.update(dao, sys_config)){
+            Globals.InitSysConfig(dao);
+            return true;
+        }else
+            return false;
 	}
 	
 	@At
