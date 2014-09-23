@@ -49,7 +49,7 @@ public class IndexAction extends BaseAction {
     }
 
     @At
-    @Ok("vm:template.private.lock")
+    @Ok("->:/private/lock.html")
     public void lock(HttpServletRequest req, HttpSession session) {
 
     }
@@ -58,7 +58,7 @@ public class IndexAction extends BaseAction {
     @Ok("raw")
     public boolean reload(@Param("resid") String resid, HttpSession session) {
         Sys_user user = (Sys_user) session.getAttribute("userSession");
-        if (daoCtl.update(dao, Sys_user.class, Chain.make("loginresid", resid), Cnd.where("uid", "=", user.getUid()))) {
+        if (daoCtl.update(dao, Sys_user.class, Chain.make("loginresid", resid), Cnd.where("userid", "=", user.getUserid()))) {
             user.setLoginresid(resid);
             session.setAttribute("userSession", user);
             return true;
@@ -80,12 +80,12 @@ public class IndexAction extends BaseAction {
     }
 
     @At
-    @Ok("vm:template.private.index")
+    @Ok("->:/private/index.html")
     public void index(HttpServletRequest req, HttpSession session) {
         Sys_user user = (Sys_user) session.getAttribute("userSession");
 
         Sql sql = Sqls.create("select * from sys_role where id in(select roleid from sys_user_role where userid=@userid)");
-        sql.params().set("userid", user.getUid());
+        sql.params().set("userid", user.getUserid());
         List<Map> rolelist = daoCtl.list(dao, sql);
         // 判断是否为系统管理员角色
         List<Integer> rolelist1 = new ArrayList<Integer>();
@@ -107,7 +107,7 @@ public class IndexAction extends BaseAction {
         session.setAttribute("userSession", user);
         Sql sql1 = Sqls
                 .create("select distinct resourceid from sys_role_resource where ( roleid in(select roleid from sys_user_role where userid=@userid) or roleid=1) and resourceid not in(select id from sys_resource where state=1)");
-        sql1.params().set("userid", user.getUid());
+        sql1.params().set("userid", user.getUserid());
         user.setReslist(daoCtl.getStrRowValues(dao, sql1));
         // 获取用户一级资源菜单
         List<Sys_resource> moduleslist = daoCtl.list(dao,
@@ -132,7 +132,7 @@ public class IndexAction extends BaseAction {
                 .getMulRowValue(dao, Sqls
                         .create("SELECT a.url,b.button FROM sys_resource a,sys_role_resource b WHERE a.ID=b.RESOURCEID "
                                 + " AND (b.button<>'' or b.button is not null) AND ( b.roleid IN(SELECT roleid FROM sys_user_role WHERE userid="
-                                + user.getUid()
+                                + user.getUserid()
                                 + ") OR roleid=1) "
                                 + " AND b.resourceid NOT IN(SELECT id FROM sys_resource WHERE state=1)"));
         Hashtable<String, String> btnmap = new Hashtable<String, String>();
@@ -147,7 +147,7 @@ public class IndexAction extends BaseAction {
     }
 
     @At
-    @Ok("vm:template.private.left")
+    @Ok("->:/private/left.html")
     public void left(@Param("sys_menuid") String sys_menuid,
                      HttpServletRequest req, HttpSession session) {
         Sys_user user = (Sys_user) session.getAttribute("userSession");
@@ -166,7 +166,7 @@ public class IndexAction extends BaseAction {
     }
 
     @At
-    @Ok("vm:template.private.welcome")
+    @Ok("->:/private/welcome.html")
     public void welcome() {
 
     }

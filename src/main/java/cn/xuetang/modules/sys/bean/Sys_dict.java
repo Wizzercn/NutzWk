@@ -13,17 +13,13 @@ public class Sys_dict
     @Name
 	private String id;
 	@Column
-    @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String dkey;
+	private String dkey;
 	@Column
-    @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String dval;
+	private String dval;
 	@Column
-    @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String txt;
+	private String txt;
 	@Column
-    @ColDefine(type = ColType.INT, width = 1)
-    private int status;
+	private int status;
 	@Column
 	private int location;
 

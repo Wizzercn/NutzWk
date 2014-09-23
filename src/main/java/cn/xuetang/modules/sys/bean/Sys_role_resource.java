@@ -1,6 +1,7 @@
 package cn.xuetang.modules.sys.bean;
 
-import org.nutz.dao.entity.annotation.*;
+import org.nutz.dao.entity.annotation.Column;
+import org.nutz.dao.entity.annotation.Table;
 
 /**
  * @author Wizzer.cn
@@ -8,16 +9,13 @@ import org.nutz.dao.entity.annotation.*;
  *
  */
 @Table("sys_role_resource")
-@TableIndexes({@Index(name = "INDEX_ROLERESOURCE", fields = {"roleid","resourceid"}, unique = true)})
 public class Sys_role_resource {
 	@Column
 	private int roleid;
 	@Column
-    @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String resourceid;
+	private String resourceid;
 	@Column
-    @ColDefine(type = ColType.VARCHAR, width = 1000)
-    private String button;
+	private String button;
 	public int getRoleid() {
 		return roleid;
 	}

@@ -1,6 +1,5 @@
 package cn.xuetang.modules;
 
-import cn.xuetang.common.view.VelocityViewMaker;
 import cn.xuetang.core.UrlMappingSet;
 import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.ioc.provider.ComboIocProvider;
@@ -23,6 +22,5 @@ import cn.xuetang.core.StartSetup;
 	"*org.nutz.ioc.loader.annotation.AnnotationIocLoader","cn.xuetang"})
 @SetupBy(value=StartSetup.class)
 @UrlMappingBy(value=UrlMappingSet.class)
-@Views({ VelocityViewMaker.class})
 public class MainModule {
 }

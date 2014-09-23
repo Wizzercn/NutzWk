@@ -46,9 +46,8 @@ import cn.xuetang.modules.sys.bean.Sys_unit;
 public class UserAction extends BaseAction {
     @Inject
     protected Dao dao;
-
     @At("")
-    @Ok("vm:template.private.sys.user")
+    @Ok("->:/private/sys/user.html")
     public void user(HttpSession session, HttpServletRequest req) {
         Sys_user user = (Sys_user) session.getAttribute("userSession");
         String unitid = user.getUnitid();
@@ -62,7 +61,7 @@ public class UserAction extends BaseAction {
         if (!Strings.isBlank(username)) {
             return Json.toJson(daoCtl.list(dao, Sys_user.class, Cnd.where("realname", "like", "%" + username + "%")));
         } else if (userid > 0) {
-            return Json.toJson(daoCtl.list(dao, Sys_user.class, Cnd.where("uid", "=", userid)));
+            return Json.toJson(daoCtl.list(dao, Sys_user.class, Cnd.where("userid", "=", userid)));
         }
         return "";
     }
@@ -160,8 +159,9 @@ public class UserAction extends BaseAction {
                 pageSize, cri);
     }
 
+    @SuppressWarnings("rawtypes")
     @At
-    @Ok("vm:template.private.sys.userAdd")
+    @Ok("->:/private/sys/userAdd.html")
     public void toadd(@Param("unitid") String unitid1, HttpSession session,
                       HttpServletRequest req) {
 
@@ -190,7 +190,7 @@ public class UserAction extends BaseAction {
                             + user.getUnitid() + "%') order by location,id asc");
             sqlrole = Cnd
                     .wrap("(unitid is null or unitid='') and id in (select roleid from sys_user_role where userid='"
-                            + user.getUid()
+                            + user.getUserid()
                             + "') order by location,id asc");
         }
         unitlist = daoCtl.list(dao, Sys_unit.class, sqlunit);
@@ -206,23 +206,26 @@ public class UserAction extends BaseAction {
         jsonroot.put("open", true);
         jsonroot.put("icon", Globals.APP_BASE_NAME
                 + "/images/icons/icon042a1.gif");
-        rolelist = daoCtl.list(dao, Sys_role.class, sqlrole);
-        for (int j = 0; j < rolelist.size(); j++) {
+        if (!"".equals(sqlrole)) {
+            rolelist = daoCtl.list(dao, Sys_role.class, sqlrole);
+            for (int j = 0; j < rolelist.size(); j++) {
 
-            Sys_role roleobj = rolelist.get(j);
-            Map<String, Object> jsonobj = new HashMap<String, Object>();
-            jsonobj.put("id", String.valueOf(roleobj.getId()));
-            jsonobj.put("pId", "");
-            jsonobj.put("name", roleobj.getName());
-            if (roleobj.getId() == 1) {
-                jsonobj.put("checked", true);
-            } else {
-                jsonobj.put("checked", false);
+                Sys_role roleobj = rolelist.get(j);
+                Map<String, Object> jsonobj = new HashMap<String, Object>();
+                jsonobj.put("id", String.valueOf(roleobj.getId()));
+                jsonobj.put("pId", "");
+                jsonobj.put("name", roleobj.getName());
+                if (roleobj.getId() == 1) {
+                    jsonobj.put("checked", true);
+                } else {
+                    jsonobj.put("checked", false);
+                }
+                jsonobj.put("url", "javascript:list(\"" + roleobj.getId()
+                        + "\")");
+                jsonobj.put("target", "_self");
+                array.add(jsonobj);
+
             }
-            jsonobj.put("url", "javascript:list(\"" + roleobj.getId()
-                    + "\")");
-            jsonobj.put("target", "_self");
-            array.add(jsonobj);
 
         }
         array.add(jsonroot);
@@ -318,7 +321,7 @@ public class UserAction extends BaseAction {
             if (result != null) {
                 for (int i = 0; i < ids.length && (!"".equals(ids[0])); i++) {
                     Sys_user_role syr = new Sys_user_role();
-                    syr.setUserid(result.getUid());
+                    syr.setUserid(result.getUserid());
                     syr.setRoleid(NumberUtils.toInt(Strings.sNull(ids[i])));
                     daoCtl.add(dao, syr);
                 }
@@ -327,12 +330,14 @@ public class UserAction extends BaseAction {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
         }
         return false;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @At
-    @Ok("vm:template.private.sys.userUpdate")
+    @Ok("->:/private/sys/userUpdate.html")
     public void toupdate(@Param("userid") long userid,
                          HttpSession session, HttpServletRequest req) {
 
@@ -351,7 +356,7 @@ public class UserAction extends BaseAction {
         Hashtable<String, String> hashrole = new Hashtable<String, String>();
         Sql sql = Sqls
                 .create("select roleid,'wiz' from sys_user_role where userid = '"
-                        + obj.getUid() + "'");
+                        + obj.getUserid() + "'");
         hashrole = daoCtl.getHTable(dao, sql);
 
         LinkedList<Sys_role> list = null;
@@ -373,12 +378,12 @@ public class UserAction extends BaseAction {
                             + user.getUnitid() + "%') order by location,id asc");
             rolec = Cnd
                     .wrap("(unitid is null or unitid='') and id in (select roleid from sys_user_role where userid='"
-                            + user.getUid() + "') order by location,id asc");
+                            + user.getUserid() + "') order by location,id asc");
         }
         unitlist = (LinkedList) daoCtl.list(dao, Sys_unit.class, unitc);
         req.setAttribute("sysrole", sysrole);
         Hashtable<String, String> hm = new Hashtable<String, String>();
-        List<Object> array = new ArrayList<Object>();
+        List array = new ArrayList();
         Map<String, Object> jsonroot = new HashMap<String, Object>();
         jsonroot.put("id", "");
         jsonroot.put("pId", "0");
@@ -497,10 +502,10 @@ public class UserAction extends BaseAction {
             result = daoCtl.update(dao, user);
             if (result) {
                 daoCtl.delete(dao, "sys_user_role",
-                        Cnd.where("userid", "=", user.getUid()));
+                        Cnd.where("userid", "=", user.getUserid()));
                 for (int i = 0; i < ids.length && (!"".equals(ids[0])); i++) {
                     Sys_user_role syr = new Sys_user_role();
-                    syr.setUserid(user.getUid());
+                    syr.setUserid(user.getUserid());
                     syr.setRoleid(NumberUtils.toInt(Strings.sNull(ids[i])));
                     daoCtl.add(dao, syr);
                 }
@@ -536,7 +541,7 @@ public class UserAction extends BaseAction {
         boolean result = false;
         for (int i = 0; i < id.length; i++) {
             result = daoCtl.update(dao, Sys_user.class, Chain.make("state", 1),
-                    Cnd.where("uid", "=", NumberUtils.toLong(Strings.sNull(id[i]))));
+                    Cnd.where("userid", "=", NumberUtils.toLong(Strings.sNull(id[i]))));
         }
         return result;
     }
@@ -547,7 +552,7 @@ public class UserAction extends BaseAction {
         boolean result = false;
         for (int i = 0; i < id.length; i++) {
             result = daoCtl.update(dao, Sys_user.class, Chain.make("state", 0),
-                    Cnd.where("uid", "=", NumberUtils.toLong(Strings.sNull(id[i]))));
+                    Cnd.where("userid", "=", NumberUtils.toLong(Strings.sNull(id[i]))));
         }
         return result;
 
@@ -557,10 +562,10 @@ public class UserAction extends BaseAction {
      * 个人信息
      */
     @At
-    @Ok("vm:template.private.sys.userInfo")
+    @Ok("->:/private/sys/userInfo.html")
     public Sys_user info(HttpSession session) {
         Sys_user user = (Sys_user) session.getAttribute("userSession");
-        return daoCtl.detailById(dao, Sys_user.class, user.getUid());
+        return daoCtl.detailById(dao, Sys_user.class, user.getUserid());
     }
 
     /**
@@ -571,7 +576,7 @@ public class UserAction extends BaseAction {
     public String updateInfo(@Param("..") Sys_user user,
                              @Param("userid") String userid, @Param("password2") String pass,
                              @Param("oldpassword") String oldpassword) {
-        Sys_user olduser = daoCtl.detailByName(dao, Sys_user.class, "uid",
+        Sys_user olduser = daoCtl.detailByName(dao, Sys_user.class, "userid",
                 userid);
         boolean relogin = false;
         if (Lang.digest("MD5", Strings.sNull(oldpassword).getBytes(), Strings.sNull(olduser.getSalt()).getBytes(), 3).equals(olduser.getPassword())) {

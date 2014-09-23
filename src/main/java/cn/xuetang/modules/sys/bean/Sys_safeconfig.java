@@ -1,6 +1,8 @@
 package cn.xuetang.modules.sys.bean;
 
-import org.nutz.dao.entity.annotation.*;
+import org.nutz.dao.entity.annotation.Column;
+import org.nutz.dao.entity.annotation.Id;
+import org.nutz.dao.entity.annotation.Table;
 
 /**
  * @author Wizzer.cn
@@ -17,7 +19,6 @@ public class Sys_safeconfig {
 	@Column
 	private int state;
 	@Column
-    @ColDefine(type = ColType.VARCHAR, width = 500)
 	private String note;
 	public int getId() {
 		return id;

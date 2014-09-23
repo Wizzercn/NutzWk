@@ -31,7 +31,7 @@ public class UserLogAction extends BaseAction {
 	@Inject
 	protected Dao dao;
 	@At
-	@Ok("vm:template.private.sys.userLog")
+	@Ok("->:/private/sys/userLog.html")
 	public void log() {
 		
 	}
