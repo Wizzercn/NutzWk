@@ -5,7 +5,7 @@ NutzWk
 
 
 文件编码全部为UTF-8,可以导入Eclispe、IDEA中,jdk7,tomcat 6/7.<br>
-需执行nit_mysql.sql进行数据库初始化<br>
+创建空的数据库,首次启动项目会自动初始化数据.<br>
 
 本框架的代码生成器（兼容mysql、oracle等数据库）：<br>
 https://github.com/Wizzercn/NutzCodematic
