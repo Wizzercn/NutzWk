@@ -53,8 +53,6 @@ public class DictAction extends BaseAction {
         if (!Strings.isBlank(id)) {
             req.setAttribute("dict", daoCtl.detailByName(dao, Sys_dict.class, id));
         }
-        req.setAttribute("treeid", id);
-
     }
 
     @At
@@ -167,7 +165,6 @@ public class DictAction extends BaseAction {
             array.add(jsonobj);
         }
         req.setAttribute("str", Json.toJson(array));
-        req.setAttribute("id", id);
     }
 
     /**

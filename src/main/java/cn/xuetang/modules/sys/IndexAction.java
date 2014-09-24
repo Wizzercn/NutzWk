@@ -92,7 +92,7 @@ public class IndexAction extends BaseAction {
         List<Integer> plist = new ArrayList<Integer>();
         for (Map map : rolelist) {
             rolelist1.add(NumberUtils.toInt(Strings.sNull(map.get("id"))));
-            int pid =NumberUtils.toInt(Strings.sNull(map.get("pid")));
+            int pid = NumberUtils.toInt(Strings.sNull(map.get("pid")));
             if (!plist.contains(pid))
                 plist.add(pid);
         }
@@ -105,27 +105,29 @@ public class IndexAction extends BaseAction {
         user.setProlist(plist);
         // 将用户所属角色塞入内存
         session.setAttribute("userSession", user);
+        String resid = Strings.sNull(user.getLoginresid());
         Sql sql1 = Sqls
                 .create("select distinct resourceid from sys_role_resource where ( roleid in(select roleid from sys_user_role where userid=@userid) or roleid=1) and resourceid not in(select id from sys_resource where state=1)");
         sql1.params().set("userid", user.getUid());
         user.setReslist(daoCtl.getStrRowValues(dao, sql1));
-        // 获取用户一级资源菜单
-        List<Sys_resource> moduleslist = daoCtl.list(dao,
-                Sys_resource.class, Cnd.where("id", "like", "____").and("id", "in", user.getReslist()).asc("location")
-        );
-        req.setAttribute("moduleslist", moduleslist);
-        String resid = Strings.sNull(user.getLoginresid());
-        if ("".equals(resid)) {
-            for (Sys_resource res : moduleslist) {
-                resid = res.getId();
-                break;
+        if (user.getReslist() != null && user.getReslist().size() > 0) {
+            // 获取用户一级资源菜单
+            List<Sys_resource> moduleslist = daoCtl.list(dao,
+                    Sys_resource.class, Cnd.where("id", "like", "____").and("id", "in", user.getReslist()).asc("location")
+            );
+            req.setAttribute("moduleslist", moduleslist);
+            if ("".equals(resid)) {
+                for (Sys_resource res : moduleslist) {
+                    resid = res.getId();
+                    break;
+                }
             }
+            // 获取用户二级资源菜单
+            List<Sys_resource> modulessublist = daoCtl.list(dao,
+                    Sys_resource.class, Cnd.where("id", "like", resid + "____").and("id", "in", user.getReslist()).asc("location")
+            );
+            req.setAttribute("modulessublist", modulessublist);
         }
-        // 获取用户二级资源菜单
-        List<Sys_resource> modulessublist = daoCtl.list(dao,
-                Sys_resource.class, Cnd.where("id", "like", resid + "____").and("id", "in", user.getReslist()).asc("location")
-        );
-        req.setAttribute("modulessublist", modulessublist);
         req.setAttribute("resid", resid);
         // 获取用户资源button HashMap
         List<List<String>> reslist = daoCtl

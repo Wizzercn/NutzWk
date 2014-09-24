@@ -115,9 +115,8 @@ public class ResourceAction extends BaseAction {
 	 * */
 	@At
 	@Ok("vm:template.private.sys.resourceUpdate")
-	public void toupdate(@Param("id") String id, HttpServletRequest req) {
-		Sys_resource res = daoCtl.detailByName(dao, Sys_resource.class, id);
-		req.setAttribute("obj", res);
+	public Sys_resource toupdate(@Param("id") String id, HttpServletRequest req) {
+		return daoCtl.detailByName(dao, Sys_resource.class, id);
 	}
 
 	/****
@@ -126,10 +125,9 @@ public class ResourceAction extends BaseAction {
 	@At
 	@Ok("raw")
 	public String updateSave(@Param("..") Sys_resource res,
-			@Param("button2") String button2, HttpServletRequest req) {
-
-		res.setButton(button2);
-		return daoCtl.update(dao, res) == true ? res.getId() : "";
+			@Param("button2") String button, HttpServletRequest req) {
+		res.setButton(button);
+		return daoCtl.update(dao, res) ? res.getId() : "";
 	}
 
 	/****
@@ -147,7 +145,7 @@ public class ResourceAction extends BaseAction {
 	@At
 	@Ok("raw")
 	public boolean addSave(@Param("..") Sys_resource res,
-			@Param("button2") String button2) {
+			@Param("button2") String button) {
 
 		Sql sql = Sqls
 				.create("select max(location)+1 from Sys_resource where id like  @id");
@@ -155,7 +153,7 @@ public class ResourceAction extends BaseAction {
 		int location = daoCtl.getIntRowValue(dao, sql);
 		res.setLocation(location);
 		res.setId(daoCtl.getSubMenuId(dao, "Sys_resource", "id", res.getId()));
-		res.setButton(button2);
+		res.setButton(button);
 		return daoCtl.add(dao, res);
 	}
 
@@ -228,9 +226,8 @@ public class ResourceAction extends BaseAction {
 	@At
 	@Ok("raw")
 	public boolean sort(@Param("checkids") String[] checkids) {
-		boolean rs = daoCtl.updateSortRow(dao, "Sys_resource", checkids,
+        return daoCtl.updateSortRow(dao, "Sys_resource", checkids,
 				"location", 0);
-		return rs;
 
 	}
 

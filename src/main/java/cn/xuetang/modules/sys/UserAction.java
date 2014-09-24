@@ -19,6 +19,9 @@ import cn.xuetang.modules.sys.bean.Sys_user_role;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.dao.*;
 import org.nutz.dao.sql.Criteria;
 import org.nutz.dao.sql.Sql;
@@ -116,7 +119,7 @@ public class UserAction extends BaseAction {
             obj.put("name", u.getName());
             obj.put("url", "javascript:list(\"" + u.getId() + "\")");
             obj.put("target", "_self");
-            obj.put("isParent", num > 0 ? true : false);
+            obj.put("isParent", num > 0);
             array.add(obj);
             i++;
         }
@@ -310,8 +313,11 @@ public class UserAction extends BaseAction {
         Sys_user result = null;
         try {
             String[] ids = StringUtils.split(checkids, ",");
-            String salt = DecodeUtil.getSalt(6);
-            user.setPassword(Lang.digest("MD5", Strings.sNull(user.getPassword()).getBytes(), Strings.sNull(salt).getBytes(), 3));
+
+            RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+            String salt = rng.nextBytes().toBase64();
+            String hashedPasswordBase64 = new Sha256Hash(user.getPassword(), salt, 1024).toBase64();
+            user.setPassword(hashedPasswordBase64);
             user.setSalt(salt);
             user.setLogintime(DateUtil.getCurDateTime());
             result = daoCtl.addT(dao, user);
@@ -341,13 +347,16 @@ public class UserAction extends BaseAction {
                 obj.getUnitid());
         req.setAttribute("obj", obj);
         req.setAttribute("unit", unit);
-        obj.setPassword(Lang.digest("MD5", Strings.sNull(obj.getPassword()).getBytes(), Strings.sNull(obj.getSalt()).getBytes(), 3));
+        RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+        String salt = rng.nextBytes().toBase64();
+        String hashedPasswordBase64 = new Sha256Hash(obj.getPassword(), salt, 1024).toBase64();
+        obj.setPassword(hashedPasswordBase64);
         Sys_user user = (Sys_user) session.getAttribute("userSession");
         boolean self = false;
-        if (user.getLoginname().equals(obj.getLoginname())) {
-            self = true;
-            req.setAttribute("self", self);
-        }
+//        if (user.getLoginname().equals(obj.getLoginname())) {
+//            self = true;
+//            req.setAttribute("self", self);
+//        }
         Hashtable<String, String> hashrole = new Hashtable<String, String>();
         Sql sql = Sqls
                 .create("select roleid,'wiz' from sys_user_role where userid = '"
@@ -488,10 +497,14 @@ public class UserAction extends BaseAction {
         boolean result = false;
         try {
             String[] ids = StringUtils.split(checkids, ",");
-            String salt = DecodeUtil.getSalt(6);
             if (!Strings.isBlank(user.getPassword())) {
-                user.setPassword(Lang.digest("MD5", Strings.sNull(user.getPassword()).getBytes(), Strings.sNull(salt).getBytes(), 3));
+                RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+                String salt = rng.nextBytes().toBase64();
+                String hashedPasswordBase64 = new Sha256Hash(user.getPassword(), salt, 1024).toBase64();
+                user.setPassword(hashedPasswordBase64);
                 user.setSalt(salt);
+            }else {
+                user.setPassword(null);
             }
             user.setLogintime(DateUtil.getCurDateTime());
             result = daoCtl.update(dao, user);
@@ -574,11 +587,14 @@ public class UserAction extends BaseAction {
         Sys_user olduser = daoCtl.detailByName(dao, Sys_user.class, "uid",
                 userid);
         boolean relogin = false;
-        if (Lang.digest("MD5", Strings.sNull(oldpassword).getBytes(), Strings.sNull(olduser.getSalt()).getBytes(), 3).equals(olduser.getPassword())) {
+        String hashedPasswordBase64 = new Sha256Hash(oldpassword, olduser.getSalt(), 1024).toBase64();
+        if (hashedPasswordBase64.equals(olduser.getPassword())) {
             if (!"".equals(pass)) {
                 relogin = true;
-                String salt = DecodeUtil.getSalt(6);
-                olduser.setPassword(Lang.digest("MD5", Strings.sNull(pass).getBytes(), salt.getBytes(), 3));
+                RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+                String salt = rng.nextBytes().toBase64();
+                String hashedPasswordBase = new Sha256Hash(user.getPassword(), salt, 1024).toBase64();
+                user.setPassword(hashedPasswordBase);
                 olduser.setSalt(salt);
             }
             if (!olduser.getLoginname().equals(user.getLoginname())) {
