@@ -359,8 +359,8 @@ public class UserAction extends BaseAction {
 //        }
         Hashtable<String, String> hashrole = new Hashtable<String, String>();
         Sql sql = Sqls
-                .create("select roleid,'wiz' from sys_user_role where userid = '"
-                        + obj.getUid() + "'");
+                .create("select roleid,'wiz' from sys_user_role where userid = "
+                        + obj.getUid());
         hashrole = daoCtl.getHTable(dao, sql);
 
         LinkedList<Sys_role> list = null;
