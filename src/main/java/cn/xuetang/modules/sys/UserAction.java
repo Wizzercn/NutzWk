@@ -349,14 +349,14 @@ public class UserAction extends BaseAction {
         obj.setPassword(Lang.digest("MD5", Strings.sNull(obj.getPassword()).getBytes(), Strings.sNull(obj.getSalt()).getBytes(), 3));
         Sys_user user = (Sys_user) session.getAttribute("userSession");
         boolean self = false;
-        if (user.getLoginname().equals(obj.getLoginname())) {
-            self = true;
-            req.setAttribute("self", self);
-        }
+//        if (user.getLoginname().equals(obj.getLoginname())) {
+//            self = true;
+//            req.setAttribute("self", self);
+//        }
         Hashtable<String, String> hashrole = new Hashtable<String, String>();
         Sql sql = Sqls
-                .create("select roleid,'wiz' from sys_user_role where userid = '"
-                        + obj.getUserid() + "'");
+                .create("select roleid,'wiz' from sys_user_role where userid = "
+                        + obj.getUserid());
         hashrole = daoCtl.getHTable(dao, sql);
 
         LinkedList<Sys_role> list = null;
@@ -585,6 +585,8 @@ public class UserAction extends BaseAction {
                 String salt = DecodeUtil.getSalt(6);
                 olduser.setPassword(Lang.digest("MD5", Strings.sNull(pass).getBytes(), salt.getBytes(), 3));
                 olduser.setSalt(salt);
+            }else {
+                olduser.setPassword(null);
             }
             if (!olduser.getLoginname().equals(user.getLoginname())) {
                 relogin = true;
