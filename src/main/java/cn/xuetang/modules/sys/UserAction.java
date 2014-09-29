@@ -10,9 +10,7 @@ import cn.xuetang.common.config.Globals;
 import cn.xuetang.common.filter.GlobalsFilter;
 import cn.xuetang.common.filter.UserLoginFilter;
 import cn.xuetang.common.util.DateUtil;
-import cn.xuetang.common.util.DecodeUtil;
 import cn.xuetang.common.util.SortHashtable;
-import cn.xuetang.common.util.StringUtil;
 import cn.xuetang.modules.sys.bean.Sys_role;
 import cn.xuetang.modules.sys.bean.Sys_user;
 import cn.xuetang.modules.sys.bean.Sys_user_role;
@@ -603,7 +601,7 @@ public class UserAction extends BaseAction {
             olduser.setLoginname(user.getLoginname());
             olduser.setRealname(user.getRealname());
             olduser.setDescript(user.getDescript());
-            olduser.setPozition(user.getPozition());
+            olduser.setPosition(user.getPosition());
             olduser.setAddress(user.getAddress());
             olduser.setTelephone(user.getTelephone());
             olduser.setMobile(user.getMobile());

@@ -43,7 +43,7 @@ public class Sys_user {
     private String descript;
 	@Column
     @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String pozition;
+    private String position;
 	@Column
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String address;
@@ -162,12 +162,12 @@ public class Sys_user {
 		this.descript = descript;
 	}
 
-	public String getPozition() {
-		return pozition;
+	public String getPosition() {
+		return position;
 	}
 
-	public void setPozition(String pozition) {
-		this.pozition = pozition;
+	public void setPosition(String position) {
+		this.position = position;
 	}
 
 	public String getAddress() {
