@@ -475,7 +475,7 @@ public class ObjectCtl {
     public <T> List<T> listPage(Dao dao, Class<T> obj, Sql sql, int curPage,
                                 int pageSize) {
         Pager pager = dao.createPager(curPage, pageSize);
-        pager.setRecordCount(Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
+        pager.setRecordCount((int)Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
         sql.setPager(pager);
         Entity<T> entity = dao.getEntity(obj);
         sql.setEntity(entity);
@@ -522,7 +522,7 @@ public class ObjectCtl {
      * @return
      */
     public <T> List<T> listPage(Dao dao, Class<T> obj, Sql sql, Pager pager) {
-        pager.setRecordCount(Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
+        pager.setRecordCount((int)Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
         sql.setPager(pager);
         Entity<T> entity = dao.getEntity(obj);
         sql.setEntity(entity);
@@ -658,7 +658,7 @@ public class ObjectCtl {
      */
     public <T> QueryResult listPageSql(Dao dao, Sql sql, int curPage, int pageSize) {
         Pager pager = dao.createPager(curPage, pageSize);
-        pager.setRecordCount(Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
+        pager.setRecordCount((int)Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
         sql.setPager(pager);
         sql.setCallback(Sqls.callback.records());
         dao.execute(sql);
@@ -692,7 +692,7 @@ public class ObjectCtl {
      * @return
      */
     public <T> QueryResult listPageSql(Dao dao, Sql sql, Pager pager) {
-        pager.setRecordCount(Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
+        pager.setRecordCount((int)Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
         sql.setPager(pager);
         sql.setCallback(Sqls.callback.records());
         dao.execute(sql);
@@ -724,7 +724,7 @@ public class ObjectCtl {
      */
     public <T> String listPageJsonSql(Dao dao, Sql sql, int curPage, int pageSize) {
         Pager pager = dao.createPager(curPage, pageSize);
-        pager.setRecordCount(Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
+        pager.setRecordCount((int)Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
         sql.setPager(pager);
         sql.setCallback(Sqls.callback.records());
         dao.execute(sql);
@@ -765,7 +765,7 @@ public class ObjectCtl {
      * @return
      */
     public <T> String listPageJsonSql(Dao dao, Sql sql, Pager pager) {
-        pager.setRecordCount(Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
+        pager.setRecordCount((int)Daos.queryCount(dao, sql.toString()));// 记录数需手动设置
         sql.setPager(pager);
         sql.setCallback(Sqls.callback.records());
         dao.execute(sql);
