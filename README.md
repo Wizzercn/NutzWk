@@ -17,3 +17,8 @@ https://github.com/Wizzercn/NutzCodematic
 使用条款：<br>
 1、个人开源，可以任意修改使用；<br>
 2、商业使用，必须更改后台菜单布局、CSS样式、界面颜色等元素（既：不可使用原始界面用于商业项目）。
+
+在线演示地址
+===================================================
+
+http://pi.wendal.net:9091/nutz_wk/private/login
