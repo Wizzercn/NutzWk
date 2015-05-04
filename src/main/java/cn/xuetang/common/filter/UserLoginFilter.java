@@ -26,11 +26,14 @@ public class UserLoginFilter implements ActionFilter {
 	public View match(ActionContext context) {
 		Sys_user user = (Sys_user) context.getRequest().getSession()
 				.getAttribute("userSession");
-		if (user == null) {
+		String contentType=context.getRequest().getContentType();
+        	if(Strings.sNull(contentType).contains("application/x-www-form-urlencoded")&&user==null){
+            		context.getResponse().setHeader("sessionstatus","timeout");
+            		return new RawView("");
+        	}else if (user == null) {
 			ServerRedirectView view = new ServerRedirectView(
 					"/include/error/nologin.jsp");
 			return view;
-
 		}
 		
 		Hashtable<String, String> btnmap= user.getBtnmap();
