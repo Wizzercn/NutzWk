@@ -11,6 +11,7 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionFilter;
 import org.nutz.mvc.View;
+import org.nutz.mvc.view.RawView;
 import org.nutz.mvc.view.ServerRedirectView;
 
 
