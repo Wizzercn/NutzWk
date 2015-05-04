@@ -1,4 +1,13 @@
 
+$.ajaxSetup({
+    contentType: 'application/x-www-form-urlencoded;charset=utf-8',
+    complete: function (XMLHttpRequest, textStatus) {
+        var sessionstatus = XMLHttpRequest.getResponseHeader('sessionstatus'); //通过XMLHttpRequest取得响应头，sessionstatus，
+        if (sessionstatus == 'timeout') {
+            top.window.location.href = CONTEXTPATH+'/include/error/nologin.jsp';
+        }
+    }
+});
 function JTrim(s)
 {
     var r1, r2, s1, s2, s3;
