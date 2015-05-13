@@ -230,5 +230,10 @@ public class ResourceAction extends BaseAction {
 				"location", 0);
 
 	}
+	@At
+	@Ok("vm:template.private.sys.resourceButton")
+	public void resourceButton(){
+
+	}
 
 }
