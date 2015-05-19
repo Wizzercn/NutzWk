@@ -21,4 +21,4 @@ https://github.com/Wizzercn/NutzCodematic
 在线演示地址
 ===================================================
 
-http://pi.wendal.net:9091/nutz_wk/private/login
+http://115.28.27.32:9091/nutz_wk/private/login
