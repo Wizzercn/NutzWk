@@ -40,7 +40,7 @@
         	        return false;
         	    }
         	    for(var i=0; i<arr.length; i++){
-        	        ids.push(arr[i].uid);
+        	        ids.push(arr[i].id);
         	    }
 				$("#checkids").val(ids);
                 return true;
@@ -81,7 +81,7 @@
         	        //sortOrder: 'desc',  
         	        queryParams:{"SearchUserName":SearchUserName},
         	        remoteSort:false,   
-        	        idField:"uid",
+        	        idField:"id",
         	        singleSelect:false,//是否单选  
         	        pagination:true,//分页控件  
         	        rownumbers:true,//行号  
@@ -90,7 +90,7 @@
         	        loadMsg:'数据加载中...',
         	        onDblClickRow:function(rowIndex,row)
         	        {
-        	        	//toupdateId(row.uid);
+        	        	//toupdateId(row.id);
         	        },
         	        columns:[[
 						{title : '用户名',field : 'loginname',width:getWidth(0.08),align : 'left'},
@@ -112,7 +112,7 @@
 						{title : '手机号码',field : 'mobile',width:getWidth(0.10),align : 'left'}   
         	        ]],
         	        frozenColumns:[[  
-        	            {field:"uid",checkbox:true}
+        	            {field:"id",checkbox:true}
         	        ]]
         	    });  
         	    //设置分页控件  

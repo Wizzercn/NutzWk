@@ -121,8 +121,8 @@
                var d = new Dialog("Update");
                d.Width = 630;
                d.Height = 460;
-               d.Title = "编辑用户" + arr.uid;
-               d.URL = "${base}/private/sys/user/toupdate?userid="+arr.uid;
+               d.Title = "编辑用户" + arr.id;
+               d.URL = "${base}/private/sys/user/toupdate?userid="+arr.id;
            	   d.OKEvent = function(){
            			updateSave();
            	   };
@@ -179,8 +179,8 @@
         	        return;
         	    }
         	    for(var i=0; i<arr.length; i++){
-        	        ids.push(arr[i].uid);
-					if(arr[i].uid=="10000"){
+        	        ids.push(arr[i].id);
+					if(arr[i].id=="10000"){
 						Dialog.alert("超级管理员不可删除！");
 						return;
 					}
@@ -214,8 +214,8 @@
         	        return;
         	    }
         	    for(var i=0; i<arr.length; i++){
-        	        ids.push(arr[i].uid);
-                    if(arr[i].uid=="10000"){
+        	        ids.push(arr[i].id);
+                    if(arr[i].id=="10000"){
                         Dialog.alert("超级管理员不可禁用！");
                         return;
                     }
@@ -248,7 +248,7 @@
         	            return;
         	        }
             	    for(var i=0; i<arr.length; i++){
-            	        ids.push(arr[i].uid);
+            	        ids.push(arr[i].id);
             	    }
         	        Dialog.confirm("确定启用？", function(){
         	        	jQuery.ajax({
@@ -312,7 +312,7 @@
         	        //sortName: 'code',  
         	        //sortOrder: 'desc',  
         	        remoteSort:false,   
-        	        idField:"uid",
+        	        idField:"id",
         	        singleSelect:false,//是否单选  
         	        pagination:true,//分页控件  
         	        rownumbers:true,//行号  
@@ -322,7 +322,7 @@
         	        loadMsg:'数据加载中...',
         	        onDblClickRow:function(rowIndex,row)
         	        {
-        	        	toupdateId(row.uid);
+        	        	toupdateId(row.id);
         	        },
         	        columns:[[
 						{title : '用户名',field : 'loginname',width:getWidth(0.08),align : 'left'},
@@ -344,7 +344,7 @@
 						{title : '手机号码',field : 'mobile',width:getWidth(0.10),align : 'left'}   
         	        ]],
         	        frozenColumns:[[  
-        	            {field:"uid",checkbox:true}
+        	            {field:"id",checkbox:true}
         	        ]]
         	    });  
         	    //设置分页控件  

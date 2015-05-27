@@ -1,6 +1,6 @@
 var ioc = {
         fileServer : {
-            type : 'cn.xuetang.modules.file.FileServer',
+            type : 'cn.wizzer.modules.file.FileServer',
             fields : {
                 username : 'fileuser',
                 password : 'filepass'

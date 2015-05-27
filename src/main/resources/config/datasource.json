@@ -5,7 +5,7 @@ var ioc = {
 			depose:"close"
 		},
 		fields:{
-			url:"jdbc:mysql://127.0.0.1:3306/nutzwk?useUnicode=true&characterEncoding=utf8",
+			url:"jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8",
 			username:"root",
 			password:"pass",
 			maxActive:20,

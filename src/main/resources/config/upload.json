@@ -15,7 +15,7 @@ var ioc = {
 			}
 		},
 		filePool : {
-			type : "cn.xuetang.common.file.FilePool",
+			type : "cn.wizzer.common.file.FilePool",
 			args : ["/temp/", 2000]
 		}
 };
