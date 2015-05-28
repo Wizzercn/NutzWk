@@ -83,11 +83,11 @@ public class IndexAction extends BaseAction {
 
         Sql sql = Sqls.create("select * from sys_role where id in(select roleid from sys_user_role where userid=@userid)");
         sql.params().set("userid", user.getId());
-        List<Map> rolelist = daoCtl.list(dao, sql);
+        List<Record> rolelist = daoCtl.list(dao, sql);
         // 判断是否为系统管理员角色
         List<Integer> rolelist1 = new ArrayList<Integer>();
         List<Integer> plist = new ArrayList<Integer>();
-        for (Map map : rolelist) {
+        for (Record map : rolelist) {
             rolelist1.add(NumberUtils.toInt(Strings.sNull(map.get("id"))));
             int pid = NumberUtils.toInt(Strings.sNull(map.get("pid")));
             if (!plist.contains(pid))
