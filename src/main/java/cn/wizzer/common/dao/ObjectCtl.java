@@ -533,16 +533,16 @@ public class ObjectCtl {
 
     /**
      * 自定义SQL，返回绑定对象
-     *
+     * Record不区分大小写，Map区分大小写，注意mysql和oracle字段名大小写问题
      * @param dao
      * @param sql
      * @return
      */
     @SuppressWarnings("rawtypes")
-    public <T> List<Map> list(Dao dao, Sql sql) {
+    public <T> List<Record> list(Dao dao, Sql sql) {
         sql.setCallback(Sqls.callback.records());
         dao.execute(sql);
-        return sql.getList(Map.class);
+        return sql.getList(Record.class);
 
     }
 
