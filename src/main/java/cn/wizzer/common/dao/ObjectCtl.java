@@ -661,7 +661,7 @@ public class ObjectCtl {
         sql.setPager(pager);
         sql.setCallback(Sqls.callback.records());
         dao.execute(sql);
-        return new QueryResult(sql.getList(Map.class), pager);
+        return new QueryResult(sql.getList(Record.class), pager);
     }
     /**
      * 根据自定义SQL分页,返回封装好的QueryResult对象
@@ -679,7 +679,7 @@ public class ObjectCtl {
         sql.setPager(pager);
         sql.setCallback(Sqls.callback.records());
         dao.execute(sql);
-        return new QueryResult(sql.getList(Map.class), pager);
+        return new QueryResult(sql.getList(Record.class), pager);
     }
 
     /**
@@ -695,7 +695,7 @@ public class ObjectCtl {
         sql.setPager(pager);
         sql.setCallback(Sqls.callback.records());
         dao.execute(sql);
-        return new QueryResult(sql.getList(Map.class), pager);
+        return new QueryResult(sql.getList(Record.class), pager);
     }
 
     /**
@@ -710,7 +710,7 @@ public class ObjectCtl {
         sql.setPager(pager);
         sql.setCallback(Sqls.callback.records());
         dao.execute(sql);
-        return new QueryResult(sql.getList(Map.class), pager);
+        return new QueryResult(sql.getList(Record.class), pager);
     }
     /**
      * 根据自定义SQL分页,返回封装好的 Easyui.datagrid JSON
@@ -729,7 +729,7 @@ public class ObjectCtl {
         dao.execute(sql);
         Map<String, Object> jsonobj = new HashMap<String, Object>();
         jsonobj.put("total", pager.getRecordCount());
-        jsonobj.put("rows", sql.getList(Map.class));
+        jsonobj.put("rows", sql.getList(Record.class));
         return Json.toJson(jsonobj);
     }
 
@@ -751,7 +751,7 @@ public class ObjectCtl {
         dao.execute(sql);
         Map<String, Object> jsonobj = new HashMap<String, Object>();
         jsonobj.put("total", pager.getRecordCount());
-        jsonobj.put("rows", sql.getList(Map.class));
+        jsonobj.put("rows", sql.getList(Record.class));
         return Json.toJson(jsonobj);
     }
 
@@ -770,7 +770,7 @@ public class ObjectCtl {
         dao.execute(sql);
         Map<String, Object> jsonobj = new HashMap<String, Object>();
         jsonobj.put("total", pager.getRecordCount());
-        jsonobj.put("rows", sql.getList(Map.class));
+        jsonobj.put("rows", sql.getList(Record.class));
         return Json.toJson(jsonobj);
     }
 
