@@ -5,14 +5,17 @@ NutzWk 2.0 纯净版
 
 
 NutzWk 2.0 新特性：
-1、集成Shrio权限框架
-2、集成Ecache缓存
-3、支持语言国际化
-4、支持注解式事务
-5、支持动作练
-6、支持注解式日志系统
-7、支持插件式开发
-8、采用Bootsrtap皮肤(Angle)
+*   集成Shrio权限框架
+*   集成Ecache缓存
+*   支持语言国际化
+*   支持注解式事务
+*   支持动作链
+*   支持注解式日志系统[Coding..]
+*   支持插件式加载[Coding..]
+*   集成Email服务
+*   集成Quartz定时任务
+*   集成Lucene搜索引擎[Coding..]
+*   采用Bootsrtap皮肤(Angle)
 
 
 
