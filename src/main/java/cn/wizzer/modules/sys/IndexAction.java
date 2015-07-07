@@ -3,21 +3,16 @@ package cn.wizzer.modules.sys;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import cn.wizzer.common.action.BaseAction;
-import cn.wizzer.common.filter.GlobalsFilter;
-import cn.wizzer.common.filter.UserLoginFilter;
-import cn.wizzer.modules.sys.bean.Sys_resource;
-import cn.wizzer.modules.sys.bean.Sys_user;
 import org.apache.commons.lang.math.NumberUtils;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
+import org.nutz.dao.entity.Record;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -28,6 +23,12 @@ import org.nutz.mvc.annotation.By;
 import org.nutz.mvc.annotation.Filters;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
+
+import cn.wizzer.common.action.BaseAction;
+import cn.wizzer.common.filter.GlobalsFilter;
+import cn.wizzer.common.filter.UserLoginFilter;
+import cn.wizzer.modules.sys.bean.Sys_resource;
+import cn.wizzer.modules.sys.bean.Sys_user;
 
 /**
  * @author Wizzer.cn

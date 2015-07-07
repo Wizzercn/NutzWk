@@ -4,7 +4,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.nutz.dao.Chain;
@@ -14,6 +19,7 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.QueryResult;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
+import org.nutz.dao.entity.Record;
 import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.sql.SqlCallback;
@@ -538,7 +544,6 @@ public class ObjectCtl {
      * @param sql
      * @return
      */
-    @SuppressWarnings("rawtypes")
     public <T> List<Record> list(Dao dao, Sql sql) {
         sql.setCallback(Sqls.callback.records());
         dao.execute(sql);
