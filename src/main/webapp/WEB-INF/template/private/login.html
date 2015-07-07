@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="NutzWk 2.0">
+    <meta name="keywords" content="nutz,wizzer">
+    <title>${app_name}</title>
+    <!-- =============== VENDOR STYLES ===============-->
+    <!-- FONT AWESOME-->
+    <link rel="stylesheet" href="${base}/include/vendor/fontawesome/css/font-awesome.min.css">
+    <!-- SIMPLE LINE ICONS-->
+    <link rel="stylesheet" href="${base}/include/vendor/simple-line-icons/css/simple-line-icons.css">
+    <!-- =============== BOOTSTRAP STYLES ===============-->
+    <link rel="stylesheet" href="${base}/include/css/bootstrap.css" id="bscss">
+    <!-- =============== APP STYLES ===============-->
+    <link rel="stylesheet" href="${base}/include/css/app.css" id="maincss">
+</head>
+
+<body>
+<div class="wrapper">
+    <div class="block-center mt-xl wd-xl">
+        <!-- START panel-->
+        <div class="panel panel-dark panel-flat">
+            <div class="panel-heading text-center">
+                <a href="#">
+                    <img src="${base}/include/img/logo.png" alt="Image" class="block-center img-rounded">
+                </a>
+            </div>
+            <div class="panel-body"><!-- START Language list-->
+                <div class="pull-right">
+                    <div class="btn-group">
+                        <button type="button" data-toggle="dropdown" class="btn btn-default">#if(!$app_language||$app_language=="zh_CN") 中文#else English#end</button>
+                        <ul role="menu" class="dropdown-menu dropdown-menu-right animated fadeInUpShort">
+                            <li><a href="${base}/private/language/zh_CN" data-set-lang="zh_CN">中文</a>
+                            </li>
+                            <li><a href="${base}/private/language/en_US" data-set-lang="en_US">English</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- END Language list    -->
+                <p class="text-center pv">
+                    &nbsp;<!--${msg['login.title']}-->
+                </p>
+                <form id="loginForm" action="${base}/private/doLogin" method="post" role="form" data-parsley-validate="" novalidate="" class="mb-lg">
+                    <div class="form-group has-feedback">
+                        <input id="username" name="username" type="text" placeholder="${msg['login.username']}" autocomplete="off" required class="form-control">
+                        <span class="fa fa-user form-control-feedback text-muted"></span>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <input id="password" name="password" type="password" placeholder="${msg['login.password']}" required class="form-control">
+                        <span class="fa fa-lock form-control-feedback text-muted"></span>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <input id="captcha" name="captcha" type="text" placeholder="${msg['login.captcha']}" required class="form-control">
+                        <img id="captcha_img" src="${base}/captcha/next" style="height:46px;cursor: pointer;" onclick="$('#captcha_img').attr('src', '${base}/captcha/next?_=' + new Date().getTime())"/>
+                    </div>
+                    <div id="tip" role="alert" class="alert alert-danger" hidden></div>
+                    <div class="clearfix">
+                        <div class="checkbox c-checkbox pull-left mt0">
+                            <label>
+                                <input type="checkbox" value="1" name="rememberMe">
+                                <span class="fa fa-check"></span>${msg['login.rememberme']}</label>
+                        </div>
+                        <div class="pull-right"><a href="javascript:void(0)" class="text-muted">${msg['login.foget']}</a>
+                        </div>
+                    </div>
+                    <button id="btn" type="submit" class="btn btn-block btn-primary mt-lg">${msg['login.submit']}</button>
+                </form>
+                <p class="pt-lg text-center"></p><a href="javascript:void(0)" class="btn btn-block btn-default">${msg['login.register']}</a>
+            </div>
+        </div>
+        <!-- END panel-->
+        <div class="p-lg text-center">
+            <span>&copy;</span>
+            <span>2015</span>
+            <span>-</span>
+            <span>${app_copyright}</span>
+        </div>
+    </div>
+</div>
+<!-- =============== VENDOR SCRIPTS ===============-->
+<!-- MODERNIZR-->
+<script src="${base}/include/vendor/modernizr/modernizr.js"></script>
+<!-- JQUERY-->
+<script src="${base}/include/vendor/jquery/dist/jquery.js"></script>
+<script src="${base}/include/vendor/jquery/dist/jquery.form.js"></script>
+<!-- BOOTSTRAP-->
+<script src="${base}/include/vendor/bootstrap/dist/js/bootstrap.js"></script>
+<!-- STORAGE API-->
+<script src="${base}/include/vendor/jQuery-Storage-API/jquery.storageapi.js"></script>
+<!-- PARSLEY-->
+<script src="${base}/include/vendor/parsleyjs/dist/parsley.min.js"></script>
+#if(!$app_language||$app_language=="zh_CN")
+<script src="${base}/include/vendor/parsleyjs/dist/parsley.zh_cn.js"></script>
+#end
+<!-- =============== APP SCRIPTS ===============-->
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#loginForm").bind("click",function(){
+             $("#tip").fadeOut();
+        });   
+        $("#loginForm").ajaxForm({
+            dataType:  'json',
+            beforeSubmit:function(arr, form, options){
+                form.find("button:submit").text("${msg['login.load']}");
+                form.find("button:submit").attr("disabled", "disabled");
+            },
+            success : function(data, statusText, xhr, form) {
+                if(data.type == "success"){
+                    $("#tip").hide();
+                    form.find("button:submit").text("${msg['login.submit']}");
+                    window.location.href = "${base}/private/index";
+                }else{
+                    $("#captcha").val("");
+                    $('#captcha_img').attr('src', '${base}/captcha/next?_=' + new Date().getTime());
+                    $("#tip").html(data.content);
+                    $("#tip").fadeIn();
+                    form.find("button:submit").text("${msg['login.submit']}");
+                    form.find("button:submit").removeAttr("disabled")
+                }
+            }
+        });
+    });
+</script>
+</body>
+
+</html>

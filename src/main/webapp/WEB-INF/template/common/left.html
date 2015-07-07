@@ -1,0 +1,160 @@
+
+<!-- sidebar-->
+<aside class="aside">
+    <!-- START Sidebar (left)-->
+    <div class="aside-inner">
+        <nav data-sidebar-anyclick-close="" class="sidebar">
+            <!-- START sidebar nav-->
+            <ul class="nav">
+                <!-- START user info-->
+                <li class="has-user-block">
+                    <div id="user-block" class="collapse">
+                        <div class="item user-block">
+                            <!-- User picture-->
+                            <div class="user-block-picture">
+                                <div class="user-block-status">
+                                    <img src="img/user/02.jpg" alt="Avatar" width="60" height="60" class="img-thumbnail img-circle">
+                                    <div class="circle circle-success circle-lg"></div>
+                                </div>
+                            </div>
+                            <!-- Name and Job-->
+                            <div class="user-block-info">
+                                <span class="user-block-name">Hello, Mike</span>
+                                <span class="user-block-role">Designer</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <!-- END user info-->
+                <!-- Iterates over all sidebar items-->
+                <li class="nav-heading ">
+                    <span data-localize="sidebar.heading.HEADER">${msg['index.left.main']}</span>
+                </li>
+                <li class=" ">
+                    <a title="Dashboard">
+                        <em class="icon-speedometer"></em>
+                        <div class="pull-right label label-info">521</div>
+                        <span data-localize="sidebar.nav.DASHBOARD">${msg['index.left.dashboard']}</span>
+                    </a>
+                </li>
+                #if(!$app_language||$app_language=="zh_CN")
+                <!--中文-->
+                #foreach($menu in $firstMenus)
+                <li class="nav-heading ">
+                    <span data-localize="sidebar.heading.HEADER">
+                        $!{menu.name}
+                    </span>
+                </li>
+                #foreach($obj in $secondMenus[$menu.id])
+                <li class=" ">
+                    #if($secondMenus[$obj.id]&&$secondMenus[$obj.id].size()>0)
+                    <a href="#$!{obj.id}" title="${obj.name}" data-toggle="collapse">
+                        #if($obj.icon)<em class="$!obj.icon"></em>#end
+                        <span data-localize="sidebar.nav.DASHBOARD">$!{obj.name}</span>
+                    </a>
+                    #else
+                    <a href="$!{obj.href}" title="${obj.name}">
+                        #if($obj.icon)<em class="$!obj.icon"></em>#end
+                        <span data-localize="sidebar.nav.DASHBOARD">$!{obj.name}</span>
+                    </a>
+                    #end
+
+                    #if($secondMenus[$obj.id]&&$secondMenus[$obj.id].size()>0)
+                    <ul id="$!{obj.id}" class="nav sidebar-subnav collapse">
+                        <li class="sidebar-subnav-header">$!{obj.name}</li>
+                        #foreach($sub in $secondMenus[$obj.id])
+                        <li class=" ">
+                            #if($secondMenus[$sub.id]&&$secondMenus[$sub.id].size()>0)
+                            <a href="#$!{sub.id}" title="$!{sub.name}" data-toggle="collapse">
+                                <em class="fa fa-angle-right" style="padding-left: 15px;"></em>
+                                <span>$!{sub.name}</span>
+                            </a>
+                            #else
+                            <a href="$!{sub.href}" title="$!{sub.name}">
+                                <span>$!{sub.name}</span>
+                            </a>
+                            #end
+                            #if($secondMenus[$sub.id]&&$secondMenus[$sub.id].size()>0)
+                            <ul id="$!{sub.id}" class="nav sidebar-subnav collapse">
+                                <li class="sidebar-subnav-header">$!sub.name</li>
+                                #foreach($sub2 in $secondMenus[$sub.id])
+                                <li class=" ">
+                                    <a href="$!{sub2.href}" title="$!{sub2.name}">
+                                        <span>$!{sub2.name}</span>
+                                    </a>
+                                </li>
+                                #end
+                            </ul>
+                            #end
+                        </li>
+                        #end
+                    </ul>
+                    #end
+                </li>
+                #end
+                #end
+                #else
+                <!--english-->
+                #foreach($menu in $firstMenus)
+                <li class="nav-heading ">
+                    <span data-localize="sidebar.heading.HEADER">
+                        $!{menu.aliasName}
+                    </span>
+                </li>
+                #foreach($obj in $secondMenus[$menu.id])
+                <li class=" ">
+                    #if($secondMenus[$obj.id]&&$secondMenus[$obj.id].size()>0)
+                    <a href="#$!{obj.id}" title="${obj.aliasName}" data-toggle="collapse">
+                        #if($obj.icon)<em class="$!obj.icon"></em>#end
+                        <span data-localize="sidebar.nav.DASHBOARD">$!{obj.aliasName}</span>
+                    </a>
+                    #else
+                    <a href="$!{obj.href}" title="${obj.aliasName}">
+                        #if($obj.icon)<em class="$!obj.icon"></em>#end
+                        <span data-localize="sidebar.nav.DASHBOARD">$!{obj.aliasName}</span>
+                    </a>
+                    #end
+
+                    #if($secondMenus[$obj.id]&&$secondMenus[$obj.id].size()>0)
+                    <ul id="$!{obj.id}" class="nav sidebar-subnav collapse">
+                        <li class="sidebar-subnav-header">$!{obj.aliasName}</li>
+                        #foreach($sub in $secondMenus[$obj.id])
+                        <li class=" ">
+                            #if($secondMenus[$sub.id]&&$secondMenus[$sub.id].size()>0)
+                            <a href="#$!{sub.id}" title="$!{sub.aliasName}" data-toggle="collapse">
+                                <em class="fa fa-angle-right" style="padding-left: 15px;"></em>
+                                <span>$!{sub.aliasName}</span>
+                            </a>
+                            #else
+                            <a href="$!{sub.href}" title="$!{sub.aliasName}">
+                                <span>$!{sub.aliasName}</span>
+                            </a>
+                            #end
+                            #if($secondMenus[$sub.id]&&$secondMenus[$sub.id].size()>0)
+                            <ul id="$!{sub.id}" class="nav sidebar-subnav collapse">
+                                <li class="sidebar-subnav-header">$!sub.aliasName</li>
+                                #foreach($sub2 in $secondMenus[$sub.id])
+                                <li class=" ">
+                                    <a href="$!{sub2.href}" title="$!{sub2.aliasName}">
+                                        <span>$!{sub2.aliasName}</span>
+                                    </a>
+                                </li>
+                                #end
+                            </ul>
+                            #end
+                        </li>
+                        #end
+                    </ul>
+                    #end
+                </li>
+                #end
+                #end
+                #end
+
+
+            </ul>
+            <!-- END sidebar nav-->
+        </nav>
+    </div>
+    <!-- END Sidebar (left)-->
+</aside>
