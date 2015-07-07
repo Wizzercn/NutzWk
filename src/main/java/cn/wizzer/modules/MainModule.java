@@ -10,7 +10,7 @@ import org.nutz.mvc.ioc.provider.ComboIocProvider;
 @Modules(scanPackage = true)
 @Ok("raw")
 @Fail("http:500")
-@IocBy(type=ComboIocProvider.class,args={"*json","config/ioc/","*anno","com.auto","*tx","*org.nutz.integration.quartz.QuartzIocLoader"})
+@IocBy(type=ComboIocProvider.class,args={"*json","config/ioc/","*anno","cn.wizzer","*tx","*org.nutz.integration.quartz.QuartzIocLoader"})
 @Localization(value="msg/", defaultLocalizationKey="zh_CN")
 @Encoding(input = "UTF-8", output = "UTF-8")
 @Views({ VelocityViewMaker.class})
