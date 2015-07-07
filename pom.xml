@@ -30,31 +30,36 @@
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-daocache</artifactId>
             <version>1.b.52.r1</version>
-			<scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-web</artifactId>
             <version>1.b.52</version>
-			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.jetty.aggregate</groupId>
+					<artifactId>jetty-all-server</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty.orbit</groupId>
+					<artifactId>javax.servlet.jsp</artifactId>
+				</exclusion>
+			</exclusions>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-quartz</artifactId>
             <version>1.b.52</version>
-			<scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>2.2.1</version>
-			<scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-shiro</artifactId>
             <version>1.b.52.r2</version>
-			<scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -90,6 +95,16 @@
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
             <version>1.0.15</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.alibaba</groupId>
+					<artifactId>jconsole</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.alibaba</groupId>
+					<artifactId>tools</artifactId>
+				</exclusion>
+			</exclusions>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -100,11 +115,6 @@
             <groupId>net.sourceforge.jtds</groupId>
             <artifactId>jtds</artifactId>
             <version>1.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>zxingorg</artifactId>
-            <version>3.2.0</version>
         </dependency>
 		<dependency>
             <groupId>com.google.zxing</groupId>
@@ -140,6 +150,12 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-all</artifactId>
             <version>1.2.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.shiro</groupId>
+					<artifactId>shiro-guice</artifactId>
+				</exclusion>
+			</exclusions>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
@@ -165,11 +181,35 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>logkit</groupId>
+					<artifactId>logkit</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>avalon-framework</groupId>
+					<artifactId>avalon-framework</artifactId>
+				</exclusion>
+			</exclusions>
         </dependency>
         <dependency>
             <groupId>org.brickred</groupId>
             <artifactId>socialauth</artifactId>
             <version>4.9</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.json</groupId>
+					<artifactId>json</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.openid4java</groupId>
+					<artifactId>openid4java-consumer</artifactId>
+				</exclusion>
+			</exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -181,6 +221,7 @@
 			<groupId>maven</groupId>
 			<artifactId>dom4j</artifactId>
 			<version>1.7-20060614</version>
+            <scope>test</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>jaxen</groupId>
@@ -219,7 +260,7 @@
     </dependencies>
 	 <build>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		<outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
+		<outputDirectory>classes</outputDirectory>
        		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -273,7 +314,7 @@
 				<configuration>
 					<archiveClasses>true</archiveClasses>
 					<packagingExcludes>WEB-INF/web.xml</packagingExcludes>
-					<warSourceExcludes>WEB-INF/classes/com/**</warSourceExcludes>
+					<warSourceExcludes>WEB-INF/classes/cn/**</warSourceExcludes>
 					<webResources>
 						<resource>
 							<directory>src/main/resources</directory>

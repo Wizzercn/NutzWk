@@ -33,19 +33,19 @@ public class MainSetup implements Setup {
 
     public void init(NutConfig config) {
         try {
-            velocityInit(config);
             Ioc ioc = config.getIoc();
+            Dao dao = ioc.get(Dao.class);
+            //初始化数据表
+            initSysData(config, dao);
+            //初始化Velocity
+            velocityInit(config);
             // 获取NutQuartzCronJobFactory从而触发计划任务的初始化与启动
             ioc.get(NutQuartzCronJobFactory.class);
             // 检查一下Ehcache CacheManager 是否正常.
             CacheManager cacheManager = ioc.get(CacheManager.class);
             log.debug("Ehcache CacheManager = " + cacheManager);
-            Dao dao = ioc.get(Dao.class);
-            //初始化数据表
-            initSysData(config, dao);
             //初始化系统变量
             initSysSetting(config, dao);
-            //初始化Velocity
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,9 +60,9 @@ public class MainSetup implements Setup {
     }
 
     private void initSysData(NutConfig config, Dao dao) {
-        Daos.createTablesInPackage(dao, "com.auto.modules", true);
+        Daos.createTablesInPackage(dao, "cn.wizzer.modules", true);
         // 若必要的数据表不存在，则初始化数据库
-        if (0 == dao.count(Sys_user.class)) {
+        if (0==dao.count(Sys_user.class)) {
             //初始化数据字典表
             FileSqlManager fm = new FileSqlManager("init_sys_dict.sql");
             List<Sql> sqlList = fm.createCombo(fm.keys());
