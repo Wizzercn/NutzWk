@@ -2,6 +2,7 @@ package cn.wizzer.modules.sys;
 
 import cn.wizzer.common.Message;
 import cn.wizzer.common.exception.IncorrectCaptchaException;
+import cn.wizzer.common.exception.IncorrectIpException;
 import cn.wizzer.common.mvc.filter.CaptchaFormAuthenticationFilter;
 import cn.wizzer.common.util.CookieUtils;
 import cn.wizzer.common.util.StringUtils;
@@ -22,6 +23,7 @@ import org.nutz.dao.Chain;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
@@ -100,7 +102,7 @@ public class LoginAction {
     @At("/doLogin")
     @Ok("json")
     @Filters(@By(type = CaptchaFormAuthenticationFilter.class))
-    public Message doLogin(@Attr("loginToken") AuthenticationToken token, HttpServletRequest req) {
+    public Object doLogin(@Attr("loginToken") AuthenticationToken token, HttpServletRequest req) {
         try {
             Subject subject = SecurityUtils.getSubject();
             ThreadContext.bind(subject);
@@ -126,6 +128,9 @@ public class LoginAction {
         } catch (IncorrectCaptchaException e) {
             //自定义的验证码错误异常,需shrio.ini 配置authcStrategy属性，加到对应的类中
             return Message.error("login.error.captcha", req);
+        } catch (IncorrectIpException e) {
+            //自定义的验证码错误异常,需shrio.ini 配置authcStrategy属性，加到对应的类中
+            return new NutMap().setv("type","iperror").setv("content","IP is error");
         } catch (LockedAccountException e) {
             return Message.error("login.error.locked", req);
         } catch (AuthenticationException e) {

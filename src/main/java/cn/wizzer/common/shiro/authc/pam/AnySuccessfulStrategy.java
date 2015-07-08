@@ -19,6 +19,7 @@
 package cn.wizzer.common.shiro.authc.pam;
 
 import cn.wizzer.common.exception.IncorrectCaptchaException;
+import cn.wizzer.common.exception.IncorrectIpException;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.pam.AbstractAuthenticationStrategy;
 import org.apache.shiro.realm.Realm;
@@ -64,6 +65,8 @@ public class AnySuccessfulStrategy extends AbstractAuthenticationStrategy {
 				throw Lang.makeThrow(LockedAccountException.class, t.getMessage());
 			} else if (t.getClass().isAssignableFrom(UnknownAccountException.class)) {
 				throw Lang.makeThrow(UnknownAccountException.class, t.getMessage());
+			} else if (t.getClass().isAssignableFrom(IncorrectIpException.class)) {
+				throw Lang.makeThrow(IncorrectIpException.class, t.getMessage());
 			} else if (t.getClass().isAssignableFrom(IncorrectCredentialsException.class)) {
 				throw Lang.makeThrow(IncorrectCredentialsException.class, t.getMessage());
 			} else if (t.getClass().isAssignableFrom(ExcessiveAttemptsException.class)) {

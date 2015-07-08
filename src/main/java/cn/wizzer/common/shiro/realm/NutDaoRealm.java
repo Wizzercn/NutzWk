@@ -1,6 +1,8 @@
 package cn.wizzer.common.shiro.realm;
 
 import cn.wizzer.common.exception.CreateUserSaltException;
+import cn.wizzer.common.exception.IncorrectIpException;
+import cn.wizzer.common.util.StringUtils;
 import cn.wizzer.modules.sys.service.UserService;
 import cn.wizzer.common.exception.IncorrectCaptchaException;
 import cn.wizzer.modules.sys.bean.Sys_user;
@@ -25,17 +27,19 @@ public class NutDaoRealm extends AbstractNutAuthoRealm {
 		if (Strings.isBlank(accountName)) {
 			throw Lang.makeThrow(AuthenticationException.class, "Account is empty");
 		}
-		boolean isCaptchaBlank = Strings.isBlank(authcToken.getCaptcha());
-		if (isCaptchaBlank) {
-			throw Lang.makeThrow(IncorrectCaptchaException.class, "Captcha is empty");
-		}
-		String _captcha = Strings.sBlank(SecurityUtils.getSubject().getSession(true).getAttribute("captcha"));
-		if (!authcToken.getCaptcha().equalsIgnoreCase(_captcha)){
-			throw Lang.makeThrow(IncorrectCaptchaException.class, "Captcha is error");
-		}
 		Sys_user user = getUserService().fetchByUsername(authcToken.getUsername());
 		if (Lang.isEmpty(user)) {
 			throw Lang.makeThrow(UnknownAccountException.class, "Account [ %s ] not found", authcToken.getUsername());
+		}
+		if(!Strings.sNull(user.getLoginIp()).equals(StringUtils.getRemoteAddr(Mvcs.getReq()))){
+			boolean isCaptchaBlank = Strings.isBlank(authcToken.getCaptcha());
+			if (isCaptchaBlank) {
+				throw Lang.makeThrow(IncorrectIpException.class, "Captcha is must");
+			}
+			String _captcha = Strings.sBlank(SecurityUtils.getSubject().getSession(true).getAttribute("captcha"));
+			if (!authcToken.getCaptcha().equalsIgnoreCase(_captcha)) {
+				throw Lang.makeThrow(IncorrectCaptchaException.class, "Captcha is error");
+			}
 		}
 		if (user.isLocked()) {
 			throw Lang.makeThrow(LockedAccountException.class, "Account [ %s ] is locked.", authcToken.getUsername());
