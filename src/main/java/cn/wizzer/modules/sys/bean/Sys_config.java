@@ -2,11 +2,15 @@ package cn.wizzer.modules.sys.bean;
 
 import org.nutz.dao.entity.annotation.*;
 
+import java.io.Serializable;
+
 /**
  * Created by Wizzer.cn on 2015/7/1.
  */
 @Table("sys_config")
-public class Sys_config {
+public class Sys_config implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Name
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 100)

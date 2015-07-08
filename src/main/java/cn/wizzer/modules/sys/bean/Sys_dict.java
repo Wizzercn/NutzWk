@@ -11,6 +11,8 @@ import java.io.Serializable;
 @Table("sys_dict")
 public class Sys_dict extends BasePojo implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+
 	@Column
     @Name
 	private String id;
