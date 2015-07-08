@@ -60,7 +60,7 @@ public class MainSetup implements Setup {
     }
 
     private void initSysData(NutConfig config, Dao dao) {
-        Daos.createTablesInPackage(dao, "cn.wizzer.modules", true);
+        Daos.createTablesInPackage(dao, "cn.wizzer.modules", false);
         // 若必要的数据表不存在，则初始化数据库
         if (0==dao.count(Sys_user.class)) {
             //初始化数据字典表
