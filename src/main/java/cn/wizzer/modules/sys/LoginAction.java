@@ -8,6 +8,7 @@ import cn.wizzer.common.util.CookieUtils;
 import cn.wizzer.common.util.StringUtils;
 import cn.wizzer.modules.sys.bean.Sys_menu;
 import cn.wizzer.modules.sys.bean.Sys_user;
+import cn.wizzer.modules.sys.bean.Sys_user_profile;
 import cn.wizzer.modules.sys.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -22,15 +23,19 @@ import org.nutz.dao.*;
 import org.nutz.dao.Chain;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
+import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -85,11 +90,62 @@ public class LoginAction {
         if (!Strings.isEmpty(theme)) {
             Subject subject = SecurityUtils.getSubject();
             if (subject != null) {
-                Sys_user user = (Sys_user) subject.getPrincipals().getPrimaryPrincipal();
+                Sys_user user = (Sys_user) subject.getPrincipal();
                 user.setLoginTheme(theme);
                 userService.update(Chain.make("login_theme", theme), Cnd.where("id", "=", user.getId()));
             }
         }
+    }
+
+    /**
+     * 切换布局，对登陆用户有效
+     *
+     * @param p
+     * @param v
+     * @param req
+     * @RequiresUser 记住我有效
+     * @RequiresAuthentication 就算记住我也需要重新验证身份
+     */
+    @At("/layout")
+    @RequiresUser
+    public void layout(@Param("p") String p, @Param("v") boolean v, HttpServletRequest req) {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject != null) {
+            Sys_user user = (Sys_user) subject.getPrincipal();
+            if ("sidebar".equals(p)) {
+                userService.update(Chain.make("login_sidebar", v), Cnd.where("id", "=", user.getId()));
+                user.setLoginSidebar(v);
+            } else if ("boxed".equals(p)) {
+                userService.update(Chain.make("login_boxed", v), Cnd.where("id", "=", user.getId()));
+                user.setLoginBoxed(v);
+            } else if ("scroll".equals(p)) {
+                userService.update(Chain.make("login_scroll", v), Cnd.where("id", "=", user.getId()));
+                user.setLoginScroll(v);
+            }
+        }
+
+    }
+
+    /**
+     * 读取用户头像
+     *
+     * @param req
+     * @return
+     * @throws SQLException
+     */
+    @RequiresUser
+    @Ok("raw:jpg")
+    @At("/avatar")
+    @GET
+    public Object avatar(HttpServletRequest req) throws SQLException {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject != null) {
+            Sys_user user = (Sys_user) subject.getPrincipal();
+            if (user.getProfile() != null && user.getProfile().getAvatar() != null) {
+                return user.getProfile().getAvatar();
+            }
+        }
+        return new File(req.getServletContext().getRealPath("/include/img/man.png"));
     }
 
     /**
@@ -107,30 +163,31 @@ public class LoginAction {
             Subject subject = SecurityUtils.getSubject();
             ThreadContext.bind(subject);
             subject.login(token);
-            Sys_user user = (Sys_user) subject.getPrincipals().getPrimaryPrincipal();
-            userService.update(Chain.make("login_ip", StringUtils.getRemoteAddr(req)).add("login_time",new Date())
-                    .add("login_count",user.getLoginCount()+1)
+            Sys_user user = (Sys_user) subject.getPrincipal();
+            userService.update(Chain.make("login_ip", StringUtils.getRemoteAddr(req)).add("login_time", new Date())
+                    .add("login_count", user.getLoginCount() + 1)
                     , Cnd.where("id", "=", user.getId()));
             //计算左侧菜单
-            List<Sys_menu> firstMenus=getChildMenus("", user.getMenus());
-            Map<String,List<Sys_menu>> secondMenus=new HashMap<String, List<Sys_menu>>();
-            for(Sys_menu menu:user.getMenus()){
-                if(menu.getId().length()>4){
-                    List<Sys_menu> s=secondMenus.get(getParentId(menu.getId()));
-                    if(s==null)s=new ArrayList<Sys_menu>();
+            List<Sys_menu> firstMenus = getChildMenus("", user.getMenus());
+            Map<String, List<Sys_menu>> secondMenus = new HashMap<>();
+            for (Sys_menu menu : user.getMenus()) {
+                if (menu.getId().length() > 4) {
+                    List<Sys_menu> s = secondMenus.get(getParentId(menu.getId()));
+                    if (s == null) s = new ArrayList<>();
                     s.add(menu);
-                    secondMenus.put(getParentId(menu.getId()),s);
+                    secondMenus.put(getParentId(menu.getId()), s);
                 }
             }
             user.setFirstMenus(firstMenus);
             user.setSecondMenus(secondMenus);
+            user.setProfile(userService.getProfile(user.getId()));
             return Message.success("login.success", req);
         } catch (IncorrectCaptchaException e) {
             //自定义的验证码错误异常,需shrio.ini 配置authcStrategy属性，加到对应的类中
             return Message.error("login.error.captcha", req);
         } catch (IncorrectIpException e) {
             //自定义的验证码错误异常,需shrio.ini 配置authcStrategy属性，加到对应的类中
-            return new NutMap().setv("type","iperror").setv("content","IP is error");
+            return new NutMap().setv("type", "iperror").setv("content", "IP is error");
         } catch (LockedAccountException e) {
             return Message.error("login.error.locked", req);
         } catch (AuthenticationException e) {
@@ -140,23 +197,24 @@ public class LoginAction {
         }
     }
 
-    private List<Sys_menu> getChildMenus(String id,List<Sys_menu> menus){
-        List<Sys_menu> menuList=new ArrayList<Sys_menu>();
-        for(Sys_menu menu:menus){
-            if(id.equals(getParentId(menu.getId()))){
+    private List<Sys_menu> getChildMenus(String id, List<Sys_menu> menus) {
+        List<Sys_menu> menuList = new ArrayList<Sys_menu>();
+        for (Sys_menu menu : menus) {
+            if (id.equals(getParentId(menu.getId()))) {
                 menuList.add(menu);
             }
         }
         return menuList;
     }
 
-    private String getParentId(String id){
-        if(id==null||id.length()==4){
+    private String getParentId(String id) {
+        if (id == null || id.length() == 4) {
             return "";
-        }else {
-            return id.substring(0,id.length()-4);
+        } else {
+            return id.substring(0, id.length() - 4);
         }
     }
+
     /**
      * 登出系统
      */

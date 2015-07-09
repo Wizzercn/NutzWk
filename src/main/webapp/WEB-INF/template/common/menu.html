@@ -1,0 +1,129 @@
+<aside class="sidebar offscreen-left">
+
+    <nav class="main-navigation" data-height="auto" data-size="6px" data-distance="0" data-rail-visible="true"
+         data-wheel-step="10">
+        <p class="nav-title">${msg['index.menu']}</p>
+        <ul class="nav">
+
+            <li>
+                <a href="">
+                    <i class="ti-home"></i>
+                    <span>${msg['index.home']}</span>
+                </a>
+            </li>
+            #if(!$app_language||$app_language=="zh_CN")
+            <!--中文-->
+            #foreach($menu in ${shiro.getPrincipalProperty('firstMenus')})
+            <li>
+
+                <a href="javascript:;" >
+                    <i class="toggle-accordion"></i>
+                    #if(${menu.icon})<i class="$!{menu.icon}"></i>#end
+                    <span>$!{menu.name}</span>
+                </a>
+                #if(${shiro.getPrincipalProperty('secondMenus').get($menu.id)}&&${shiro.getPrincipalProperty('secondMenus').get($menu.id).size()}>0)
+                <ul class="sub-menu">
+                    #foreach($obj in $secondMenus[$menu.id])
+                    <li>
+                        <a #if(${obj.href}) href="$!{obj.href}" #else href="javascript:;"#end>
+                            #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)<i class="toggle-accordion"></i>#end
+                            <span>$!{obj.name}</span>
+                        </a>
+                        #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)
+                        <ul class="sub-menu">
+                            #foreach($mm in $secondMenus[$obj.id])
+                            <li>
+                                <a #if(${mm.href}) href="$!{mm.href}" #else href="javascript:;"#end>
+                                    <span>$!{mm.name}</span>
+                                </a>
+                            </li>
+                            #end
+                        </ul>
+                        #end
+                    </li>
+                    #end
+                </ul>
+                #end
+
+            </li>
+            #end
+            #else
+            <!--english-->
+            #foreach($menu in ${shiro.getPrincipalProperty('firstMenus')})
+            <li>
+
+                <a href="javascript:;" >
+                    <i class="toggle-accordion"></i>
+                    #if(${menu.icon})<i class="$!{menu.icon}"></i>#end
+                    <span>$!{menu.aliasName}</span>
+                </a>
+                #if(${shiro.getPrincipalProperty('secondMenus').get($menu.id)}&&${shiro.getPrincipalProperty('secondMenus').get($menu.id).size()}>0)
+                <ul class="sub-menu">
+                    #foreach($obj in $secondMenus[$menu.id])
+                    <li>
+                        <a #if(${obj.href}) href="$!{obj.href}" #else href="javascript:;"#end>
+                            #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)<i class="toggle-accordion"></i>#end
+                            <span>$!{obj.aliasName}</span>
+                        </a>
+                        #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)
+                        <ul class="sub-menu">
+                            #foreach($mm in $secondMenus[$obj.id])
+                            <li>
+                                <a #if(${mm.href}) href="$!{mm.href}" #else href="javascript:;"#end>
+                                    <span>$!{mm.aliasName}</span>
+                                </a>
+                            </li>
+                            #end
+                        </ul>
+                        #end
+                    </li>
+                    #end
+                </ul>
+                #end
+
+            </li>
+            #end
+            #end
+
+
+        </ul>
+        <p class="nav-title">${msg['index.links']}</p>
+        <ul class="nav">
+
+            <li>
+                <a href="http://www.wizzer.cn" target="_blank">
+                    <i class="ti-stats-up"></i>
+                    <span>Wizzer.cn</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://www.nutzam.com" target="_blank">
+                    <i class="ti-infinite"></i>
+                    <span>Nutz</span>
+                </a>
+            </li>
+        </ul>
+        <p class="nav-title">LABELS</p>
+        <ul class="nav">
+            <li>
+                <a href="javascript:;">
+                    <i class="ti-control-record text-warning"></i>
+                    <span>Projects</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:;">
+                    <i class="ti-control-record text-success"></i>
+                    <span>Apps</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:;">
+                    <i class="ti-control-record text-danger"></i>
+                    <span>Support</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+

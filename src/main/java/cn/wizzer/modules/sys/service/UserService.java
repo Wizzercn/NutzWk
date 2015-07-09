@@ -4,6 +4,7 @@ import cn.wizzer.common.service.core.BaseIdEntityService;
 import cn.wizzer.modules.sys.bean.Sys_role;
 import cn.wizzer.modules.sys.bean.Sys_menu;
 import cn.wizzer.modules.sys.bean.Sys_user;
+import cn.wizzer.modules.sys.bean.Sys_user_profile;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -49,6 +50,10 @@ public class UserService extends BaseIdEntityService<Sys_user> {
         sql.setCallback(Sqls.callback.entities());
         dao().execute(sql);
         return sql.getList(Sys_menu.class);
+    }
+
+    public Sys_user_profile getProfile(long uid){
+        return dao().fetch(Sys_user_profile.class,Cnd.where("user_id","=",uid));
     }
 
     public List<String> getRoleNameList(Sys_user user) {

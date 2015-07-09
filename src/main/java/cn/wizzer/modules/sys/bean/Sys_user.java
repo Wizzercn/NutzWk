@@ -62,6 +62,12 @@ public class Sys_user extends BasePojo implements Serializable {
     @Comment("登陆皮肤")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String loginTheme;
+    @Column("login_sidebar")
+    private boolean loginSidebar;
+    @Column("login_boxed")
+    private boolean loginBoxed;
+    @Column("login_scroll")
+    private boolean loginScroll;
     @ManyMany(from="user_id", relation="sys_user_role", target=Sys_role.class, to="role_id")
     protected List<Sys_role> roles;
     @One(target=Sys_user_profile.class, field="id", key="userId")
@@ -205,4 +211,29 @@ public class Sys_user extends BasePojo implements Serializable {
     public void setSecondMenus(Map<String, List<Sys_menu>> secondMenus) {
         this.secondMenus = secondMenus;
     }
+
+    public boolean isLoginSidebar() {
+        return loginSidebar;
+    }
+
+    public void setLoginSidebar(boolean loginSidebar) {
+        this.loginSidebar = loginSidebar;
+    }
+
+    public boolean isLoginBoxed() {
+        return loginBoxed;
+    }
+
+    public void setLoginBoxed(boolean loginBoxed) {
+        this.loginBoxed = loginBoxed;
+    }
+
+    public boolean isLoginScroll() {
+        return loginScroll;
+    }
+
+    public void setLoginScroll(boolean loginScroll) {
+        this.loginScroll = loginScroll;
+    }
+
 }

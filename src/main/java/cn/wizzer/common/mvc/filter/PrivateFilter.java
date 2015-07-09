@@ -20,7 +20,7 @@ public class PrivateFilter implements ActionFilter {
         //获取当前登陆用户的皮肤样式
         Subject subject = SecurityUtils.getSubject();
         if (subject != null && subject.getPrincipals() != null) {
-            Sys_user user = (Sys_user) subject.getPrincipals().getPrimaryPrincipal();
+            Sys_user user = (Sys_user) subject.getPrincipal();
             if (user != null) {
                 context.getRequest().setAttribute("app_theme", user.getLoginTheme());
                 context.getRequest().setAttribute("firstMenus", user.getFirstMenus());

@@ -90,7 +90,8 @@ public class MainSetup implements Setup {
             menu.setIs_enabled(true);
             menu.setId("0001");
             menu.setName("系统管理");
-            menu.setAliasName("System Management");
+            menu.setAliasName("System");
+            menu.setIcon("ti-settings");
             menu.setLocation(0);
             menu.setHref("");
             menu.setIs_show(true);
@@ -100,7 +101,6 @@ public class MainSetup implements Setup {
             menu.setId("00010001");
             menu.setName("组织结构");
             menu.setAliasName("Units");
-            menu.setIcon("icon-home");
             menu.setLocation(0);
             menu.setHref("/private/sys/unit");
             menu.setIs_show(true);
@@ -111,7 +111,6 @@ public class MainSetup implements Setup {
             menu.setId("00010002");
             menu.setName("用户管理");
             menu.setAliasName("Users");
-            menu.setIcon("icon-users");
             menu.setLocation(0);
             menu.setHref("/private/sys/user");
             menu.setIs_show(true);
@@ -158,7 +157,6 @@ public class MainSetup implements Setup {
             menu.setId("00010003");
             menu.setName("角色管理");
             menu.setAliasName("Roles");
-            menu.setIcon("icon-shield");
             menu.setLocation(0);
             menu.setHref("/private/sys/role");
             menu.setIs_show(true);
@@ -169,7 +167,6 @@ public class MainSetup implements Setup {
             menu.setId("00010004");
             menu.setName("菜单管理");
             menu.setAliasName("Menus");
-            menu.setIcon("icon-list");
             menu.setLocation(0);
             menu.setHref("/private/sys/menu");
             menu.setIs_show(true);
@@ -179,8 +176,7 @@ public class MainSetup implements Setup {
             menu.setIs_enabled(true);
             menu.setId("00010005");
             menu.setName("参数配置");
-            menu.setAliasName("Parameters");
-            menu.setIcon("icon-settings");
+            menu.setAliasName("Params");
             menu.setLocation(0);
             menu.setHref("/private/sys/config");
             menu.setIs_show(true);
@@ -191,7 +187,6 @@ public class MainSetup implements Setup {
             menu.setId("00010006");
             menu.setName("数据字典");
             menu.setAliasName("Dicts");
-            menu.setIcon("icon-notebook");
             menu.setLocation(0);
             menu.setHref("/private/sys/dict");
             menu.setIs_show(true);

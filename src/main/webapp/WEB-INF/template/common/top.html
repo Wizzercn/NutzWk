@@ -1,33 +1,93 @@
-<!DOCTYPE html>
-<html>
-
+<!doctype html>
+<html class="no-js" lang="">
 <head>
+
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
     <meta name="description" content="NutzWk 2.0">
     <meta name="keywords" content="nutz,wizzer">
     <title>${app_name}</title>
-    <!-- =============== VENDOR STYLES ===============-->
-    <!-- FONT AWESOME-->
-    <link rel="stylesheet" href="${base}/include/vendor/fontawesome/css/font-awesome.min.css">
-    <!-- SIMPLE LINE ICONS-->
-    <link rel="stylesheet" href="${base}/include/vendor/simple-line-icons/css/simple-line-icons.css">
-    <!-- ANIMATE.CSS-->
-    <link rel="stylesheet" href="${base}/include/vendor/animate.css/animate.min.css">
-    <!-- WHIRL (spinners)-->
-    <link rel="stylesheet" href="${base}/include/vendor/whirl/dist/whirl.css">
-    <!-- =============== PAGE VENDOR STYLES ===============-->
-    <!-- =============== BOOTSTRAP STYLES ===============-->
-    <link rel="stylesheet" href="${base}/include/css/bootstrap.css" id="bscss">
-    <!-- =============== APP STYLES ===============-->
-    <link rel="stylesheet" href="${base}/include/css/app.css" id="maincss">
+    <link rel="stylesheet" href="${base}/include/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
+
+
+    <link rel="stylesheet" href="${base}/include/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${base}/include/css/font-awesome.css">
+    <link rel="stylesheet" href="${base}/include/css/themify-icons.css">
+    <link rel="stylesheet" href="${base}/include/css/animate.min.css">
+
+    <link rel="stylesheet" href="${base}/include/css/fonts/font.css">
+    <link rel="stylesheet" href="${base}/include/css/main.css">
+    <link rel="stylesheet" href="${base}/include/css/panel.css">
+
+    <!--[if lt IE 9]>
+    <script src="${base}/include/js/html5shiv.js"></script>
+    <script src="${base}/include/js/respond.min.js"></script>
+    <script src="${base}/include/js/json2.js"></script>
+    <![endif]-->
+    #if(${shiro.getPrincipalProperty('loginTheme')})
+    <link rel="stylesheet" href="${base}/include/css/skins/${shiro.getPrincipalProperty('loginTheme')}" id="skin">
+    #else
+    <link rel="stylesheet" href="${base}/include/css/skins/palette.css" id="skin">
+    #end
+    <script src="${base}/include/plugins/modernizr.js"></script>
+    <!--趁热情的人心还未冷，趁主动的人还未绝望，去拥抱，去示好，别总是等到彻底失去后才幡然醒悟，会来不及。-->
     <script type="text/javascript">
         var base="${base}";
     </script>
-    #if($app_theme)
-    <link rel="stylesheet" href="${app_theme}">
-    #end
-<!--趁热情的人心还未冷，趁主动的人还未绝望，去拥抱，去示好，别总是等到彻底失去后才幡然醒悟，会来不及。-->
 </head>
+
 <body>
-<div class="wrapper">
+
+<div class="gallery-loader" style="background-color:transparent;">
+    <div class="loader"></div>
+</div>
+
+<div class="playground hidden-xs">
+    <div class="options">
+        <div class="pg-close ti-close"></div>
+        <div class="options-container color-options">
+            <h6>${msg['index.themes']}</h6>
+            <a onclick="sublime.changeTheme('palette.css')" href="${base}/include/css/skins/palette.css"
+               class="css_orange cs_color cs_1">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+            <a onclick="sublime.changeTheme('palette.2.css')" href="${base}/include/css/skins/palette.2.css"
+               class="css_orange cs_color cs_2">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+            <a onclick="sublime.changeTheme('palette.3.css')" href="${base}/include/css/skins/palette.3.css"
+               class="css_orange cs_color cs_3">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+            <a onclick="sublime.changeTheme('palette.4.css')" href="${base}/include/css/skins/palette.4.css"
+               class="css_orange cs_color cs_4">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+        </div>
+        <div class="options-container">
+            <h6>${msg['index.layout']}</h6>
+            <a class="pg-val toggle-sidebar toggle-active" href="javascript:;">
+                <img src="${base}/include/img/panel/small.png" alt="">
+            </a>
+            <a class="pg-val toggle-scroll toggle-active" href="javascript:;">
+                <img src="${base}/include/img/panel/scroll.png" alt="">
+            </a>
+            <a class="pg-val toggle-boxed toggle-active" href="javascript:;">
+                <img src="${base}/include/img/panel/boxed.png" alt="">
+            </a>
+        </div>
+        <small class="pg-footer"><i class="ti-info-alt mr5"></i>${msg['index.panel']}</small>
+    </div>
+</div>

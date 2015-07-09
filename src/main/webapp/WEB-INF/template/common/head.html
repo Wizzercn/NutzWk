@@ -1,155 +1,204 @@
-<!-- top navbar-->
-<header class="topnavbar-wrapper">
-    <!-- START Top Navbar-->
-    <nav role="navigation" class="navbar topnavbar">
-        <!-- START navbar header-->
-        <div class="navbar-header">
-            <a href="" class="navbar-brand">
-                <div class="brand-logo">
-                    <img src="${base}/include/img/logo.png" alt="App Logo" class="img-responsive">
-                </div>
-                <div class="brand-logo-collapsed">
-                    <img src="${base}/include/img/logo-single.png" alt="App Logo" class="img-responsive">
+<header class="header header-fixed navbar">
+    <div class="brand">
+
+        <a href="javascript:;" class="ti-menu off-left visible-xs" data-toggle="offscreen" data-move="ltr"></a>
+
+
+        <a href="" class="navbar-brand">
+            <img src="${base}/include/img/logo.png" alt="">
+                <span class="heading-font">
+                ${app_name}
+                </span>
+        </a>
+
+    </div>
+    <ul class="nav navbar-nav">
+        <li class="hidden-xs">
+
+            <a href="javascript:;" class="toggle-sidebar">
+                <i class="ti-menu"></i>
+            </a>
+
+        </li>
+        <li class="header-search">
+
+            <a href="javascript:;" class="toggle-search">
+                <i class="ti-search"></i>
+            </a>
+
+            <div class="search-container">
+                <form role="search">
+                    <input type="text" class="form-control search" placeholder="type and press enter">
+                </form>
+            </div>
+        </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown hidden-xs">
+            <a href="javascript:;" data-toggle="dropdown">
+                <i class="ti-more-alt"></i>
+            </a>
+            <ul class="dropdown-menu animated zoomIn">
+                <li class="dropdown-header">Quick Links</li>
+                <li>
+                    <a href="javascript:;">Start New Campaign</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Review Campaigns</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="javascript:;">Settings</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Wish List</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Purchases History</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="javascript:;">Activity Log</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Settings</a>
+                </li>
+                <li>
+                    <a href="javascript:;">System Reports</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="javascript:;">Help</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Report a Problem</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="notifications dropdown">
+            <a href="javascript:;" data-toggle="dropdown">
+                <i class="ti-bell"></i>
+
+                <div class="badge badge-top bg-danger animated flash">
+                    <span>3</span>
                 </div>
             </a>
-        </div>
-        <!-- END navbar header-->
-        <!-- START Nav wrapper-->
-        <div class="nav-wrapper">
-            <!-- START Left navbar-->
-            <ul class="nav navbar-nav">
-                <li>
-                    <!-- Button used to collapse the left sidebar. Only visible on tablet and desktops-->
-                    <a href="#" data-toggle-state="aside-collapsed" class="hidden-xs">
-                        <em class="fa fa-navicon"></em>
-                    </a>
-                    <!-- Button to show/hide the sidebar on mobile. Visible on mobile only.-->
-                    <a href="#" data-toggle-state="aside-toggled" data-no-persist="true" class="visible-xs sidebar-toggle">
-                        <em class="fa fa-navicon"></em>
-                    </a>
-                </li>
-                <!-- START User avatar toggle-->
-                <li>
-                    <!-- Button used to collapse the left sidebar. Only visible on tablet and desktops-->
-                    <a id="user-block-toggle" href="#user-block" data-toggle="collapse">
-                        <em class="icon-user"></em>
-                    </a>
-                </li>
-                <!-- END User avatar toggle-->
-                <!-- START lock screen-->
-                <li>
-                    <a href="${base}/private/lock" title="Lock screen">
-                        <em class="icon-lock"></em>
-                    </a>
-                </li>
-                <!-- END lock screen-->
-            </ul>
-            <!-- END Left navbar-->
-            <!-- START Right Navbar-->
-            <ul class="nav navbar-nav navbar-right">
-                <!-- Search icon-->
-                <li>
-                    <a href="#" data-search-open="">
-                        <em class="icon-magnifier"></em>
-                    </a>
-                </li>
-                <!-- Fullscreen (only desktops)-->
-                <li class="visible-lg">
-                    <a href="#" data-toggle-fullscreen="">
-                        <em class="fa fa-expand"></em>
-                    </a>
-                </li>
-                <!-- START Alert menu-->
-                <li class="dropdown dropdown-list">
-                    <a href="#" data-toggle="dropdown">
-                        <em class="icon-bell"></em>
-                        <div class="label label-danger">11</div>
-                    </a>
-                    <!-- START Dropdown menu-->
-                    <ul class="dropdown-menu animated flipInX">
-                        <li>
-                            <!-- START list group-->
-                            <div class="list-group">
-                                <!-- list item-->
-                                <a href="#" class="list-group-item">
-                                    <div class="media-box">
-                                        <div class="pull-left">
-                                            <em class="fa fa-twitter fa-2x text-info"></em>
-                                        </div>
-                                        <div class="media-box-body clearfix">
-                                            <p class="m0">New followers</p>
-                                            <p class="m0 text-muted">
-                                                <small>1 new follower</small>
-                                            </p>
+
+            <div class="dropdown-menu animated fadeInLeft">
+                <div class="panel panel-default no-m">
+                    <div class="panel-heading small"><b>Notifications</b>
+                    </div>
+
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="javascript:;">
+                                    <span class="pull-left mt5 mr15">
+                                    <img src="${base}/include/img/face4.jpg" class="avatar avatar-sm img-circle" alt="">
+                                    </span>
+
+                                <div class="m-body">
+                                    <div class="">
+                                        <small><b>CRYSTAL BROWN</b></small>
+                                        <span class="label label-danger pull-right">ASSIGN AGENT</span>
+                                    </div>
+                                    <span>Opened a support query</span>
+                                    <span class="time small">2 mins ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="javascript:;">
+                                <div class="pull-left mt5 mr15">
+                                    <div class="circle-icon bg-danger">
+                                        <i class="ti-download"></i>
+                                    </div>
+                                </div>
+                                <div class="m-body">
+                                    <span>Upload Progress</span>
+
+                                    <div class="progress progress-xs mt5 mb5">
+                                        <div class="progress-bar" role="progressbar" aria-valuenow="40"
+                                             aria-valuemin="0" aria-valuemax="100" style="width: 40%">
                                         </div>
                                     </div>
-                                </a>
-                                <!-- list item-->
-                                <a href="#" class="list-group-item">
-                                    <div class="media-box">
-                                        <div class="pull-left">
-                                            <em class="fa fa-envelope fa-2x text-warning"></em>
-                                        </div>
-                                        <div class="media-box-body clearfix">
-                                            <p class="m0">New e-mails</p>
-                                            <p class="m0 text-muted">
-                                                <small>You have 10 new emails</small>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <!-- list item-->
-                                <a href="#" class="list-group-item">
-                                    <div class="media-box">
-                                        <div class="pull-left">
-                                            <em class="fa fa-tasks fa-2x text-success"></em>
-                                        </div>
-                                        <div class="media-box-body clearfix">
-                                            <p class="m0">Pending Tasks</p>
-                                            <p class="m0 text-muted">
-                                                <small>11 pending task</small>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <!-- last list item -->
-                                <a href="#" class="list-group-item">
-                                    <small>More notifications</small>
-                                    <span class="label label-danger pull-right">14</span>
-                                </a>
-                            </div>
-                            <!-- END list group-->
+                                    <span class="time small">Submited 23 mins ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="javascript:;">
+                                    <span class="pull-left mt5 mr15">
+                                    <img src="${base}/include/img/face3.jpg" class="avatar avatar-sm img-circle" alt="">
+                                    </span>
+
+                                <div class="m-body">
+                                    <em>Status Update:</em>
+                                    <span>All servers now online</span>
+                                    <span class="time small">5 days ago</span>
+                                </div>
+                            </a>
                         </li>
                     </ul>
-                    <!-- END Dropdown menu-->
-                </li>
-                <!-- END Alert menu-->
-                <!-- START Contacts button-->
-                <li>
-                    <a href="#" data-toggle-state="offsidebar-open" data-no-persist="true">
-                        <em class="icon-settings"></em>
-                    </a>
-                </li>
-                <li>
-                    <a href="${base}/private/logout">
-                        <em class="icon-logout"></em>
-                    </a>
-                </li>
-                <!-- END Contacts menu-->
-            </ul>
-            <!-- END Right Navbar-->
-        </div>
-
-        <!-- END Nav wrapper-->
-        <!-- START Search form-->
-        <form role="search" action="#" class="navbar-form">
-            <div class="form-group has-feedback">
-                <input type="text" placeholder="Type and hit enter ..." class="form-control">
-                <div data-search-dismiss="" class="fa fa-times form-control-feedback"></div>
+                    <div class="panel-footer">
+                        <a href="javascript:;">See all notifications</a>
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="hidden btn btn-default">Submit</button>
-        </form>
-        <!-- END Search form-->
-    </nav>
-    <!-- END Top Navbar-->
+        </li>
+        <li class="dropdown hidden-xs">
+            <a href="javascript:;" class="pg-toggle">
+                <i class="ti-palette"></i>
+            </a>
+        </li>
+
+        <!-- START Language list-->
+        <li class="language-dropdown dropdown hidden-xs">
+            <a href="javascript:;" data-toggle="dropdown" id="language">
+                #if(!$app_language||$app_language=="zh_CN")
+                <img src="${base}/include/img/flags/cn.png" class="flag">
+                <span class="language"></span>
+                #else
+                <img src="${base}/include/img/flags/us.png" class="flag">
+                <span class="language"></span>
+                #end
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
+                <li>
+                    <a href="${base}/private/language/en_US">
+                        <img src="${base}/include/img/flags/us.png" class="flag">
+                        <span class="language">English</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${base}/private/language/zh_CN">
+                        <img src="${base}/include/img/flags/cn.png" class="flag">
+                        <span class="language">中文</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <!-- END Language list    -->
+
+        <li class="off-right">
+            <a href="javascript:;" data-toggle="dropdown">
+                <img src="${base}/private/avatar" class="header-avatar img-circle" alt="user" title="user">
+                <span class="hidden-xs ml10">${shiro.getPrincipalProperty('profile').nickname}</span>
+                <i class="ti-angle-down ti-caret hidden-xs"></i>
+            </a>
+            <ul class="dropdown-menu animated fadeInLeft">
+                <li>
+                    <a href="javascript:;">${msg['index.user.setting']}</a>
+                </li>
+                <li>
+                    <a href="javascript:;">${msg['index.user.password']}</a>
+                </li>
+            </ul>
+        </li>
+        <li class="off-right">
+            <a href="${base}/private/logout">
+                <i class="ti-power-off"></i>
+            </a>
+        </li>
+    </ul>
 </header>
