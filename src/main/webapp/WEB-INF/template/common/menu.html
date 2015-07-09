@@ -6,7 +6,7 @@
         <ul class="nav">
 
             <li>
-                <a href="">
+                <a href="${base}/private/index">
                     <i class="ti-home"></i>
                     <span>${msg['index.home']}</span>
                 </a>
@@ -23,7 +23,7 @@
                 </a>
                 #if(${shiro.getPrincipalProperty('secondMenus').get($menu.id)}&&${shiro.getPrincipalProperty('secondMenus').get($menu.id).size()}>0)
                 <ul class="sub-menu">
-                    #foreach($obj in $secondMenus[$menu.id])
+                    #foreach($obj in ${shiro.getPrincipalProperty('secondMenus').get($menu.id)})
                     <li>
                         <a #if(${obj.href}) href="$!{obj.href}" #else href="javascript:;"#end>
                             #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)<i class="toggle-accordion"></i>#end
@@ -31,7 +31,7 @@
                         </a>
                         #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)
                         <ul class="sub-menu">
-                            #foreach($mm in $secondMenus[$obj.id])
+                            #foreach($mm in ${shiro.getPrincipalProperty('secondMenus').get($obj.id)})
                             <li>
                                 <a #if(${mm.href}) href="$!{mm.href}" #else href="javascript:;"#end>
                                     <span>$!{mm.name}</span>
