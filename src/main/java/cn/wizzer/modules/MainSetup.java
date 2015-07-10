@@ -1,12 +1,17 @@
 package cn.wizzer.modules;
 
+import cn.wizzer.common.mvc.config.Dict;
+import cn.wizzer.common.util.CacheUtils;
 import cn.wizzer.modules.sys.bean.*;
 import cn.wizzer.common.mvc.config.Globals;
+import cn.wizzer.modules.sys.service.ConfigService;
+import cn.wizzer.modules.sys.service.DictService;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.velocity.app.Velocity;
+import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.impl.FileSqlManager;
@@ -16,21 +21,21 @@ import org.nutz.ioc.Ioc;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by Wizzer.cn on 2015/6/27.
  */
 public class MainSetup implements Setup {
     private static final Log log = Logs.get();
-
+    static DictService dictService= Mvcs.ctx().getDefaultIoc().get(DictService.class);
+    static ConfigService configService= Mvcs.ctx().getDefaultIoc().get(ConfigService.class);
     public void init(NutConfig config) {
         try {
             Ioc ioc = config.getIoc();
@@ -51,14 +56,31 @@ public class MainSetup implements Setup {
         }
     }
 
+    /**
+     * 初始化系统变量
+     * @param config
+     * @param dao
+     */
     private void initSysSetting(NutConfig config, Dao dao) {
-        Globals.InitSysConfig();
-        Globals.InitDataDict();
+        Map<String,String> map=new HashMap<>();
+        List<Sys_config> configList =dao.query(Sys_config.class,Cnd.orderBy().asc("location"));
+        for (Sys_config sysConfig : configList) {
+            map.put(sysConfig.getCname(), sysConfig.getCvalue());
+        }
+        Map<String,Object> dictMap=new HashMap<>();
+        dictMap.put(Dict.DIVSION, dictService.list(Sqls.create("SELECT dkey,dval FROM sys_dict WHERE id LIKE '" + Dict.DIVSION + "_%'")));
+        CacheUtils.put(Globals.SYS_CONFIG_KEY,map);
+        CacheUtils.put(Globals.SYS_DICT_KEY, dictMap);
         Globals.APP_BASE_PATH = Strings.sNull(config.getAppRoot());//项目路径
         Globals.APP_BASE_NAME = Strings.sNull(config.getServletContext().getContextPath());//部署名
-        Globals.APP_NAME = Strings.sNull(Globals.SYS_CONFIG.get("app_name"));//项目名称
+        Globals.APP_NAME = Strings.sNull(map.get("app_name"));//项目名称
     }
 
+    /**
+     * 初始化数据库
+     * @param config
+     * @param dao
+     */
     private void initSysData(NutConfig config, Dao dao) {
         Daos.createTablesInPackage(dao, "cn.wizzer.modules", true);
         // 若必要的数据表不存在，则初始化数据库
@@ -231,7 +253,11 @@ public class MainSetup implements Setup {
         }
     }
 
-
+    /**
+     * 初始化Velocity
+     * @param config
+     * @throws IOException
+     */
     private void velocityInit(NutConfig config) throws IOException {
         log.info("Veloctiy Init Start...");
         Properties p = new Properties();
@@ -250,6 +276,7 @@ public class MainSetup implements Setup {
         p.setProperty("runtime.log.info.stacktrace", "false");
         p.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
         p.setProperty("runtime.log.logsystem.log4j.category", "velocity_log");
+
         Velocity.init(p);
         log.info("Veloctiy Init End.");
     }

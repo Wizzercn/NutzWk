@@ -22,4 +22,16 @@ public class StringUtils {
         }
         return remoteAddr != null ? remoteAddr : request.getRemoteAddr();
     }
+
+    /**
+     * 去掉URL中?后的路径
+     * @param p
+     * @return
+     */
+    public static String getPath(String p){
+        if(Strings.sNull(p).contains("?")){
+            return p.substring(0,p.indexOf("?"));
+        }
+        return Strings.sNull(p);
+    }
 }

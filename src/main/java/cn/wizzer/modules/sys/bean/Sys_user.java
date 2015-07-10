@@ -75,7 +75,7 @@ public class Sys_user extends BasePojo implements Serializable {
     protected List<Sys_menu> menus;
     protected List<Sys_menu> firstMenus;
     protected Map<String,List<Sys_menu>> secondMenus;
-
+    protected Map<String,String> idMenus;
     public long getId() {
         return id;
     }
@@ -236,4 +236,11 @@ public class Sys_user extends BasePojo implements Serializable {
         this.loginScroll = loginScroll;
     }
 
+    public Map<String, String> getIdMenus() {
+        return idMenus;
+    }
+
+    public void setIdMenus(Map<String, String> idMenus) {
+        this.idMenus = idMenus;
+    }
 }

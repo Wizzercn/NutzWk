@@ -4,6 +4,7 @@ import cn.wizzer.common.Message;
 import cn.wizzer.common.exception.IncorrectCaptchaException;
 import cn.wizzer.common.exception.IncorrectIpException;
 import cn.wizzer.common.mvc.filter.CaptchaFormAuthenticationFilter;
+import cn.wizzer.common.util.CacheUtils;
 import cn.wizzer.common.util.CookieUtils;
 import cn.wizzer.common.util.StringUtils;
 import cn.wizzer.modules.sys.bean.Sys_menu;
@@ -181,12 +182,13 @@ public class LoginAction {
             user.setFirstMenus(firstMenus);
             user.setSecondMenus(secondMenus);
             user.setProfile(userService.getProfile(user.getId()));
+            user.setIdMenus(getIdMenus(user.getMenus()));
             return Message.success("login.success", req);
         } catch (IncorrectCaptchaException e) {
             //自定义的验证码错误异常,需shrio.ini 配置authcStrategy属性，加到对应的类中
             return Message.error("login.error.captcha", req);
         } catch (IncorrectIpException e) {
-            //自定义的验证码错误异常,需shrio.ini 配置authcStrategy属性，加到对应的类中
+            //IP异常返回信息，其实就是验证码为空
             return new NutMap().setv("type", "iperror").setv("content", "IP is error");
         } catch (LockedAccountException e) {
             return Message.error("login.error.locked", req);
@@ -197,8 +199,27 @@ public class LoginAction {
         }
     }
 
+    /**
+     * 得到一个路径和ID对应的map，用于当前栏目高亮
+     * @param menus
+     * @return
+     */
+    private Map<String,String> getIdMenus( List<Sys_menu> menus){
+        Map<String,String> menuMap=new HashMap<>();
+        for(Sys_menu menu:menus){
+            menuMap.put(StringUtils.getPath(menu.getHref()), menu.getId());
+        }
+        return menuMap;
+    }
+
+    /**
+     * 获得第一级菜单
+     * @param id
+     * @param menus
+     * @return
+     */
     private List<Sys_menu> getChildMenus(String id, List<Sys_menu> menus) {
-        List<Sys_menu> menuList = new ArrayList<Sys_menu>();
+        List<Sys_menu> menuList = new ArrayList<>();
         for (Sys_menu menu : menus) {
             if (id.equals(getParentId(menu.getId()))) {
                 menuList.add(menu);
@@ -207,6 +228,11 @@ public class LoginAction {
         return menuList;
     }
 
+    /**
+     * 得到父菜单ID
+     * @param id
+     * @return
+     */
     private String getParentId(String id) {
         if (id == null || id.length() == 4) {
             return "";
