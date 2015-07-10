@@ -11,9 +11,8 @@
                     <span>${msg['index.home']}</span>
                 </a>
             </li>
-            #set($id=${shiro.getPrincipalProperty('idMenus').get("$app_path")})
+            #set($id=${shiro.getPrincipalProperty('idMenus').get($app_path)})
             #if(!$id||$id=="") #set($id="wizzer.cn")#end
-            $id
             #if(!$app_language||$app_language=="zh_CN")
             <!--中文-->
             #foreach($menu in ${shiro.getPrincipalProperty('firstMenus')})
@@ -53,7 +52,7 @@
             #else
             <!--english-->
             #foreach($menu in ${shiro.getPrincipalProperty('firstMenus')})
-            <li>
+            <li #if($id==$menu.id)class="active"#elseif($id.indexOf($menu.id)!=-1)class="open"#end>
 
                 <a href="javascript:;" >
                     <i class="toggle-accordion"></i>
@@ -63,7 +62,7 @@
                 #if(${shiro.getPrincipalProperty('secondMenus').get($menu.id)}&&${shiro.getPrincipalProperty('secondMenus').get($menu.id).size()}>0)
                 <ul class="sub-menu">
                     #foreach($obj in ${shiro.getPrincipalProperty('secondMenus').get($menu.id)})
-                    <li>
+                    <li #if($id==$obj.id)class="active"#elseif($id.indexOf($obj.id)!=-1)class="open"#end>
                         <a #if(${obj.href}) href="$!{obj.href}" #else href="javascript:;"#end>
                             #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)<i class="toggle-accordion"></i>#end
                             <span>$!{obj.aliasName}</span>
@@ -71,7 +70,7 @@
                         #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)
                         <ul class="sub-menu">
                             #foreach($mm in ${shiro.getPrincipalProperty('secondMenus').get($obj.id)})
-                            <li>
+                            <li #if($id==$mm.id)class="active"#end>
                                 <a #if(${mm.href}) href="$!{mm.href}" #else href="javascript:;"#end>
                                     <span>$!{mm.aliasName}</span>
                                 </a>

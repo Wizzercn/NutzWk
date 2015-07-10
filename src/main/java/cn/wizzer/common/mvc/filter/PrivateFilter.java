@@ -36,14 +36,11 @@ public class PrivateFilter implements ActionFilter {
      */
     private String getMenu(String path, Map map) {
         String p = Strings.sNull(map.get(path));
-        System.out.println("p:::"+p);
-        System.out.println("path:::"+path);
-        if (!Strings.isEmpty(p)) {
-            return Strings.sNull(p);
-        } else if (path.indexOf("/")>0) {
+        if(Strings.isEmpty(p)&&path.lastIndexOf("/")>0){
             return getMenu(path.substring(0, path.lastIndexOf("/")), map);
-        } else {
-            return "";
+        }else if(!Strings.isEmpty(p)){
+            return path;
         }
+        return "";
     }
 }
