@@ -1,0 +1,494 @@
+#macro (sys_top)
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="NutzWk 2.0">
+    <meta name="keywords" content="nutz,wizzer">
+    <title>${app_name}</title>
+    <link rel="stylesheet" href="${base}/include/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
+
+
+    <link rel="stylesheet" href="${base}/include/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${base}/include/css/font-awesome.css">
+    <link rel="stylesheet" href="${base}/include/css/themify-icons.css">
+    <link rel="stylesheet" href="${base}/include/css/animate.min.css">
+
+    <link rel="stylesheet" href="${base}/include/css/fonts/font.css">
+    <link rel="stylesheet" href="${base}/include/css/main.css">
+    <link rel="stylesheet" href="${base}/include/css/panel.css">
+
+    <!--[if lt IE 9]>
+    <script src="${base}/include/js/html5shiv.js"></script>
+    <script src="${base}/include/js/respond.min.js"></script>
+    <script src="${base}/include/js/json2.js"></script>
+    <![endif]-->
+    #if(${shiro.getPrincipalProperty('loginTheme')})
+    <link rel="stylesheet" href="${base}/include/css/skins/${shiro.getPrincipalProperty('loginTheme')}" id="skin">
+    #else
+    <link rel="stylesheet" href="${base}/include/css/skins/palette.css" id="skin">
+    #end
+    <script src="${base}/include/plugins/modernizr.js"></script>
+    <!--趁热情的人心还未冷，趁主动的人还未绝望，去拥抱，去示好，别总是等到彻底失去后才幡然醒悟，会来不及。-->
+    <script type="text/javascript">
+        var base="${base}",language="${app_language}";
+    </script>
+</head>
+
+<body>
+
+<div class="gallery-loader" style="background-color:transparent;">
+    <div class="loader"></div>
+</div>
+
+<div class="playground hidden-xs">
+    <div class="options">
+        <div class="pg-close ti-close"></div>
+        <div class="options-container color-options">
+            <h6>${msg['index.themes']}</h6>
+            <a onclick="sublime.changeTheme('palette.css')" href="${base}/include/css/skins/palette.css"
+               class="css_orange cs_color cs_1">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+            <a onclick="sublime.changeTheme('palette.2.css')" href="${base}/include/css/skins/palette.2.css"
+               class="css_orange cs_color cs_2">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+            <a onclick="sublime.changeTheme('palette.3.css')" href="${base}/include/css/skins/palette.3.css"
+               class="css_orange cs_color cs_3">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+            <a onclick="sublime.changeTheme('palette.4.css')" href="${base}/include/css/skins/palette.4.css"
+               class="css_orange cs_color cs_4">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+        </div>
+        <div class="options-container">
+            <h6>${msg['index.layout']}</h6>
+            <a class="pg-val toggle-sidebar toggle-active" href="javascript:;">
+                <img src="${base}/include/img/panel/small.png" alt="">
+            </a>
+            <a class="pg-val toggle-scroll toggle-active" href="javascript:;">
+                <img src="${base}/include/img/panel/scroll.png" alt="">
+            </a>
+            <a class="pg-val toggle-boxed toggle-active" href="javascript:;">
+                <img src="${base}/include/img/panel/boxed.png" alt="">
+            </a>
+        </div>
+        <small class="pg-footer"><i class="ti-info-alt mr5"></i>${msg['index.panel']}</small>
+    </div>
+</div>
+
+#end
+#macro (sys_head)
+<header class="header header-fixed navbar">
+    <div class="brand">
+
+        <a href="javascript:;" class="ti-menu off-left visible-xs" data-toggle="offscreen" data-move="ltr"></a>
+
+
+        <a href="${base}/private/index" class="navbar-brand">
+            <img src="${base}/include/img/logo.png" alt="">
+                <span class="heading-font">
+                ${app_name}
+                </span>
+        </a>
+
+    </div>
+    <ul class="nav navbar-nav">
+        <li class="hidden-xs">
+
+            <a href="javascript:;" class="toggle-sidebar">
+                <i class="ti-menu"></i>
+            </a>
+
+        </li>
+        <li class="header-search">
+
+            <a href="javascript:;" class="toggle-search">
+                <i class="ti-search"></i>
+            </a>
+
+            <div class="search-container">
+                <form role="search">
+                    <input type="text" class="form-control search" placeholder="type and press enter">
+                </form>
+            </div>
+        </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown hidden-xs">
+            <a href="javascript:;" data-toggle="dropdown">
+                <i class="ti-more-alt"></i>
+            </a>
+            <ul class="dropdown-menu animated zoomIn">
+                <li class="dropdown-header">Quick Links</li>
+                <li>
+                    <a href="javascript:;">Start New Campaign</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Review Campaigns</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="javascript:;">Settings</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Wish List</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Purchases History</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="javascript:;">Activity Log</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Settings</a>
+                </li>
+                <li>
+                    <a href="javascript:;">System Reports</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="javascript:;">Help</a>
+                </li>
+                <li>
+                    <a href="javascript:;">Report a Problem</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="notifications dropdown">
+            <a href="javascript:;" data-toggle="dropdown">
+                <i class="ti-bell"></i>
+
+                <div class="badge badge-top bg-danger animated flash">
+                    <span>3</span>
+                </div>
+            </a>
+
+            <div class="dropdown-menu animated fadeInLeft">
+                <div class="panel panel-default no-m">
+                    <div class="panel-heading small"><b>Notifications</b>
+                    </div>
+
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="javascript:;">
+                                    <span class="pull-left mt5 mr15">
+                                    <img src="${base}/include/img/face4.jpg" class="avatar avatar-sm img-circle" alt="">
+                                    </span>
+
+                                <div class="m-body">
+                                    <div class="">
+                                        <small><b>CRYSTAL BROWN</b></small>
+                                        <span class="label label-danger pull-right">ASSIGN AGENT</span>
+                                    </div>
+                                    <span>Opened a support query</span>
+                                    <span class="time small">2 mins ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="javascript:;">
+                                <div class="pull-left mt5 mr15">
+                                    <div class="circle-icon bg-danger">
+                                        <i class="ti-download"></i>
+                                    </div>
+                                </div>
+                                <div class="m-body">
+                                    <span>Upload Progress</span>
+
+                                    <div class="progress progress-xs mt5 mb5">
+                                        <div class="progress-bar" role="progressbar" aria-valuenow="40"
+                                             aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                                        </div>
+                                    </div>
+                                    <span class="time small">Submited 23 mins ago</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="javascript:;">
+                                    <span class="pull-left mt5 mr15">
+                                    <img src="${base}/include/img/face3.jpg" class="avatar avatar-sm img-circle" alt="">
+                                    </span>
+
+                                <div class="m-body">
+                                    <em>Status Update:</em>
+                                    <span>All servers now online</span>
+                                    <span class="time small">5 days ago</span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="panel-footer">
+                        <a href="javascript:;">See all notifications</a>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li class="dropdown hidden-xs">
+            <a href="javascript:;" class="pg-toggle">
+                <i class="ti-palette"></i>
+            </a>
+        </li>
+
+        <!-- START Language list-->
+        <li class="language-dropdown dropdown hidden-xs">
+            <a href="javascript:;" data-toggle="dropdown" id="language">
+                #if(!$app_language||$app_language=="zh_CN")
+                <img src="${base}/include/img/flags/cn.png" class="flag">
+                <span class="language"></span>
+                #else
+                <img src="${base}/include/img/flags/us.png" class="flag">
+                <span class="language"></span>
+                #end
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
+                <li>
+                    <a href="${base}/private/language/en_US">
+                        <img src="${base}/include/img/flags/us.png" class="flag">
+                        <span class="language">English</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${base}/private/language/zh_CN">
+                        <img src="${base}/include/img/flags/cn.png" class="flag">
+                        <span class="language">中文</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <!-- END Language list    -->
+
+        <li class="off-right">
+            <a href="javascript:;" data-toggle="dropdown">
+                <img src="${base}/private/avatar" class="header-avatar img-circle" alt="user" title="user">
+                <span class="hidden-xs ml10">${shiro.getPrincipalProperty('profile').nickname}</span>
+                <i class="ti-angle-down ti-caret hidden-xs"></i>
+            </a>
+            <ul class="dropdown-menu animated fadeInLeft">
+                <li>
+                    <a href="javascript:;">${msg['index.user.setting']}</a>
+                </li>
+                <li>
+                    <a href="javascript:;">${msg['index.user.password']}</a>
+                </li>
+            </ul>
+        </li>
+        <li class="off-right">
+            <a href="${base}/private/logout">
+                <i class="ti-power-off"></i>
+            </a>
+        </li>
+    </ul>
+</header>
+
+#end
+
+#macro (sys_menu)
+<aside class="sidebar offscreen-left">
+
+    <nav class="main-navigation" data-height="auto" data-size="6px" data-distance="0" data-rail-visible="true"
+         data-wheel-step="10">
+        <p class="nav-title">${msg['index.menu']}</p>
+        <ul class="nav">
+
+            <li>
+                <a href="${base}/private/index">
+                    <i class="ti-home"></i>
+                    <span>${msg['index.home']}</span>
+                </a>
+            </li>
+            #set($id=${shiro.getPrincipalProperty('idMenus').get($app_path)})
+            #if(!$id||$id=="") #set($id="wizzer.cn")#end
+            #if(!$app_language||$app_language=="zh_CN")
+            <!--中文-->
+            #foreach($menu in ${shiro.getPrincipalProperty('firstMenus')})
+            <li #if($id==$menu.id)class="active"#elseif($id.indexOf($menu.id)!=-1)class="open"#end>
+
+                <a href="javascript:;" >
+                    <i class="toggle-accordion"></i>
+                    #if(${menu.icon})<i class="$!{menu.icon}"></i>#end
+                    <span>$!{menu.name}</span>
+                </a>
+                #if(${shiro.getPrincipalProperty('secondMenus').get($menu.id)}&&${shiro.getPrincipalProperty('secondMenus').get($menu.id).size()}>0)
+                <ul class="sub-menu">
+                    #foreach($obj in ${shiro.getPrincipalProperty('secondMenus').get($menu.id)})
+                    <li #if($id==$obj.id)class="active"#elseif($id.indexOf($obj.id)!=-1)class="open"#end>
+                        <a #if(${obj.href}) href="$!{obj.href}" #else href="javascript:;"#end>
+                            #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)<i class="toggle-accordion"></i>#end
+                            <span>$!{obj.name}</span>
+                        </a>
+                        #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)
+                        <ul class="sub-menu">
+                            #foreach($mm in ${shiro.getPrincipalProperty('secondMenus').get($obj.id)})
+                            <li #if($id==$mm.id)class="active"#end>
+                                <a #if(${mm.href}) href="$!{mm.href}" #else href="javascript:;"#end>
+                                    <span>$!{mm.name}</span>
+                                </a>
+                            </li>
+                            #end
+                        </ul>
+                        #end
+                    </li>
+                    #end
+                </ul>
+                #end
+
+            </li>
+            #end
+            #else
+            <!--english-->
+            #foreach($menu in ${shiro.getPrincipalProperty('firstMenus')})
+            <li #if($id==$menu.id)class="active"#elseif($id.indexOf($menu.id)!=-1)class="open"#end>
+
+                <a href="javascript:;" >
+                    <i class="toggle-accordion"></i>
+                    #if(${menu.icon})<i class="$!{menu.icon}"></i>#end
+                    <span>$!{menu.aliasName}</span>
+                </a>
+                #if(${shiro.getPrincipalProperty('secondMenus').get($menu.id)}&&${shiro.getPrincipalProperty('secondMenus').get($menu.id).size()}>0)
+                <ul class="sub-menu">
+                    #foreach($obj in ${shiro.getPrincipalProperty('secondMenus').get($menu.id)})
+                    <li #if($id==$obj.id)class="active"#elseif($id.indexOf($obj.id)!=-1)class="open"#end>
+                        <a #if(${obj.href}) href="$!{obj.href}" #else href="javascript:;"#end>
+                            #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)<i class="toggle-accordion"></i>#end
+                            <span>$!{obj.aliasName}</span>
+                        </a>
+                        #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)
+                        <ul class="sub-menu">
+                            #foreach($mm in ${shiro.getPrincipalProperty('secondMenus').get($obj.id)})
+                            <li #if($id==$mm.id)class="active"#end>
+                                <a #if(${mm.href}) href="$!{mm.href}" #else href="javascript:;"#end>
+                                    <span>$!{mm.aliasName}</span>
+                                </a>
+                            </li>
+                            #end
+                        </ul>
+                        #end
+                    </li>
+                    #end
+                </ul>
+                #end
+
+            </li>
+            #end
+            #end
+
+
+        </ul>
+        <p class="nav-title">${msg['index.links']}</p>
+        <ul class="nav">
+
+            <li>
+                <a href="http://www.wizzer.cn" target="_blank">
+                    <i class="ti-stats-up"></i>
+                    <span>Wizzer.cn</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://www.nutzam.com" target="_blank">
+                    <i class="ti-infinite"></i>
+                    <span>Nutz</span>
+                </a>
+            </li>
+        </ul>
+        <p class="nav-title">LABELS</p>
+        <ul class="nav">
+            <li>
+                <a href="javascript:;">
+                    <i class="ti-control-record text-warning"></i>
+                    <span>Projects</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:;">
+                    <i class="ti-control-record text-success"></i>
+                    <span>Apps</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:;">
+                    <i class="ti-control-record text-danger"></i>
+                    <span>Support</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+#end
+#macro (sys_buttom)
+
+<script src="${base}/include/plugins/jquery-1.11.1.min.js"></script>
+<script src="${base}/include/bootstrap/js/bootstrap.js"></script>
+<script src="${base}/include/plugins/jquery.slimscroll.min.js"></script>
+<script src="${base}/include/plugins/jquery.easing.min.js"></script>
+<script src="${base}/include/plugins/appear/jquery.appear.js"></script>
+<script src="${base}/include/plugins/jquery.placeholder.js"></script>
+<script src="${base}/include/plugins/fastclick.js"></script>
+<script src="${base}/include/plugins/count-to/jquery.countTo.js"></script>
+
+<script src="${base}/include/js/offscreen.js"></script>
+<script src="${base}/include/js/main.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        #if(${shiro.getPrincipalProperty('loginTheme')})
+            $("a[href='${base}/include/css/skins/${shiro.getPrincipalProperty('loginTheme')}']").addClass("active");
+        #else
+        $("a[href='${base}/include/css/skins/palette.css']").addClass("active");
+        #end
+        #if(${shiro.getPrincipalProperty('loginSidebar')})
+            $(".app").addClass("small-menu");
+        $(".toggle-sidebar").addClass("active");
+        if (!$.browser.mobile && $.fn.slimScroll) {
+            $(".no-touch .main-navigation").each(function () {
+                $(this).slimScroll({destroy: true}).removeAttr('style');
+            });
+        }
+        #else
+        $(".app").removeClass("small-menu");
+        $(".toggle-sidebar").removeClass("active");
+        if (!$.browser.mobile && !sublime.checkBreakout() && $.fn.slimScroll) {
+            $(".no-touch .main-navigation").each(function () {
+                var data = $(this).data();
+                $(this).slimScroll(data);
+            });
+        }
+        #end
+        #if(${shiro.getPrincipalProperty('loginScroll')})
+            $(".app").addClass("fixed-scroll");
+        $(".toggle-scroll").addClass("active");
+
+        #end
+        #if(${shiro.getPrincipalProperty('loginBoxed')})
+            $(".app").addClass("boxed");
+        $(".toggle-boxed").addClass("active");
+
+        #end
+        try{
+            $(".gallery-loader").fadeOut(function(){
+                $(".gallery-loader").remove();
+            });
+        }catch(e){};
+
+    });
+</script>
+#end

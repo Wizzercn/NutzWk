@@ -276,7 +276,7 @@ public class MainSetup implements Setup {
         p.setProperty("runtime.log.info.stacktrace", "false");
         p.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
         p.setProperty("runtime.log.logsystem.log4j.category", "velocity_log");
-
+        p.setProperty("velocimacro.library","/WEB-INF/template/common/globals.html");
         Velocity.init(p);
         log.info("Veloctiy Init End.");
     }
