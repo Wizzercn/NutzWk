@@ -27,6 +27,7 @@ public class UnitAction {
     @Ok("vm:template.private.sys.unit.index")
     @RequiresPermissions("sys:unit")
     public Object index(){
+
         return unitService.query(Cnd.where("length(id)","=",4),null);
     }
     @At("/add")

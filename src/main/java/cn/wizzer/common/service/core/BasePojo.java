@@ -21,12 +21,11 @@ public abstract class BasePojo implements Serializable {
     @Column("create_time")
     @Comment("创建时间")
     protected Date createTime;
-    @Prev(els=@EL("$me.now()"))
-    @Column("update_time")
-    @Comment("更新时间")
-    protected Date updateTime;
+    @Column("create_user")
+    @Comment("创建用户")
+    protected long createUser;
     @Column("is_deteled")
-    @Comment("更新时间")
+    @Comment("是否删除")
     protected boolean isDeteled;
     public String toString() {
         return String.format("/*%s*/%s", super.toString(), Json.toJson(this, JsonFormat.compact()));
@@ -40,12 +39,12 @@ public abstract class BasePojo implements Serializable {
         this.createTime = createTime;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
+    public long getCreateUser() {
+        return createUser;
     }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setCreateUser(long createUser) {
+        this.createUser = createUser;
     }
 
     public Date now() {
