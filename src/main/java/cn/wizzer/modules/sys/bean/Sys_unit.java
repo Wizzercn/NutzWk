@@ -14,31 +14,43 @@ public class Sys_unit extends BasePojo implements Serializable {
 
     @Column
     @Name
+    @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String id;
     @Column
+    @Comment("单位名称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String name;
     @Column
+    @Comment("机构编码")
     @ColDefine(type = ColType.VARCHAR, width = 20)
     private String unitcode;
     @Column
+    @Comment("单位介绍")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String description;
     @Column
+    @Comment("单位地址")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String address;
     @Column
+    @Comment("联系电话")
     @ColDefine(type = ColType.VARCHAR, width = 20)
     private String telephone;
     @Column
+    @Comment("单位邮箱")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String email;
     @Column
+    @Comment("单位网站")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String website;
     @Column
+    @Comment("排序字段")
     private int location;
+    @Column("has_children")
+    @Comment("有子节点")
+    private boolean hasChildren;
 
     public String getId() {
         return id;
@@ -110,5 +122,13 @@ public class Sys_unit extends BasePojo implements Serializable {
 
     public void setLocation(int location) {
         this.location = location;
+    }
+
+    public boolean isHasChildren() {
+        return hasChildren;
+    }
+
+    public void setHasChildren(boolean hasChildren) {
+        this.hasChildren = hasChildren;
     }
 }

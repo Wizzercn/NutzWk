@@ -25,12 +25,39 @@
                                     <th class="col-md-3 pd-l-lg">
                                         <span class="pd-l-sm ml20"></span>机构名称</th>
                                     <th class="col-md-5 offscreen-right">地址</th>
-                                    <th class="col-md-2">状态</th>
                                     <th class="col-md-2">操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                #foreach($o in $obj)
+                                <tr data-tt-id="$!obj.id" #if($!obj.parentId!='-1')data-tt-parent-id="$!obj.parentId"#end data-tt-branch="$!obj.hasChildren">
+                                    <td>
+                                        <span class="pd-l-sm"></span>$!o.name #if($o.startWith("0001"))(系统)#end</td>
+                                    <td class="offscreen-right">$!o.address</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                                <i class="ti-settings"></i>
+                                                <span class="ti-angle-down"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li><a href="$!basePath/unit/detail/$!obj.id" data-toggle="modal" data-target="#dialogUnitDetail">查看</a></li>
+                                                <li><a href="$!basePath/unit/edit/$!obj.id">修改</a></li>
+                                                <li><a href="javascript:;" onclick="del('$!obj.id')">删除</a></li>
+                                                <li class="divider"></li>
+                                                <li><a href="javascript:;" onclick="enableUnit('$!obj.id')">启用</a></li>
+                                                <li><a href="javascript:;" onclick="disableUnit('$!obj.id')">禁用</a></li>
+                                                <li class="divider"></li>
+                                                <li><a href="$!basePath/unit/add?pid=$!obj.id">添加子机构</a></li>
+                                                #if(!$!obj.system)
+                                                <li><a href="$!basePath/unit/res/$!obj.id">管理菜单</a></li>
+                                                <li><a href="$!basePath/unit/detail/res/$!obj.id" data-toggle="modal" data-target="#dialogUnitDetail">查看菜单</a></li>
+                                                #end
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                #end
                                 </tbody>
                             </table>
                         </div>

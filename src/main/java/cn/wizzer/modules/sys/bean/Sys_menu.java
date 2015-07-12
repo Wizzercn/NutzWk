@@ -17,27 +17,27 @@ public class Sys_menu extends BasePojo implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String id;
     @Column
-    @Comment("名称")
+    @Comment("菜单名称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String name;
     @Column("alias_name")
-    @Comment("别名")
+    @Comment("菜单别名")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String aliasName;
     @Column
-    @Comment("链接")
+    @Comment("菜单链接")
     @ColDefine(type = ColType.VARCHAR, width = 1000)
     private String href;
     @Column
-    @Comment("目标")
+    @Comment("打开方式")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String target;
     @Column
-    @Comment("图标")
+    @Comment("菜单图标")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String icon;
     @Column
-    @Comment("菜单中显示")
+    @Comment("是否显示")
     private boolean is_show;
     @Column
     @Comment("是否启用")
@@ -47,10 +47,15 @@ public class Sys_menu extends BasePojo implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 500)
     private String permission;
     @Column
-    private long location;
-    @Column
+    @Comment("菜单介绍")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String description;
+    @Column
+    @Comment("排序字段")
+    private long location;
+    @Column("has_children")
+    @Comment("有子节点")
+    private boolean hasChildren;
 
     public String getId() {
         return id;
@@ -138,5 +143,13 @@ public class Sys_menu extends BasePojo implements Serializable {
 
     public void setIs_enabled(boolean is_enabled) {
         this.is_enabled = is_enabled;
+    }
+
+    public boolean isHasChildren() {
+        return hasChildren;
+    }
+
+    public void setHasChildren(boolean hasChildren) {
+        this.hasChildren = hasChildren;
     }
 }

@@ -15,7 +15,7 @@ NutzWk 2.0 新特性：
 *   集成Email服务
 *   集成Quartz定时任务
 *   集成Lucene搜索引擎[Coding..]
-*   采用Bootsrtap皮肤(Sublime)
+*   采用Bootsrtap皮肤(Sublime貌似收费?请不要吝啬那点钱买正版授权)
 
 
 

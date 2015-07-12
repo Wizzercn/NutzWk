@@ -34,8 +34,9 @@ import java.util.*;
  */
 public class MainSetup implements Setup {
     private static final Log log = Logs.get();
-    static DictService dictService= Mvcs.ctx().getDefaultIoc().get(DictService.class);
-    static ConfigService configService= Mvcs.ctx().getDefaultIoc().get(ConfigService.class);
+    static DictService dictService = Mvcs.ctx().getDefaultIoc().get(DictService.class);
+    static ConfigService configService = Mvcs.ctx().getDefaultIoc().get(ConfigService.class);
+
     public void init(NutConfig config) {
         try {
             Ioc ioc = config.getIoc();
@@ -56,35 +57,17 @@ public class MainSetup implements Setup {
         }
     }
 
-    /**
-     * 初始化系统变量
-     * @param config
-     * @param dao
-     */
-    private void initSysSetting(NutConfig config, Dao dao) {
-        Map<String,String> map=new HashMap<>();
-        List<Sys_config> configList =dao.query(Sys_config.class,Cnd.orderBy().asc("location"));
-        for (Sys_config sysConfig : configList) {
-            map.put(sysConfig.getCname(), sysConfig.getCvalue());
-        }
-        Map<String,Object> dictMap=new HashMap<>();
-        dictMap.put(Dict.DIVSION, dictService.list(Sqls.create("SELECT dkey,dval FROM sys_dict WHERE id LIKE '" + Dict.DIVSION + "_%'")));
-        CacheUtils.put(Globals.SYS_CONFIG_KEY,map);
-        CacheUtils.put(Globals.SYS_DICT_KEY, dictMap);
-        Globals.APP_BASE_PATH = Strings.sNull(config.getAppRoot());//项目路径
-        Globals.APP_BASE_NAME = Strings.sNull(config.getServletContext().getContextPath());//部署名
-        Globals.APP_NAME = Strings.sNull(map.get("app_name"));//项目名称
-    }
 
     /**
      * 初始化数据库
+     *
      * @param config
      * @param dao
      */
     private void initSysData(NutConfig config, Dao dao) {
         Daos.createTablesInPackage(dao, "cn.wizzer.modules", true);
         // 若必要的数据表不存在，则初始化数据库
-        if (0==dao.count(Sys_user.class)) {
+        if (0 == dao.count(Sys_user.class)) {
             //初始化数据字典表
             FileSqlManager fm = new FileSqlManager("init_sys_dict.sql");
             List<Sql> sqlList = fm.createCombo(fm.keys());
@@ -105,10 +88,13 @@ public class MainSetup implements Setup {
             unit.setId("0001");
             unit.setName("系统管理");
             unit.setLocation(0);
+            unit.setAddress("银河-太阳系-地球");
+            unit.setEmail("wizzer@qq.com");
+            unit.setTelephone("");
             dao.insert(unit);
             //初始化菜单
-            List<Sys_menu> menuList=new ArrayList<Sys_menu>();
-            Sys_menu menu=new Sys_menu();
+            List<Sys_menu> menuList = new ArrayList<Sys_menu>();
+            Sys_menu menu = new Sys_menu();
             menu.setIs_enabled(true);
             menu.setId("0001");
             menu.setName("系统管理");
@@ -117,8 +103,9 @@ public class MainSetup implements Setup {
             menu.setLocation(0);
             menu.setHref("");
             menu.setIs_show(true);
+            menu.setHasChildren(true);
             menuList.add(menu);
-            menu=new Sys_menu();
+            menu = new Sys_menu();
             menu.setIs_enabled(true);
             menu.setId("00010001");
             menu.setName("组织结构");
@@ -128,7 +115,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setPermission("sys:unit");
             menuList.add(menu);
-            menu=new Sys_menu();
+            menu = new Sys_menu();
             menu.setIs_enabled(true);
             menu.setId("00010002");
             menu.setName("用户管理");
@@ -137,8 +124,9 @@ public class MainSetup implements Setup {
             menu.setHref("/private/sys/user");
             menu.setIs_show(true);
             menu.setPermission("sys:user");
+            menu.setHasChildren(true);
             menuList.add(menu);
-            menu=new Sys_menu();
+            menu = new Sys_menu();
             menu.setIs_enabled(true);
             menu.setId("000100020001");
             menu.setName("添加用户");
@@ -147,7 +135,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(false);
             menu.setPermission("sys:user:add");
             menuList.add(menu);
-            menu=new Sys_menu();
+            menu = new Sys_menu();
             menu.setIs_enabled(true);
             menu.setId("000100020002");
             menu.setName("修改用户");
@@ -156,7 +144,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(false);
             menu.setPermission("sys:user:update");
             menuList.add(menu);
-            menu=new Sys_menu();
+            menu = new Sys_menu();
             menu.setIs_enabled(true);
             menu.setId("000100020003");
             menu.setName("删除用户");
@@ -165,7 +153,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(false);
             menu.setPermission("sys:user:delete");
             menuList.add(menu);
-            menu=new Sys_menu();
+            menu = new Sys_menu();
             menu.setIs_enabled(true);
             menu.setId("000100020004");
             menu.setName("更新资料");
@@ -174,7 +162,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(false);
             menu.setPermission("sys:user:profile");
             menuList.add(menu);
-            menu=new Sys_menu();
+            menu = new Sys_menu();
             menu.setIs_enabled(true);
             menu.setId("00010003");
             menu.setName("角色管理");
@@ -184,7 +172,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setPermission("sys:role");
             menuList.add(menu);
-            menu=new Sys_menu();
+            menu = new Sys_menu();
             menu.setIs_enabled(true);
             menu.setId("00010004");
             menu.setName("菜单管理");
@@ -194,7 +182,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setPermission("sys:menu");
             menuList.add(menu);
-            menu=new Sys_menu();
+            menu = new Sys_menu();
             menu.setIs_enabled(true);
             menu.setId("00010005");
             menu.setName("参数配置");
@@ -204,7 +192,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setPermission("sys:config");
             menuList.add(menu);
-            menu=new Sys_menu();
+            menu = new Sys_menu();
             menu.setIs_enabled(true);
             menu.setId("00010006");
             menu.setName("数据字典");
@@ -215,21 +203,21 @@ public class MainSetup implements Setup {
             menu.setPermission("sys:dict");
             menuList.add(menu);
             //初始化角色
-            Sys_role role=new Sys_role();
+            Sys_role role = new Sys_role();
             role.setName("公共角色");
             role.setAlias("public");
             role.setDescription("All user's role.");
             role.setLocation(0);
             role.setUnitid("");
             dao.insert(role);
-            role=new Sys_role();
+            role = new Sys_role();
             role.setName("超级管理员");
             role.setAlias("superadmin");
             role.setDescription("Super Admin");
             role.setLocation(1);
             role.setUnitid("");
             role.setMenus(menuList);
-            dao.insertWith(role,"menus");
+            dao.insertWith(role, "menus");
             //初始化用户
             Sys_user user = new Sys_user();
             user.setUsername("superadmin");
@@ -254,7 +242,29 @@ public class MainSetup implements Setup {
     }
 
     /**
+     * 初始化系统变量
+     *
+     * @param config
+     * @param dao
+     */
+    private void initSysSetting(NutConfig config, Dao dao) {
+        Map<String, String> map = new HashMap<>();
+        List<Sys_config> configList = dao.query(Sys_config.class, Cnd.orderBy().asc("location"));
+        for (Sys_config sysConfig : configList) {
+            map.put(sysConfig.getCname(), sysConfig.getCvalue());
+        }
+        Map<String, Object> dictMap = new HashMap<>();
+        dictMap.put(Dict.DIVSION, dictService.list(Sqls.create("SELECT dkey,dval FROM sys_dict WHERE id LIKE '" + Dict.DIVSION + "_%'")));
+        CacheUtils.put(Globals.SYS_CONFIG_KEY, map);
+        CacheUtils.put(Globals.SYS_DICT_KEY, dictMap);
+        Globals.APP_BASE_PATH = Strings.sNull(config.getAppRoot());//项目路径
+        Globals.APP_BASE_NAME = Strings.sNull(config.getServletContext().getContextPath());//部署名
+        Globals.APP_NAME = Strings.sNull(map.get("app_name"));//项目名称
+    }
+
+    /**
      * 初始化Velocity
+     *
      * @param config
      * @throws IOException
      */
@@ -276,7 +286,7 @@ public class MainSetup implements Setup {
         p.setProperty("runtime.log.info.stacktrace", "false");
         p.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
         p.setProperty("runtime.log.logsystem.log4j.category", "velocity_log");
-        p.setProperty("velocimacro.library","/WEB-INF/template/common/globals.html");
+        p.setProperty("velocimacro.library", "/WEB-INF/template/common/globals.html");
         Velocity.init(p);
         log.info("Veloctiy Init End.");
     }
