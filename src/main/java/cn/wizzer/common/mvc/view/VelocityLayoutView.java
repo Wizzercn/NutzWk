@@ -1,6 +1,9 @@
 package cn.wizzer.common.mvc.view;
 
 import cn.wizzer.common.shiro.velocity.Permission;
+import cn.wizzer.common.util.CacheUtils;
+import cn.wizzer.common.util.DateUtils;
+import cn.wizzer.common.util.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -47,6 +50,9 @@ public class VelocityLayoutView extends AbstractPathView {
             context.put("request", req);
             context.put("session", req.getSession());
             context.put("shiro",Mvcs.ctx().getDefaultIoc().get(Permission.class));
+            context.put("cache",Mvcs.ctx().getDefaultIoc().get(CacheUtils.class));
+            context.put("string",Mvcs.ctx().getDefaultIoc().get(StringUtils.class));
+            context.put("date",Mvcs.ctx().getDefaultIoc().get(DateUtils.class));
             //context.put("cookie", CookieUtils.getCookie(req,resp));
             //请求的参数表,需要兼容之前的p.参数, Fix issue 418
             Map<String, String> p = new HashMap<String, String>();

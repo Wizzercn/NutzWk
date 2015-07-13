@@ -1,6 +1,6 @@
 package cn.wizzer.modules.sys.service;
 
-import cn.wizzer.common.service.core.BaseIdEntityService;
+import cn.wizzer.common.service.core.BaseService;
 import cn.wizzer.modules.sys.bean.Sys_role;
 import cn.wizzer.modules.sys.bean.Sys_menu;
 import cn.wizzer.modules.sys.bean.Sys_user;
@@ -20,7 +20,7 @@ import java.util.List;
  * Created by Wizzer.cn on 2015/6/30.
  */
 @IocBean(args = {"refer:dao"})
-public class UserService extends BaseIdEntityService<Sys_user> {
+public class UserService extends BaseService<Sys_user> {
     public UserService(Dao dao) {
         super(dao);
     }

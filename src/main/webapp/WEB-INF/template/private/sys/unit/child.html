@@ -1,0 +1,23 @@
+#foreach($o in $obj)
+<tr data-tt-id="$!o.id" data-tt-parent-id="$string.getParentId($o.id)" data-tt-branch="$!o.hasChildren">
+    <td>
+        <span class="pd-l-sm"></span>$!o.name #if($o.startWith("0001"))(系统)#end</td>
+    <td>$!o.address</td>
+    <td>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                <i class="ti-settings"></i>
+                <span class="ti-angle-down"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="${base}/private/sys/unit/detail/${o.id}" data-toggle="modal" data-target="#dialogUnitDetail">查看</a></li>
+                <li><a href="$!basePath/unit/edit/${o.id}">修改</a></li>
+                <li><a href="javascript:;" onclick="del('${o.id}')">删除</a></li>
+                <li class="divider"></li>
+                <li><a href="$!basePath/unit/add?pid=${o.id}">添加子机构</a></li>
+
+            </ul>
+        </div>
+    </td>
+</tr>
+#end

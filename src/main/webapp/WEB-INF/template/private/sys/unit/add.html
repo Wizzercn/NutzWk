@@ -1,0 +1,116 @@
+#sys_top
+<div class="app">
+    #sys_head
+
+
+    <section class="layout">
+        #sys_menu
+
+
+        <section class="main-content">
+            <header class="header navbar bg-white shadow">
+                <div class="btn-group tool-button">
+                    <a class="btn btn-primary navbar-btn" href="${base}/private/sys/unit"><i class="ti-angle-left"></i> 返回</a>
+                </div>
+            </header>
+
+            <div class="content-wrap">
+                <div class="wrapper">
+                    #if(${shiro.hasPermission('sys:unit')})
+
+                    <section class="panel">
+                        <form id="unitAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="$!basePath/unit/add/do" method="post">
+                            <div class="row mb10">
+                                <div class="col-lg-12">
+                                    <div class="form-group has-feedback">
+                                        <label for="parentId" class="col-sm-2 control-label">上级机构</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                #if($!isSystemUnit == true)
+                                                <input id="parentId" type="text" class="form-control" placeholder="不选择默认为顶级机构" disabled value="$!parentUnit.name"/>
+                                                #else
+                                                <input id="parentId" type="text" class="form-control" placeholder="必须选择一个上级机构" disabled value="$!parentUnit.name"/>
+                                                #end
+			                             		<span class="input-group-btn">
+			                             			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dialogSelectParentUnit" #if($!noUnit) disabled="disabled"#end><i class="ti-plus"></i> 选择</button>
+			                             		</span>
+                                            </div>
+                                            <input type="hidden" name="parentId" value="$!parentUnit.id">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name" class="col-sm-2 control-label">名称</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" name="name" data-parsley-required="true" placeholder="机构名称">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="address" class="col-sm-2 control-label">地址</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" name="address" class="form-control" placeholder="机构所在地址">
+                                            <p class="help-block no-m">例如：安徽省合肥市高新区长江西路001号</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mobile" class="col-sm-2 control-label">联系方式</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" name="mobile" class="form-control" placeholder="固定电话、手机号码等">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email" class="col-sm-2 control-label">电子邮件</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" name="email" class="form-control" placeholder="格式：xxx@xxx.xx" data-parsley-type="email" data-parsley-trigger="change">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="web" class="col-sm-2 control-label">网站地址</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" name="web" class="form-control" placeholder="http://">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="enabled" class="col-sm-2 control-label">是否启用</label>
+                                        <div class="col-sm-4 switcha">
+                                            <div class="mr15">
+                                                <input type="checkbox" name="enabled" class="js-switch-blue" checked="checked">
+                                            </div>
+                                        </div>
+                                        #if($!isSystemUnit == true)
+                                        <label for="enabled" class="col-sm-2 control-label">系统机构</label>
+                                        <div class="col-sm-4 switcha">
+                                            <div class="mr15">
+                                                <input type="checkbox" name="system" class="js-switch-blue">
+                                            </div>
+                                        </div>
+                                        #end
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3"></div>
+                            <div class="col-lg-6">
+                                <div class="form-group text-center">
+                                    <label></label>
+                                    <div>
+                                        <button class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="正在提交...">提   交</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                    #end
+                </div>
+            </div>
+            <a class="exit-offscreen"></a>
+        </section>
+
+    </section>
+</div>
+
+#sys_buttom
+<script language="JavaScript">
+
+</script>
+</body>
+
+</html>

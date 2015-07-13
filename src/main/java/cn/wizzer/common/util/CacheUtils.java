@@ -3,12 +3,14 @@ package cn.wizzer.common.util;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.mvc.Mvcs;
 
 /**
  * Cache工具类
  * Created by Wizzer.cn on 2015/7/3.
  */
+@IocBean
 public class CacheUtils {
     private static CacheManager cacheManager = Mvcs.ctx().getDefaultIoc().get(CacheManager.class);
 

@@ -91,6 +91,16 @@ public class MainSetup implements Setup {
             unit.setAddress("银河-太阳系-地球");
             unit.setEmail("wizzer@qq.com");
             unit.setTelephone("");
+            unit.setHasChildren(true);
+            unit.setWebsite("http://www.wizzer.cn");
+            dao.insert(unit);
+            unit = new Sys_unit();
+            unit.setId("00010001");
+            unit.setName("子单位");
+            unit.setLocation(0);
+            unit.setAddress("安徽-合肥-蜀山区");
+            unit.setEmail("wizzer@qq.com");
+            unit.setTelephone("");
             dao.insert(unit);
             //初始化菜单
             List<Sys_menu> menuList = new ArrayList<Sys_menu>();
