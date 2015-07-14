@@ -11,6 +11,8 @@ import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 
+import java.util.Date;
+
 /**
  * Created by Wizzer.cn on 2015/6/30.
  */
@@ -41,8 +43,12 @@ public class UnitService extends BaseService<Sys_unit> {
     @Aop(TransAop.READ_COMMITTED)
     public boolean save(Sys_unit unit, String pid) {
         try {
-            String path = getSubPath("sys_unit", "path", pid);
-            unit.setPath(path);
+            String path="";
+            if(!Strings.isEmpty(pid)) {
+                Sys_unit pp = this.fetch(pid);
+                path=pp.getPath();
+            }
+            unit.setPath(getSubPath("sys_unit", "path", path));
             unit.setParentId(pid);
             unit.setCreateUser(StringUtils.getUid());
             dao().insert(unit);
@@ -58,20 +64,17 @@ public class UnitService extends BaseService<Sys_unit> {
     @Aop(TransAop.READ_COMMITTED)
     public boolean edit(Sys_unit unit, String pid) {
         try {
-            if (!Strings.isEmpty(pid)) {
-                Sys_unit pp = this.fetch(pid);
-                if (!Strings.sNull(unit.getPath()).equals(pp.getPath())) {
-                    String path = getSubPath("sys_unit", "path", pp.getPath());
-                    unit.setPath(path);
-                    unit.setParentId(pid);
-                }
-            }else {
-                if(!Strings.isEmpty(unit.getParentId())){
-                    String path = getSubPath("sys_unit", "path", "");
-                    unit.setPath(path);
+            if (!Strings.sNull(pid).equals(unit.getParentId())) {
+                if (!Strings.isEmpty(unit.getParentId())) {
+                    Sys_unit pp = this.fetch(unit.getParentId());
+                    unit.setPath(getSubPath("sys_unit", "path", pp.getPath()));
+                    unit.setParentId(pp.getId());
+                } else {
+                    unit.setPath(getSubPath("sys_unit", "path", ""));
                     unit.setParentId("");
                 }
             }
+            unit.setCreateTime(new Date());
             unit.setCreateUser(StringUtils.getUid());
             dao().update(unit);
             if (!Strings.isEmpty(pid)) {
@@ -79,8 +82,9 @@ public class UnitService extends BaseService<Sys_unit> {
                 if (count < 1) {
                     dao().execute(Sqls.create("update sys_unit set has_children=false where id='" + pid + "'"));
                 }
-                dao().execute(Sqls.create("update sys_unit set has_children=true where id='" + pid + "'"));
             }
+            if (!Strings.isEmpty(unit.getParentId()))
+                dao().execute(Sqls.create("update sys_unit set has_children=true where id='" + unit.getParentId() + "'"));
 
         } catch (Exception e) {
             return false;

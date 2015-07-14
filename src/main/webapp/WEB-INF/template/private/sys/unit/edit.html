@@ -21,6 +21,7 @@
                     <section class="panel">
                         <form id="unitAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/private/sys/unit/edit/do" method="post">
                             <input type="hidden" name="id" value="$!obj.id">
+                            <input type="hidden" name="pid" value="$!obj.parentId">
                             <input type="hidden" name="path" value="$!obj.path">
                             <div class="row mb10">
                                 <div class="col-lg-12">
@@ -168,21 +169,21 @@
         initTreeView();
         $('#unitAddForm').ajaxForm({
             dataType:  'json',
-            beforeSubmit:function(arr, $form, options){
-                $form.find("button:submit").button("loading");
+            beforeSubmit:function(arr, form, options){
+                form.find("button:submit").button("loading");
             },
-            success : function(data, statusText, xhr, $form) {
+            success : function(data, statusText, xhr, form) {
                 if(data.type == "success"){
-                    Toast.success(data.content+"，3秒后返回组织机构首页", function(){
+                    Toast.success(data.content+"，2秒后返回组织机构首页", function(){
                         window.location.href="${base}/private/sys/unit";
                     });
                     setTimeout(function(){
                         window.location.href="${base}/private/sys/unit";
-                    }, 3000);
+                    }, 2000);
                 }else{
                     Toast.error(data.content);
                 }
-                $form.find("button:submit").button("reset");
+                form.find("button:submit").button("reset");
             }
         });
     });

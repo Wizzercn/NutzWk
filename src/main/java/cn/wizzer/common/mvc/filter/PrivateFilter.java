@@ -18,11 +18,14 @@ import java.util.Map;
 public class PrivateFilter implements ActionFilter {
 
     public View match(ActionContext context) {
-        Subject currentUser = SecurityUtils.getSubject();
-        if (currentUser != null) {
-            Sys_user user = (Sys_user) currentUser.getPrincipal();
-            if (user != null) {
-                context.getRequest().setAttribute("app_path", getMenu(StringUtils.getPath(context.getPath()), user.getIdMenus()));
+        //忽略AJAX请求
+        if(!"XMLHttpRequest".equalsIgnoreCase(context.getRequest().getHeader("x-requested-with"))) {
+            Subject currentUser = SecurityUtils.getSubject();
+            if (currentUser != null) {
+                Sys_user user = (Sys_user) currentUser.getPrincipal();
+                if (user != null) {
+                    context.getRequest().setAttribute("app_path", getMenu(StringUtils.getPath(context.getPath()), user.getIdMenus()));
+                }
             }
         }
         return null;

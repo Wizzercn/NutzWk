@@ -49,8 +49,8 @@ public class UnitAction {
     @Ok("json")
     @RequiresPermissions("sys:unit")
     public Object addDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
-        int sum=unitService.count(Cnd.where("parentId","=",parentId).and("name","=",unit.getName()));
-        if(sum>0){
+        int sum = unitService.count(Cnd.where("parentId", "=", parentId).and("name", "=", unit.getName()));
+        if (sum > 0) {
             return Message.error("机构名称已存在！", req);
         }
         if (unitService.save(unit, parentId)) {
@@ -73,15 +73,17 @@ public class UnitAction {
     @At("/edit/do")
     @Ok("json")
     @RequiresPermissions("sys:unit")
-    public Object editDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
-        if(unit.getId().equals(parentId)){
-            return Message.error("上级机构不可选择自身！", req);
+    public Object editDo(@Param("..") Sys_unit unit, @Param("pid") String pid, HttpServletRequest req) {
+        if (unit.getParentId().equals(unit.getId())) {
+            return Message.error("上级机构不可为自身！", req);
         }
-        int sum=unitService.count(Cnd.where("parentId","=",parentId).and("name","=",unit.getName()));
-        if(sum>0){
-            return Message.error("机构名称已存在！", req);
+        if (!Strings.sNull(pid).equals(unit.getParentId())) {
+            int sum = unitService.count(Cnd.where("parentId", "=", unit.getParentId()).and("name", "=", unit.getName()));
+            if (sum > 0) {
+                return Message.error("机构名称已存在！", req);
+            }
         }
-        if (unitService.edit(unit, parentId)) {
+        if (unitService.edit(unit, pid)) {
             return Message.success("system.success", req);
         }
         return Message.success("system.error", req);
@@ -122,7 +124,7 @@ public class UnitAction {
     @Ok("json")
     @RequiresPermissions("sys:unit")
     public Object delete(String id, HttpServletRequest req) {
-        if ("0001".equals(id)) {
+        if ("0001".equals(unitService.fetch(id).getPath())) {
             return Message.error("system.nodel", req);
         }
         if (unitService.deleteAndChild(id)) {

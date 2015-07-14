@@ -166,21 +166,21 @@
         initTreeView();
         $('#unitAddForm').ajaxForm({
             dataType:  'json',
-            beforeSubmit:function(arr, $form, options){
-                $form.find("button:submit").button("loading");
+            beforeSubmit:function(arr, form, options){
+                form.find("button:submit").button("loading");
             },
-            success : function(data, statusText, xhr, $form) {
+            success : function(data, statusText, xhr, form) {
                 if(data.type == "success"){
                     Toast.success(data.content);
                     //刷新父级菜单
                     $.jstree.reference("#jsTreeParentUnit").refresh();
                     var parentName = $("#unitAddForm #parentId").val();
-                    $form.resetForm();
+                    form.resetForm();
                     $("#unitAddForm #parentId").val(parentName);
                 }else{
                     Toast.error(data.content);
                 }
-                $form.find("button:submit").button("reset");
+                form.find("button:submit").button("reset");
             }
         });
     });
