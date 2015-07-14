@@ -10,7 +10,6 @@ import java.io.Serializable;
 @Table("sys_config")
 public class Sys_config implements Serializable {
     private static final long serialVersionUID = 1L;
-
     @Name
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 100)

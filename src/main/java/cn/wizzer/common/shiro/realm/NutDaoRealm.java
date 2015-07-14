@@ -50,6 +50,7 @@ public class NutDaoRealm extends AbstractNutAuthoRealm {
 		}
 		UserService userService= Mvcs.ctx().getDefaultIoc().get(UserService.class);
 		user.setMenus(userService.getMenus(user.getId()));
+		user.setUnits(userService.getUnits(user.getId()));
 		ByteSource salt = ByteSource.Util.bytes(user.getSalt());
 		SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), getName());
 		info.setCredentialsSalt(salt);

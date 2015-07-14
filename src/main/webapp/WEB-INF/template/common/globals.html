@@ -321,25 +321,25 @@
             #if(!$app_language||$app_language=="zh_CN")
             <!--中文-->
             #foreach($menu in ${shiro.getPrincipalProperty('firstMenus')})
-            <li #if($id==$menu.id)class="active"#elseif($id.indexOf($menu.id)!=-1)class="open"#end>
+            <li #if($id==$menu.path)class="active"#elseif($id.indexOf($menu.path)!=-1)class="open"#end>
 
                 <a href="javascript:;" >
                     <i class="toggle-accordion"></i>
                     #if(${menu.icon})<i class="$!{menu.icon}"></i>#end
                     <span>$!{menu.name}</span>
                 </a>
-                #if(${shiro.getPrincipalProperty('secondMenus').get($menu.id)}&&${shiro.getPrincipalProperty('secondMenus').get($menu.id).size()}>0)
+                #if(${shiro.getPrincipalProperty('secondMenus').get($menu.path)}&&${shiro.getPrincipalProperty('secondMenus').get($menu.path).size()}>0)
                 <ul class="sub-menu">
-                    #foreach($obj in ${shiro.getPrincipalProperty('secondMenus').get($menu.id)})
-                    <li #if($id==$obj.id)class="active"#elseif($id.indexOf($obj.id)!=-1)class="open"#end>
+                    #foreach($obj in ${shiro.getPrincipalProperty('secondMenus').get($menu.path)})
+                    <li #if($id==$obj.path)class="active"#elseif($id.indexOf($obj.path)!=-1)class="open"#end>
                         <a #if(${obj.href}) href="$!{obj.href}" #else href="javascript:;"#end>
-                            #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)<i class="toggle-accordion"></i>#end
+                            #if(${shiro.getPrincipalProperty('secondMenus').get($obj.path)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.path).size()}>0)<i class="toggle-accordion"></i>#end
                             <span>$!{obj.name}</span>
                         </a>
-                        #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)
+                        #if(${shiro.getPrincipalProperty('secondMenus').get($obj.path)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.path).size()}>0)
                         <ul class="sub-menu">
-                            #foreach($mm in ${shiro.getPrincipalProperty('secondMenus').get($obj.id)})
-                            <li #if($id==$mm.id)class="active"#end>
+                            #foreach($mm in ${shiro.getPrincipalProperty('secondMenus').get($obj.path)})
+                            <li #if($id==$mm.path)class="active"#end>
                                 <a #if(${mm.href}) href="$!{mm.href}" #else href="javascript:;"#end>
                                     <span>$!{mm.name}</span>
                                 </a>
@@ -357,25 +357,25 @@
             #else
             <!--english-->
             #foreach($menu in ${shiro.getPrincipalProperty('firstMenus')})
-            <li #if($id==$menu.id)class="active"#elseif($id.indexOf($menu.id)!=-1)class="open"#end>
+            <li #if($id==$menu.path)class="active"#elseif($id.indexOf($menu.path)!=-1)class="open"#end>
 
                 <a href="javascript:;" >
                     <i class="toggle-accordion"></i>
                     #if(${menu.icon})<i class="$!{menu.icon}"></i>#end
                     <span>$!{menu.aliasName}</span>
                 </a>
-                #if(${shiro.getPrincipalProperty('secondMenus').get($menu.id)}&&${shiro.getPrincipalProperty('secondMenus').get($menu.id).size()}>0)
+                #if(${shiro.getPrincipalProperty('secondMenus').get($menu.path)}&&${shiro.getPrincipalProperty('secondMenus').get($menu.path).size()}>0)
                 <ul class="sub-menu">
-                    #foreach($obj in ${shiro.getPrincipalProperty('secondMenus').get($menu.id)})
-                    <li #if($id==$obj.id)class="active"#elseif($id.indexOf($obj.id)!=-1)class="open"#end>
+                    #foreach($obj in ${shiro.getPrincipalProperty('secondMenus').get($menu.path)})
+                    <li #if($id==$obj.path)class="active"#elseif($id.indexOf($obj.path)!=-1)class="open"#end>
                         <a #if(${obj.href}) href="$!{obj.href}" #else href="javascript:;"#end>
-                            #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)<i class="toggle-accordion"></i>#end
+                            #if(${shiro.getPrincipalProperty('secondMenus').get($obj.path)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.path).size()}>0)<i class="toggle-accordion"></i>#end
                             <span>$!{obj.aliasName}</span>
                         </a>
-                        #if(${shiro.getPrincipalProperty('secondMenus').get($obj.id)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.id).size()}>0)
+                        #if(${shiro.getPrincipalProperty('secondMenus').get($obj.path)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.path).size()}>0)
                         <ul class="sub-menu">
-                            #foreach($mm in ${shiro.getPrincipalProperty('secondMenus').get($obj.id)})
-                            <li #if($id==$mm.id)class="active"#end>
+                            #foreach($mm in ${shiro.getPrincipalProperty('secondMenus').get($obj.path)})
+                            <li #if($id==$mm.path)class="active"#end>
                                 <a #if(${mm.href}) href="$!{mm.href}" #else href="javascript:;"#end>
                                     <span>$!{mm.aliasName}</span>
                                 </a>

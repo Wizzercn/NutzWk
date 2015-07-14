@@ -172,11 +172,11 @@ public class LoginAction {
             List<Sys_menu> firstMenus = getChildMenus("", user.getMenus());
             Map<String, List<Sys_menu>> secondMenus = new HashMap<>();
             for (Sys_menu menu : user.getMenus()) {
-                if (menu.getId().length() > 4) {
-                    List<Sys_menu> s = secondMenus.get(getParentId(menu.getId()));
+                if (menu.getPath().length() > 4) {
+                    List<Sys_menu> s = secondMenus.get(getParentId(menu.getPath()));
                     if (s == null) s = new ArrayList<>();
                     s.add(menu);
-                    secondMenus.put(getParentId(menu.getId()), s);
+                    secondMenus.put(getParentId(menu.getPath()), s);
                 }
             }
             user.setFirstMenus(firstMenus);
@@ -207,7 +207,7 @@ public class LoginAction {
     private Map<String,String> getIdMenus( List<Sys_menu> menus){
         Map<String,String> menuMap=new HashMap<>();
         for(Sys_menu menu:menus){
-            menuMap.put(StringUtils.getPath(menu.getHref()), menu.getId());
+            menuMap.put(StringUtils.getPath(menu.getHref()), menu.getPath());
         }
         return menuMap;
     }
@@ -221,7 +221,7 @@ public class LoginAction {
     private List<Sys_menu> getChildMenus(String id, List<Sys_menu> menus) {
         List<Sys_menu> menuList = new ArrayList<>();
         for (Sys_menu menu : menus) {
-            if (id.equals(getParentId(menu.getId()))) {
+            if (id.equals(getParentId(menu.getPath()))) {
                 menuList.add(menu);
             }
         }

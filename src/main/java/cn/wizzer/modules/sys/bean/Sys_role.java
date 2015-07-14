@@ -14,8 +14,10 @@ public class Sys_role extends BasePojo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column
-    @Id
-    private long id;
+    @Name
+    @ColDefine(type = ColType.VARCHAR, width = 64)
+    @Prev(els={@EL("uuid()")})
+    private String id;
     @Column
     private String name;
     @Column
@@ -31,11 +33,11 @@ public class Sys_role extends BasePojo implements Serializable {
     @ManyMany(from="role_id", relation="sys_role_menu", target=Sys_menu.class, to="menu_id")
     protected List<Sys_menu> menus;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

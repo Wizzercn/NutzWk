@@ -9,6 +9,7 @@ import org.nutz.dao.sql.Sql;
 import org.nutz.dao.sql.SqlCallback;
 import org.nutz.dao.util.Daos;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Strings;
 import org.nutz.service.EntityService;
 
 import java.sql.Connection;
@@ -55,30 +56,6 @@ public class BaseService<T> extends EntityService<T> {
     }
 
     /**
-     * 通过LONG主键获取部分字段值
-     *
-     * @param fieldName
-     * @param id
-     * @return
-     */
-    public T getField(String fieldName, long id) {
-        return Daos.ext(this.dao(), FieldFilter.create(getEntityClass(), fieldName))
-                .fetch(getEntityClass(), id);
-    }
-
-    /**
-     * 通过INT主键获取部分字段值
-     *
-     * @param fieldName
-     * @param id
-     * @return
-     */
-    public T getField(String fieldName, int id) {
-        return Daos.ext(this.dao(), FieldFilter.create(getEntityClass(), fieldName))
-                .fetch(getEntityClass(), id);
-    }
-
-    /**
      * 批量删除
      *
      * @param ids
@@ -106,9 +83,34 @@ public class BaseService<T> extends EntityService<T> {
     }
 
     /**
-     * 通过NAME主键获取部分字段值
+     * 通过LONG主键获取部分字段值
      *
      * @param fieldName
+     * @param id
+     * @return
+     */
+    public T getField(String fieldName, long id) {
+        return Daos.ext(this.dao(), FieldFilter.create(getEntityClass(), fieldName))
+                .fetch(getEntityClass(), id);
+    }
+
+    /**
+     * 通过INT主键获取部分字段值
+     *
+     * @param fieldName
+     * @param id
+     * @return
+     */
+    public T getField(String fieldName, int id) {
+        return Daos.ext(this.dao(), FieldFilter.create(getEntityClass(), fieldName))
+                .fetch(getEntityClass(), id);
+    }
+
+
+    /**
+     * 通过NAME主键获取部分字段值
+     *
+     * @param fieldName 支持通配符 ^(a|b)$
      * @param name
      * @return
      */
@@ -117,6 +119,17 @@ public class BaseService<T> extends EntityService<T> {
                 .fetch(getEntityClass(), name);
     }
 
+    /**
+     * 通过NAME主键获取部分字段值
+     *
+     * @param fieldName 支持通配符 ^(a|b)$
+     * @param cnd
+     * @return
+     */
+    public T getField(String fieldName, Condition cnd) {
+        return Daos.ext(this.dao(), FieldFilter.create(getEntityClass(), fieldName))
+                .fetch(getEntityClass(), cnd);
+    }
 
     /**
      * 计算子节点ID
@@ -127,8 +140,8 @@ public class BaseService<T> extends EntityService<T> {
      * @param <T>
      * @return
      */
-    public <T> String getSubId(String tableName, String cloName, String value) {
-        final String val = value;
+    public <T> String getSubPath(String tableName, String cloName, String value) {
+        final String val = Strings.sNull(value);
         Sql sql = Sqls.create("select " + cloName + " from " + tableName
                 + " where " + cloName + " like '" + value + "____' order by "
                 + cloName + " desc");

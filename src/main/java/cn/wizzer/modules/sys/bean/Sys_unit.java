@@ -9,14 +9,24 @@ import java.io.Serializable;
  * Created by Wizzer.cn on 2015/6/29.
  */
 @Table("sys_unit")
+@TableIndexes({@Index(name = "INDEX_SYS_UNIT_PATH", fields = {"path"}, unique = true)})
 public class Sys_unit extends BasePojo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column
     @Name
     @Comment("ID")
-    @ColDefine(type = ColType.VARCHAR, width = 100)
+    @ColDefine(type = ColType.VARCHAR, width = 64)
+    @Prev(els={@EL("uuid()")})
     private String id;
+    @Column
+    @Comment("父级ID")
+    @ColDefine(type = ColType.VARCHAR, width = 64)
+    private String parentId;
+    @Column
+    @Comment("树路径")
+    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private String path;
     @Column
     @Comment("单位名称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
@@ -58,6 +68,22 @@ public class Sys_unit extends BasePojo implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getName() {

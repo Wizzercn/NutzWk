@@ -15,10 +15,12 @@ import java.util.Map;
 @TableIndexes({@Index(name = "INDEX_USERNAME", fields = {"username"}, unique = false)})
 public class Sys_user extends BasePojo implements Serializable {
     private static final long serialVersionUID = 1L;
-
     @Column
-    @Id
-    private long id;
+    @Name
+    @Comment("ID")
+    @ColDefine(type = ColType.VARCHAR, width = 64)
+    @Prev(els = {@EL("uuid()")})
+    private String id;
     @Column
     @Comment("登录名")
     @ColDefine(type = ColType.VARCHAR, width = 120)
@@ -42,7 +44,7 @@ public class Sys_user extends BasePojo implements Serializable {
     @Column("register_ip")
     @ColDefine(type = ColType.VARCHAR, width = 15)
     private String registerIp;
-    @Prev(els=@EL("$me.now()"))
+    @Prev(els = @EL("$me.now()"))
     @Column("login_time")
     @Comment("登陆时间")
     protected Date loginTime;
@@ -68,19 +70,22 @@ public class Sys_user extends BasePojo implements Serializable {
     private boolean loginBoxed;
     @Column("login_scroll")
     private boolean loginScroll;
-    @ManyMany(from="user_id", relation="sys_user_role", target=Sys_role.class, to="role_id")
+    @ManyMany(from = "user_id", relation = "sys_user_role", target = Sys_role.class, to = "role_id")
     protected List<Sys_role> roles;
-    @One(target=Sys_user_profile.class, field="id", key="userId")
+    @ManyMany(from = "user_id", relation = "sys_user_unit", target = Sys_role.class, to = "unit_id")
+    protected List<Sys_unit> units;
+    @One(target = Sys_user_profile.class, field = "id", key = "userId")
     protected Sys_user_profile profile;
     protected List<Sys_menu> menus;
     protected List<Sys_menu> firstMenus;
-    protected Map<String,List<Sys_menu>> secondMenus;
-    protected Map<String,String> idMenus;
-    public long getId() {
+    protected Map<String, List<Sys_menu>> secondMenus;
+    protected Map<String, String> idMenus;
+
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -242,5 +247,13 @@ public class Sys_user extends BasePojo implements Serializable {
 
     public void setIdMenus(Map<String, String> idMenus) {
         this.idMenus = idMenus;
+    }
+
+    public List<Sys_unit> getUnits() {
+        return units;
+    }
+
+    public void setUnits(List<Sys_unit> units) {
+        this.units = units;
     }
 }

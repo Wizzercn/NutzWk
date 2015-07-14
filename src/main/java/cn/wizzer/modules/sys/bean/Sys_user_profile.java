@@ -12,12 +12,10 @@ import java.io.Serializable;
 public class Sys_user_profile extends BasePojo implements Serializable {
     private static final long serialVersionUID = 1L;
     /**关联的用户id*/
-    @Id(auto=false)
+    @Name
     @Column("user_id")
-    protected long userId;
-    @Column
-    @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String unitid;
+    @ColDefine(type = ColType.VARCHAR, width = 64)
+    protected String userId;
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String position;
@@ -61,20 +59,12 @@ public class Sys_user_profile extends BasePojo implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width =100)
     private String linkCity;
 
-    public long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getUnitid() {
-        return unitid;
-    }
-
-    public void setUnitid(String unitid) {
-        this.unitid = unitid;
     }
 
     public String getPosition() {

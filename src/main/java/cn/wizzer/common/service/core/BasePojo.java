@@ -1,9 +1,6 @@
 package cn.wizzer.common.service.core;
 
-import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Comment;
-import org.nutz.dao.entity.annotation.EL;
-import org.nutz.dao.entity.annotation.Prev;
+import org.nutz.dao.entity.annotation.*;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 
@@ -23,7 +20,8 @@ public abstract class BasePojo implements Serializable {
     protected Date createTime;
     @Column("create_user")
     @Comment("创建用户")
-    protected long createUser;
+    @ColDefine(type = ColType.VARCHAR, width = 64)
+    protected String createUser;
     @Column("is_deteled")
     @Comment("是否删除")
     protected boolean isDeteled;
@@ -39,11 +37,11 @@ public abstract class BasePojo implements Serializable {
         this.createTime = createTime;
     }
 
-    public long getCreateUser() {
+    public String getCreateUser() {
         return createUser;
     }
 
-    public void setCreateUser(long createUser) {
+    public void setCreateUser(String createUser) {
         this.createUser = createUser;
     }
 

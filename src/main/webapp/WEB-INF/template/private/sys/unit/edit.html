@@ -19,7 +19,9 @@
                     #if(${shiro.hasPermission('sys:unit')})
 
                     <section class="panel">
-                        <form id="unitAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/private/sys/unit/add/do" method="post">
+                        <form id="unitAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/private/sys/unit/edit/do" method="post">
+                            <input type="hidden" name="id" value="$!obj.id">
+                            <input type="hidden" name="path" value="$!obj.path">
                             <div class="row mb10">
                                 <div class="col-lg-12">
                                     <div class="form-group has-feedback">
@@ -38,44 +40,44 @@
                                     <div class="form-group">
                                         <label for="name" class="col-sm-2 control-label">名称</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="name" class="form-control" name="name" data-parsley-required="true" placeholder="机构名称">
+                                            <input type="text" id="name" class="form-control" name="name" value="$!obj.name" data-parsley-required="true" placeholder="机构名称">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="address" class="col-sm-2 control-label">地址</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="address" name="address" class="form-control" placeholder="机构所在地址">
+                                            <input type="text" id="address" name="address"  value="$!obj.address" class="form-control" placeholder="机构所在地址">
                                             <p class="help-block no-m">例如：安徽省合肥市蜀山区合作化南路922号</p>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="unitcode" class="col-sm-2 control-label">机构编码</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="unitcode" class="form-control" name="unitcode" placeholder="机构编码">
+                                            <input type="text" id="unitcode" class="form-control" name="unitcode" value="$!obj.unitcode" placeholder="机构编码">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="description" class="col-sm-2 control-label">机构简介</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="description" class="form-control" name="description" placeholder="机构简介">
+                                            <input type="text" id="description" class="form-control" name="description" value="$!obj.description" placeholder="机构简介">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="telephone" class="col-sm-2 control-label">联系方式</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="telephone" name="telephone" class="form-control" placeholder="固定电话、手机号码等">
+                                            <input type="text" id="telephone" name="telephone" value="$!obj.telephone"  class="form-control" placeholder="固定电话、手机号码等">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="email" class="col-sm-2 control-label">电子邮件</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="email" name="email" class="form-control" placeholder="格式：xxx@xxx.xx" data-parsley-type="email" data-parsley-trigger="change">
+                                            <input type="text" id="email" name="email" value="$!obj.email" class="form-control" placeholder="格式：xxx@xxx.xx" data-parsley-type="email" data-parsley-trigger="change">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="website" class="col-sm-2 control-label">网站地址</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="website" name="website" class="form-control" placeholder="http://">
+                                            <input type="text" id="website" name="website" value="$!obj.website" class="form-control" placeholder="http://">
                                         </div>
                                     </div>
                                 </div>
@@ -171,12 +173,12 @@
             },
             success : function(data, statusText, xhr, $form) {
                 if(data.type == "success"){
-                    Toast.success(data.content);
-                    //刷新父级菜单
-                    $.jstree.reference("#jsTreeParentUnit").refresh();
-                    var parentName = $("#unitAddForm #parentId").val();
-                    $form.resetForm();
-                    $("#unitAddForm #parentId").val(parentName);
+                    Toast.success(data.content+"，3秒后返回组织机构首页", function(){
+                        window.location.href="${base}/private/sys/unit";
+                    });
+                    setTimeout(function(){
+                        window.location.href="${base}/private/sys/unit";
+                    }, 3000);
                 }else{
                     Toast.error(data.content);
                 }

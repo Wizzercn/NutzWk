@@ -9,13 +9,23 @@ import java.io.Serializable;
  * Created by Wizzer.cn on 2015/7/1.
  */
 @Table("sys_menu")
+@TableIndexes({@Index(name = "INDEX_SYS_MENU_PATH", fields = {"path"}, unique = true)})
 public class Sys_menu extends BasePojo implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Name
     @Comment("ID")
-    @ColDefine(type = ColType.VARCHAR, width = 100)
+    @ColDefine(type = ColType.VARCHAR, width = 64)
+    @Prev(els={@EL("uuid()")})
     private String id;
+    @Column
+    @Comment("父级ID")
+    @ColDefine(type = ColType.VARCHAR, width = 64)
+    private String parentId;
+    @Column
+    @Comment("树路径")
+    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private String path;
     @Column
     @Comment("菜单名称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
@@ -65,12 +75,36 @@ public class Sys_menu extends BasePojo implements Serializable {
         this.id = id;
     }
 
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAliasName() {
+        return aliasName;
+    }
+
+    public void setAliasName(String aliasName) {
+        this.aliasName = aliasName;
     }
 
     public String getHref() {
@@ -105,20 +139,20 @@ public class Sys_menu extends BasePojo implements Serializable {
         this.is_show = is_show;
     }
 
+    public boolean is_enabled() {
+        return is_enabled;
+    }
+
+    public void setIs_enabled(boolean is_enabled) {
+        this.is_enabled = is_enabled;
+    }
+
     public String getPermission() {
         return permission;
     }
 
     public void setPermission(String permission) {
         this.permission = permission;
-    }
-
-    public long getLocation() {
-        return location;
-    }
-
-    public void setLocation(long location) {
-        this.location = location;
     }
 
     public String getDescription() {
@@ -129,20 +163,12 @@ public class Sys_menu extends BasePojo implements Serializable {
         this.description = description;
     }
 
-    public String getAliasName() {
-        return aliasName;
+    public long getLocation() {
+        return location;
     }
 
-    public void setAliasName(String aliasName) {
-        this.aliasName = aliasName;
-    }
-
-    public boolean is_enabled() {
-        return is_enabled;
-    }
-
-    public void setIs_enabled(boolean is_enabled) {
-        this.is_enabled = is_enabled;
+    public void setLocation(long location) {
+        this.location = location;
     }
 
     public boolean isHasChildren() {

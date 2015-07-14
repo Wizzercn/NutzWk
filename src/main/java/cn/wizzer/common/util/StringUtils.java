@@ -1,5 +1,7 @@
 package cn.wizzer.common.util;
 
+import cn.wizzer.modules.sys.bean.Sys_user;
+import org.apache.shiro.SecurityUtils;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 
@@ -10,6 +12,24 @@ import javax.servlet.http.HttpServletRequest;
  */
 @IocBean
 public class StringUtils {
+    /**
+     * 获取当前登陆用户ID
+     *
+     * @return
+     */
+    public static String getUid() {
+        String uid = "";
+        Object u = SecurityUtils.getSubject().getPrincipal();
+        if (u != null) {
+            if (u instanceof Sys_user) {
+                uid = ((Sys_user) u).getId();
+            } else if (u instanceof String) {
+                uid = ((String) u);
+            }
+        }
+        return uid;
+    }
+
     /**
      * 获得用户远程地址
      */
