@@ -33,7 +33,7 @@ public class UnitAction {
     @Ok("vm:template.private.sys.unit.index")
     @RequiresPermissions("sys:unit")
     public Object index() {
-        return unitService.query(Cnd.where("length(path)", "=", 4).asc("location").asc("path"), null);
+        return unitService.query(Cnd.where("parentId", "=", "").asc("location").asc("path"), null);
     }
 
     @At("/add")
