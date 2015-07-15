@@ -24,10 +24,6 @@ public class UnitService extends BaseService<Sys_unit> {
         super(dao);
     }
 
-    public void update(Sys_unit unit) {
-        dao().update(unit);
-    }
-
     @Aop(TransAop.READ_COMMITTED)
     public boolean deleteAndChild(String id) {
         String pid = this.fetch(id).getParentId();
