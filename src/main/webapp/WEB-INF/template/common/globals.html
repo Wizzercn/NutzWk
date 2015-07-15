@@ -38,7 +38,6 @@
 </head>
 
 <body>
-
 <div class="gallery-loader" style="background-color:transparent;">
     <div class="loader"></div>
 </div>
@@ -49,28 +48,28 @@
         <div class="options-container color-options">
             <h6>${msg['index.themes']}</h6>
             <a onclick="sublime.changeTheme('palette.css')" href="${base}/include/css/skins/palette.css"
-               class="css_orange cs_color cs_1">
+               class="css_orange cs_color cs_1 #if(!${shiro.getPrincipalProperty('loginTheme')}||${shiro.getPrincipalProperty('loginTheme')}=='palette.css')active#end">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
             </a>
             <a onclick="sublime.changeTheme('palette.2.css')" href="${base}/include/css/skins/palette.2.css"
-               class="css_orange cs_color cs_2">
+               class="css_orange cs_color cs_2 #if(${shiro.getPrincipalProperty('loginTheme')}=='palette.2.css')active#end">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
             </a>
             <a onclick="sublime.changeTheme('palette.3.css')" href="${base}/include/css/skins/palette.3.css"
-               class="css_orange cs_color cs_3">
+               class="css_orange cs_color cs_3 #if(${shiro.getPrincipalProperty('loginTheme')}=='palette.3.css')active#end">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
             </a>
             <a onclick="sublime.changeTheme('palette.4.css')" href="${base}/include/css/skins/palette.4.css"
-               class="css_orange cs_color cs_4">
+               class="css_orange cs_color cs_4 #if(${shiro.getPrincipalProperty('loginTheme')}=='palette.4.css')active#end">
                 <div></div>
                 <div></div>
                 <div></div>
@@ -79,20 +78,20 @@
         </div>
         <div class="options-container">
             <h6>${msg['index.layout']}</h6>
-            <a class="pg-val toggle-sidebar toggle-active" href="javascript:;">
+            <a class="pg-val toggle-sidebar toggle-active #if(${shiro.getPrincipalProperty('loginSidebar')})active#end" href="javascript:;">
                 <img src="${base}/include/img/panel/small.png" alt="">
             </a>
-            <a class="pg-val toggle-scroll toggle-active" href="javascript:;">
+            <a class="pg-val toggle-scroll toggle-active #if(${shiro.getPrincipalProperty('loginScroll')})active#end" href="javascript:;">
                 <img src="${base}/include/img/panel/scroll.png" alt="">
             </a>
-            <a class="pg-val toggle-boxed toggle-active" href="javascript:;">
+            <a class="pg-val toggle-boxed toggle-active #if(${shiro.getPrincipalProperty('loginBoxed')})active#end" href="javascript:;">
                 <img src="${base}/include/img/panel/boxed.png" alt="">
             </a>
         </div>
         <small class="pg-footer"><i class="ti-info-alt mr5"></i>${msg['index.panel']}</small>
     </div>
 </div>
-
+<div class="app #if(${shiro.getPrincipalProperty('loginSidebar')})small-menu#end #if(${shiro.getPrincipalProperty('loginScroll')})fixed-scroll#end #if(${shiro.getPrincipalProperty('loginBoxed')})boxed#end">
 #end
 #macro (sys_head)
 <header class="header header-fixed navbar">
@@ -435,7 +434,7 @@
 </aside>
 #end
 #macro (sys_buttom)
-
+</div>
 <script src="${base}/include/plugins/jquery-1.11.1.min.js"></script>
 <script src="${base}/include/bootstrap/js/bootstrap.js"></script>
 <script src="${base}/include/plugins/jquery.slimscroll.min.js"></script>
@@ -449,40 +448,6 @@
 <script src="${base}/include/js/main.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-
-        #if(${shiro.getPrincipalProperty('loginTheme')})
-            $("a[href='${base}/include/css/skins/${shiro.getPrincipalProperty('loginTheme')}']").addClass("active");
-        #else
-        $("a[href='${base}/include/css/skins/palette.css']").addClass("active");
-        #end
-        #if(${shiro.getPrincipalProperty('loginSidebar')})
-            $(".app").addClass("small-menu");
-        $(".toggle-sidebar").addClass("active");
-        if (!$.browser.mobile && $.fn.slimScroll) {
-            $(".no-touch .main-navigation").each(function () {
-                $(this).slimScroll({destroy: true}).removeAttr('style');
-            });
-        }
-        #else
-        $(".app").removeClass("small-menu");
-        $(".toggle-sidebar").removeClass("active");
-        if (!$.browser.mobile && !sublime.checkBreakout() && $.fn.slimScroll) {
-            $(".no-touch .main-navigation").each(function () {
-                var data = $(this).data();
-                $(this).slimScroll(data);
-            });
-        }
-        #end
-        #if(${shiro.getPrincipalProperty('loginScroll')})
-            $(".app").addClass("fixed-scroll");
-        $(".toggle-scroll").addClass("active");
-
-        #end
-        #if(${shiro.getPrincipalProperty('loginBoxed')})
-            $(".app").addClass("boxed");
-        $(".toggle-boxed").addClass("active");
-
-        #end
         try{
             $(".gallery-loader").fadeOut(function(){
                 $(".gallery-loader").remove();

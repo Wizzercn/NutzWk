@@ -1,5 +1,4 @@
 #sys_top
-<div class="app">
     #sys_head
 
 
@@ -15,7 +14,7 @@
             </header>
 
             <div class="content-wrap">
-                <div class="wrapper">
+                <div class="wrapper" style="min-height:500px;">
                     #if(${shiro.hasPermission('sys:unit')})
 
                     <section class="panel">
@@ -98,7 +97,6 @@
         </section>
 
     </section>
-</div>
 <!-- 选择上级机构 -->
 <div id="dialogSelectParentUnit" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
