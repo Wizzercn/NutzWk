@@ -249,6 +249,7 @@ public class MainSetup implements Setup {
             String hashedPasswordBase64 = new Sha256Hash("1", salt, 1024).toBase64();
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
+            user.setLoginIp("127.0.0.1");
             Sys_user dbuser = dao.insert(user);
             Sys_user_profile profile = new Sys_user_profile();
             profile.setNickname("超级管理员");

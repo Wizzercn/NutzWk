@@ -4,6 +4,7 @@ import cn.wizzer.modules.sys.bean.Sys_user;
 import org.apache.shiro.SecurityUtils;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.mvc.Mvcs;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,13 +20,18 @@ public class StringUtils {
      */
     public static String getUid() {
         String uid = "";
-        Object u = SecurityUtils.getSubject().getPrincipal();
-        if (u != null) {
-            if (u instanceof Sys_user) {
-                uid = ((Sys_user) u).getId();
-            } else if (u instanceof String) {
-                uid = ((String) u);
+        try {
+            Object u = SecurityUtils.getSubject().getPrincipal();
+            if (u != null) {
+                if (u instanceof Sys_user) {
+                    uid = ((Sys_user) u).getId();
+                } else if (u instanceof String) {
+                    uid = ((String) u);
+                }
             }
+        }catch (Exception e){
+
+            return "";
         }
         return uid;
     }
@@ -33,7 +39,8 @@ public class StringUtils {
     /**
      * 获得用户远程地址
      */
-    public static String getRemoteAddr(HttpServletRequest request) {
+    public static String getRemoteAddr() {
+        HttpServletRequest request = Mvcs.getReq();
         String remoteAddr = request.getHeader("X-Real-IP");
         if (Strings.isNotBlank(remoteAddr)) {
             remoteAddr = request.getHeader("X-Forwarded-For");

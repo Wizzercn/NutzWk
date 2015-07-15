@@ -33,6 +33,10 @@ public class Sys_user extends BasePojo implements Serializable {
     @Comment("加盐")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String salt;
+    @Column("is_online")
+    @Comment("是否在线")
+    @ColDefine(type = ColType.BOOLEAN)
+    private boolean online;
     @Column("is_locked")
     @Comment("是否锁定")
     @ColDefine(type = ColType.BOOLEAN)
@@ -255,5 +259,13 @@ public class Sys_user extends BasePojo implements Serializable {
 
     public void setUnits(List<Sys_unit> units) {
         this.units = units;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 }

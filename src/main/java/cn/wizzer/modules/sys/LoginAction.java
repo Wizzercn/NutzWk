@@ -4,12 +4,12 @@ import cn.wizzer.common.Message;
 import cn.wizzer.common.exception.IncorrectCaptchaException;
 import cn.wizzer.common.exception.IncorrectIpException;
 import cn.wizzer.common.mvc.filter.CaptchaFormAuthenticationFilter;
-import cn.wizzer.common.util.CacheUtils;
+import cn.wizzer.common.service.log.SysLogService;
 import cn.wizzer.common.util.CookieUtils;
 import cn.wizzer.common.util.StringUtils;
+import cn.wizzer.modules.sys.bean.Sys_log;
 import cn.wizzer.modules.sys.bean.Sys_menu;
 import cn.wizzer.modules.sys.bean.Sys_user;
-import cn.wizzer.modules.sys.bean.Sys_user_profile;
 import cn.wizzer.modules.sys.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -24,17 +24,16 @@ import org.nutz.dao.*;
 import org.nutz.dao.Chain;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
-import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.*;
@@ -49,7 +48,8 @@ public class LoginAction {
     private static final Log log = Logs.get();
     @Inject
     UserService userService;
-
+    @Inject
+    SysLogService sysLogService;
     /**
      * 登陆页面
      */
@@ -159,15 +159,13 @@ public class LoginAction {
     @At("/doLogin")
     @Ok("json")
     @Filters(@By(type = CaptchaFormAuthenticationFilter.class))
-    public Object doLogin(@Attr("loginToken") AuthenticationToken token, HttpServletRequest req) {
+    public Object doLogin(@Attr("loginToken") AuthenticationToken token, HttpServletRequest req,HttpSession session) {
         try {
             Subject subject = SecurityUtils.getSubject();
             ThreadContext.bind(subject);
             subject.login(token);
             Sys_user user = (Sys_user) subject.getPrincipal();
-            userService.update(Chain.make("login_ip", StringUtils.getRemoteAddr(req)).add("login_time", new Date())
-                    .add("login_count", user.getLoginCount() + 1)
-                    , Cnd.where("id", "=", user.getId()));
+            user.setLoginIp(StringUtils.getRemoteAddr());
             //计算左侧菜单
             List<Sys_menu> firstMenus = getChildMenus("", user.getMenus());
             Map<String, List<Sys_menu>> secondMenus = new HashMap<>();
@@ -183,6 +181,11 @@ public class LoginAction {
             user.setSecondMenus(secondMenus);
             user.setProfile(userService.getProfile(user.getId()));
             user.setIdMenus(getIdMenus(user.getMenus()));
+            Sys_log log= Sys_log.c("info","用户登陆",user.getId(),"用户："+user.getUsername()+" 成功登陆系统！");
+            sysLogService.async(log);
+            userService.update(Chain.make("login_ip", user.getLoginIp()).add("login_time", new Date())
+                    .add("login_count", user.getLoginCount() + 1).add("is_online",true)
+                    , Cnd.where("id", "=", user.getId()));
             return Message.success("login.success", req);
         } catch (IncorrectCaptchaException e) {
             //自定义的验证码错误异常,需shrio.ini 配置authcStrategy属性，加到对应的类中

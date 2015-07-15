@@ -48,28 +48,28 @@
         <div class="options-container color-options">
             <h6>${msg['index.themes']}</h6>
             <a onclick="sublime.changeTheme('palette.css')" href="${base}/include/css/skins/palette.css"
-               class="css_orange cs_color cs_1 #if(!${shiro.getPrincipalProperty('loginTheme')}||${shiro.getPrincipalProperty('loginTheme')}=='palette.css')active#end">
+               class="css_orange cs_color cs_1 #if(!${shiro.getPrincipalProperty('loginTheme')}||'palette.css'==$!{shiro.getPrincipalProperty('loginTheme')})active#end">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
             </a>
             <a onclick="sublime.changeTheme('palette.2.css')" href="${base}/include/css/skins/palette.2.css"
-               class="css_orange cs_color cs_2 #if(${shiro.getPrincipalProperty('loginTheme')}=='palette.2.css')active#end">
+               class="css_orange cs_color cs_2 #if('palette.2.css'==$!{shiro.getPrincipalProperty('loginTheme')})active#end">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
             </a>
             <a onclick="sublime.changeTheme('palette.3.css')" href="${base}/include/css/skins/palette.3.css"
-               class="css_orange cs_color cs_3 #if(${shiro.getPrincipalProperty('loginTheme')}=='palette.3.css')active#end">
+               class="css_orange cs_color cs_3 #if('palette.3.css'==$!{shiro.getPrincipalProperty('loginTheme')})active#end">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
             </a>
             <a onclick="sublime.changeTheme('palette.4.css')" href="${base}/include/css/skins/palette.4.css"
-               class="css_orange cs_color cs_4 #if(${shiro.getPrincipalProperty('loginTheme')}=='palette.4.css')active#end">
+               class="css_orange cs_color cs_4 #if('palette.4.css'==$!{shiro.getPrincipalProperty('loginTheme')})active#end">
                 <div></div>
                 <div></div>
                 <div></div>

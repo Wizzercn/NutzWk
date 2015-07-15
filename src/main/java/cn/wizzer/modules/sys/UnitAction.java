@@ -1,6 +1,7 @@
 package cn.wizzer.modules.sys;
 
 import cn.wizzer.common.Message;
+import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.mvc.filter.PrivateFilter;
 import cn.wizzer.common.util.StringUtils;
 import cn.wizzer.modules.sys.bean.Sys_unit;
@@ -25,6 +26,7 @@ import java.util.List;
 @IocBean
 @At("/private/sys/unit")
 @Filters({@By(type = PrivateFilter.class)})
+@SLog(tag="机构管理", msg="")
 public class UnitAction {
     @Inject
     UnitService unitService;
@@ -48,6 +50,7 @@ public class UnitAction {
     @At("/add/do")
     @Ok("json")
     @RequiresPermissions("sys:unit")
+    @SLog(tag="新增机构", msg="机构名称：[${args[0]}]")
     public Object addDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         int sum = unitService.count(Cnd.where("parentId", "=", parentId).and("name", "=", unit.getName()));
         if (sum > 0) {
