@@ -31,7 +31,7 @@ public class NutDaoRealm extends AbstractNutAuthoRealm {
 		if (Lang.isEmpty(user)) {
 			throw Lang.makeThrow(UnknownAccountException.class, "Account [ %s ] not found", authcToken.getUsername());
 		}
-		if(!Strings.sNull(user.getLoginIp()).equals(StringUtils.getRemoteAddr(Mvcs.getReq()))){
+		if(!Strings.sNull(user.getLoginIp()).equals(StringUtils.getRemoteAddr())){
 			boolean isCaptchaBlank = Strings.isBlank(authcToken.getCaptcha());
 			if (isCaptchaBlank) {
 				throw Lang.makeThrow(IncorrectIpException.class, "Captcha is must");

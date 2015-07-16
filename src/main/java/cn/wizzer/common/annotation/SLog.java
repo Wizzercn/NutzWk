@@ -11,9 +11,9 @@ public @interface SLog {
 
     String msg();
 
-    boolean before() default true;
+    boolean before() default false;
 
-    boolean after() default false;
+    boolean after() default true;
 
     boolean error() default true;
 

@@ -181,7 +181,7 @@ public class LoginAction {
             user.setSecondMenus(secondMenus);
             user.setProfile(userService.getProfile(user.getId()));
             user.setIdMenus(getIdMenus(user.getMenus()));
-            Sys_log log= Sys_log.c("info","用户登陆",user.getId(),"用户："+user.getUsername()+" 成功登陆系统！");
+            Sys_log log= Sys_log.c("info","用户登陆",user.getId(),"用户："+user.getUsername()+" 成功登陆系统！",null);
             sysLogService.async(log);
             userService.update(Chain.make("login_ip", user.getLoginIp()).add("login_time", new Date())
                     .add("login_count", user.getLoginCount() + 1).add("is_online",true)

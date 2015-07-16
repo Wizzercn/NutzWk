@@ -50,7 +50,7 @@ public class UnitAction {
     @At("/add/do")
     @Ok("json")
     @RequiresPermissions("sys:unit")
-    @SLog(tag="新增机构", msg="机构名称：[${args[0]}]")
+    @SLog(tag="新增机构", msg="机构名称：${args[0].name}")
     public Object addDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         int sum = unitService.count(Cnd.where("parentId", "=", parentId).and("name", "=", unit.getName()));
         if (sum > 0) {
@@ -76,6 +76,7 @@ public class UnitAction {
     @At("/edit/do")
     @Ok("json")
     @RequiresPermissions("sys:unit")
+    @SLog(tag="修改机构", msg="机构名称：${args[0].name}")
     public Object editDo(@Param("..") Sys_unit unit, @Param("pid") String pid, HttpServletRequest req) {
         if (unit.getParentId().equals(unit.getId())) {
             return Message.error("上级机构不可为自身！", req);
@@ -126,8 +127,11 @@ public class UnitAction {
     @At("/delete/?")
     @Ok("json")
     @RequiresPermissions("sys:unit")
+    @SLog(tag="删除机构", msg="机构名称：${args[1].getAttribute('name')}")
     public Object delete(String id, HttpServletRequest req) {
-        if ("0001".equals(unitService.fetch(id).getPath())) {
+        Sys_unit unit=unitService.fetch(id);
+        req.setAttribute("name",unit.getName());
+        if ("0001".equals(unit.getPath())) {
             return Message.error("system.nodel", req);
         }
         if (unitService.deleteAndChild(id)) {

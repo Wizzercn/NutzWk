@@ -36,7 +36,7 @@ public class MySessionListener implements HttpSessionListener {
         if (userService == null) {
             userService = Mvcs.ctx().getDefaultIoc().get(UserService.class);
         }
-        Sys_log syslog = Sys_log.c("system", "用户退出", uid, "用户："+uid+" 超时，自动退出系统！");
+        Sys_log syslog = Sys_log.c("system", "用户退出", uid, "用户："+uid+" 超时，自动退出系统！",null);
         sysLogService.async(syslog);
         userService.update(Chain.make("is_online",false), Cnd.where("id","=",uid));
     }

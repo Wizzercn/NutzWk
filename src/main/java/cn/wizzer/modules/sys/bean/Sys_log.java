@@ -80,19 +80,20 @@ public class Sys_log extends BasePojo implements Serializable {
         this.ip = ip;
     }
 
-    public static Sys_log c(String type, String tag, String uid, String msg) {
+    public static Sys_log c(String type, String tag, String uid, String msg, String source) {
         Sys_log sysLog = new Sys_log();
         sysLog.setCreateUser(uid);
         sysLog.setCreateTime(new Date());
         if (type == null || tag == null || msg == null) {
             throw new RuntimeException("t/tag/msg can't null");
         }
-        String source = "";
-        StackTraceElement[] tmp = Thread.currentThread().getStackTrace();
-        if (tmp.length > 2) {
-            source = tmp[2].getClassName() + "#" + tmp[2].getMethodName();
-        } else {
-            source = "main";
+        if (source == null) {
+            StackTraceElement[] tmp = Thread.currentThread().getStackTrace();
+            if (tmp.length > 2) {
+                source = tmp[2].getClassName() + "#" + tmp[2].getMethodName();
+            } else {
+                source = "main";
+            }
         }
         sysLog.type = type;
         sysLog.tag = tag;
