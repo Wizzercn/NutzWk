@@ -22,4 +22,7 @@ NutzWk 2.0 新特性：
 在线演示地址
 ============================================
 
-<a href="http://121.43.107.94/private/login" target="_blank">http://121.43.107.94/private/login</a>
+http://121.43.107.94/private/login                 NutzWk 2.0
+
+http://115.28.27.32:9091/nutz_wk/private/login     NutzWk 1.0
+
