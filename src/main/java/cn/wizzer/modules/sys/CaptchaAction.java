@@ -1,6 +1,5 @@
 package cn.wizzer.modules.sys;
 
-import cn.wizzer.common.util.Toolkit;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
@@ -30,7 +29,7 @@ public class CaptchaAction{
 //								.gimp(new FishEyeGimpyRenderer())
                 .build();
         String text = captcha.getAnswer();
-        session.setAttribute(Toolkit.captcha_attr, text);
+        session.setAttribute("captcha", text);
         return captcha.getImage();
     }
 }
