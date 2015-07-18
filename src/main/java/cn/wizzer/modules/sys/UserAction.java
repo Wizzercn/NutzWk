@@ -45,9 +45,8 @@ public class UserAction {
     @At
     @Ok("vm:template.private.sys.user.list")
     @RequiresPermissions("sys:user")
-    public Pagination list(@Param("curPage") int curPage, @Param("pageSize") int pageSize, @Param("tableId") String tableId, HttpServletRequest req) {
+    public Pagination list(@Param("curPage") int curPage, @Param("pageSize") int pageSize, HttpServletRequest req) {
         Pagination p= userService.listPage(curPage, pageSize, Sqls.create("select a.id,a.username,a.is_online,a.is_locked,b.email,b.nickname from sys_user a,sys_user_profile b where a.id=b.user_id order by a.username asc"));
-        req.setAttribute("tableId",tableId);
         return p;
     }
 }

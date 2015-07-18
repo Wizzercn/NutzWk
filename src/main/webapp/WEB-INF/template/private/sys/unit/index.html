@@ -118,7 +118,7 @@
                 var node = this;
                 var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\""+node.id+"\" data-tt-branch=\"false\"><td colspan='4'><img src=\"${base}/include/img/loading.gif\"/>loading</td></tr>";
                 unitTreeTable.treetable("loadBranch", node, rows);
-                $.get("${base}/private/sys/unit/child/"+node.id,{}, function(data){
+                $.post("${base}/private/sys/unit/child/"+node.id,{}, function(data){
                     unitTreeTable.treetable("unloadBranch", node);
                     unitTreeTable.treetable("loadBranch", node, data);
                 });

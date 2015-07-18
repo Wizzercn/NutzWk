@@ -8,6 +8,8 @@ import org.nutz.lang.Strings;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionFilter;
 import org.nutz.mvc.View;
+import org.nutz.mvc.view.RawView;
+import org.nutz.mvc.view.ServerRedirectView;
 
 import java.util.Map;
 
@@ -19,13 +21,15 @@ public class PrivateFilter implements ActionFilter {
 
     public View match(ActionContext context) {
         //忽略AJAX请求
-        if(!"XMLHttpRequest".equalsIgnoreCase(context.getRequest().getHeader("x-requested-with"))) {
+        if (!"XMLHttpRequest".equalsIgnoreCase(context.getRequest().getHeader("x-requested-with"))) {
             Subject currentUser = SecurityUtils.getSubject();
             if (currentUser != null) {
                 Sys_user user = (Sys_user) currentUser.getPrincipal();
                 if (user != null) {
                     context.getRequest().setAttribute("app_path", getMenu(StringUtils.getPath(context.getPath()), user.getIdMenus()));
                 }
+            } else {
+                return new ServerRedirectView("/private/login");
             }
         }
         return null;
@@ -33,15 +37,16 @@ public class PrivateFilter implements ActionFilter {
 
     /**
      * 得到当前路径或上级路径的栏目ID
+     *
      * @param path
      * @param map
      * @return
      */
     private String getMenu(String path, Map map) {
         String p = Strings.sNull(map.get(path));
-        if(Strings.isEmpty(p)&&path.lastIndexOf("/")>0){
+        if (Strings.isEmpty(p) && path.lastIndexOf("/") > 0) {
             return getMenu(path.substring(0, path.lastIndexOf("/")), map);
-        }else if(!Strings.isEmpty(p)){
+        } else if (!Strings.isEmpty(p)) {
             return path;
         }
         return "";

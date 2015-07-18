@@ -39,6 +39,7 @@ public class NutShiroProcessor extends AbstractProcessor {
                 this.interceptor.assertAuthorized(new NutShiroInterceptor(ac));
             } catch (Throwable var3) {
                 if(NutShiro.isAjax(ac.getRequest())) {
+                    ac.getResponse().setHeader("sessionstatus","timeout");
                     NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), (Message.error(var3.getMessage(), ac.getRequest())));
                 } else {
                     (new ServerRedirectView(this.uri)).render(ac.getRequest(), ac.getResponse(), (Object)null);
