@@ -34,6 +34,7 @@ public class UnitAction {
     @At("")
     @Ok("vm:template.private.sys.unit.index")
     @RequiresPermissions("sys:unit")
+    @SLog(tag="机构列表", msg="访问机构列表")
     public Object index() {
         return unitService.query(Cnd.where("parentId", "=", "").asc("location").asc("path"), null);
     }

@@ -8,21 +8,26 @@ import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.sql.SqlCallback;
 import org.nutz.dao.util.Daos;
+import org.nutz.json.Json;
+import org.nutz.json.JsonFormat;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.service.EntityService;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Wizzer.cn on 2015/7/13.
  */
 public class BaseService<T> extends EntityService<T> {
-    protected final static int DEFAULT_PAGE_NUMBER = 20;
-
+    protected final static int DEFAULT_PAGE_NUMBER = 10;
+    protected final static JsonFormat jsonFormat=new JsonFormat().setIgnoreNull(false);
     public BaseService() {
         super();
     }
@@ -178,6 +183,32 @@ public class BaseService<T> extends EntityService<T> {
         this.dao().execute(sql);
         return sql.getList(Record.class);
 
+    }
+
+    public <T> String listPageJson(Class<T> obj, Condition cnd, int curPage, int pageSize) {
+        NutMap map = new NutMap();
+        Pager pager = dao().createPager(curPage, pageSize);
+        List<T> list = dao().query(obj, cnd, pager);
+        pager.setRecordCount(dao().count(obj, cnd));//记录数需手动设置
+        map.setv("draw", 1);
+        map.setv("recordsTotal", pager.getRecordCount());
+        map.setv("recordsFiltered", pager.getRecordCount());
+        map.setv("data", list);
+        return Json.toJson(map,jsonFormat);
+    }
+
+    public <T> String listPageJson(Sql sql, int curPage, int pageSize) {
+        NutMap map = new NutMap();
+        Pager pager = dao().createPager(curPage, pageSize);
+        pager.setRecordCount((int) Daos.queryCount(dao(), sql.toString()));// 记录数需手动设置
+        sql.setPager(pager);
+        sql.setCallback(Sqls.callback.records());
+        dao().execute(sql);
+        map.setv("draw", 1);
+        map.setv("recordsTotal", pager.getRecordCount());
+        map.setv("recordsFiltered", pager.getRecordCount());
+        map.setv("data", sql.getList(Record.class));
+        return Json.toJson(map,jsonFormat);
     }
 
     /**
