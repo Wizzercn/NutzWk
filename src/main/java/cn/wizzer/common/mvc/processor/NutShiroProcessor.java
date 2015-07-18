@@ -8,6 +8,7 @@ import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionInfo;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.impl.processor.AbstractProcessor;
+import org.nutz.mvc.view.RawView;
 import org.nutz.mvc.view.ServerRedirectView;
 
 /**
@@ -40,7 +41,8 @@ public class NutShiroProcessor extends AbstractProcessor {
             } catch (Throwable var3) {
                 if(NutShiro.isAjax(ac.getRequest())) {
                     ac.getResponse().setHeader("sessionstatus","timeout");
-                    NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), (Message.error(var3.getMessage(), ac.getRequest())));
+                    new RawView("").render(ac.getRequest(), ac.getResponse(),  (Object)null);
+                    //NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), (Message.error(var3.getMessage(), ac.getRequest())));
                 } else {
                     (new ServerRedirectView(this.uri)).render(ac.getRequest(), ac.getResponse(), (Object)null);
                 }

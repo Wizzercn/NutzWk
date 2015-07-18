@@ -483,6 +483,7 @@
         param.curPage = page;
         param.tableId = "$!tableid";
         $.post(form.attr("action"), param, function (data) {
+            if(!data){ return false;}
             $("#$!tableid tbody").html(data);
             $("#__pageLeft$!tableid").html("第"+$("#pageNo$!tableid").val()+"/"+$("#totalPage$!tableid").val()+"页，每页显示"+$("#pageSize$!tableid").val()+"条，共"+$("#totalCount$!tableid").val()+"条数据");
             $("#__pageControl$!tableid").html("<li id=\"__pageFirst$!tableid\" class=\"disabled\"><a href=\"javascript:;\">首页</a></li>" +
