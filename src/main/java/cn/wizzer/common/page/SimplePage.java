@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SimplePage implements Paginable {
 
-	public static final int DEF_COUNT = 20;
+	public static final int DEF_COUNT = 10;
 	private List<Integer> localArrayList = new ArrayList<Integer>();
 
 	public List<Integer> getSegment() {

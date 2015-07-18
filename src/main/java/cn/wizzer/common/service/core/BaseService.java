@@ -27,7 +27,8 @@ import java.util.Map;
  */
 public class BaseService<T> extends EntityService<T> {
     protected final static int DEFAULT_PAGE_NUMBER = 10;
-    protected final static JsonFormat jsonFormat=new JsonFormat().setIgnoreNull(false);
+    protected final static JsonFormat jsonFormat = new JsonFormat().setIgnoreNull(false);
+
     public BaseService() {
         super();
     }
@@ -185,32 +186,6 @@ public class BaseService<T> extends EntityService<T> {
 
     }
 
-    public <T> String listPageJson(Class<T> obj, Condition cnd, int curPage, int pageSize) {
-        NutMap map = new NutMap();
-        Pager pager = dao().createPager(curPage, pageSize);
-        List<T> list = dao().query(obj, cnd, pager);
-        pager.setRecordCount(dao().count(obj, cnd));//记录数需手动设置
-        map.setv("draw", 1);
-        map.setv("recordsTotal", pager.getRecordCount());
-        map.setv("recordsFiltered", pager.getRecordCount());
-        map.setv("data", list);
-        return Json.toJson(map,jsonFormat);
-    }
-
-    public <T> String listPageJson(Sql sql, int curPage, int pageSize) {
-        NutMap map = new NutMap();
-        Pager pager = dao().createPager(curPage, pageSize);
-        pager.setRecordCount((int) Daos.queryCount(dao(), sql.toString()));// 记录数需手动设置
-        sql.setPager(pager);
-        sql.setCallback(Sqls.callback.records());
-        dao().execute(sql);
-        map.setv("draw", 1);
-        map.setv("recordsTotal", pager.getRecordCount());
-        map.setv("recordsFiltered", pager.getRecordCount());
-        map.setv("data", sql.getList(Record.class));
-        return Json.toJson(map,jsonFormat);
-    }
-
     /**
      * 分页查询
      *
@@ -232,10 +207,30 @@ public class BaseService<T> extends EntityService<T> {
      */
     public Pagination listPage(Integer pageNumber, int pageSize, Condition cnd) {
         pageNumber = getPageNumber(pageNumber);
+        pageSize = getPageSize(pageSize);
         Pager pager = this.dao().createPager(pageNumber, pageSize);
         List<T> list = this.dao().query(getEntityClass(), cnd, pager);
         pager.setRecordCount(this.dao().count(getEntityClass(), cnd));
         return new Pagination(pageNumber, pageSize, pager.getRecordCount(), list);
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param sql
+     * @return
+     */
+    public Pagination listPage(Integer pageNumber, int pageSize, Sql sql) {
+        pageNumber = getPageNumber(pageNumber);
+        pageSize = getPageSize(pageSize);
+        Pager pager = this.dao().createPager(pageNumber, pageSize);
+        pager.setRecordCount((int) Daos.queryCount(dao(), sql.toString()));// 记录数需手动设置
+        sql.setPager(pager);
+        sql.setCallback(Sqls.callback.records());
+        dao().execute(sql);
+        return new Pagination(pageNumber, pageSize, pager.getRecordCount(), sql.getList(Record.class));
     }
 
     /**
@@ -247,5 +242,15 @@ public class BaseService<T> extends EntityService<T> {
     protected int getPageNumber(Integer pageNumber) {
         return Lang.isEmpty(pageNumber) ? 1 : pageNumber;
     }
+
+    /**
+     * 默认页大小
+     * @param pageSize
+     * @return
+     */
+    protected int getPageSize(int pageSize) {
+        return pageSize == 0 ? DEFAULT_PAGE_NUMBER : pageSize;
+    }
+
 
 }

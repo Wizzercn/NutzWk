@@ -6555,3 +6555,58 @@ td.no-b {
   float: left;
   margin: 0;
 }
+
+#loadingbar {
+  position: absolute;
+  z-index: 2147483647;
+  top: 0;
+  left: 0px;
+  width: 1%;
+  height: 2px;
+  background: #b91f1f;
+  -moz-border-radius: 1px;
+  -webkit-border-radius: 1px;
+  border-radius: 1px;
+  -moz-transition: all 500ms ease-in-out;
+  -ms-transition: all 500ms ease-in-out;
+  -o-transition: all 500ms ease-in-out;
+  -webkit-transition: all 500ms ease-in-out;
+  transition: all 500ms ease-in-out;
+}
+#loadingbar.full {
+  position: fixed;
+  left: -6px;
+}
+#loadingbar.waiting dd, #loadingbar.waiting dt {
+  -moz-animation: pulse 2s ease-out 0s infinite;
+  -ms-animation: pulse 2s ease-out 0s infinite;
+  -o-animation: pulse 2s ease-out 0s infinite;
+  -webkit-animation: pulse 2s ease-out 0s infinite;
+  animation: pulse 2s ease-out 0s infinite;
+}
+
+#loadingbar dt {
+  opacity: .6;
+  width: 180px;
+  right: -80px;
+  clip: rect(-6px,90px,14px,-6px);
+}
+
+#loadingbar dd {
+  opacity: .6;
+  width: 20px;
+  right: 0;
+  clip: rect(-6px,22px,14px,10px);
+}
+#loadingbar dd, #loadingbar dt {
+  position: absolute;
+  top: 0;
+  height: 2px;
+  -moz-box-shadow: #b91f1f 1px 0 6px 1px;
+  -ms-box-shadow: #b91f1f 1px 0 6px 1px;
+  -webkit-box-shadow: #B91F1F 1px 0 6px 1px;
+  box-shadow: #B91F1F 1px 0 6px 1px;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+  border-radius: 100%;
+}

@@ -461,6 +461,35 @@ var sublime = function () {
         },
         changeTheme:function(obj){
             jQuery.post(base+"/private/theme", {path:obj});
+        },
+        showLoadingbar : function(obj){//显示顶部进度条
+            var clz = "waiting";
+            if(!obj){
+                clz += " full";
+            }
+            obj = obj || $("body");
+            obj.prepend("<div id=\"loadingbar\"></div>");
+            $("#loadingbar").addClass(clz).append($("<dt/><dd/>"));
+            $("#loadingbar").width((50 + Math.random() * 30) + "%");
+            var width = (50 + Math.random() * 30);
+            var interval = setInterval(function(){
+                width = width + 10;
+                if(width<100){
+                    $("#loadingbar").width(width + "%");
+                }else{
+                    $("#loadingbar").width("101%");
+                    clearInterval(interval);
+                }
+            }, 1000);
+            $("#loadingbar").attr("interval", interval);
+        },
+        closeLoadingbar : function(obj){//关闭顶部进度条
+            obj = obj || $("body");
+            obj.find("#loadingbar").width("101%").delay(200).fadeOut(400, function() {
+                var interval =  $(this).attr("interval");
+                clearInterval(interval);
+                $("#loadingbar").remove();
+            });
         }
     };
 }();

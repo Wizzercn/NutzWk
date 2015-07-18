@@ -2,57 +2,70 @@
 #sys_head
 
 
-    <section class="layout">
-        #sys_menu
-        <!-- 机构  -->
-        <aside class="sidebar-250 canvas-right bg-default ">
-            <header class="header navbar clearfix bb bg-default pl0 pr0">
-                <p class="navbar-text"><i class="fa fa-sitemap mr5"></i> 组织结构</p>
-            </header>
-            <div class="content-wrap no-p">
-                <div class="wrapper">
-                    <div class="m5">
-                        <div id="jsTreeUnit"></div>
-                    </div>
+<section class="layout">
+    #sys_menu
+    <!-- 机构  -->
+    <aside class="sidebar-250 canvas-right bg-default ">
+        <header class="header navbar clearfix bb bg-default pl0 pr0">
+            <p class="navbar-text"><i class="fa fa-sitemap mr5"></i> 组织结构</p>
+        </header>
+        <div class="content-wrap no-p">
+            <div class="wrapper">
+                <div class="m5">
+                    <div id="jsTreeUnit"></div>
                 </div>
             </div>
-        </aside>
-        <!-- 列表 -->
-        <section class="main-content bg-white">
-            <header class="header navbar bg-white shadow">
-                #if(${shiro.hasPermission('sys:unit')})
-                <div class="btn-group tool-button">
-                    <a class="btn btn-primary navbar-btn" href="$!basePath/user/add"><i class="ti-plus"></i> 新增用户</a>
-                    <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
-                </div>
-                <div class="pull-right offscreen-right">
-                    <button class="btn btn-primary navbar-btn" onclick="ns.toggleFilter('.cd-panel')"><i class="fa fa-sliders"></i> 筛选</button>
-                </div>
-                #end
-            </header>
-            <div class="content-wrap">
-                <div class="wrapper" style="min-height:500px;">
-                    <div class="row mb15">
-                        <div class="col-lg-12 table-responsive">
-                            <table id="data" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                <thead>
-                                <tr>
-                                    <th>登陆名</th>
-                                    <th>姓名</th>
-                                    <th>状态</th>
-                                    <th>是否在线</th>
-                                    <th>操作</th>
-                                </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
+        </div>
+    </aside>
+    <!-- 列表 -->
+    <section class="main-content bg-white">
+        <header class="header navbar bg-white shadow">
+            #if(${shiro.hasPermission('sys:unit')})
+            <div class="btn-group tool-button">
+                <a class="btn btn-primary navbar-btn" href="$!basePath/user/add"><i class="ti-plus"></i> 新增用户</a>
+                <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
             </div>
+            <div class="pull-right offscreen-right">
+                <button class="btn btn-primary navbar-btn" onclick="ns.toggleFilter('.cd-panel')"><i
+                        class="fa fa-sliders"></i> 筛选
+                </button>
             </div>
-            <a class="exit-offscreen"></a>
-        </section>
+            #end
+        </header>
+        <div class="content-wrap">
+            <div class="wrapper" style="min-height:500px;">
+                <div class="row">
+                    <div class="col-lg-12 table-responsive">
+                        <form action="${base}/private/sys/user/list" method="post">
+                        <table id="data" class="table no-m">
+                            <thead>
+                            <tr>
+                                <th><input class="icheck" type="checkbox"></th>
+                                <th class="col-md-2 pd-l-lg">
+                                    <span class="pd-l-sm"></span>用户名
+                                </th>
+                                <th class="col-md-2">姓名</th>
+                                <th class="col-md-2">邮箱</th>
+                                <th class="col-md-1">状态</th>
+                                <th class="col-md-1">是否在线</th>
+                                <th class="col-md-2">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
+                            </tbody>
+                        </table>
+                        </form>
+                    </div>
+                </div>
+                #page("data")
+
+            </div>
+        </div>
+        <a class="exit-offscreen"></a>
     </section>
+
+</section>
 <!-- 菜单排序 -->
 <div id="dialogSort" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
@@ -71,76 +84,24 @@
 <script language="JavaScript">
     var unitTreeTable;
     var selected = [];
+
     $(document).ready(function () {
-        $("#dialogUnitDetail").on("hidden.bs.modal", function() {
+        $("#dialogUnitDetail").on("hidden.bs.modal", function () {
             $(this).removeData("bs.modal");
         });
         unitTreeTable = $("#unitTreeTable").treetable({
             expandable: true,
-            onNodeExpand : function(){
+            onNodeExpand: function () {
                 var node = this;
-                var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\""+node.id+"\" data-tt-branch=\"false\"><td colspan='4'><img src=\"${base}/include/img/loading.gif\"/>loading</td></tr>";
+                var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\"" + node.id + "\" data-tt-branch=\"false\"><td colspan='4'><img src=\"${base}/include/img/loading.gif\"/>loading</td></tr>";
                 unitTreeTable.treetable("loadBranch", node, rows);
-                $.get("${base}/private/sys/unit/child/"+node.id,{}, function(data){
+                $.get("${base}/private/sys/unit/child/" + node.id, {}, function (data) {
                     unitTreeTable.treetable("unloadBranch", node);
                     unitTreeTable.treetable("loadBranch", node, data);
                 });
             }
         });
-        var t=$('#data').dataTable( {
-            "serverSide": true,
-            "searching": false,
-            "bLengthChange": false,
-            "language": {
-                paginate: {//分页的样式内容。
-                    previous: "上一页",
-                    next: "下一页",
-                    first: "第一页",
-                    last: "最后"
-                },
-                zeroRecords: "没有内容",
-                //下面三者构成了总体的左下角的内容。
-                info: "总共_PAGES_页，显示第_START_到第_END_条",
-                infoEmpty: "0条记录",//筛选为空时左下角的显示。
-                infoFiltered: ""//筛选之后的左下角筛选提示，
-            },
-            "paging": true,
-            "pagingType": "full_numbers",//分页样式的类型
-            "ajax": {
-                "url": "${base}/private/sys/user/list",
-                "type": "POST",
-                dataSrc: "data",//默认data，也可以写其他的，格式化table的时候取里面的数据
-                data: function (d) {//d 是原始的发送给服务器的数据，默认很长。
-                    var param = {};//因为服务端排序，可以新建一个参数对象
-                    param.start = d.start;//开始的序号
-                    param.length = d.length;//要取的数据的
-//                    var formData = $("#data").serializeArray();//把form里面的数据序列化成数组
-//                    formData.forEach(function (e) {
-//                        param[e.name] = e.value;
-//                    });
-                    return param;//自定义需要传递的参数。
-                }
-            },
-            "columns": [
-                { "data": "username" },
-                { "data": "nickname" },
-                { "data": "is_locked" },
-                { "data": "is_online" },
-                { "data": "username" }
-            ]
-        } );
-        $('#data tbody').on('click', 'tr', function () {
-            var id = this.id;
-            var index = $.inArray(id, selected);
 
-            if ( index === -1 ) {
-                selected.push( id );
-            } else {
-                selected.splice( index, 1 );
-            }
-
-            $(this).toggleClass('selected');
-        } );
     });
 
 </script>

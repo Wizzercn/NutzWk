@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="${base}/include/css/skins/palette.css" id="skin">
     #end
     <script src="${base}/include/plugins/modernizr.js"></script>
+    <script src="${base}/include/plugins/jquery-1.11.1.min.js"></script>
     <!--趁热情的人心还未冷，趁主动的人还未绝望，去拥抱，去示好，别总是等到彻底失去后才幡然醒悟，会来不及。-->
     <script type="text/javascript">
         var base="${base}",language="${app_language}";
@@ -435,7 +436,6 @@
 #end
 #macro (sys_buttom)
 </div>
-<script src="${base}/include/plugins/jquery-1.11.1.min.js"></script>
 <script src="${base}/include/bootstrap/js/bootstrap.js"></script>
 <script src="${base}/include/plugins/jquery.slimscroll.min.js"></script>
 <script src="${base}/include/plugins/jquery.easing.min.js"></script>
@@ -454,6 +454,77 @@
             });
         }catch(e){};
 
+    });
+</script>
+#end
+#macro (page $tableid)
+<div class="row bt" id="__page$!tableid">
+    <div class="col-lg-12">
+        <div class="pull-left mt20" id="__pageLeft$!tableid">
+            第1/1页，每页显示0条，共0条数据
+        </div>
+        <div class="pull-right">
+            <ul id="__pageControl$!tableid" class="pagination">
+
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function __jumpPage$!tableid(page){
+        sublime.showLoadingbar($(".main-content"));
+        var __pageControl = $("#$!tableid");
+        var form = __pageControl.parent("form");
+        var param = {};
+        var inputs = form.find("input");
+        $.each(inputs, function(i,input){
+            param[input.name] = input.value;
+        });
+        param.curPage = page;
+        param.tableId = "$!tableid";
+        $.post(form.attr("action"), param, function (data) {
+            $("#$!tableid tbody").html(data);
+            $("#__pageLeft$!tableid").html("第"+$("#pageNo$!tableid").val()+"/"+$("#totalPage$!tableid").val()+"页，每页显示"+$("#pageSize$!tableid").val()+"条，共"+$("#totalCount$!tableid").val()+"条数据");
+            $("#__pageControl$!tableid").html("<li id=\"__pageFirst$!tableid\" class=\"disabled\"><a href=\"javascript:;\">首页</a></li>" +
+                    "<li id=\"__pagePre$!tableid\" class=\"disabled\"><a href=\"javascript:;\">上一页</a></li>" +
+                    "<li id=\"__pageNext$!tableid\" class=\"disabled\"><a href=\"javascript:;\">下一页</a></li>" +
+                    "<li id=\"__pageLast$!tableid\" class=\"disabled\"><a href=\"javascript:;\">末页</a></li>");
+            if($("#pageNo$!tableid").val()>1){
+                $("#__pageFirst$!tableid").removeClass("disabled");
+                $("#__pagePre$!tableid").removeClass("disabled");
+                $("#__pageFirst$!tableid a").on("click",function(){
+                    __jumpPage$!tableid(1);
+                });
+                $("#__pagePre$!tableid a").on("click",function(){
+                    __jumpPage$!tableid(parseInt($("#pageNo$!tableid").val())-1);
+                });
+            }else{
+                $("#__pageFirst$!tableid").addClass("disabled");
+                $("#__pagePre$!tableid").addClass("disabled");
+                $("#__pageFirst$!tableid a").off("click");
+                $("#__pagePre$!tableid a").off("click");
+            }
+            if($("#totalPage$!tableid").val() > $("#pageNo$!tableid").val()){
+                $("#__pageNext$!tableid").removeClass("disabled");
+                $("#__pageLast$!tableid").removeClass("disabled");
+                $("#__pageNext$!tableid a").on("click",function(){
+                    __jumpPage$!tableid(parseInt($("#pageNo$!tableid").val())+1);
+                });
+                $("#__pageLast$!tableid a").on("click",function(){
+                    __jumpPage$!tableid(parseInt($("#totalPage$!tableid").val()));
+                });
+            }else{
+                $("#__pageNext$!tableid").addClass("disabled");
+                $("#__pageLast$!tableid").addClass("disabled");
+                $("#__pageNext$!tableid a").off("click");
+                $("#__pageLast$!tableid a").off("click");
+            }
+            sublime.closeLoadingbar($(".main-content"));
+            return false;
+        });
+    }
+    $(document).ready(function () {
+        __jumpPage$!tableid(1);
     });
 </script>
 #end
