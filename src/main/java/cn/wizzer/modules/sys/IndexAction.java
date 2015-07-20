@@ -8,6 +8,8 @@ import org.nutz.mvc.annotation.By;
 import org.nutz.mvc.annotation.Filters;
 import org.nutz.mvc.annotation.Ok;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Created by Wizzer.cn on 2015/7/4.
  */
@@ -18,7 +20,7 @@ public class IndexAction {
     @At("/index")
     @Ok("vm:template.private.index")
     @RequiresUser
-    public void index(){
-
+    public void index(HttpServletRequest req){
+        req.setAttribute("props", System.getProperties());
     }
 }

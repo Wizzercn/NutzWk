@@ -84,7 +84,31 @@
 <script language="JavaScript">
     var unitTreeTable;
     var selected = [];
-
+    function initTreeView(){
+        $("#jsTreeUnit").jstree({
+            plugins : [ "wholerow"],
+            core : {
+                data : {
+                    url : function(node){
+                        return node.id === "#" ? "${base}/private/sys/user/tree" : "${base}/private/sys/user/tree?pid="+node.id
+                    }
+                },
+                multiple : false
+            }
+        }).on("select_node.jstree", function(node,selected){
+            var id = selected.selected;
+            sublime.showLoadingbar($(".main-content"));
+            jQuery.post("$!basePath/user/unituser/"+id,{},function(data){
+                $("#userTable tbody").html(data);
+                sublime.initIcheck();
+                sublime.closeLoadingbar($(".main-content"));
+            });
+        }).on("loaded.jstree", function(node,jstree){
+            var id = $(node.target).find("li:first").attr("id");
+            if(id)
+                jstree.instance.select_node(id);
+        });
+    }
     $(document).ready(function () {
         $("#dialogUnitDetail").on("hidden.bs.modal", function () {
             $(this).removeData("bs.modal");

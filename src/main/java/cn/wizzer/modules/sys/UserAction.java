@@ -49,4 +49,17 @@ public class UserAction {
         Pagination p= userService.listPage(curPage, pageSize, Sqls.create("select a.id,a.username,a.is_online,a.is_locked,b.email,b.nickname from sys_user a,sys_user_profile b where a.id=b.user_id order by a.username asc"));
         return p;
     }
+
+    @At("/tree")
+    @Ok("json")
+    @RequiresPermissions("sys:unit")
+    public Object tree(@Param("pid") String pid, HttpServletRequest req) {
+        List<Record> list;
+        if (!Strings.isEmpty(pid)) {
+            list = userService.list(Sqls.create("select id,name as text,has_children as children from sys_unit where parentId = '" + pid + "' order by location asc,path asc"));
+        } else {
+            list = userService.list(Sqls.create("select id,name as text,has_children as children from sys_unit where length(path)=4 order by location asc,path asc"));
+        }
+        return list;
+    }
 }
