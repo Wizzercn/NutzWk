@@ -9,11 +9,14 @@ import cn.wizzer.modules.sys.bean.Sys_user;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.util.ByteSource;
+import org.nutz.dao.Sqls;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
+
+import java.util.List;
 
 public class NutDaoRealm extends AbstractNutAuthoRealm {
 	private static final Log log = Logs.get();
@@ -48,9 +51,12 @@ public class NutDaoRealm extends AbstractNutAuthoRealm {
 		if (Strings.isBlank(userSalt)) {
 			throw Lang.makeThrow(CreateUserSaltException.class, "Account [ %s ] is not set PassWord", authcToken.getUsername());
 		}
-		UserService userService= Mvcs.ctx().getDefaultIoc().get(UserService.class);
-		user.setMenus(userService.getMenus(user.getId()));
-		user.setUnits(userService.getUnits(user.getId()));
+		user.setMenus(getUserService().getMenus(user.getId()));
+		user.setUnits(getUserService().getUnits(user.getId()));
+		List<String> roles=getUserService().getRoleCodeList(user);
+		if(roles!=null&&roles.contains("superadmin")){
+			user.setSystem(true);
+		}
 		ByteSource salt = ByteSource.Util.bytes(user.getSalt());
 		SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), getName());
 		info.setCredentialsSalt(salt);

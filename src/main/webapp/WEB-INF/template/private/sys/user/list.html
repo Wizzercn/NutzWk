@@ -4,7 +4,7 @@
     <td><span class="pd-l-sm"></span><a href="$!basePath/user/edit/$!user.id">$!user.username</a></td>
     <td>$!user.nickname</td>
     <td><a href="mailto:$!user.email">$!user.email</a></td>
-    <td id="td_status_$!user.id">#if($!user.is_locked)<i class="fa fa-circle text-success ml5">#else <i class="fa fa-circle text-danger ml5">#end</i></td>
+    <td id="td_status_$!user.id">#if($!user.is_locked) <i class="fa fa-circle text-danger ml5">#else<i class="fa fa-circle text-success ml5">#end</i></td>
     <td>#if($!user.is_online)<i class="fa fa-circle text-success ml5">#else <i class="fa fa-circle text-danger ml5">#end</i></td>
     <td>
         <div class="btn-group">
@@ -13,10 +13,10 @@
                 <span class="ti-angle-down"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li><a href="$!basePath/user/detail/info/$!user.id" data-toggle="modal" data-target="#dialogUserDetail">查看基本信息</a></li>
-                <li><a href="$!basePath/user/detail/right/$!user.id" data-toggle="modal" data-target="#dialogUserRightDetail">查看权限</a></li>
+                <li><a href="${base}/private/sys/user/detail/$!user.id" data-toggle="modal" data-target="#dialogUserDetail">查看基本信息</a></li>
+                <li><a href="${base}/private/sys/user/right/$!user.id" data-toggle="modal" data-target="#dialogUserRightDetail">查看权限</a></li>
                 <li class="divider"></li>
-                <li><a href="$!basePath/user/edit/$!user.id">修改信息</a></li>
+                <li><a href="${base}/private/sys/user/edit/$!user.id">修改信息</a></li>
                 <li><a href="javascript:;" onclick="resetPwd('$!user.id')">密码重置</a></li>
                 <li><a href="javascript:;" onclick="del('$!user.id')">删除</a></li>
                 <li class="divider"></li>

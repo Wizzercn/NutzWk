@@ -228,14 +228,16 @@ public class MainSetup implements Setup {
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
-            role.setAlias("public");
+            role.setCode("public");
+            role.setAliasName("Public");
             role.setDescription("All user's role.");
             role.setLocation(0);
             role.setUnitid("");
             dao.insert(role);
             role = new Sys_role();
             role.setName("超级管理员");
-            role.setAlias("superadmin");
+            role.setCode("superadmin");
+            role.setAliasName("Superadmin");
             role.setDescription("Super Admin");
             role.setLocation(1);
             role.setUnitid("");

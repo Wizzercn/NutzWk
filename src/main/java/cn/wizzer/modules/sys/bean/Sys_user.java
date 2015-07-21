@@ -41,8 +41,7 @@ public class Sys_user extends BasePojo implements Serializable {
     @Comment("是否锁定")
     @ColDefine(type = ColType.BOOLEAN)
     private boolean locked;
-    @Column("is_system")
-    @Comment("是否系统帐号")
+    @Comment("系统管理员")
     @ColDefine(type = ColType.BOOLEAN)
     private boolean system;
     @Column("register_ip")

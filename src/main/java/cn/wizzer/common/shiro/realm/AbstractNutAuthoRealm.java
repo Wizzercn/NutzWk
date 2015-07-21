@@ -61,7 +61,7 @@ public abstract class AbstractNutAuthoRealm extends AuthorizingRealm {
 		Sys_user user = (Sys_user) principals.getPrimaryPrincipal();
 		if (!Lang.isEmpty(user)) {
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-			info.addRoles(getUserService().getRoleNameList(user));
+			info.addRoles(getUserService().getRoleCodeList(user));
 			for (Sys_role role : user.getRoles()) {
 				info.addStringPermissions(getRoleService().getPermissionNameList(role));
 			}

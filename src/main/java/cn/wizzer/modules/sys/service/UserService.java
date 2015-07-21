@@ -30,12 +30,8 @@ public class UserService extends BaseService<Sys_user> {
         return dao().fetchLinks(fetch(id), "profile");
     }
 
-    public Sys_user viewRoles(String id) {
-        return dao().fetchLinks(fetch(id), "roles");
-    }
-
     public Sys_user fetchByUsername(String username) {
-        return fetch(Cnd.where("username", "=", username));
+        return dao().fetchLinks(fetch(Cnd.where("username", "=", username)), "roles");
     }
 
     public List<Sys_menu> getMenus(String uid) {
@@ -63,11 +59,11 @@ public class UserService extends BaseService<Sys_user> {
         return dao().fetch(Sys_user_profile.class,Cnd.where("user_id","=",uid));
     }
 
-    public List<String> getRoleNameList(Sys_user user) {
+    public List<String> getRoleCodeList(Sys_user user) {
         dao().fetchLinks(user, "roles");
         List<String> roleNameList = new ArrayList<String>();
         for (Sys_role role : user.getRoles()) {
-            roleNameList.add(role.getName());
+            roleNameList.add(role.getCode());
         }
         return roleNameList;
     }

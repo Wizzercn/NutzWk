@@ -31,6 +31,10 @@ public class Sys_unit extends BasePojo implements Serializable {
     @Comment("单位名称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String name;
+    @Column("alias_name")
+    @Comment("单位别名")
+    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private String aliasName;
     @Column
     @Comment("机构编码")
     @ColDefine(type = ColType.VARCHAR, width = 20)
@@ -156,5 +160,13 @@ public class Sys_unit extends BasePojo implements Serializable {
 
     public void setHasChildren(boolean hasChildren) {
         this.hasChildren = hasChildren;
+    }
+
+    public String getAliasName() {
+        return aliasName;
+    }
+
+    public void setAliasName(String aliasName) {
+        this.aliasName = aliasName;
     }
 }
