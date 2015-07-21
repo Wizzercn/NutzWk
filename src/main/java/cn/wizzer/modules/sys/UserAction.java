@@ -105,8 +105,7 @@ public class UserAction {
     @Ok("json")
     @RequiresPermissions("sys:user")
     public Object role(String unitId, HttpServletRequest req) {
-        Cnd cnd = Cnd.NEW();
-        cnd = Cnd.where("unitid", "=", unitId);
+        Cnd cnd = Cnd.where("unitid", "=", unitId);
         Subject currentUser = SecurityUtils.getSubject();
         if (currentUser != null) {
             Sys_user user = (Sys_user) currentUser.getPrincipal();

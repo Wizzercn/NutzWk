@@ -36,7 +36,7 @@
                                     <div class="col-sm-8">
                                         <select tabindex="2" id="roleIds" name="roleIds" data-placeholder="<--选择机构后，选择角色" style="width:100%" multiple class="form-control chosen" data-parsley-required="true">
                                             #foreach($!role in $!roleList)
-                                            <option value="$!role.id">$!role.name
+                                            <option value="$!role.id"> #if(!$!role.unitId)[系统]#end$!role.name
                                             #end
                                         </select>
                                     </div>
@@ -199,11 +199,15 @@
         //根据获取的机构，获取角色列表
         jQuery.post("${base}/private/sys/user/role/"+node[0].id,{},function(data){
             var roleSelect = $("#userAddForm select[name='roleIds']");
-            if(data.roles.length > 0){
+            if(data.type="success"&&data.data.length > 0){
                 var html = "";
-                for(var i=0;i<data.roles.length;i++){
-                    var role = data.roles[i];
-                    html += "<option value='"+role.id+"'>"+role.name+"</option>";
+                for(var i=0;i<data.data.length;i++){
+                    var role = data.data[i];
+                    var t="";
+                    if(""==role.unitid){
+                        t="[系统]";
+                    }
+                    html += "<option value='"+role.id+"'>"+t+role.name+"</option>";
                 }
                 roleSelect.html(html);
             }else{
@@ -211,7 +215,7 @@
                 Toast.warning("当前机构无角色，请添加角色后再添加用户!");
             }
             roleSelect.trigger("chosen:updated");
-        });
+        },"json");
         $("#dialogSelectUnit").modal("hide");
     }
     $(document).ready(function () {
