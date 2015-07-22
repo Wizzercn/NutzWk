@@ -3,6 +3,8 @@ package cn.wizzer.common.service.log;
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.util.StringUtils;
 import cn.wizzer.modules.sys.bean.Sys_log;
+import cn.wizzer.modules.sys.bean.Sys_user;
+import org.apache.shiro.SecurityUtils;
 import org.nutz.aop.InterceptorChain;
 import org.nutz.aop.MethodInterceptor;
 import org.nutz.el.El;
@@ -77,7 +79,14 @@ public class SysLogAopInterceptor implements MethodInterceptor {
         } else {
             _msg = msg.getOrginalString();
         }
-        Sys_log sysLog = Sys_log.c(t, tag, StringUtils.getUsername(), _msg,source);
+        String username = null, uid = null;
+        Object u = SecurityUtils.getSubject().getPrincipal();
+        if (u != null) {
+            Sys_user user = (Sys_user) u;
+            uid = user.getId();
+            username = user.getUsername();
+        }
+        Sys_log sysLog = Sys_log.c(t, tag, uid, username, _msg, source);
         if (async)
             sysLogService.async(sysLog);
         else

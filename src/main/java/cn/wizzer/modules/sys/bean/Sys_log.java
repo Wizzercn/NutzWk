@@ -16,6 +16,9 @@ public class Sys_log extends BasePojo implements Serializable {
     @Column
     @Id
     private long id;
+    @Column("username")
+    @ColDefine(type = ColType.VARCHAR, width = 50)
+    private String username;
     @Column("type")// aop.before aop.after aop.error
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String type;
@@ -38,6 +41,14 @@ public class Sys_log extends BasePojo implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getTag() {
@@ -80,10 +91,11 @@ public class Sys_log extends BasePojo implements Serializable {
         this.ip = ip;
     }
 
-    public static Sys_log c(String type, String tag, String username, String msg, String source) {
+    public static Sys_log c(String type, String tag, String uid,String username, String msg, String source) {
         Sys_log sysLog = new Sys_log();
-        sysLog.setCreateUser(username);
+        sysLog.setCreateUser(uid);
         sysLog.setCreateTime(new Date());
+        sysLog.setUsername(username);
         if (type == null || tag == null || msg == null) {
             throw new RuntimeException("t/tag/msg can't null");
         }
