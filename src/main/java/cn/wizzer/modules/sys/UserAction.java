@@ -55,12 +55,10 @@ public class UserAction {
     @Ok("vm:template.private.sys.user.list")
     @RequiresPermissions("sys:user")
     public Pagination list(@Param("curPage") int curPage, @Param("pageSize") int pageSize, @Param("unitid") String unitid, HttpServletRequest req) {
-        Sql sql = Sqls.create("SELECT a.id,a.username,a.is_online,a.is_locked,b.email,b.nickname " +
+        return userService.listPage(curPage, pageSize, Sqls.create("SELECT a.id,a.username,a.is_online,a.is_locked,b.email,b.nickname " +
                 "FROM sys_user a,sys_user_profile b ,sys_user_unit c " +
                 "WHERE a.id=b.user_id AND a.id=c.user_id AND " +
-                "c.unit_id=@unitid ORDER BY a.username asc");
-        sql.params().set("unitid", unitid);
-        return userService.listPage(curPage, pageSize, sql);
+                "c.unit_id=@unitid ORDER BY a.create_time desc").setParam("unitid", unitid));
     }
 
     @At("/tree")

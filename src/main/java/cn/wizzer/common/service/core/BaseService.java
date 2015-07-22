@@ -201,6 +201,29 @@ public class BaseService<T> extends EntityService<T> {
      * 分页查询
      *
      * @param pageNumber
+     * @param sql
+     * @return
+     */
+    public Pagination listPage(Integer pageNumber, Sql sql) {
+        return listPage(pageNumber, DEFAULT_PAGE_NUMBER, sql);
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param pageNumber
+     * @param tableName
+     * @param cnd
+     * @return
+     */
+    public Pagination listPage(Integer pageNumber, String tableName, Condition cnd) {
+        return listPage(pageNumber, DEFAULT_PAGE_NUMBER, tableName, cnd);
+    }
+
+    /**
+     * 分页查询(cnd)
+     *
+     * @param pageNumber
      * @param pageSize
      * @param cnd
      * @return
@@ -215,7 +238,25 @@ public class BaseService<T> extends EntityService<T> {
     }
 
     /**
-     * 分页查询
+     * 分页查询(tabelName)
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param tableName
+     * @param cnd
+     * @return
+     */
+    public Pagination listPage(Integer pageNumber, int pageSize, String tableName, Condition cnd) {
+        pageNumber = getPageNumber(pageNumber);
+        pageSize = getPageSize(pageSize);
+        Pager pager = this.dao().createPager(pageNumber, pageSize);
+        List<Record> list = this.dao().query(tableName, cnd, pager);
+        pager.setRecordCount(this.dao().count(tableName, cnd));
+        return new Pagination(pageNumber, pageSize, pager.getRecordCount(), list);
+    }
+
+    /**
+     * 分页查询(sql)
      *
      * @param pageNumber
      * @param pageSize
@@ -245,6 +286,7 @@ public class BaseService<T> extends EntityService<T> {
 
     /**
      * 默认页大小
+     *
      * @param pageSize
      * @return
      */

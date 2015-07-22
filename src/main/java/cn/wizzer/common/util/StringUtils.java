@@ -29,7 +29,30 @@ public class StringUtils {
                     uid = ((String) u);
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
+
+            return "";
+        }
+        return uid;
+    }
+
+    /**
+     * 获取当前登陆用户Username
+     *
+     * @return
+     */
+    public static String getUsername() {
+        String uid = "";
+        try {
+            Object u = SecurityUtils.getSubject().getPrincipal();
+            if (u != null) {
+                if (u instanceof Sys_user) {
+                    uid = ((Sys_user) u).getUsername();
+                } else if (u instanceof String) {
+                    uid = ((String) u);
+                }
+            }
+        } catch (Exception e) {
 
             return "";
         }

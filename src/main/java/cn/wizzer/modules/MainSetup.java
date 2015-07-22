@@ -225,6 +225,28 @@ public class MainSetup implements Setup {
             menu.setPermission("sys:dict");
             menu.setParentId(m1.getId());
             Sys_menu m7 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setIs_enabled(true);
+            menu.setPath("00010007");
+            menu.setName("日志管理");
+            menu.setAliasName("Logs");
+            menu.setLocation(0);
+            menu.setHref("/private/sys/log");
+            menu.setIs_show(true);
+            menu.setPermission("sys:log");
+            menu.setParentId(m1.getId());
+            Sys_menu m8 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setIs_enabled(true);
+            menu.setPath("00010008");
+            menu.setName("插件管理");
+            menu.setAliasName("Plugins");
+            menu.setLocation(0);
+            menu.setHref("/private/sys/plugin");
+            menu.setIs_show(true);
+            menu.setPermission("sys:plugin");
+            menu.setParentId(m1.getId());
+            Sys_menu m9 = dao.insert(menu);
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
@@ -274,6 +296,8 @@ public class MainSetup implements Setup {
             dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m5.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m6.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m7.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m8.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m9.getId() + "')"));
 
         }
     }

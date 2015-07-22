@@ -1,0 +1,15 @@
+#foreach($!o in $obj.list)
+<tr id="$!o.id" >
+    <td><span class="pd-l-sm"></span>$!o.create_user</a></td>
+    <td>$!o.type</td>
+    <td>$!o.tag</td>
+    <td>$!o.msg</td>
+    <td>$!o.src</td>
+    <td>$!o.ip</td>
+    <td>$!date.formatDateTime($o.create_time)</td>
+</tr>
+#end
+<input id="totalCount$!tableId" type="hidden" value="$!obj.totalCount">
+<input id="totalPage$!tableId" type="hidden" value="$!obj.totalPage">
+<input id="pageNo$!tableId" type="hidden" value="$!obj.pageNo">
+<input id="pageSize$!tableId" type="hidden" value="$!obj.pageSize">

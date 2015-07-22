@@ -498,7 +498,7 @@
                     "<li id=\"__pagePre$!tableid\" class=\"disabled\"><a href=\"javascript:;\">上一页</a></li>" +
                     "<li id=\"__pageNext$!tableid\" class=\"disabled\"><a href=\"javascript:;\">下一页</a></li>" +
                     "<li id=\"__pageLast$!tableid\" class=\"disabled\"><a href=\"javascript:;\">末页</a></li>");
-            if($("#pageNo$!tableid").val()>1){
+            if(parseInt($("#pageNo$!tableid").val())>1){
                 $("#__pageFirst$!tableid").removeClass("disabled");
                 $("#__pagePre$!tableid").removeClass("disabled");
                 $("#__pageFirst$!tableid a").on("click",function(){
@@ -513,7 +513,7 @@
                 $("#__pageFirst$!tableid a").off("click");
                 $("#__pagePre$!tableid a").off("click");
             }
-            if($("#totalPage$!tableid").val() > $("#pageNo$!tableid").val()){
+            if(parseInt($("#totalPage$!tableid").val()) > parseInt($("#pageNo$!tableid").val())){
                 $("#__pageNext$!tableid").removeClass("disabled");
                 $("#__pageLast$!tableid").removeClass("disabled");
                 $("#__pageNext$!tableid a").on("click",function(){
