@@ -148,16 +148,19 @@ public class UserAction {
     @At("/delete")
     @Ok("json")
     @RequiresPermissions("sys:user")
-    @SLog(tag = "批量删除", msg = "用户ID：${args[0]}")
+    @SLog(tag = "批量删除", msg = "用户ID：${args[1].getAttribute('ids')}")
     public Object deletes(@Param("ids") String[] userIds, HttpServletRequest req) {
         try {
             Sys_user user = userService.fetch(Cnd.where("username", "=", "superadmin"));
+            StringBuilder sb=new StringBuilder();
             for (String s : userIds) {
                 if (s.equals(user.getId())) {
                     return Message.error("system.nodel", req);
                 }
+                sb.append(s).append(",");
             }
             userService.deleteByIds(userIds);
+            req.setAttribute("ids",sb.toString());
             return Message.success("system.success", req);
         } catch (Exception e) {
             return Message.error("system.error", req);
