@@ -25,72 +25,60 @@ public class UnitService extends BaseService<Sys_unit> {
     }
 
     @Aop(TransAop.READ_COMMITTED)
-    public boolean deleteAndChild(String id) {
+    public void deleteAndChild(String id) {
         String pid = this.fetch(id).getParentId();
-        dao().execute(Sqls.create("delete from sys_unit where id = '" + id + "'"));
-        dao().execute(Sqls.create("delete from sys_unit where parentId = '" + id + "'"));
+        dao().execute(Sqls.create("delete from sys_unit where id = @id").setParam("id", id));
+        dao().execute(Sqls.create("delete from sys_unit where parentId = @id").setParam("id", id));
         if (!Strings.isEmpty(pid)) {
             int count = count(Cnd.where("parentId", "=", pid));
             if (count < 1) {
-                dao().execute(Sqls.create("update sys_unit set has_children=false where id='" + pid + "'"));
+                dao().execute(Sqls.create("update sys_unit set has_children=false where id=@pid").setParam("pid", pid));
             }
         }
-        return true;
     }
 
     @Aop(TransAop.READ_COMMITTED)
-    public boolean save(Sys_unit unit, String pid) {
-        try {
-            String path = "";
-            if (!Strings.isEmpty(pid)) {
-                Sys_unit pp = this.fetch(pid);
-                path = pp.getPath();
-            }
-            unit.setPath(getSubPath("sys_unit", "path", path));
-            unit.setParentId(pid);
-            unit.setCreateUser(StringUtils.getUid());
-            dao().insert(unit);
-            if (!Strings.isEmpty(pid)) {
-                dao().execute(Sqls.create("update sys_unit set has_children=true where id='" + pid + "'"));
-            }
-        } catch (Exception e) {
-            return false;
+    public void save(Sys_unit unit, String pid) {
+        String path = "";
+        if (!Strings.isEmpty(pid)) {
+            Sys_unit pp = this.fetch(pid);
+            path = pp.getPath();
         }
-        return true;
+        unit.setPath(getSubPath("sys_unit", "path", path));
+        unit.setParentId(pid);
+        unit.setCreateUser(StringUtils.getUid());
+        dao().insert(unit);
+        if (!Strings.isEmpty(pid)) {
+            dao().execute(Sqls.create("update sys_unit set has_children=true where id=@pid").setParam("pid", pid));
+        }
     }
 
     @Aop(TransAop.READ_COMMITTED)
-    public boolean edit(Sys_unit unit, String pid) {
-        try {
-            if (!Strings.sNull(pid).equals(unit.getParentId())) {
-                if (!Strings.isEmpty(unit.getParentId())) {
-                    Sys_unit pp = this.fetch(unit.getParentId());
-                    unit.setPath(getSubPath("sys_unit", "path", pp.getPath()));
-                    unit.setParentId(pp.getId());
-                } else {
-                    unit.setPath(getSubPath("sys_unit", "path", ""));
-                    unit.setParentId("");
-                }
+    public void edit(Sys_unit unit, String pid) {
+        if (!Strings.sNull(pid).equals(unit.getParentId())) {
+            if (!Strings.isEmpty(unit.getParentId())) {
+                Sys_unit pp = this.fetch(unit.getParentId());
+                unit.setPath(getSubPath("sys_unit", "path", pp.getPath()));
+                unit.setParentId(pp.getId());
+            } else {
+                unit.setPath(getSubPath("sys_unit", "path", ""));
+                unit.setParentId("");
             }
-            unit.setCreateTime(new Date());
-            unit.setCreateUser(StringUtils.getUid());
-            dao().update(unit);
-            if (!Strings.isEmpty(pid)) {
-                int count = count(Cnd.where("parentId", "=", pid));
-                if (count < 1) {
-                    dao().execute(Sqls.create("update sys_unit set has_children=false where id='" + pid + "'"));
-                }
-            }
-            if (!Strings.isEmpty(unit.getParentId()))
-                dao().execute(Sqls.create("update sys_unit set has_children=true where id='" + unit.getParentId() + "'"));
-            if (unit.isHasChildren()) {
-                updatePath(unit.getId(), unit.getPath());
-            }
-
-        } catch (Exception e) {
-            return false;
         }
-        return true;
+        unit.setCreateTime(new Date());
+        unit.setCreateUser(StringUtils.getUid());
+        dao().update(unit);
+        if (!Strings.isEmpty(pid)) {
+            int count = count(Cnd.where("parentId", "=", pid));
+            if (count < 1) {
+                dao().execute(Sqls.create("update sys_unit set has_children=false where id=@pid").setParam("pid", pid));
+            }
+        }
+        if (!Strings.isEmpty(unit.getParentId()))
+            dao().execute(Sqls.create("update sys_unit set has_children=true where id=@id").setParam("id", unit.getParentId()));
+        if (unit.isHasChildren()) {
+            updatePath(unit.getId(), unit.getPath());
+        }
     }
 
     /**

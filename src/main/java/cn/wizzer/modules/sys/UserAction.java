@@ -67,7 +67,7 @@ public class UserAction {
     public Object tree(@Param("pid") String pid, HttpServletRequest req) {
         List<Record> list;
         if (!Strings.isEmpty(pid)) {
-            list = userService.list(Sqls.create("select id,name as text,has_children as children from sys_unit where parentId = '" + pid + "' order by location asc,path asc"));
+            list = userService.list(Sqls.create("select id,name as text,has_children as children from sys_unit where parentId = @pid order by location asc,path asc").setParam("pid",pid));
         } else {
             list = userService.list(Sqls.create("select id,name as text,has_children as children from sys_unit where length(path)=4 order by location asc,path asc"));
         }
