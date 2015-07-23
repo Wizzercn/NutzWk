@@ -22,8 +22,8 @@
         <header class="header navbar bg-white shadow">
             #if(${shiro.hasPermission('sys:unit')})
             <div class="btn-group tool-button">
-                <a class="btn btn-primary navbar-btn" href="${base}/private/sys/user/add"><i class="ti-plus"></i> 新增用户</a>
-                <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
+                <a class="btn btn-primary navbar-btn" href="${base}/private/sys/user/add"><i class="ti-plus"></i> ${msg['sys.user.add']}</a>
+                <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['sys.user.del']}</button>
             </div>
             <div class="pull-right offscreen-right">
                 <button class="btn btn-primary navbar-btn" onclick="ns.toggleFilter('.cd-panel')"><i
@@ -67,22 +67,96 @@
     </section>
 
 </section>
-<!-- 菜单排序 -->
-<div id="dialogSort" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- 删除用户 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除用户</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        用户删除后无法恢复，确定删除吗？ <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取  消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确  定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 删除选中用户 -->
+<div id="dialogDeleteCheck" class="modal fade bs-modal-lg" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除用户</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 mb10">
+                        确定删除以下用户吗？
+                    </div>
+                    <div class="col-xs-12">
+                        <ul id="checkedUser" class="list-group"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取  消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确  定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 用户详情 -->
+<div id="dialogUserDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
 
         </div>
     </div>
 </div>
+<div id="dialogUserRightDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
 
+        </div>
+    </div>
+</div>
+<div id="dialogPaasword" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">重置密码</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 #sys_buttom
 <script src="${base}/include/plugins/jquery.nestable.js"></script>
+<script src="${base}/include/plugins/icheck/icheck.js"></script>
 <script src="${base}/include/js/toast.js"></script>
 <script src="${base}/include/js/treetable.js"></script>
 <script src="${base}/include/js/datatables.js"></script>
 <script src="${base}/include/js/tree.js"></script>
+
 <script language="JavaScript">
     var unitTreeTable;
     var selected = [];
@@ -108,8 +182,109 @@
                 jstree.instance.select_node(id);
         });
     }
+    function del(id){
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#ok").unbind("click");
+        dialog.find("#ok").bind("click", function(event){
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/private/sys/user/delete/"+id,{},function(data){
+                if(data.type == "success"){
+                    $("#"+id).removeClass().addClass("hinge animated").one(
+                            "webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
+                                $("#"+id).remove();
+                            })
+                }else{
+                    Toast.error(data.content);
+                }
+                //重置按钮状态，关闭提示框
+                btn.button("reset");
+                dialog.modal("hide");
+            },"json");
+        });
+    }
+    function delCheck(){
+        var chks = $("#data td input[type='checkbox']:checked");
+        if(chks.length>0){
+            var ids = new Array();
+            $("#checkedUser").html("");//清空
+            $.each(chks, function(i,n){
+                var chk = $(n);
+                ids.push(n.value);
+                $("#checkedUser").append("<li class=\"list-group-item\">"+chk.parents("tr").attr("name")+"</li>");
+            });
+            var dialog = $("#dialogDeleteCheck");
+            dialog.modal("show");
+            dialog.find("#ok").unbind("click");
+            dialog.find("#ok").bind("click", function(event){
+                $(this).button("loading");
+                $.post("${base}/private/sys/user/delete", {ids:ids.toString()}, function(data){
+                    if(data.type == "success"){
+                        window.location.reload();
+                    }else{
+                        Toast.error(data.content);
+                    }
+                    $(this).button("reset");
+                },"json");
+            });
+        }else{
+            Toast.warning("请先选择要删除的用户！");
+        }
+    }
+    function enableUser(id){
+        $.post("${base}/private/sys/user/enable/"+id,{}, function(data){
+            if(data.type == "success"){
+                $("#td_status_"+id).find("i").attr("class", "fa fa-circle text-success ml5");
+            }else{
+                Toast.error(data.content);
+            }
+        },"json");
+    }
+    function disableUser(id){
+        $.post("${base}/private/sys/user/disable/"+id,{}, function(data){
+            if(data.type == "success"){
+                $("#td_status_"+id).find("i").attr("class", "fa fa-circle text-danger ml5");
+            }else{
+                Toast.error(data.content);
+            }
+        },"json");
+    }
+    //密码重置
+    function resetPwd(id){
+        $.post("${base}/private/sys/user/resetPwd/"+id,{}, function(data){
+            var dialog = $("#dialogPaasword");
+            if(data.type == "success"){
+                dialog.find(".col-xs-12").html("密码重置成功，请复制新密码："+data.data);
+                dialog.modal("show");
+            }else{
+                dialog.find(".col-xs-12").html(data.content);
+                dialog.modal("show");
+            }
+        },"json");
+    }
+    function initCheckBox(){
+        var chkAll = $("#data th input[type='checkbox']");
+        chkAll.on("ifChecked", function(event){
+            $("#data td input[type='checkbox']").iCheck("check");
+        });
+        chkAll.on("ifUnchecked", function(event){
+            $("#data td input[type='checkbox']").iCheck("uncheck");
+        });
+    }
     $(document).ready(function () {
         initTreeView();
+        initCheckBox();
+        //删除页面缓存
+        $("#dialogUserDetail").on("hidden.bs.modal", function() {
+            $(this).removeData("bs.modal");
+        });
+        $("#dialogUserRightDetail").on("hidden.bs.modal", function() {
+            $(this).removeData("bs.modal");
+        });
+        $("#dialogPaasword").on("hidden.bs.modal", function() {
+            $(this).removeData("bs.modal");
+        });
     });
 
 </script>

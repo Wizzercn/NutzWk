@@ -36,6 +36,9 @@ public class BaseService<T> extends EntityService<T> {
     public BaseService(Dao dao) {
         super(dao);
     }
+    public int count(String tableName,Condition cnd){
+        return this.dao().count(tableName,cnd);
+    }
 
     public T fetch(long id) {
         return this.dao().fetch(this.getEntityClass(), id);

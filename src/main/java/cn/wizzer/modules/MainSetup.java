@@ -11,6 +11,7 @@ import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.velocity.app.Velocity;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -283,8 +284,10 @@ public class MainSetup implements Setup {
             profile.setLinkQq("11624317");
             profile.setUserId(dbuser.getId());
             dao.insert(profile);
-            dao.execute(Sqls.create("insert into `sys_user_unit` (`user_id`, `unit_id`) values('" + dbuser.getId() + "','" + dbunit.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_user_role` (`user_id`, `role_id`) values('" + dbuser.getId() + "','" + dbrole.getId() + "')"));
+            //不同的插入数据方式(安全)
+            dao.insert("sys_user_unit", Chain.make("user_id", dbuser.getId()).add("unit_id",dbunit.getId()));
+            dao.insert("sys_user_role", Chain.make("user_id", dbuser.getId()).add("role_id",dbrole.getId()));
+            //执行自定义SQL插入
             dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m1.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m2.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m3.getId() + "')"));

@@ -26,7 +26,7 @@
 			                             			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dialogSelectUnit"><i class="ti-plus"></i> 选择</button>
 												</span>
                                         </div>
-                                        <input type="hidden" name="unitId" value="$!parentUnit.id" />
+                                        <input type="hidden" id="unitId" name="unitId" value="$!parentUnit.id" />
                                     </div>
                                 </div>
                             </div>
@@ -56,7 +56,7 @@
                                 <div class="form-group">
                                     <label for="nickname" class="col-sm-2 control-label">昵称</label>
                                     <div class="col-sm-8">
-                                        <input type="text" id="nickname" tabindex="4" class="form-control" name="p.nickname" placeholder="昵称或姓名">
+                                        <input type="text" id="nickname" tabindex="4" class="form-control" name="p.nickname" data-parsley-required="true" placeholder="昵称或姓名">
                                     </div>
                                 </div>
                             </div>
@@ -92,7 +92,7 @@
                                 <div class="form-group">
                                     <label for="mobile" class="col-sm-2 control-label">联系方式</label>
                                     <div class="col-sm-8">
-                                        <input id="mobile" type="text" tabindex="8" name="p.mobile" class="form-control" placeholder="固定电话或手机号码">
+                                        <input id="mobile" type="text" tabindex="8" name="p.mobile" class="form-control" data-parsley-type="digits" placeholder="固定电话或手机号码">
                                     </div>
                                 </div>
                             </div>
@@ -102,7 +102,7 @@
                                 <div class="form-group">
                                     <label for="linkQq" class="col-sm-2 control-label">QQ</label>
                                     <div class="col-sm-8">
-                                        <input id="linkQq" type="text" name="p.linkQq" tabindex="10" class="form-control" placeholder="QQ号码">
+                                        <input id="linkQq" type="text" name="p.linkQq" tabindex="10" data-parsley-type="number" class="form-control" placeholder="QQ号码">
                                     </div>
                                 </div>
                             </div>
@@ -110,7 +110,7 @@
                                 <div class="form-group">
                                     <label for="linkWebsite" class="col-sm-2 control-label">主页</label>
                                     <div class="col-sm-8">
-                                        <input id="linkWebsite" type="text" name="p.linkWebsite" tabindex="10" class="form-control" placeholder="http://www.wizzer.cn">
+                                        <input id="linkWebsite" type="text" name="p.linkWebsite" tabindex="10" data-parsley-type="url"  class="form-control" placeholder="http://www.wizzer.cn">
                                     </div>
                                 </div>
                             </div>
@@ -118,10 +118,20 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label for="locked" class="col-sm-2 control-label">是否启用</label>
+                                    <label for="address" class="col-sm-2 control-label">住址</label>
+                                    <div class="col-sm-8">
+                                        <input id="address" type="text" name="p.address" tabindex="10" data-parsley-type="number" class="form-control" placeholder="住址">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="locked" class="col-sm-2 control-label">是否禁用</label>
                                     <div class="col-sm-8 switcha">
                                         <div class="mr15">
-                                            <input type="checkbox" id="locked" name="u.locked" class="js-switch-blue" checked="checked" value="false">
+                                            <input type="checkbox" id="locked" name="u.locked" class="js-switch-blue" >
                                         </div>
                                     </div>
                                 </div>
@@ -173,6 +183,11 @@
 <script src="${base}/include/js/treetable.js"></script>
 <script src="${base}/include/js/datatables.js"></script>
 <script src="${base}/include/js/tree.js"></script>
+<script src="${base}/include/plugins/jquery.form.js"></script>
+<script src="${base}/include/plugins/parsley.min.js"></script>
+#if(!$app_language||$app_language=="zh_CN")
+<script src="${base}/include/plugins/parsley.zh_cn.js"></script>
+#end
 <script language="JavaScript">
     function initTreeView(){
         $("#jsTreeUnit").jstree({
@@ -220,6 +235,38 @@
     }
     $(document).ready(function () {
         initTreeView();
+        $('#userAddForm').ajaxForm({
+            dataType:  'json',
+            beforeSubmit:function(arr, form, options){
+                if(!$("#unitId").val()){
+                    Toast.error("请选择一个机构！");
+                    return false;
+                }
+                var roleIds = $("#userAddForm select[name='roleIds']").val();
+                if(!roleIds){
+                    Toast.error("至少需要选择一个角色！");
+                    return false;
+                }
+                form.find("button:submit").button("loading");
+            },
+            success : function(data, statusText, xhr, form) {
+                if(data.type == "success"){
+                    Toast.success("用户增加成功！");
+                    var unitName = $("#userAddForm #unitName").val();
+                    var roleIds = $("#userAddForm select[name='roleIds']").val();
+
+                    //重置form
+                    form.resetForm();
+                    //重置select
+                    $("#userAddForm #unitName").val(unitName);
+                    $("#userAddForm select[name='roleIds']").val(roleIds);
+                    $("#userAddForm select[name='roleIds']").trigger("chosen:updated");
+                }else{
+                    Toast.error(data.content);
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
     });
 
 </script>

@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by Wizzer.cn on 2015/6/27.
  */
 @Table("sys_user")
-@TableIndexes({@Index(name = "INDEX_USERNAME", fields = {"username"}, unique = false)})
+@TableIndexes({@Index(name = "INDEX_USERNAME", fields = {"username"}, unique = true)})
 public class Sys_user extends BasePojo implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column

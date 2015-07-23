@@ -7,6 +7,7 @@ import org.nutz.lang.Strings;
 import org.nutz.mvc.Mvcs;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Random;
 
 /**
  * Created by Wizzer.cn on 2015/7/4.
@@ -30,7 +31,6 @@ public class StringUtils {
                 }
             }
         } catch (Exception e) {
-
             return "";
         }
         return uid;
@@ -99,5 +99,20 @@ public class StringUtils {
             return s.substring(0, s.length() - 4);
         }
         return "";
+    }
+
+    /**
+     * 得到六位随机数
+     *
+     * @param s
+     * @return
+     */
+    public static String getRndNumber(int s) {
+        Random ra = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s; i++) {
+            sb.append(String.valueOf(ra.nextInt(8)));
+        }
+        return sb.toString();
     }
 }

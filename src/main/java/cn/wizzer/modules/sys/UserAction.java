@@ -4,17 +4,22 @@ import cn.wizzer.common.Message;
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.mvc.filter.PrivateFilter;
 import cn.wizzer.common.page.Pagination;
+import cn.wizzer.common.util.StringUtils;
 import cn.wizzer.modules.sys.bean.Sys_role;
 import cn.wizzer.modules.sys.bean.Sys_unit;
 import cn.wizzer.modules.sys.bean.Sys_user;
+import cn.wizzer.modules.sys.bean.Sys_user_profile;
 import cn.wizzer.modules.sys.service.RoleService;
 import cn.wizzer.modules.sys.service.UnitService;
 import cn.wizzer.modules.sys.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.subject.Subject;
-import org.nutz.dao.Cnd;
-import org.nutz.dao.Sqls;
+import org.nutz.dao.*;
+import org.nutz.dao.Chain;
 import org.nutz.dao.entity.Record;
 import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
@@ -67,7 +72,7 @@ public class UserAction {
     public Object tree(@Param("pid") String pid, HttpServletRequest req) {
         List<Record> list;
         if (!Strings.isEmpty(pid)) {
-            list = userService.list(Sqls.create("select id,name as text,has_children as children from sys_unit where parentId = @pid order by location asc,path asc").setParam("pid",pid));
+            list = userService.list(Sqls.create("select id,name as text,has_children as children from sys_unit where parentId = @pid order by location asc,path asc").setParam("pid", pid));
         } else {
             list = userService.list(Sqls.create("select id,name as text,has_children as children from sys_unit where length(path)=4 order by location asc,path asc"));
         }
@@ -93,10 +98,102 @@ public class UserAction {
     @At("/add/do")
     @Ok("json")
     @RequiresPermissions("sys:user")
-    @SLog(tag = "新建用户", msg = "用户名称：${args[0].name}")
-    public Object addDo(@Param("..") Sys_user user, @Param("unitId") String unitId, HttpServletRequest req) {
+    @SLog(tag = "新建用户", msg = "用户名称：${args[0].username}")
+    public Object addDo(@Param("::u.") Sys_user user, @Param("::p.") Sys_user_profile profile, @Param("unitId") String unitId, @Param("roleIds") String[] roleIds, HttpServletRequest req) {
+        try {
+            int num = userService.count(Cnd.where("username", "=", user.getUsername().trim()));
+            if (num > 0) {
+                return Message.error("sys.user.username", req);
+            }
+            if (!Strings.isEmpty(profile.getEmail())) {
+                if (userService.count("sys_user_profile", Cnd.where("email", "=", profile.getEmail().trim())) > 0) {
+                    return Message.error("sys.user.email", req);
+                }
+            }
+            userService.save(user, profile, unitId, roleIds);
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
+    }
 
-        return Message.error("system.error", req);
+    @At("/info/?")
+    @Ok("vm:template.private.sys.user.info")
+    @RequiresPermissions("sys:user")
+    public Object info(String userId, HttpServletRequest req) {
+        Sys_unit unit = userService.getUnit(userId);
+        if (unit != null) req.setAttribute("unitName", unit.getName());
+        req.setAttribute("roles", userService.getReolnames(userId));
+        return userService.info(userId);
+    }
+
+    @At("/delete/?")
+    @Ok("json")
+    @RequiresPermissions("sys:user")
+    @SLog(tag = "删除用户", msg = "用户ID：${args[0]}")
+    public Object delete(String userId, HttpServletRequest req) {
+        try {
+            userService.deleteById(userId);
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
+    }
+
+    @At("/delete")
+    @Ok("json")
+    @RequiresPermissions("sys:user")
+    @SLog(tag = "批量删除", msg = "用户ID：${args[0]}")
+    public Object deletes(@Param("ids") String[] userIds, HttpServletRequest req) {
+        try {
+            userService.deleteByIds(userIds);
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
+    }
+
+    @At("/enable/?")
+    @Ok("json")
+    @RequiresPermissions("sys:user")
+    @SLog(tag = "启用用户", msg = "用户ID：${args[0]}")
+    public Object enable(String userId, HttpServletRequest req) {
+        try {
+            userService.update(Chain.make("is_locked", false), Cnd.where("id", "=", userId));
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
+    }
+
+    @At("/disable/?")
+    @Ok("json")
+    @RequiresPermissions("sys:user")
+    @SLog(tag = "禁用用户", msg = "用户ID：${args[0]}")
+    public Object disable(String userId, HttpServletRequest req) {
+        try {
+            userService.update(Chain.make("is_locked", true), Cnd.where("id", "=", userId));
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
+    }
+
+    @At("/resetPwd/?")
+    @Ok("json")
+    @RequiresPermissions("sys:user")
+    @SLog(tag = "重置密码", msg = "用户ID：${args[0]}")
+    public Object resetPwd(String userId, HttpServletRequest req) {
+        try {
+            RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+            String password = StringUtils.getRndNumber(6);
+            String salt = rng.nextBytes().toBase64();
+            String hashedPasswordBase64 = new Sha256Hash(password, salt, 1024).toBase64();
+            userService.update(Chain.make("password", hashedPasswordBase64).add("salt", salt), Cnd.where("id", "=", userId));
+            return Message.success("system.success", password, req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
     }
 
     @At("/role/?")
