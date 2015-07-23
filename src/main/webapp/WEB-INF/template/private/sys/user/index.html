@@ -218,14 +218,16 @@
             dialog.modal("show");
             dialog.find("#ok").unbind("click");
             dialog.find("#ok").bind("click", function(event){
-                $(this).button("loading");
+                var btn = $(this);
+                btn.button("loading");
                 $.post("${base}/private/sys/user/delete", {ids:ids.toString()}, function(data){
                     if(data.type == "success"){
                         window.location.reload();
                     }else{
                         Toast.error(data.content);
                     }
-                    $(this).button("reset");
+                    btn.button("reset");
+                    dialog.modal("hide");
                 },"json");
             });
         }else{

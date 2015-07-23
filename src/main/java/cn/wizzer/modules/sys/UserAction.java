@@ -130,10 +130,15 @@ public class UserAction {
     @At("/delete/?")
     @Ok("json")
     @RequiresPermissions("sys:user")
-    @SLog(tag = "删除用户", msg = "用户ID：${args[0]}")
+    @SLog(tag = "删除用户", msg = "用户名：${args[1].getAttribute('username')}")
     public Object delete(String userId, HttpServletRequest req) {
         try {
+            Sys_user user = userService.fetch(userId);
+            if ("superadmin".equals(user.getUsername())) {
+                return Message.error("system.nodel", req);
+            }
             userService.deleteById(userId);
+            req.setAttribute("username", user.getUsername());
             return Message.success("system.success", req);
         } catch (Exception e) {
             return Message.error("system.error", req);
@@ -146,6 +151,12 @@ public class UserAction {
     @SLog(tag = "批量删除", msg = "用户ID：${args[0]}")
     public Object deletes(@Param("ids") String[] userIds, HttpServletRequest req) {
         try {
+            Sys_user user = userService.fetch(Cnd.where("username", "=", "superadmin"));
+            for (String s : userIds) {
+                if (s.equals(user.getId())) {
+                    return Message.error("system.nodel", req);
+                }
+            }
             userService.deleteByIds(userIds);
             return Message.success("system.success", req);
         } catch (Exception e) {
