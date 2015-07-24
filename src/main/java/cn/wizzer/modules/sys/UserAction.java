@@ -239,6 +239,9 @@ public class UserAction {
     @SLog(tag = "禁用用户", msg = "用户ID：${args[0]}")
     public Object disable(String userId, HttpServletRequest req) {
         try {
+            if ("superadmin".equals(userService.fetch(userId).getUsername())) {
+                return Message.error("system.not.allow", req);
+            }
             userService.update(Chain.make("is_locked", true), Cnd.where("id", "=", userId));
             return Message.success("system.success", req);
         } catch (Exception e) {

@@ -179,7 +179,7 @@ public class UserService extends BaseService<Sys_user> {
      */
     public List<Sys_menu> getMenus(String uid) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menu_id and" +
-                " b.role_id in(select role_id from sys_user_role where user_id=@userId) and a.is_enabled=1 and a.is_show=1 and a.type='menu' order by a.location ASC,a.path asc");
+                " b.role_id in(select role_id from sys_user_role where user_id=@userId) and a.is_enabled=true and a.is_show=true and a.type='menu' order by a.location ASC,a.path asc");
         sql.params().set("userId", uid);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
@@ -196,7 +196,7 @@ public class UserService extends BaseService<Sys_user> {
      */
     public List<Sys_menu> getButtons(String uid) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menu_id and" +
-                " b.role_id in(select role_id from sys_user_role where user_id=@userId) and a.is_enabled=1 and a.type='button'");
+                " b.role_id in(select role_id from sys_user_role where user_id=@userId) and a.is_enabled=true and a.type='button'");
         sql.params().set("userId", uid);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);

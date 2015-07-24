@@ -26,6 +26,7 @@ public class UnitService extends BaseService<Sys_unit> {
 
     /**
      * 级联删除单位
+     *
      * @param id
      */
     @Aop(TransAop.READ_COMMITTED)
@@ -33,6 +34,8 @@ public class UnitService extends BaseService<Sys_unit> {
         String pid = this.fetch(id).getParentId();
         dao().execute(Sqls.create("delete from sys_unit where id = @id").setParam("id", id));
         dao().execute(Sqls.create("delete from sys_unit where parentId = @id").setParam("id", id));
+        dao().execute(Sqls.create("delete from sys_user_unit where unit_id=@id or unit_id in(SELECT id FROM sys_unit WHERE parentId=@id)").setParam("id", id));
+        dao().execute(Sqls.create("delete from sys_role where unitid=@id or unitid in(SELECT id FROM sys_unit WHERE parentId=@id)").setParam("id", id));
         if (!Strings.isEmpty(pid)) {
             int count = count(Cnd.where("parentId", "=", pid));
             if (count < 1) {
@@ -43,6 +46,7 @@ public class UnitService extends BaseService<Sys_unit> {
 
     /**
      * 新增单位
+     *
      * @param unit
      * @param pid
      */
@@ -64,6 +68,7 @@ public class UnitService extends BaseService<Sys_unit> {
 
     /**
      * 修改单位
+     *
      * @param unit
      * @param pid
      */
