@@ -253,6 +253,9 @@ public class LoginAction {
     public void logout() {
         Subject currentUser = SecurityUtils.getSubject();
         try {
+            Sys_user user=(Sys_user)currentUser.getPrincipal();
+            Sys_log log= Sys_log.c("info","用户退出",user.getId(),user.getUsername(),"用户："+user.getUsername()+" 手动退出系统！",null);
+            sysLogService.async(log);
             currentUser.logout();
         } catch (SessionException ise) {
             log.debug("Encountered session exception during logout.  This can generally safely be ignored.", ise);
