@@ -30,6 +30,11 @@ public class RoleService extends BaseService<Sys_role> {
         return fetch(Cnd.where("name", "=", name));
     }
 
+    /**
+     * 查询权限
+     * @param role
+     * @return
+     */
     public List<String> getPermissionNameList(Sys_role role) {
         dao().fetchLinks(role, "menus");
         List<String> list = new ArrayList<String>();

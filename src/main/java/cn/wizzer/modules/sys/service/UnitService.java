@@ -24,6 +24,10 @@ public class UnitService extends BaseService<Sys_unit> {
         super(dao);
     }
 
+    /**
+     * 级联删除单位
+     * @param id
+     */
     @Aop(TransAop.READ_COMMITTED)
     public void deleteAndChild(String id) {
         String pid = this.fetch(id).getParentId();
@@ -37,6 +41,11 @@ public class UnitService extends BaseService<Sys_unit> {
         }
     }
 
+    /**
+     * 新增单位
+     * @param unit
+     * @param pid
+     */
     @Aop(TransAop.READ_COMMITTED)
     public void save(Sys_unit unit, String pid) {
         String path = "";
@@ -53,6 +62,11 @@ public class UnitService extends BaseService<Sys_unit> {
         }
     }
 
+    /**
+     * 修改单位
+     * @param unit
+     * @param pid
+     */
     @Aop(TransAop.READ_COMMITTED)
     public void edit(Sys_unit unit, String pid) {
         if (!Strings.sNull(pid).equals(unit.getParentId())) {

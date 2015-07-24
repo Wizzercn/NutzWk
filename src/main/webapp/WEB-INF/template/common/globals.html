@@ -480,7 +480,7 @@
         #end
         var form = __pageControl.parent("form");
         var param = {};
-        var inputs = form.find("input");
+        var inputs = $.find("input");
         $.each(inputs, function(i,input){
             param[input.name] = input.value;
         });

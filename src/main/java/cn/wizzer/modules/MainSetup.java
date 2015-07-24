@@ -118,6 +118,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setHasChildren(true);
             menu.setParentId("");
+            menu.setType("menu");
             Sys_menu m1 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -129,6 +130,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setPermission("sys:unit");
             menu.setParentId(m1.getId());
+            menu.setType("menu");
             Sys_menu m2 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -139,8 +141,9 @@ public class MainSetup implements Setup {
             menu.setHref("/private/sys/user");
             menu.setIs_show(true);
             menu.setPermission("sys:user");
-            menu.setHasChildren(true);
+            menu.setHasChildren(false);
             menu.setParentId(m1.getId());
+            menu.setType("menu");
             Sys_menu m3 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -151,6 +154,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(false);
             menu.setPermission("sys:user:add");
             menu.setParentId(m3.getId());
+            menu.setType("button");
             Sys_menu m31 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -161,6 +165,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(false);
             menu.setPermission("sys:user:update");
             menu.setParentId(m3.getId());
+            menu.setType("button");
             Sys_menu m32 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -171,6 +176,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(false);
             menu.setPermission("sys:user:delete");
             menu.setParentId(m3.getId());
+            menu.setType("button");
             Sys_menu m33 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -181,6 +187,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(false);
             menu.setPermission("sys:user:profile");
             menu.setParentId(m3.getId());
+            menu.setType("button");
             Sys_menu m34 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -192,6 +199,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setPermission("sys:role");
             menu.setParentId(m1.getId());
+            menu.setType("menu");
             Sys_menu m4 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -203,6 +211,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setPermission("sys:menu");
             menu.setParentId(m1.getId());
+            menu.setType("menu");
             Sys_menu m5 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -214,6 +223,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setPermission("sys:config");
             menu.setParentId(m1.getId());
+            menu.setType("menu");
             Sys_menu m6 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -225,6 +235,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setPermission("sys:dict");
             menu.setParentId(m1.getId());
+            menu.setType("menu");
             Sys_menu m7 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -236,6 +247,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setPermission("sys:log");
             menu.setParentId(m1.getId());
+            menu.setType("menu");
             Sys_menu m8 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setIs_enabled(true);
@@ -247,6 +259,7 @@ public class MainSetup implements Setup {
             menu.setIs_show(true);
             menu.setPermission("sys:plugin");
             menu.setParentId(m1.getId());
+            menu.setType("menu");
             Sys_menu m9 = dao.insert(menu);
             //初始化角色
             Sys_role role = new Sys_role();
@@ -285,8 +298,8 @@ public class MainSetup implements Setup {
             profile.setUserId(dbuser.getId());
             dao.insert(profile);
             //不同的插入数据方式(安全)
-            dao.insert("sys_user_unit", Chain.make("user_id", dbuser.getId()).add("unit_id",dbunit.getId()));
-            dao.insert("sys_user_role", Chain.make("user_id", dbuser.getId()).add("role_id",dbrole.getId()));
+            dao.insert("sys_user_unit", Chain.make("user_id", dbuser.getId()).add("unit_id", dbunit.getId()));
+            dao.insert("sys_user_role", Chain.make("user_id", dbuser.getId()).add("role_id", dbrole.getId()));
             //执行自定义SQL插入
             dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m1.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m2.getId() + "')"));
@@ -299,8 +312,9 @@ public class MainSetup implements Setup {
             dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m5.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m6.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m7.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m8.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m9.getId() + "')"));
+            //另外一种写法(安全)
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values(@a,@b)").setParam("a", dbrole.getId()).setParam("b", m8.getId()));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values(@a,@b)").setParam("a", dbrole.getId()).setParam("b", m9.getId()));
 
         }
     }

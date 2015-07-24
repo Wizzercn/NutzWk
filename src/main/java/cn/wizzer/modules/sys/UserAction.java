@@ -5,10 +5,7 @@ import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.mvc.filter.PrivateFilter;
 import cn.wizzer.common.page.Pagination;
 import cn.wizzer.common.util.StringUtils;
-import cn.wizzer.modules.sys.bean.Sys_role;
-import cn.wizzer.modules.sys.bean.Sys_unit;
-import cn.wizzer.modules.sys.bean.Sys_user;
-import cn.wizzer.modules.sys.bean.Sys_user_profile;
+import cn.wizzer.modules.sys.bean.*;
 import cn.wizzer.modules.sys.service.RoleService;
 import cn.wizzer.modules.sys.service.UnitService;
 import cn.wizzer.modules.sys.service.UserService;
@@ -31,7 +28,10 @@ import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Wizzer.cn on 2015/7/4.
@@ -59,11 +59,18 @@ public class UserAction {
     @At
     @Ok("vm:template.private.sys.user.list")
     @RequiresPermissions("sys:user")
-    public Pagination list(@Param("curPage") int curPage, @Param("pageSize") int pageSize, @Param("unitid") String unitid, HttpServletRequest req) {
+    public Pagination list(@Param("curPage") int curPage, @Param("pageSize") int pageSize, @Param("unitid") String unitid, @Param("username") String username, @Param("nickname") String nickname, HttpServletRequest req) {
+        String s = "";
+        if (!Strings.isEmpty(username)) {
+            s += " and a.username like '%" + username + "%' ";
+        }
+        if (!Strings.isEmpty(nickname)) {
+            s += " and b.nickname like '%" + nickname + "%' ";
+        }
         return userService.listPage(curPage, pageSize, Sqls.create("SELECT a.id,a.username,a.is_online,a.is_locked,b.email,b.nickname " +
                 "FROM sys_user a,sys_user_profile b ,sys_user_unit c " +
                 "WHERE a.id=b.user_id AND a.id=c.user_id AND " +
-                "c.unit_id=@unitid ORDER BY a.create_time desc").setParam("unitid", unitid));
+                "c.unit_id=@unitid $s ORDER BY a.create_time desc").setParam("unitid", unitid).setVar("s", s));
     }
 
     @At("/tree")
@@ -98,7 +105,7 @@ public class UserAction {
     @At("/add/do")
     @Ok("json")
     @RequiresPermissions("sys:user")
-    @SLog(tag = "新建用户", msg = "用户名称：${args[0].username}")
+    @SLog(tag = "新建用户", msg = "用户名：${args[0].username}")
     public Object addDo(@Param("::u.") Sys_user user, @Param("::p.") Sys_user_profile profile, @Param("unitId") String unitId, @Param("roleIds") String[] roleIds, HttpServletRequest req) {
         try {
             int num = userService.count(Cnd.where("username", "=", user.getUsername().trim()));
@@ -113,6 +120,52 @@ public class UserAction {
             userService.save(user, profile, unitId, roleIds);
             return Message.success("system.success", req);
         } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
+    }
+
+    @At("/edit/?")
+    @Ok("vm:template.private.sys.user.edit")
+    @RequiresPermissions("sys:user")
+    public Object edit(String userId, HttpServletRequest req) {
+        Sys_user user = userService.info(userId);
+        Sys_unit unit = userService.getUnit(userId);
+        req.setAttribute("parentUnit", unit);
+        Cnd cnd = Cnd.where("unitid", "=", unit.getId());
+        Subject currentUser = SecurityUtils.getSubject();
+        if (currentUser != null) {
+            Sys_user cuser = (Sys_user) currentUser.getPrincipal();
+            if (cuser.isSystem()) {
+                cnd = Cnd.where("unitid", "=", "").or("unitid", "is", null).or("unitid", "=", unit.getId());
+            }
+        }
+        req.setAttribute("roleList", roleService.query(cnd.asc("location"), null));
+        req.setAttribute("roleIds", userService.getRoleCodeList(user));
+        return user;
+    }
+
+    @At("/edit/do")
+    @Ok("json")
+    @RequiresPermissions("sys:user")
+    @SLog(tag = "编辑用户", msg = "用户名：${args[0].username}")
+    public Object editDo(@Param("::u.") Sys_user user, @Param("::p.") Sys_user_profile profile, @Param("unitId") String unitId, @Param("roleIds") String[] roleIds, HttpServletRequest req) {
+        try {
+            Sys_user u = userService.info(user.getId());
+            if (!u.getUsername().equals(user.getUsername())) {
+                int num = userService.count(Cnd.where("username", "=", user.getUsername().trim()));
+                if (num > 0) {
+                    return Message.error("sys.user.username", req);
+                }
+            }
+            if (!Strings.isEmpty(profile.getEmail()) && !profile.getEmail().equals(u.getProfile().getEmail())) {
+                if (userService.count("sys_user_profile", Cnd.where("email", "=", profile.getEmail().trim())) > 0) {
+                    return Message.error("sys.user.email", req);
+                }
+            }
+            userService.edit(user, profile, unitId, roleIds);
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            e.printStackTrace();
             return Message.error("system.error", req);
         }
     }
@@ -152,7 +205,7 @@ public class UserAction {
     public Object deletes(@Param("ids") String[] userIds, HttpServletRequest req) {
         try {
             Sys_user user = userService.fetch(Cnd.where("username", "=", "superadmin"));
-            StringBuilder sb=new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             for (String s : userIds) {
                 if (s.equals(user.getId())) {
                     return Message.error("system.nodel", req);
@@ -160,7 +213,7 @@ public class UserAction {
                 sb.append(s).append(",");
             }
             userService.deleteByIds(userIds);
-            req.setAttribute("ids",sb.toString());
+            req.setAttribute("ids", sb.toString());
             return Message.success("system.success", req);
         } catch (Exception e) {
             return Message.error("system.error", req);
@@ -211,17 +264,33 @@ public class UserAction {
     }
 
     @At("/role/?")
-    @Ok("json")
+    @Ok("vm:template.private.sys.user.role")
     @RequiresPermissions("sys:user")
-    public Object role(String unitId, HttpServletRequest req) {
-        Cnd cnd = Cnd.where("unitid", "=", unitId);
-        Subject currentUser = SecurityUtils.getSubject();
-        if (currentUser != null) {
-            Sys_user user = (Sys_user) currentUser.getPrincipal();
-            if (user.isSystem()) {
-                cnd = Cnd.where("unitid", "=", "").or("unitid", "is", null).or("unitid", "=", unitId);
+    public Object role(String userId, HttpServletRequest req) {
+        Sys_unit unit = userService.getUnit(userId);
+        if (unit != null) req.setAttribute("unitName", unit.getName());
+        req.setAttribute("user", userService.info(userId));
+        List<Sys_menu> list = userService.getButtons(userId);
+        Map<String, List<Sys_menu>> map=getMap(list);
+        req.setAttribute("buttons", map);
+        req.setAttribute("allBtns", list);
+        return userService.getMenus(userId);
+    }
+
+    private Map<String, List<Sys_menu>> getMap(List<Sys_menu> list) {
+        Map<String, List<Sys_menu>> map = new HashMap<>();
+        for (Sys_menu menu : list) {
+            List<Sys_menu> l = map.get(menu.getParentId());
+            if (l == null) {
+                l = new ArrayList<>();
+            }else continue;
+            for (Sys_menu m : list) {
+                if (m.getParentId().equals(menu.getParentId())) {
+                    l.add(m);
+                }
             }
+            map.put(menu.getParentId(), l);
         }
-        return Message.success("system.success", roleService.query(cnd.asc("location"), null), req);
+        return map;
     }
 }

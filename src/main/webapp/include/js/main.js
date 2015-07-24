@@ -499,6 +499,18 @@ var sublime = function () {
                 clearInterval(interval);
                 $("#loadingbar").remove();
             });
+        },
+        toggleFilter : function(filter){//显示/隐藏筛选面板
+            var filter = $(filter);
+            filter.addClass('is-visible');
+
+            filter.unbind("click");
+            filter.bind("click", function(event){
+                if( $(event.target).is('.cd-panel') || $(event.target).is('.cd-panel-close') ) {
+                    filter.removeClass('is-visible');
+                    event.preventDefault();
+                }
+            });
         }
     };
 }();

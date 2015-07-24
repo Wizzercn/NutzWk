@@ -35,6 +35,10 @@ public class Sys_menu extends BasePojo implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String aliasName;
     @Column
+    @Comment("资源类型")
+    @ColDefine(type = ColType.VARCHAR, width = 10)
+    private String type;
+    @Column
     @Comment("菜单链接")
     @ColDefine(type = ColType.VARCHAR, width = 1000)
     private String href;
@@ -105,6 +109,14 @@ public class Sys_menu extends BasePojo implements Serializable {
 
     public void setAliasName(String aliasName) {
         this.aliasName = aliasName;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getHref() {

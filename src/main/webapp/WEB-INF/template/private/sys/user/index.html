@@ -26,7 +26,7 @@
                 <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['sys.user.del']}</button>
             </div>
             <div class="pull-right offscreen-right">
-                <button class="btn btn-primary navbar-btn" onclick="ns.toggleFilter('.cd-panel')"><i
+                <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i
                         class="fa fa-sliders"></i> 筛选
                 </button>
             </div>
@@ -67,6 +67,27 @@
     </section>
 
 </section>
+<div class="cd-panel from-right">
+    <header class="cd-panel-header">
+        <h4>高级筛选</h4>
+        <a href="javascript:;" class="cd-panel-close text-center"><i class="ti-close"></i> </a>
+    </header>
+    <div class="cd-panel-container">
+        <div class="cd-panel-content shadow">
+            <form id="searchForm" role="form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="用户名/登录名" autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="nickname">姓名</label>
+                    <input type="text" id="nickname" name="nickname" class="form-control" placeholder="姓名/昵称">
+                </div>
+                <button id="searchBtn" type="button" class="btn btn-default">查询</button>
+            </form>
+        </div>
+    </div>
+</div>
 <!-- 删除用户 -->
 <div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
@@ -174,6 +195,7 @@
         }).on("select_node.jstree", function(node,selected){
             var id = selected.selected;
             $("#unitid").val(id);
+            $("#searchForm").find("input[type='text']").val("");
             __jumpPage(1);
 
         }).on("loaded.jstree", function(node,jstree){
@@ -277,6 +299,9 @@
     $(document).ready(function () {
         initTreeView();
         initCheckBox();
+        $("#searchBtn").on("click",function(){
+            __jumpPage(1);
+        });
         //删除页面缓存
         $("#dialogUserDetail").on("hidden.bs.modal", function() {
             $(this).removeData("bs.modal");

@@ -14,7 +14,8 @@
         <div class="content-wrap">
             <div class="wrapper">
                 <section class="panel">
-                    <form id="userAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/private/sys/user/add/do" method="post">
+                    <form id="userAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/private/sys/user/edit/do" method="post">
+                        <input type="hidden" name="u.id" value="$!obj.id"/>
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="form-group has-feedback">
@@ -36,7 +37,7 @@
                                     <div class="col-sm-8">
                                         <select tabindex="2" id="roleIds" name="roleIds" data-placeholder="<--选择机构后，选择角色" style="width:100%" multiple class="form-control chosen" data-parsley-required="true">
                                             #foreach($!role in $!roleList)
-                                            <option value="$!role.id"> #if(!$!role.unitId)[系统]#end$!role.name
+                                            <option value="$!role.id" #if($!roleIds.contains("$!role.code"))selected="selected"#end> #if(!$!role.unitId)[系统]#end$!role.name
                                             #end
                                         </select>
                                     </div>
@@ -48,7 +49,7 @@
                                 <div class="form-group">
                                     <label for="username" class="col-sm-2 control-label">用户名</label>
                                     <div class="col-sm-8">
-                                        <input type="text" id="username" tabindex="3" class="form-control" name="u.username" data-parsley-required="true" placeholder="登陆时使用的用户名">
+                                        <input type="text" id="username" value="$!obj.username" tabindex="3" class="form-control" name="u.username" data-parsley-required="true" placeholder="登陆时使用的用户名">
                                     </div>
                                 </div>
                             </div>
@@ -56,25 +57,7 @@
                                 <div class="form-group">
                                     <label for="nickname" class="col-sm-2 control-label">昵称</label>
                                     <div class="col-sm-8">
-                                        <input type="text" id="nickname" tabindex="4" class="form-control" name="p.nickname" data-parsley-required="true" placeholder="昵称或姓名">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="password" class="col-sm-2 control-label">密码</label>
-                                    <div class="col-sm-8">
-                                        <input id="password" tabindex="5" type="password" class="form-control" name="u.password" data-parsley-required="true" placeholder="密码">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="password2" class="col-sm-2 control-label">密码确认</label>
-                                    <div class="col-sm-8">
-                                        <input id="password2" type="password" tabindex="6" class="form-control" data-parsley-equalto="#password" data-parsley-required="true" name="eqPassword" placeholder="请再输入一次密码">
+                                        <input type="text" id="nickname" value="$!obj.profile.nickname" tabindex="4" class="form-control" name="p.nickname" data-parsley-required="true" placeholder="昵称或姓名">
                                     </div>
                                 </div>
                             </div>
@@ -84,7 +67,7 @@
                                 <div class="form-group">
                                     <label for="email" class="col-sm-2 control-label">邮箱</label>
                                     <div class="col-sm-8">
-                                        <input id="email" type="text" tabindex="7" name="p.email" data-parsley-type="email" class="form-control" placeholder="电子邮箱地址 wizzer@qq.com">
+                                        <input id="email" type="text" tabindex="7" value="$!obj.profile.email" name="p.email" data-parsley-type="email" class="form-control" placeholder="电子邮箱地址 wizzer@qq.com">
                                     </div>
                                 </div>
                             </div>
@@ -92,7 +75,7 @@
                                 <div class="form-group">
                                     <label for="mobile" class="col-sm-2 control-label">联系方式</label>
                                     <div class="col-sm-8">
-                                        <input id="mobile" type="text" tabindex="8" name="p.mobile" class="form-control" data-parsley-type="digits" placeholder="固定电话或手机号码">
+                                        <input id="mobile" type="text" tabindex="8" value="$!obj.profile.mobile" name="p.mobile" class="form-control" data-parsley-type="digits" placeholder="固定电话或手机号码">
                                     </div>
                                 </div>
                             </div>
@@ -102,7 +85,7 @@
                                 <div class="form-group">
                                     <label for="linkQq" class="col-sm-2 control-label">QQ</label>
                                     <div class="col-sm-8">
-                                        <input id="linkQq" type="text" name="p.linkQq" tabindex="10" data-parsley-type="number" class="form-control" placeholder="QQ号码">
+                                        <input id="linkQq" type="text" name="p.linkQq" value="$!obj.profile.linkQq" tabindex="10" data-parsley-type="number" class="form-control" placeholder="QQ号码">
                                     </div>
                                 </div>
                             </div>
@@ -110,7 +93,7 @@
                                 <div class="form-group">
                                     <label for="linkWebsite" class="col-sm-2 control-label">主页</label>
                                     <div class="col-sm-8">
-                                        <input id="linkWebsite" type="text" name="p.linkWebsite" tabindex="10" data-parsley-type="url"  class="form-control" placeholder="http://www.wizzer.cn">
+                                        <input id="linkWebsite" type="text" name="p.linkWebsite" value="$!obj.profile.linkWebsite" tabindex="10" data-parsley-type="url"  class="form-control" placeholder="http://www.wizzer.cn">
                                     </div>
                                 </div>
                             </div>
@@ -120,7 +103,7 @@
                                 <div class="form-group">
                                     <label for="address" class="col-sm-2 control-label">住址</label>
                                     <div class="col-sm-8">
-                                        <input id="address" type="text" name="p.address" tabindex="10" class="form-control" placeholder="住址">
+                                        <input id="address" type="text" name="p.address" value="$!obj.profile.address" tabindex="10" class="form-control" placeholder="住址">
                                     </div>
                                 </div>
                             </div>
@@ -131,7 +114,7 @@
                                     <label for="locked" class="col-sm-2 control-label">是否禁用</label>
                                     <div class="col-sm-8 switcha">
                                         <div class="mr15">
-                                            <input type="checkbox" id="locked" name="u.locked" class="js-switch-blue" >
+                                            <input type="checkbox" id="locked" name="u.locked" #if($!obj.locked)checked="checked"#end class="js-switch-blue" >
                                         </div>
                                     </div>
                                 </div>
@@ -251,16 +234,12 @@
             },
             success : function(data, statusText, xhr, form) {
                 if(data.type == "success"){
-                    Toast.success("用户增加成功！");
-                    var unitName = $("#userAddForm #unitName").val();
-                    var roleIds = $("#userAddForm select[name='roleIds']").val();
-
-                    //重置form
-                    form.resetForm();
-                    //重置select
-                    $("#userAddForm #unitName").val(unitName);
-                    $("#userAddForm select[name='roleIds']").val(roleIds);
-                    $("#userAddForm select[name='roleIds']").trigger("chosen:updated");
+                    Toast.success(data.content+"，2秒后返回用户管理首页", function(){
+                        window.location.href="${base}/private/sys/user";
+                    });
+                    setTimeout(function(){
+                        window.location.href="${base}/private/sys/user";
+                    }, 2000);
                 }else{
                     Toast.error(data.content);
                 }
