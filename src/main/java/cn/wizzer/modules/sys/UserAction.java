@@ -188,7 +188,7 @@ public class UserAction {
         try {
             Sys_user user = userService.fetch(userId);
             if ("superadmin".equals(user.getUsername())) {
-                return Message.error("system.nodel", req);
+                return Message.error("system.not.allow", req);
             }
             userService.deleteById(userId);
             req.setAttribute("username", user.getUsername());
@@ -208,7 +208,7 @@ public class UserAction {
             StringBuilder sb = new StringBuilder();
             for (String s : userIds) {
                 if (s.equals(user.getId())) {
-                    return Message.error("system.nodel", req);
+                    return Message.error("system.not.allow", req);
                 }
                 sb.append(s).append(",");
             }
@@ -252,6 +252,9 @@ public class UserAction {
     @SLog(tag = "重置密码", msg = "用户ID：${args[0]}")
     public Object resetPwd(String userId, HttpServletRequest req) {
         try {
+            if ("superadmin".equals(userService.fetch(userId).getUsername())) {
+                return Message.error("system.not.allow", req);
+            }
             RandomNumberGenerator rng = new SecureRandomNumberGenerator();
             String password = StringUtils.getRndNumber(6);
             String salt = rng.nextBytes().toBase64();
@@ -271,7 +274,7 @@ public class UserAction {
         if (unit != null) req.setAttribute("unitName", unit.getName());
         req.setAttribute("user", userService.info(userId));
         List<Sys_menu> list = userService.getButtons(userId);
-        Map<String, List<Sys_menu>> map=getMap(list);
+        Map<String, List<Sys_menu>> map = getMap(list);
         req.setAttribute("buttons", map);
         req.setAttribute("allBtns", list);
         return userService.getMenus(userId);
@@ -283,7 +286,7 @@ public class UserAction {
             List<Sys_menu> l = map.get(menu.getParentId());
             if (l == null) {
                 l = new ArrayList<>();
-            }else continue;
+            } else continue;
             for (Sys_menu m : list) {
                 if (m.getParentId().equals(menu.getParentId())) {
                     l.add(m);

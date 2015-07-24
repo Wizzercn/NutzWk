@@ -137,7 +137,7 @@ public class UnitAction {
         Sys_unit unit = unitService.fetch(id);
         req.setAttribute("name", unit.getName());
         if ("0001".equals(unit.getPath())) {
-            return Message.error("system.nodel", req);
+            return Message.error("system.not.allow", req);
         }
         try {
             unitService.deleteAndChild(id);
