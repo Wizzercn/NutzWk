@@ -100,10 +100,6 @@
                                         <section class="panel no-b">
                                             <div class="panel-heading no-b">
                                                 <h5><span id="menuName">菜单</span><b>按钮权限</b></h5>
-                                                <div id="checkAllMenuBtn" class="pull-right">
-                                                    <label for="selectAllBtn">全选：&nbsp;&nbsp;&nbsp;</label>
-                                                    <input type="checkbox" id="selectAllBtn" class="js-switch-blue" />
-                                                </div>
                                             </div>
                                             <div id="divResBtn" class="panel-body">
 
@@ -118,44 +114,48 @@
                                     <div class="col-sm-8">
                                         <div class="panel">
                                             <div class="panel-body">
-                                                <div class="input-group input-rounded mb15">
-                                                    <input type="text" class="form-control" name="key" placeholder="搜索用户...">
+                                                <div class="input-group input-rounded mb15 ">
+                                                    <input type="hidden" id="type" name="type" value="1">
+                                                    <input type="text" class="form-control" onclick="this.value='';" name="keyword" placeholder="搜索用户...">
                                                     <div class="input-group-btn">
                                                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">搜索
                                                             <span class="caret"></span>
                                                         </button>
                                                         <ul class="dropdown-menu pull-right">
-                                                            <li><a href="javascript:;">按用户名</a></li>
-                                                            <li><a href="javascript:;">按姓名</a></li>
+                                                            <li><a href="javascript:search(1);">按用户名</a></li>
+                                                            <li><a href="javascript:search(2);">按姓名</a></li>
                                                             <li class="divider"></li>
-                                                            <li><a href="javascript:;">全部匹配</a></li>
+                                                            <li><a href="javascript:search(3);">全部匹配</a></li>
                                                         </ul>
                                                     </div>
                                                 </div>
-                                                <table class="table no-m">
+
+                                                <table id="data"  class="table no-m">
                                                     <thead>
                                                     <tr>
-                                                        <th class="col-md-1">
-                                                            <input type="checkbox" class="icheck" id="checkAll">
-                                                        </th>
-                                                        <th class="col-md-5 pd-l-lg">
+                                                        <th class="col-md-3 pd-l-lg">
                                                             <span class="pd-l-sm"></span>用户名</th>
-                                                        <th class="col-md-5">姓名</th>
+                                                        <th class="col-md-3">姓名</th>
+                                                        <th class="col-md-4">邮箱</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    #foreach($!btn in $!btnList)
-                                                    <tr>
-                                                        <td>
-                                                            <input type="checkbox" class="icheck" id="checkAll">
-                                                        </td>
-                                                        <td>
-                                                            <span class="pd-l-sm"></span>$!btn.name</td>
-                                                        <td>$!btn.code</td>
-                                                    </tr>
-                                                    #end
+
                                                     </tbody>
                                                 </table>
+
+                                            </div>
+                                            <div class="row bt" id="__page">
+                                                <div class="col-lg-12">
+                                                    <div class="pull-left mt20" id="__pageLeft">
+                                                        第1/1页，每页显示0条，共0条数据
+                                                    </div>
+                                                    <div class="pull-right">
+                                                        <ul id="__pageControl" class="pagination">
+
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -165,20 +165,15 @@
                                                 <h5><b>已选择的</b>用户</h5>
                                             </div>
                                             <div class="panel-body">
-                                                <table class="table no-m">
+                                                <table id="xz" class="table no-m">
                                                     <thead>
                                                     <tr>
-                                                        <th class="col-md-5 pd-l-lg">
+                                                        <th class="col-md-3 pd-l-lg">
                                                             <span class="pd-l-sm"></span>用户名</th>
-                                                        <th class="col-md-5">姓名</th>
+                                                        <th class="col-md-3">姓名</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <span class="pd-l-sm"></span>$!btn.name</td>
-                                                        <td>$!btn.code</td>
-                                                    </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -261,6 +256,62 @@
 
         $("#dialogSelectUnit").modal("hide");
     }
+    function __jumpPage(page){
+        sublime.showLoadingbar($(".main-content"));
+        var __pageControl = $("#data");
+        var form = __pageControl.parent("form");
+        var param = {};
+        var inputs = $.find("input");
+        $.each(inputs, function(i,input){
+            param[input.name] = input.value;
+        });
+        param.curPage = page;
+        $.post("${base}/private/sys/role/user", param, function (data) {
+            if(!data){ return false;}
+            $("#data tbody").html(data);
+            $("#__pageLeft").html("第"+$("#pageNo").val()+"/"+$("#totalPage").val()+"页，每页显示"+$("#pageSize").val()+"条，共"+$("#totalCount").val()+"条数据");
+            $("#__pageControl").html("<li id=\"__pageFirst\" class=\"disabled\"><a href=\"javascript:;\">首页</a></li>" +
+                    "<li id=\"__pagePre\" class=\"disabled\"><a href=\"javascript:;\">上一页</a></li>" +
+                    "<li id=\"__pageNext\" class=\"disabled\"><a href=\"javascript:;\">下一页</a></li>" +
+                    "<li id=\"__pageLast\" class=\"disabled\"><a href=\"javascript:;\">末页</a></li>");
+            if(parseInt($("#pageNo").val())>1){
+                $("#__pageFirst").removeClass("disabled");
+                $("#__pagePre").removeClass("disabled");
+                $("#__pageFirst a").on("click",function(){
+                    __jumpPage(1);
+                });
+                $("#__pagePre a").on("click",function(){
+                    __jumpPage(parseInt($("#pageNo").val())-1);
+                });
+            }else{
+                $("#__pageFirst").addClass("disabled");
+                $("#__pagePre").addClass("disabled");
+                $("#__pageFirst a").off("click");
+                $("#__pagePre a").off("click");
+            }
+            if(parseInt($("#totalPage").val()) > parseInt($("#pageNo").val())){
+                $("#__pageNext").removeClass("disabled");
+                $("#__pageLast").removeClass("disabled");
+                $("#__pageNext a").on("click",function(){
+                    __jumpPage(parseInt($("#pageNo").val())+1);
+                });
+                $("#__pageLast a").on("click",function(){
+                    __jumpPage(parseInt($("#totalPage").val()));
+                });
+            }else{
+                $("#__pageNext").addClass("disabled");
+                $("#__pageLast").addClass("disabled");
+                $("#__pageNext a").off("click");
+                $("#__pageLast a").off("click");
+            }
+            sublime.closeLoadingbar($(".main-content"));
+            return false;
+        });
+    }
+    function search(t){
+        $("#type").val(t);
+        __jumpPage(1);
+    }
     $(function(){
         var jsTreeMenu;
         $(".stepy").stepy({
@@ -295,6 +346,9 @@
                             $("#menuDescript").text(data.node.data);
                     }).on("dehover_node.jstree", function(e,data){
                         $("#menuDescript").html("<div class='alert alert-info'>鼠标在左侧菜单树节点上悬浮，可以查看菜单描述</div>");//清空菜单描述
+                    }).bind("loaded.jstree", function(){
+                        //立即加载树下所有节点
+                        $("#jsTreeMenu").jstree("load_all");
                     });
 
                 }else if(idx == 3){
@@ -307,18 +361,18 @@
                         each(node,tree,nodes);
                     }
                     if(nodes.length>0){
-                        $("#checkAllMenuBtn").show();
                         $("#divResBtn").html("<img src='${base}/include/img/loading.gif'/>正在加载...");
                         $.get("${base}/private/sys/role/btn", {ids:nodes.toString()}, function(html){
                             $("#divResBtn").html(html);
                         });
                     }else{
                         $("#divResBtn").html("<div class='alert alert-warning'>未分配任何菜单，如需分配菜单权限，请到第2步中选择菜单！</div>");
-                        $("#checkAllMenuBtn").hide();
                     }
                 }else if(idx == 4){
                     //保存上一步的数据
                     saveResource();
+                    search(1);
+
                 }
             }
         });
@@ -356,7 +410,7 @@
                 }
             },
             success : function(data, statusText, xhr, $form) {
-                if(data.success == true){
+                if(data.type == "success"){
                     Toast.success("角色增加成功！");
                     $form.resetForm();
                     //回到第一个step
@@ -367,11 +421,6 @@
                 $form.find("button:submit").button("reset");
             }
         });
-
-        //绑定全选事件
-        $("#selectAllBtn").on("change", function(){
-
-        })
         initTreeView();
     });
     function saveResource(){

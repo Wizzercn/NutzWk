@@ -9,6 +9,7 @@ import cn.wizzer.modules.sys.bean.Sys_user;
 import cn.wizzer.modules.sys.service.MenuService;
 import cn.wizzer.modules.sys.service.RoleService;
 import cn.wizzer.modules.sys.service.UnitService;
+import cn.wizzer.modules.sys.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -16,6 +17,7 @@ import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Record;
+import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
@@ -43,7 +45,7 @@ public class RoleAction {
     @Inject
     MenuService menuService;
     @Inject
-    UnitService unitService;
+    UserService userService;
 
     @At("")
     @Ok("vm:template.private.sys.role.index")
@@ -142,6 +144,43 @@ public class RoleAction {
         Map<String, List<Sys_menu>> map = getMap(list);
         req.setAttribute("buttons", map);
         return menuService.query(Cnd.where("id","in",ids).and("type", "=", "menu").asc("location").asc("path"),null);
+
+    }
+    @At("/user")
+    @Ok("vm:template.private.sys.role.user")
+    @RequiresPermissions("sys:role")
+    public Object user(@Param("unitId") String unitId,@Param("keyword") String keyword,@Param("type") int type,@Param("curPage") int curPage, @Param("pageSize") int pageSize, HttpServletRequest req) {
+        Sql sql;
+        if("_system".equals(unitId)){
+            if(type==1){
+                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b where a.id=b.user_id and a.username like @a");
+                sql.params().set("a","%"+keyword+"%");
+            }else if(type==2){
+                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b where a.id=b.user_id and b.nickname like @a");
+                sql.params().set("a","%"+keyword+"%");
+            }else {
+                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b where a.id=b.user_id and a.username like @a and b.nickname like @b");
+                sql.params().set("a","%"+keyword+"%");
+                sql.params().set("b","%"+keyword+"%");
+            }
+        }else {
+            if(type==1){
+                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b,sys_user_unit c where a.id=b.user_id and a.username like @a and a.id=c.user_id and c.unit_id=@unitid");
+                sql.params().set("a","%"+keyword+"%");
+                sql.params().set("unitid",unitId);
+            }else if(type==2){
+                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b,sys_user_unit c where a.id=b.user_id and b.nickname like @a and a.id=c.user_id and c.unit_id=@unitid");
+                sql.params().set("a","%"+keyword+"%");
+                sql.params().set("unitid",unitId);
+            }else {
+                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b,sys_user_unit c where a.id=b.user_id and a.username like @a and b.nickname like @b and a.id=c.user_id and c.unit_id=@unitid");
+                sql.params().set("a","%"+keyword+"%");
+                sql.params().set("b","%"+keyword+"%");
+                sql.params().set("unitid",unitId);
+
+            }
+        }
+        return userService.listPage(curPage, pageSize,sql) ;
 
     }
     private Map<String, List<Sys_menu>> getMap(List<Sys_menu> list) {

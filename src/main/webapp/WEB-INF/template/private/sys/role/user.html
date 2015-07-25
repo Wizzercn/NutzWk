@@ -1,0 +1,11 @@
+#foreach($!user in $obj.list)
+<tr id="$!user.id" name="$!user.username">
+    <td><span class="pd-l-sm"></span><a href="${base}/private/sys/user/edit/$!user.id">$!user.username</a></td>
+    <td>$!user.nickname</td>
+    <td><a href="mailto:$!user.email">$!user.email</a></td>
+</tr>
+#end
+<input id="totalCount" type="hidden" value="$!obj.totalCount">
+<input id="totalPage" type="hidden" value="$!obj.totalPage">
+<input id="pageNo" type="hidden" value="$!obj.pageNo">
+<input id="pageSize" type="hidden" value="$!obj.pageSize">

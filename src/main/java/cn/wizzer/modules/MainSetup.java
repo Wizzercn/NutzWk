@@ -43,7 +43,7 @@ public class MainSetup implements Setup {
             Ioc ioc = config.getIoc();
             Dao dao = ioc.get(Dao.class);
             //初始化数据表
-            initSysData(config, dao);
+            //initSysData(config, dao);
             //初始化Velocity
             velocityInit(config);
             // 获取NutQuartzCronJobFactory从而触发计划任务的初始化与启动
