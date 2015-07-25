@@ -4,9 +4,12 @@ import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.mvc.filter.PrivateFilter;
 import cn.wizzer.common.page.Pagination;
 import cn.wizzer.common.util.DateUtils;
+import cn.wizzer.modules.sys.bean.Sys_menu;
 import cn.wizzer.modules.sys.bean.Sys_user;
+import cn.wizzer.modules.sys.service.MenuService;
 import cn.wizzer.modules.sys.service.RoleService;
 import cn.wizzer.modules.sys.service.UnitService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
@@ -22,7 +25,9 @@ import org.nutz.mvc.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Wizzer.cn on 2015/7/25.
@@ -35,6 +40,8 @@ public class RoleAction {
     private Log log = Logs.get();
     @Inject
     RoleService roleService;
+    @Inject
+    MenuService menuService;
     @Inject
     UnitService unitService;
 
@@ -100,22 +107,58 @@ public class RoleAction {
     @RequiresPermissions("sys:role")
     public Object menu(String unitId, @Param("pid") String pid, HttpServletRequest req) {
         List<Record> list = new ArrayList<>();
-        if ("_system".equals(unitId)) {
+        Subject currentUser = SecurityUtils.getSubject();
+        boolean isSystem = false;
+        if (currentUser != null) {
+            Sys_user user = (Sys_user) currentUser.getPrincipal();
+            if (user.isSystem()) {
+                isSystem = true;
+            }
+        }
+        if (isSystem) {
             if (!Strings.isEmpty(pid)) {
-                list = roleService.list(Sqls.create("select id,name as text,has_children as children from sys_menu  where parentId = @pid order by location asc,path asc").setParam("pid", pid));
+                list = roleService.list(Sqls.create("select id,name as text,has_children as children,icon,description as data from sys_menu  where parentId = @pid order by location asc,path asc").setParam("pid", pid));
             } else {
-                list = roleService.list(Sqls.create("select id,name as text,has_children as children from sys_menu where length(path)=4 order by location asc,path asc"));
+                list = roleService.list(Sqls.create("select id,name as text,has_children as children,icon,description as data from sys_menu where length(path)=4 order by location asc,path asc"));
             }
         } else {
             if (!Strings.isEmpty(pid)) {
-                list = roleService.list(Sqls.create("select id,name as text,has_children as children from sys_menu where parentId = @pid order by location asc,path asc").setParam("pid", pid));
+                list = roleService.list(Sqls.create("select id,name as text,has_children as children,icon,description as data from sys_menu where parentId = @pid order by location asc,path asc").setParam("pid", pid));
             } else {
                 list = roleService.list(
-                        Sqls.create("select DISTINCT a.id,a.name as text,a.has_children as children from sys_menu a,sys_role_menu b " +
+                        Sqls.create("select DISTINCT a.id,a.name as text,a.has_children as children,a.icon,a.description as data from sys_menu a,sys_role_menu b " +
                                 " where a.id=b.menu_id and b.role_id in(select c.id from sys_role c where c.unitid=@unitid) and length(a.path)=4 order by a.location asc,a.path asc").setParam("unitid", unitId));
             }
         }
         return list;
+    }
+
+    @At("/btn")
+    @Ok("vm:template.private.sys.role.btn")
+    @RequiresPermissions("sys:role")
+    public Object btn(@Param("ids") String id, HttpServletRequest req) {
+        String[] ids= StringUtils.split(id,",");
+        List<Sys_menu> list = menuService.query(Cnd.where("parentId", "in", ids).and("type", "=", "button").asc("location").asc("path"), null);
+        Map<String, List<Sys_menu>> map = getMap(list);
+        req.setAttribute("buttons", map);
+        return menuService.query(Cnd.where("id","in",ids).and("type", "=", "menu").asc("location").asc("path"),null);
+
+    }
+    private Map<String, List<Sys_menu>> getMap(List<Sys_menu> list) {
+        Map<String, List<Sys_menu>> map = new HashMap<>();
+        for (Sys_menu menu : list) {
+            List<Sys_menu> l = map.get(menu.getParentId());
+            if (l == null) {
+                l = new ArrayList<>();
+            } else continue;
+            for (Sys_menu m : list) {
+                if (m.getParentId().equals(menu.getParentId())) {
+                    l.add(m);
+                }
+            }
+            map.put(menu.getParentId(), l);
+        }
+        return map;
     }
 
     @At("/add")

@@ -7,6 +7,9 @@ import cn.wizzer.modules.sys.bean.Sys_user;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
+import org.nutz.dao.Sqls;
+import org.nutz.dao.entity.Entity;
+import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 
@@ -44,6 +47,22 @@ public class RoleService extends BaseService<Sys_role> {
             }
         }
         return list;
+    }
+
+    /**
+     * 查询用户按钮权限
+     *
+     * @param ids
+     * @return
+     */
+    public List<Sys_menu> getButtons(String[] ids) {
+        Sql sql = Sqls.create("select distinct * from sys_menu where");
+        sql.params().set("ids", ids);
+        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
+        sql.setEntity(entity);
+        sql.setCallback(Sqls.callback.entities());
+        dao().execute(sql);
+        return sql.getList(Sys_menu.class);
     }
 
     public void addMenu(Long roleId, String menuId) {

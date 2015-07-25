@@ -111,6 +111,7 @@ public class MainSetup implements Setup {
             menu.setIs_enabled(true);
             menu.setPath("0001");
             menu.setName("系统管理");
+            menu.setDescription("系统管理");
             menu.setAliasName("System");
             menu.setIcon("ti-settings");
             menu.setLocation(0);

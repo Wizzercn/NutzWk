@@ -69,7 +69,7 @@
                                 </div>
                             </fieldset>
                             <fieldset title="第 2 步&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
-                                <legend>分配菜单</legend>
+                                <legend>分配菜单权限</legend>
                                 <div class="form-group no-b">
                                     <div class="col-sm-8">
                                         <div class="panel">
@@ -94,7 +94,7 @@
                                 </div>
                             </fieldset>
                             <fieldset title="第 3 步&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
-                                <legend>分配菜单按钮权限</legend>
+                                <legend>分配按钮权限</legend>
                                 <div class="form-group no-b">
                                     <div class="col-sm-12">
                                         <section class="panel no-b">
@@ -241,6 +241,7 @@
             plugins : [ "wholerow"],
             core : {
                 data : {
+                    async : true,
                     url : function(node){
                         return node.id === "#" ? "${base}/private/sys/role/tree" : "${base}/private/sys/role/tree?pid="+node.id
                     }
@@ -303,7 +304,6 @@
                     //查询所选节点的所有父节点
                     for(var i=0;i<nodes.length;i++){
                         var node = nodes[i];
-
                         each(node,tree,nodes);
                     }
                     if(nodes.length>0){
