@@ -149,12 +149,15 @@ public class UserService extends BaseService<Sys_user> {
      * @return
      */
     public String getReolnames(String uid) {
-        List<Record> list = list(Sqls.create("select name,unitid from sys_role a,sys_user_role b where a.id=b.role_id and b.user_id=@uid").setParam("uid", uid));
+        List<Record> list = list(Sqls.create("select a.name,a.unitid,a.is_enabled from sys_role a,sys_user_role b where a.id=b.role_id and b.user_id=@uid").setParam("uid", uid));
         StringBuilder sb = new StringBuilder();
         for (Record record : list) {
             sb.append(record.get("name"));
             if (Strings.isEmpty(Strings.sNull(record.get("unitid")))) {
                 sb.append("[系统]");
+            }
+            if (!Boolean.valueOf(Strings.sNull(record.get("is_enabled")))) {
+                sb.append("[禁用]");
             }
             sb.append(",");
         }
@@ -179,7 +182,7 @@ public class UserService extends BaseService<Sys_user> {
      */
     public List<Sys_menu> getMenus(String uid) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menu_id and" +
-                " b.role_id in(select role_id from sys_user_role where user_id=@userId) and a.is_enabled=true and a.is_show=true and a.type='menu' order by a.location ASC,a.path asc");
+                " b.role_id in(select c.role_id from sys_user_role c,sys_role d where c.role_id=d.id and c.user_id=@userId and d.is_enabled=true) and a.is_enabled=true and a.is_show=true and a.type='menu' order by a.location ASC,a.path asc");
         sql.params().set("userId", uid);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
@@ -196,7 +199,7 @@ public class UserService extends BaseService<Sys_user> {
      */
     public List<Sys_menu> getButtons(String uid) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menu_id and" +
-                " b.role_id in(select role_id from sys_user_role where user_id=@userId) and a.is_enabled=true and a.type='button'");
+                " b.role_id in(select c.role_id from sys_user_role c,sys_role d where c.role_id=d.id and c.user_id=@userId and d.is_enabled=true) and a.is_enabled=true and a.type='button'");
         sql.params().set("userId", uid);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
@@ -204,6 +207,7 @@ public class UserService extends BaseService<Sys_user> {
         dao().execute(sql);
         return sql.getList(Sys_menu.class);
     }
+
     /**
      * 查询用户单位列表
      *
@@ -240,7 +244,8 @@ public class UserService extends BaseService<Sys_user> {
         dao().fetchLinks(user, "roles");
         List<String> roleNameList = new ArrayList<String>();
         for (Sys_role role : user.getRoles()) {
-            roleNameList.add(role.getCode());
+            if (role.isEnabled())
+                roleNameList.add(role.getCode());
         }
         return roleNameList;
     }

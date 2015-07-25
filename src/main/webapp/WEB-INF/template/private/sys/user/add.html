@@ -21,7 +21,7 @@
                                     <label for="unitName" class="col-sm-2 control-label">所属机构</label>
                                     <div class="col-sm-8">
                                         <div class="input-group">
-                                            <input id="unitName" type="text" value="$!parentUnit.name" class="form-control" placeholder="点击右侧按钮选择" disabled/>
+                                            <input id="unitName" type="text" value="$!parentUnit.name" class="form-control"  data-parsley-required="true" placeholder="点击右侧按钮选择" readonly/>
 			                             		<span class="input-group-btn">
 			                             			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dialogSelectUnit"><i class="ti-plus"></i> 选择</button>
 												</span>

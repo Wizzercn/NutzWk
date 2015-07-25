@@ -269,6 +269,7 @@ public class MainSetup implements Setup {
             role.setDescription("All user's role.");
             role.setLocation(0);
             role.setUnitid("");
+            role.setEnabled(true);
             dao.insert(role);
             role = new Sys_role();
             role.setName("超级管理员");
@@ -278,6 +279,7 @@ public class MainSetup implements Setup {
             role.setLocation(1);
             role.setUnitid("");
             role.setMenus(menuList);
+            role.setEnabled(true);
             Sys_role dbrole = dao.insert(role);
             //初始化用户
             Sys_user user = new Sys_user();

@@ -468,6 +468,7 @@ var sublime = function () {
             initIcheck();
             initTheme();
         },
+        initIcheck : initIcheck,//初始化复选框控件
         changeTheme:function(obj){
             jQuery.post(base+"/private/theme", {path:obj});
         },

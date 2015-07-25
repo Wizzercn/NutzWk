@@ -4959,24 +4959,28 @@ table.dataTable {
 *   Stepy Wizard
 *   
 */
+
 .stepy {
   width: 100%;
   display: block;
-  background-color: #ffffff;
+  background-color: #fff
 }
+
 .stepy-header {
   background-color: #1582dc;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  border-bottom: 1px solid #1166ad;
+  border-bottom: 1px solid #1166ad
 }
+
 .stepy-header li {
   background-color: transparent;
   position: relative;
-  line-height: 1;
+  line-height: 1
 }
+
 .stepy-header li:before {
   position: absolute;
   top: 1px;
@@ -4986,8 +4990,9 @@ table.dataTable {
   border: 23px solid transparent;
   border-right: 0;
   border-left: 22px solid #1582dc;
-  content: "";
+  content: ""
 }
+
 .stepy-header li:after {
   position: absolute;
   top: 0;
@@ -4997,42 +5002,46 @@ table.dataTable {
   border: 24px solid transparent;
   border-right: 0;
   border-left: 23px solid #1166ad;
-  content: "";
+  content: ""
 }
+
 .stepy-header li div {
   font-weight: 400;
   font-family: inherit;
   color: #fff;
   text-shadow: none;
   text-transform: uppercase;
-  font-size: 14px;
+  font-size: 14px
 }
-.stepy-header li span,
-.stepy-header li.stepy-active div,
-.stepy-header li.stepy-active span {
-  color: #fff;
+
+.stepy-header li span,.stepy-header li.stepy-active div,.stepy-header li.stepy-active span {
+  color: #fff
 }
+
 .stepy-header li.stepy-active div {
-  font-weight: 800;
+  font-weight: 800
 }
+
 .stepy-step {
   background: transparent;
-  width: 100%;
+  width: 100%
 }
-.stepy-step:before,
-.stepy-step:after {
+
+.stepy-step:before,.stepy-step:after {
   content: " ";
-  display: table;
+  display: table
 }
+
 .stepy-step:after {
-  clear: both;
+  clear: both
 }
+
 .stepy-step legend {
   border-radius: 2px;
-  background-color: #4f5061;
+  background-color: #2e353d;
   color: #fff;
   padding: 0 15px;
-  font-size: 13px;
+  font-size: 13px
 }
 /*
 *   Jstree
