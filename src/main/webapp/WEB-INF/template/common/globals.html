@@ -330,7 +330,7 @@
                 <ul class="sub-menu">
                     #foreach($obj in ${shiro.getPrincipalProperty('secondMenus').get($menu.path)})
                     <li #if($id==$obj.path)class="active"#elseif($id.indexOf($obj.path)!=-1)class="open"#end>
-                        <a #if(${obj.href}) href="$!{obj.href}" #else href="javascript:;"#end>
+                        <a #if(${obj.href}) href="${base}$!{obj.href}" #else href="javascript:;"#end>
                             #if(${shiro.getPrincipalProperty('secondMenus').get($obj.path)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.path).size()}>0)<i class="toggle-accordion"></i>#end
                             <span>$!{obj.name}</span>
                         </a>
@@ -338,7 +338,7 @@
                         <ul class="sub-menu">
                             #foreach($mm in ${shiro.getPrincipalProperty('secondMenus').get($obj.path)})
                             <li #if($id==$mm.path)class="active"#end>
-                                <a #if(${mm.href}) href="$!{mm.href}" #else href="javascript:;"#end>
+                                <a #if(${mm.href}) href="${base}$!{mm.href}" #else href="javascript:;"#end>
                                     <span>$!{mm.name}</span>
                                 </a>
                             </li>
@@ -366,7 +366,7 @@
                 <ul class="sub-menu">
                     #foreach($obj in ${shiro.getPrincipalProperty('secondMenus').get($menu.path)})
                     <li #if($id==$obj.path)class="active"#elseif($id.indexOf($obj.path)!=-1)class="open"#end>
-                        <a #if(${obj.href}) href="$!{obj.href}" #else href="javascript:;"#end>
+                        <a #if(${obj.href}) href="${base}$!{obj.href}" #else href="javascript:;"#end>
                             #if(${shiro.getPrincipalProperty('secondMenus').get($obj.path)}&&${shiro.getPrincipalProperty('secondMenus').get($obj.path).size()}>0)<i class="toggle-accordion"></i>#end
                             <span>$!{obj.aliasName}</span>
                         </a>
@@ -374,7 +374,7 @@
                         <ul class="sub-menu">
                             #foreach($mm in ${shiro.getPrincipalProperty('secondMenus').get($obj.path)})
                             <li #if($id==$mm.path)class="active"#end>
-                                <a #if(${mm.href}) href="$!{mm.href}" #else href="javascript:;"#end>
+                                <a #if(${mm.href}) href="${base}$!{mm.href}" #else href="javascript:;"#end>
                                     <span>$!{mm.aliasName}</span>
                                 </a>
                             </li>
