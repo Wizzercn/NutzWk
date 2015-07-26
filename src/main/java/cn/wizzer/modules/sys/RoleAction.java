@@ -1,10 +1,12 @@
 package cn.wizzer.modules.sys;
 
+import cn.wizzer.common.Message;
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.mvc.filter.PrivateFilter;
 import cn.wizzer.common.page.Pagination;
 import cn.wizzer.common.util.DateUtils;
 import cn.wizzer.modules.sys.bean.Sys_menu;
+import cn.wizzer.modules.sys.bean.Sys_role;
 import cn.wizzer.modules.sys.bean.Sys_user;
 import cn.wizzer.modules.sys.service.MenuService;
 import cn.wizzer.modules.sys.service.RoleService;
@@ -139,50 +141,52 @@ public class RoleAction {
     @Ok("vm:template.private.sys.role.btn")
     @RequiresPermissions("sys:role")
     public Object btn(@Param("ids") String id, HttpServletRequest req) {
-        String[] ids= StringUtils.split(id,",");
+        String[] ids = StringUtils.split(id, ",");
         List<Sys_menu> list = menuService.query(Cnd.where("parentId", "in", ids).and("type", "=", "button").asc("location").asc("path"), null);
         Map<String, List<Sys_menu>> map = getMap(list);
         req.setAttribute("buttons", map);
-        return menuService.query(Cnd.where("id","in",ids).and("type", "=", "menu").asc("location").asc("path"),null);
+        return menuService.query(Cnd.where("id", "in", ids).and("type", "=", "menu").asc("location").asc("path"), null);
 
     }
+
     @At("/user")
     @Ok("vm:template.private.sys.role.user")
     @RequiresPermissions("sys:role")
-    public Object user(@Param("unitId") String unitId,@Param("keyword") String keyword,@Param("type") int type,@Param("curPage") int curPage, @Param("pageSize") int pageSize, HttpServletRequest req) {
+    public Object user(@Param("unitId") String unitId, @Param("keyword") String keyword, @Param("type") int type, @Param("curPage") int curPage, @Param("pageSize") int pageSize, HttpServletRequest req) {
         Sql sql;
-        if("_system".equals(unitId)){
-            if(type==1){
-                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b where a.id=b.user_id and a.username like @a");
-                sql.params().set("a","%"+keyword+"%");
-            }else if(type==2){
-                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b where a.id=b.user_id and b.nickname like @a");
-                sql.params().set("a","%"+keyword+"%");
-            }else {
-                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b where a.id=b.user_id and a.username like @a and b.nickname like @b");
-                sql.params().set("a","%"+keyword+"%");
-                sql.params().set("b","%"+keyword+"%");
+        if ("_system".equals(unitId)) {
+            if (type == 1) {
+                sql = Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b where a.id=b.user_id and a.username like @a");
+                sql.params().set("a", "%" + keyword + "%");
+            } else if (type == 2) {
+                sql = Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b where a.id=b.user_id and b.nickname like @a");
+                sql.params().set("a", "%" + keyword + "%");
+            } else {
+                sql = Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b where a.id=b.user_id and a.username like @a and b.nickname like @b");
+                sql.params().set("a", "%" + keyword + "%");
+                sql.params().set("b", "%" + keyword + "%");
             }
-        }else {
-            if(type==1){
-                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b,sys_user_unit c where a.id=b.user_id and a.username like @a and a.id=c.user_id and c.unit_id=@unitid");
-                sql.params().set("a","%"+keyword+"%");
-                sql.params().set("unitid",unitId);
-            }else if(type==2){
-                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b,sys_user_unit c where a.id=b.user_id and b.nickname like @a and a.id=c.user_id and c.unit_id=@unitid");
-                sql.params().set("a","%"+keyword+"%");
-                sql.params().set("unitid",unitId);
-            }else {
-                sql=Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b,sys_user_unit c where a.id=b.user_id and a.username like @a and b.nickname like @b and a.id=c.user_id and c.unit_id=@unitid");
-                sql.params().set("a","%"+keyword+"%");
-                sql.params().set("b","%"+keyword+"%");
-                sql.params().set("unitid",unitId);
+        } else {
+            if (type == 1) {
+                sql = Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b,sys_user_unit c where a.id=b.user_id and a.username like @a and a.id=c.user_id and c.unit_id=@unitid");
+                sql.params().set("a", "%" + keyword + "%");
+                sql.params().set("unitid", unitId);
+            } else if (type == 2) {
+                sql = Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b,sys_user_unit c where a.id=b.user_id and b.nickname like @a and a.id=c.user_id and c.unit_id=@unitid");
+                sql.params().set("a", "%" + keyword + "%");
+                sql.params().set("unitid", unitId);
+            } else {
+                sql = Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b,sys_user_unit c where a.id=b.user_id and a.username like @a and b.nickname like @b and a.id=c.user_id and c.unit_id=@unitid");
+                sql.params().set("a", "%" + keyword + "%");
+                sql.params().set("b", "%" + keyword + "%");
+                sql.params().set("unitid", unitId);
 
             }
         }
-        return userService.listPage(curPage, pageSize,sql) ;
+        return userService.listPage(curPage, pageSize, sql);
 
     }
+
     private Map<String, List<Sys_menu>> getMap(List<Sys_menu> list) {
         Map<String, List<Sys_menu>> map = new HashMap<>();
         for (Sys_menu menu : list) {
@@ -206,5 +210,27 @@ public class RoleAction {
     public Object add() {
         return "";
 
+    }
+
+    @At("/add/do")
+    @Ok("json")
+    @RequiresPermissions("sys:role")
+    public Object addDo(@Param("resourceIds")String resourceIds,@Param("uids")String uids,@Param("unitId")String unitId,@Param("..")Sys_role role, HttpServletRequest req) {
+        log.debug("resourceIds::"+resourceIds);
+        log.debug("uids::"+uids);
+        log.debug("unitId::"+unitId);
+        log.debug("role.name::"+role.getName());
+        log.debug("role.code::"+role.getCode());
+        log.debug("role.des::"+role.getDescription());
+        try {
+            int num = roleService.count(Cnd.where("code", "=", role.getCode().trim()));
+            if (num > 0) {
+                return Message.error("sys.role.code", req);
+            }
+            roleService.save(resourceIds,uids,unitId,role);
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
     }
 }

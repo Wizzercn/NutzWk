@@ -4,14 +4,18 @@ import cn.wizzer.common.service.core.BaseService;
 import cn.wizzer.modules.sys.bean.Sys_role;
 import cn.wizzer.modules.sys.bean.Sys_menu;
 import cn.wizzer.modules.sys.bean.Sys_user;
+import org.apache.commons.lang3.StringUtils;
+import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.sql.Sql;
+import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.trans.Trans;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +33,38 @@ public class RoleService extends BaseService<Sys_role> {
         dao().update(user);
     }
 
+    /**
+     * 新增角色
+     */
+    @Aop(TransAop.READ_COMMITTED)
+    public void save(String resourceIds, String uids, String unitId, Sys_role role) {
+        if ("_system".equals(unitId)) {
+            role.setUnitid("");
+        } else {
+            role.setUnitid(unitId);
+        }
+        Sys_role r = dao().insert(role);
+        String[] res = StringUtils.split(resourceIds, ",");
+        String[] uid = StringUtils.split(uids, ",");
+        for (String s : res) {
+            if (!Strings.isEmpty(s)) {
+                dao().insert("sys_role_menu", Chain.make("role_id", r.getId()).add("menu_id", s));
+            }
+        }
+        for (String s : uid) {
+            if (!Strings.isEmpty(s)) {
+                dao().insert("sys_user_role", Chain.make("role_id", r.getId()).add("user_id", s));
+            }
+        }
+    }
+
     public Sys_role fetchByName(String name) {
         return fetch(Cnd.where("name", "=", name));
     }
 
     /**
      * 查询权限
+     *
      * @param role
      * @return
      */

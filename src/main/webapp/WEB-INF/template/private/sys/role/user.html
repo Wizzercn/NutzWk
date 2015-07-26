@@ -1,8 +1,11 @@
 #foreach($!user in $obj.list)
-<tr id="$!user.id" name="$!user.username">
-    <td><span class="pd-l-sm"></span><a href="${base}/private/sys/user/edit/$!user.id">$!user.username</a></td>
+<tr id="$!user.id" username="$!user.username" nickname="$!user.nickname">
+    <td>$!user.username</td>
     <td>$!user.nickname</td>
     <td><a href="mailto:$!user.email">$!user.email</a></td>
+    <td>
+        <button type="button" class="btn btn-default" onclick="selBtn('$!user.id')">选中</button>
+    </td>
 </tr>
 #end
 <input id="totalCount" type="hidden" value="$!obj.totalCount">

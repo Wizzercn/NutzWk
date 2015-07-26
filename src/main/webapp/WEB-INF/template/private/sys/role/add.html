@@ -136,7 +136,8 @@
                                                         <th class="col-md-3 pd-l-lg">
                                                             <span class="pd-l-sm"></span>用户名</th>
                                                         <th class="col-md-3">姓名</th>
-                                                        <th class="col-md-4">邮箱</th>
+                                                        <th class="col-md-3">邮箱</th>
+                                                        <th class="col-md-1"><button type="button" class="btn btn-default" onclick="allBtn()">全选</button></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -160,6 +161,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
+                                        <input id="uids" name="uids" type="hidden">
                                         <section class="panel no-b">
                                             <div class="panel-heading no-b">
                                                 <h5><b>已选择的</b>用户</h5>
@@ -168,9 +170,10 @@
                                                 <table id="xz" class="table no-m">
                                                     <thead>
                                                     <tr>
-                                                        <th class="col-md-3 pd-l-lg">
+                                                        <th class="col-md-4 pd-l-lg">
                                                             <span class="pd-l-sm"></span>用户名</th>
-                                                        <th class="col-md-3">姓名</th>
+                                                        <th class="col-md-4">姓名</th>
+                                                        <th class="col-md-1"><button type="button" class="btn btn-default" onclick="delAllBtn()">全删</button></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -228,7 +231,6 @@
 
 <!-- 本页面脚本 -->
 <script src="${base}/include/js/form.js"></script>
-<script src="${base}/include/js/zjson.js"></script>
 <script src="${base}/include/js/select.js"></script>
 <script language="JavaScript">
     function initTreeView(){
@@ -305,8 +307,66 @@
                 $("#__pageLast a").off("click");
             }
             sublime.closeLoadingbar($(".main-content"));
+            binBtn();
             return false;
         });
+    }
+    //绑定用户选择按钮事件
+    function binBtn(){
+        $("#data tbody").find("button[type='button']").each(function(){
+            var oldid=$(this).parents("tr").attr("id");
+            if($("#uids").val().indexOf(oldid+",")>-1){
+                $(this).attr("disabled",true);
+            }else{
+                $(this).attr("disabled",false);
+            }
+        });
+    }
+    //选择用户
+    function selBtn(t){
+        var obj=$("#data tbody").find("tr[id='"+t+"']");
+        if(obj!=undefined){
+            var id=obj.attr("id");
+            var username=obj.attr("username");
+            var nickname=obj.attr("nickname");
+            $("#xz tbody").append("<tr id=\""+id+"\" username=\""+username+"\" nickname=\""+nickname+"\">" +
+                    "<td>"+username+"</td><td>"+nickname+"</td><td><button type=\"button\" class=\"btn btn-default\" onclick=\"delBtn('"+id+"')\">删除</button></td></tr>");
+            obj.find("button[type='button']").attr("disabled",true);
+            var ids=$("#uids").val();
+            ids+=id+",";
+            $("#uids").val(ids);
+        }
+    }
+    //全选用户
+    function allBtn(){
+        $("#data tbody").find("button[type='button']").each(function(){
+            var obj=$(this).parents("tr");
+            var id=obj.attr("id");
+            var ids=$("#uids").val();
+            if(id!=undefined&&id!=""&&ids.indexOf(id+",")<0){
+                var username=obj.attr("username");
+                var nickname=obj.attr("nickname");
+                $("#xz tbody").append("<tr id=\""+id+"\" username=\""+username+"\" nickname=\""+nickname+"\">" +
+                        "<td>"+username+"</td><td>"+nickname+"</td><td><button type=\"button\" class=\"btn btn-default\" onclick=\"delBtn('"+id+"')\">删除</button></td></tr>");
+                $(this).attr("disabled",true);
+                ids+=id+",";
+                $("#uids").val(ids);
+            }
+
+        });
+    }
+    //删除选择用户
+    function delBtn(id){
+        $("#xz tbody").find("tr[id='"+id+"']").remove();
+        var ids=$("#uids").val().replace(id+",","");
+        $("#uids").val(ids);
+        $("#data tbody").find("tr[id='"+id+"']").find("button[type='button']").attr("disabled",false);
+    }
+    //全删用户
+    function delAllBtn(){
+        $("#uids").val("");
+        $("#xz tbody").html("");
+        binBtn();
     }
     function search(t){
         $("#type").val(t);
@@ -350,6 +410,7 @@
                         //立即加载树下所有节点
                         $("#jsTreeMenu").jstree("load_all");
                     });
+                    $("#addRoleForm input[name='resourceIds']:hidden").val("");
 
                 }else if(idx == 3){
                     //获取所选菜单
@@ -399,26 +460,29 @@
         });
         //表单ajax提交
         $("#addRoleForm").ajaxForm({
-            beforeSubmit:function(arr, $form, options){
+            dataType:  'json',
+            beforeSubmit:function(arr, form, options){
                 //获取选择的菜单
-                $form.find("button:submit").button("loading");
-                if($form.attr("isSubmit") == undefined){//与stepy结合使用时，要避免二次提交的问题
-                    $form.attr("isSubmit", true);
+                form.find("button:submit").button("loading");
+                if(form.attr("isSubmit") == undefined){//与stepy结合使用时，要避免二次提交的问题
+                    form.attr("isSubmit", true);
                 }else{
-                    $form.removeAttr("isSubmit");
+                    form.removeAttr("isSubmit");
                     return false;
                 }
             },
-            success : function(data, statusText, xhr, $form) {
+            success : function(data, statusText, xhr, form) {
                 if(data.type == "success"){
                     Toast.success("角色增加成功！");
-                    $form.resetForm();
+                    form.resetForm();
+                    $("#addRoleForm input[name='resourceIds']:hidden").val("");
+                    delAllBtn();
                     //回到第一个step
                     $(".stepy").stepy("step", 1);
                 }else{
                     Toast.error(data.error);
                 }
-                $form.find("button:submit").button("reset");
+                form.find("button:submit").button("reset");
             }
         });
         initTreeView();
@@ -428,11 +492,8 @@
         var objs = $("#divResBtn .chosen");
         $.each(objs, function(i, sel){
             sel = $(sel);
-            var res = new JSONObject();
-            res.put("id", sel.attr("name"));
-            res.put("btns", sel.val());
-
-            resourceBtns.push(res.toString());
+            resourceBtns.push(sel.attr("name"));
+            resourceBtns.push(sel.val());
         });
         $("#addRoleForm input[name='resourceIds']:hidden").val(resourceBtns.toString());
     }
