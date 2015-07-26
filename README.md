@@ -18,6 +18,15 @@ NutzWk 2.0 新特性：
 *   采用Bootsrtap皮肤(Sublime貌似收费?请不要吝啬那点钱买正版授权)
 
 
+使用说明：
+*   创建空的数据库
+*   修改数据库连接 /resources/config/custom/db.properties
+*   项目使用Maven构建，IDEA/Eclipse直接打开，等待包下载完毕
+*   nutz-1.b.53.jar 暂未正式发布，请将/lib下此包手动加到编译环境*
+*   cn.wizzer.modules.MainSetup 第45行（启动时自动建表）
+*   用户名：superadmin  密码：1
+
+
 
 在线演示地址
 ============================================
