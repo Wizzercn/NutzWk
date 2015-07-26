@@ -1,0 +1,45 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="pull-right">创建于：$!role.createTime</div>
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5"><i class="$!res.icon"></i> $!role.name</a>
+                        <small>$!role.code - $!role.description</small>
+                    </div>
+                </header>
+                #if($!obj.size()>0)
+                <table class="table no-m">
+                    <thead>
+                    <tr>
+                        <th class="col-md-4 pd-l-lg">
+                            <span class="pd-l-sm"></span>用户名</th>
+                        <th class="col-md-4">真实姓名</th>
+                        <th class="col-md-4">邮箱</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    #foreach($!user in $!obj)
+                    <tr>
+                        <td><span class="pd-l-sm"></span><a href="${base}/private/sys/user/info/$!user.id" data-toggle="modal" data-target="#dialogUserDetail">$!user.username</a></td>
+                        <td>$!user.nickname</td>
+                        <td>$!user.email</td>
+                    </tr>
+                    #end
+                    </tbody>
+                </table>
+                #else
+                <div class="p10">
+                    <div class="alert alert-warning">
+                        没有用户属于此角色。
+                    </div>
+                </div>
+                #end
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+</div>

@@ -11,11 +11,13 @@
                 <span class="ti-angle-down"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li><a href="${base}/private/sys/role/detail/right/$!role.id" data-toggle="modal" data-target="#dialogDetail">查看权限</a></li>
-                <li><a href="${base}/private/sys/role/user/$!role.id" data-toggle="modal" data-target="#dialogDetail">查看用户</a></li>
+                <li><a href="${base}/private/sys/role/showrole/$!role.id" data-toggle="modal" data-target="#dialogDetail">查看权限</a></li>
+                <li><a href="${base}/private/sys/role/showuser/$!role.id" data-toggle="modal" data-target="#dialogDetail">查看用户</a></li>
                 <li class="divider"></li>
                 <li><a href="${base}/private/sys/role/edit/$!role.id">修改信息</a></li>
-                <li><a href="${base}/private/sys/role/edit/right/$!role.id">修改权限</a></li>
+                <li><a href="${base}/private/sys/role/edit/role/$!role.id">修改权限</a></li>
+                <li><a href="${base}/private/sys/role/edit/user/$!role.id">分配用户</a></li>
+                <li class="divider"></li>
                 <li><a href="javascript:;" onclick="del('$!role.id')">删除</a></li>
                 <li class="divider"></li>
                 <li><a href="javascript:;" onclick="enableRole('$!role.id')">启用</a></li>

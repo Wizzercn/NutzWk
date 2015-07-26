@@ -1,0 +1,90 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    #if($!unitName)
+                    <div class="pull-right">隶属于：$!unitName</div>
+                    #end
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5"><i class="$!res.icon"></i> $!role.name</a>
+                        <small>$!role.code - $!role.description</small>
+                    </div>
+                </header>
+                #if($!obj.size()>0)
+                <table id="menuTreeTable" class="table no-m">
+                    <thead>
+                    <tr>
+                        <th class="col-md-2 pd-l-lg">
+                            <span class="pd-l-sm ml20"></span>菜单名称</th>
+                        <th class="col-md-3">URL</th>
+                        <th class="col-md-2">权限</th>
+                        <th class="col-md-4">按钮权限</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    #foreach($!menu in $obj)
+                    <tr data-tt-id="$!menu.id" data-tt-parent-id="$!menu.parentId" data-tt-branch="$!menu.hasChildren">
+                        <td><span class="pd-l-sm"></span><i class="$!menu.icon mr5"></i> $!menu.name</td>
+                        <td>$!menu.href</td>
+                        <td>$!menu.permission</td>
+                        <td>
+                            #foreach($!btn in $!buttons.get($menu.id))
+                           <a title="$btn.permission"><span class="label label-default">$btn.name</span></a>
+                            #end
+                        </td>
+                    </tr>
+                    #end
+                    </tbody>
+                </table>
+                #else
+                <div class="p10">
+                    <div class="alert alert-warning">
+                        该角色无任何菜单权限。
+                    </div>
+                </div>
+                #end
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+</div>
+<script type="text/javascript">
+    var allRes = $!obj;
+    var allBtns=$!allBtns;
+    var menuTreeTable;
+    $(function(){
+        menuTreeTable = $("#menuTreeTable").treetable({
+            expandable: true,
+            onNodeExpand : function(){
+                var node = this;
+                var data = "";
+                var childs = new Array();
+                $.each(allRes, function(i,n){
+                    if(n.parentId == node.id){
+                        childs.push(n);
+                    }
+                });
+                $.each(childs, function(i,n){
+                    var row = "<tr data-tt-id='"+n.id+"' data-tt-parent-id='"+n.parentId+"' data-tt-branch='"+n.hasChildren+"'>";
+                    row+="<td><span class='pd-l-sm'></span><i class='"+n.icon+" mr5'></i> "+n.name+"</td>";
+                    row+="<td>"+n.href+"</td>";
+                    row+="<td>"+n.permission+"</td>";
+                    var btns = "";
+                    $.each(allBtns, function(i, btn){
+                        if(n.id==btn.parentId){
+                            btns += "<a title=\""+btn.permission+"\"><span class=\"label label-default\">"+btn.name+"</span></a> ";
+                        }
+                    });
+                    row+="<td>"+btns+"</td>";
+                    row+="</tr>";
+                    data += row;
+                });
+                menuTreeTable.treetable("unloadBranch", node);
+                menuTreeTable.treetable("loadBranch", node, data);
+            }
+        });
+    });
+</script>

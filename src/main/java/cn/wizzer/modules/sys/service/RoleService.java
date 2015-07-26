@@ -96,6 +96,38 @@ public class RoleService extends BaseService<Sys_role> {
         return sql.getList(Sys_menu.class);
     }
 
+    /**
+     * 查询角色按钮权限
+     *
+     * @param roleId
+     * @return
+     */
+    public List<Sys_menu> getButtonsByRoleid(String roleId) {
+        Sql sql = Sqls.create("SELECT DISTINCT a.* FROM sys_menu a,sys_role_menu b WHERE a.id=b.menu_id AND b.role_id=@roleId AND a.type='button'");
+        sql.params().set("roleId", roleId);
+        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
+        sql.setEntity(entity);
+        sql.setCallback(Sqls.callback.entities());
+        dao().execute(sql);
+        return sql.getList(Sys_menu.class);
+    }
+
+    /**
+     * 查询角色菜单权限
+     *
+     * @param roleId
+     * @return
+     */
+    public List<Sys_menu> getMenusByRoleid(String roleId) {
+        Sql sql = Sqls.create("SELECT DISTINCT a.* FROM sys_menu a,sys_role_menu b WHERE a.id=b.menu_id AND b.role_id=@roleId AND a.type='menu'");
+        sql.params().set("roleId", roleId);
+        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
+        sql.setEntity(entity);
+        sql.setCallback(Sqls.callback.entities());
+        dao().execute(sql);
+        return sql.getList(Sys_menu.class);
+    }
+
     public void addMenu(Long roleId, String menuId) {
         dao().insert("sys_role_menu", Chain.make("role_id", roleId).add("menu_id", menuId));
     }

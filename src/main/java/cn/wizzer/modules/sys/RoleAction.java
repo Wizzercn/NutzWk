@@ -48,6 +48,8 @@ public class RoleAction {
     MenuService menuService;
     @Inject
     UserService userService;
+    @Inject
+    UnitService unitService;
 
     @At("")
     @Ok("vm:template.private.sys.role.index")
@@ -215,16 +217,59 @@ public class RoleAction {
     @At("/add/do")
     @Ok("json")
     @RequiresPermissions("sys:role")
-    public Object addDo(@Param("resourceIds")String resourceIds,@Param("uids")String uids,@Param("unitId")String unitId,@Param("..")Sys_role role, HttpServletRequest req) {
+    public Object addDo(@Param("resourceIds") String resourceIds, @Param("uids") String uids, @Param("unitId") String unitId, @Param("..") Sys_role role, HttpServletRequest req) {
         try {
             int num = roleService.count(Cnd.where("code", "=", role.getCode().trim()));
             if (num > 0) {
                 return Message.error("sys.role.code", req);
             }
-            roleService.save(resourceIds,uids,unitId,role);
+            roleService.save(resourceIds, uids, unitId, role);
             return Message.success("system.success", req);
         } catch (Exception e) {
             return Message.error("system.error", req);
         }
+    }
+
+    @At("/showrole/?")
+    @Ok("vm:template.private.sys.role.showrole")
+    @RequiresPermissions("sys:role")
+    public Object showrole(String roleId, HttpServletRequest req) {
+        Sys_role role = roleService.fetch(roleId);
+        if (!Strings.isEmpty(role.getUnitid())) {
+            req.setAttribute("unitName", unitService.fetch(role.getUnitid()).getName());
+        } else {
+            req.setAttribute("unitName", "系统角色");
+        }
+        req.setAttribute("role", role);
+        List<Sys_menu> list = roleService.getButtonsByRoleid(roleId);
+        Map<String, List<Sys_menu>> map = getMap(list);
+        req.setAttribute("buttons", map);
+        req.setAttribute("allBtns", list);
+        return roleService.getMenusByRoleid(roleId);
+    }
+
+    @At("/showuser/?")
+    @Ok("vm:template.private.sys.role.showuser")
+    @RequiresPermissions("sys:role")
+    public Object showuser(String roleId, HttpServletRequest req) {
+        req.setAttribute("role", roleService.fetch(roleId));
+        return userService.list(Sqls.create("SELECT a.id,a.username,a.is_online,a.is_locked,b.email,b.nickname " +
+                "FROM sys_user a,sys_user_profile b ,sys_user_role c " +
+                "WHERE a.id=b.user_id AND a.id=c.user_id AND " +
+                "c.role_id=@roleId $s ORDER BY a.create_time desc").setParam("roleId", roleId));
+    }
+
+    @At("/edit/?")
+    @Ok("vm:template.private.sys.role.edit")
+    @RequiresPermissions("sys:role")
+    public Object edit(String roleId, HttpServletRequest req) {
+        Sys_role role = roleService.fetch(roleId);
+        if (!Strings.isEmpty(role.getUnitid())) {
+            role.setUnitid("_system");
+            req.setAttribute("unitName", unitService.fetch(role.getUnitid()).getName());
+        } else {
+            req.setAttribute("unitName", "系统角色");
+        }
+        return role;
     }
 }

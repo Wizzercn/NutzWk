@@ -1,0 +1,220 @@
+#sys_top
+#sys_head
+
+
+<section class="layout">
+    #sys_menu
+    <!-- 内容主体 -->
+    <section class="main-content bg-white">
+        <!-- 主体操作栏 -->
+        <header class="header navbar bg-white shadow">
+            <!-- 左按钮区 -->
+            <div class="btn-group tool-button">
+                <a class="btn btn-primary navbar-btn" href="${base}/private/sys/role"><i class="ti-angle-left"></i> 返回</a>
+            </div>
+            <!-- 右按钮区 -->
+            <div class="pull-right">
+                <div class="btn-group tool-button">
+                    <button class="btn btn-danger navbar-btn" onclick="del('$!role.id')"><i class="ti-trash"></i> 删除</button>
+                    <a class="btn btn-primary navbar-btn" href="${base}/private/sys/role/edit/role/$!role.id">修改权限 <i class="ti-angle-right"></i></a>
+                    <a class="btn btn-primary navbar-btn" href="${base}/private/sys/role/edit/user/$!role.id">分配用户 <i class="ti-angle-right"></i></a>
+                </div>
+            </div>
+        </header>
+        <div class="content-wrap">
+            <div class="wrapper">
+                <section class="panel">
+                    <form id="roleEditForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/private/sys/role/edit/edit/do" method="post">
+                        <input type="hidden" name="id" value="$!obj.id"/>
+                        <div class="row mb15">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="unitName" class="col-sm-2 control-label">所属机构</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input id="unitName" type="text" class="form-control" data-parsley-required="true" placeholder="点击右侧按钮选择" readonly value="$!unitName"/>
+			                             		<span class="input-group-btn">
+			                             			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dialogSelectUnit"><i class="ti-plus"></i> 选择</button>
+			                             		</span>
+                                        </div>
+                                        <input type="hidden" name="unitid" value="$!obj.unitid"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name" class="col-sm-2 control-label">名称</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="name" class="form-control" name="name" data-parsley-required="true" placeholder="角色名称" value="$!obj.name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="code" class="col-sm-2 control-label">名称</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="code" class="form-control" name="code" data-parsley-required="true" placeholder="权限标识" value="$!obj.code">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="description" class="col-sm-2 control-label">描述</label>
+                                    <div class="col-sm-8">
+                                        <textarea id="description" name="description" class="form-control" rows="3">$!obj.description</textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="enabled" class="col-sm-2 control-label">是否启用</label>
+                                    <div class="col-sm-8 switcha">
+                                        <div class="mr15">
+                                            <input id="enabled" type="checkbox" name="enabled" class="js-switch-blue" #if($!obj.enabled)checked="checked"#end>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-6">
+                            <div class="form-group text-center">
+                                <label></label>
+                                <div>
+                                    <button class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="正在提交...">提   交</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+        <a class="exit-offscreen"></a>
+    </section>
+</section>
+<!-- 删除角色 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除角色</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        角色删除后无法恢复，并且角色下属用户将失去该角色的所有菜单权限; <br/>
+                        <br/>确定呢删除吗？
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取  消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确  定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 选择机构 -->
+<div id="dialogSelectUnit" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">选择机构</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="jsTreeUnit" class="demo"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取  消</button>
+                <button type="button" class="btn btn-primary" onclick="selectParentMenu()">确认选择</button>
+            </div>
+        </div>
+    </div>
+</div>
+#sys_buttom
+<script src="${base}/include/plugins/jquery.nestable.js"></script>
+<script src="${base}/include/js/toast.js"></script>
+<script src="${base}/include/js/treetable.js"></script>
+<script src="${base}/include/js/datatables.js"></script>
+<script src="${base}/include/js/tree.js"></script>
+
+<script src="${base}/include/plugins/count-to/jquery.countTo.js"></script>
+<script src="${base}/include/plugins/switchery/switchery.js"></script>
+<script src="${base}/include/plugins/stepy/jquery.stepy.js"></script>
+<script src="${base}/include/plugins/stepy/jquery.validate.min.js"></script>
+<script src="${base}/include/plugins/icheck/icheck.js"></script>
+<script src="${base}/include/plugins/jquery.form.js"></script>
+<script src="${base}/include/plugins/parsley.min.js"></script>
+#if(!$app_language||$app_language=="zh_CN")
+<script src="${base}/include/plugins/parsley.zh_cn.js"></script>
+#end
+<script type="text/javascript">
+    function initTreeView(){
+        $("#jsTreeUnit").jstree({
+            plugins : [ "wholerow"],
+            core : {
+                data : {
+                    url : function(node){
+                        return node.id === "#" ? "${base}/private/sys/role/tree" : "${base}/private/sys/role/tree?pid="+node.id
+                    }
+                },
+                multiple : false
+            }
+        }).on("dblclick.jstree", function(node){
+            selectParentMenu();
+        });
+    }
+    //选择父菜单
+    function selectParentMenu(){
+        var tree = $.jstree.reference("#jsTreeUnit");
+        var node = tree.get_selected(true);
+        $("#roleEditForm #unitName").val(node[0].text);
+        $("#roleEditForm input[name='unit.id']").val(node[0].id);
+
+        $("#dialogSelectUnit").modal("hide");
+    }
+    function del(id){
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#ok").unbind("click");
+        dialog.find("#ok").bind("click", function(event){
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/private/sys/role/delete/"+id,{},function(data){
+                if(data.success == true){
+                    Toast.success("角色删除成功!");
+                    window.location.href="${base}/private/sys/role";
+                }else{
+                    Toast.error(data.error);
+                }
+                //重置按钮状态，关闭提示框
+                btn.button("reset");
+                dialog.modal("hide");
+            });
+        });
+    }
+    $(function(){
+        $('#roleEditForm').ajaxForm({
+            beforeSubmit:function(arr, form, options){
+                form.find("button:submit").button("loading");
+            },
+            success : function(data, statusText, xhr, form) {
+                if(data.type == "success"){
+                    Toast.success("角色修改成功，2秒后返回角色管理首页",function(){
+                        //返回上级菜单
+                        setTimeout(function(){
+                            //返回上级菜单
+                            window.location.href="${base}/private/sys/role";
+                        }, 2000);
+                    });
+                }else{
+                    Toast.error(data.error);
+                    form.find("button:submit").button("reset");
+                }
+            }
+        });
+        initTreeView();
+    });
+
+</script>
+</body>
+
+</html>
