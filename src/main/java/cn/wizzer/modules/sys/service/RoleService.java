@@ -43,6 +43,7 @@ public class RoleService extends BaseService<Sys_role> {
         } else {
             role.setUnitid(unitId);
         }
+        role.setCreateUser(cn.wizzer.common.util.StringUtils.getUid());
         Sys_role r = dao().insert(role);
         String[] res = StringUtils.split(resourceIds, ",");
         String[] uid = StringUtils.split(uids, ",");

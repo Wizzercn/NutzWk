@@ -216,12 +216,6 @@ public class RoleAction {
     @Ok("json")
     @RequiresPermissions("sys:role")
     public Object addDo(@Param("resourceIds")String resourceIds,@Param("uids")String uids,@Param("unitId")String unitId,@Param("..")Sys_role role, HttpServletRequest req) {
-        log.debug("resourceIds::"+resourceIds);
-        log.debug("uids::"+uids);
-        log.debug("unitId::"+unitId);
-        log.debug("role.name::"+role.getName());
-        log.debug("role.code::"+role.getCode());
-        log.debug("role.des::"+role.getDescription());
         try {
             int num = roleService.count(Cnd.where("code", "=", role.getCode().trim()));
             if (num > 0) {
