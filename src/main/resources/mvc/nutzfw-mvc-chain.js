@@ -5,6 +5,7 @@ var chain={
 			  "cn.wizzer.common.mvc.processor.GlobalsSettingProcessor",
 			  "org.nutz.mvc.impl.processor.UpdateRequestAttributesProcessor",
 		      "org.nutz.mvc.impl.processor.EncodingProcessor",
+		      "cn.wizzer.common.mvc.processor.XSSProcessor",
 		      "org.nutz.mvc.impl.processor.ModuleProcessor",
 		      "cn.wizzer.common.mvc.processor.NutShiroProcessor",
 		      "org.nutz.mvc.impl.processor.ActionFiltersProcessor",

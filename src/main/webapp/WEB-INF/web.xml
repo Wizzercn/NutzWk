@@ -6,7 +6,7 @@
          version="2.5">
     <display-name>NutzFw</display-name>
 
-    <!-- XSS -->
+    <!-- XSS
     <filter>
         <filter-name>xss</filter-name>
         <filter-class>cn.wizzer.common.mvc.filter.XssFilter</filter-class>
@@ -16,7 +16,7 @@
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
-
+ -->
     <listener>
         <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
     </listener>
