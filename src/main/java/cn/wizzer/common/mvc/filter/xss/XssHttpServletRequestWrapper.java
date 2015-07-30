@@ -15,11 +15,6 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
-    public String getHeader(String name){
-        return StringEscapeUtils.escapeHtml4(name);
-    }
-
-    @Override
     public String getParameter(String name) {
         return StringEscapeUtils.escapeHtml4(super.getParameter(name));
     }
