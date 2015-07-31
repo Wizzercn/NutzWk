@@ -15,9 +15,9 @@ import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
-import org.nutz.trans.Trans;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,13 +37,7 @@ public class RoleService extends BaseService<Sys_role> {
      * 新增角色
      */
     @Aop(TransAop.READ_COMMITTED)
-    public void save(String resourceIds, String uids, String unitId, Sys_role role) {
-        if ("_system".equals(unitId)) {
-            role.setUnitid("");
-        } else {
-            role.setUnitid(unitId);
-        }
-        role.setCreateUser(cn.wizzer.common.util.StringUtils.getUid());
+    public void save(String resourceIds, String uids, Sys_role role) {
         Sys_role r = dao().insert(role);
         String[] res = StringUtils.split(resourceIds, ",");
         String[] uid = StringUtils.split(uids, ",");
@@ -57,6 +51,16 @@ public class RoleService extends BaseService<Sys_role> {
                 dao().insert("sys_user_role", Chain.make("role_id", r.getId()).add("user_id", s));
             }
         }
+    }
+
+    /**
+     * 修改角色
+     */
+    @Aop(TransAop.READ_COMMITTED)
+    public void edit(Sys_role role) {
+        role.setCreateUser(cn.wizzer.common.util.StringUtils.getUid());
+        role.setCreateTime(new Date());
+        dao().update(role);
     }
 
     public Sys_role fetchByName(String name) {

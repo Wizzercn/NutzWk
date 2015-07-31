@@ -65,7 +65,7 @@ public class RoleAction {
     public Object info(String unitId, HttpServletRequest req) {
         Cnd cnd;
         if ("_system".equals(unitId)) {
-            cnd = Cnd.where("unitid", "is", null).or("unitid", "=", "");
+            cnd = Cnd.where("unitid", "=", "_system");
         } else cnd = Cnd.where("unitid", "=", unitId);
         return roleService.query(cnd.asc("location"), null);
     }
@@ -217,13 +217,13 @@ public class RoleAction {
     @At("/add/do")
     @Ok("json")
     @RequiresPermissions("sys:role")
-    public Object addDo(@Param("resourceIds") String resourceIds, @Param("uids") String uids, @Param("unitId") String unitId, @Param("..") Sys_role role, HttpServletRequest req) {
+    public Object addDo(@Param("resourceIds") String resourceIds, @Param("uids") String uids, @Param("unitid") String unitId, @Param("..") Sys_role role, HttpServletRequest req) {
         try {
             int num = roleService.count(Cnd.where("code", "=", role.getCode().trim()));
             if (num > 0) {
                 return Message.error("sys.role.code", req);
             }
-            roleService.save(resourceIds, uids, unitId, role);
+            roleService.save(resourceIds, uids, role);
             return Message.success("system.success", req);
         } catch (Exception e) {
             return Message.error("system.error", req);
@@ -235,7 +235,7 @@ public class RoleAction {
     @RequiresPermissions("sys:role")
     public Object showrole(String roleId, HttpServletRequest req) {
         Sys_role role = roleService.fetch(roleId);
-        if (!Strings.isEmpty(role.getUnitid())) {
+        if (!"_system".equals(role.getUnitid())) {
             req.setAttribute("unitName", unitService.fetch(role.getUnitid()).getName());
         } else {
             req.setAttribute("unitName", "系统角色");
@@ -256,7 +256,7 @@ public class RoleAction {
         return userService.list(Sqls.create("SELECT a.id,a.username,a.is_online,a.is_locked,b.email,b.nickname " +
                 "FROM sys_user a,sys_user_profile b ,sys_user_role c " +
                 "WHERE a.id=b.user_id AND a.id=c.user_id AND " +
-                "c.role_id=@roleId $s ORDER BY a.create_time desc").setParam("roleId", roleId));
+                "c.role_id=@roleId ORDER BY a.create_time desc").setParam("roleId", roleId));
     }
 
     @At("/edit/?")
@@ -264,12 +264,30 @@ public class RoleAction {
     @RequiresPermissions("sys:role")
     public Object edit(String roleId, HttpServletRequest req) {
         Sys_role role = roleService.fetch(roleId);
-        if (!Strings.isEmpty(role.getUnitid())) {
-            role.setUnitid("_system");
+        if (!"_system".equals(role.getUnitid())) {
             req.setAttribute("unitName", unitService.fetch(role.getUnitid()).getName());
         } else {
+            role.setUnitid("_system");
             req.setAttribute("unitName", "系统角色");
         }
         return role;
+    }
+
+    @At("/edit/do")
+    @Ok("json")
+    @RequiresPermissions("sys:role")
+    public Object editDo(@Param("unitid") String unitid, @Param("..") Sys_role role, @Param("oldcode") String oldcode, HttpServletRequest req) {
+        try {
+            if (!oldcode.equals(role.getCode().trim())) {
+                int num = roleService.count(Cnd.where("code", "=", role.getCode().trim()));
+                if (num > 0) {
+                    return Message.error("sys.role.code", req);
+                }
+            }
+            roleService.edit(role);
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
     }
 }

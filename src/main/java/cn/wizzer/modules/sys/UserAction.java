@@ -67,6 +67,9 @@ public class UserAction {
         if (!Strings.isEmpty(nickname)) {
             s += " and b.nickname like '%" + nickname + "%' ";
         }
+        if (Strings.isEmpty(unitid)) {
+            unitid = "_system";
+        }
         return userService.listPage(curPage, pageSize, Sqls.create("SELECT a.id,a.username,a.is_online,a.is_locked,b.email,b.nickname " +
                 "FROM sys_user a,sys_user_profile b ,sys_user_unit c " +
                 "WHERE a.id=b.user_id AND a.id=c.user_id AND " +
@@ -89,7 +92,7 @@ public class UserAction {
     @At("/add")
     @Ok("vm:template.private.sys.user.add")
     @RequiresPermissions("sys:user")
-    public void add(@Param("unitId") String unitId, HttpServletRequest req) {
+    public void add(@Param("unitid") String unitId, HttpServletRequest req) {
         if (!Strings.isEmpty(unitId)) {
             req.setAttribute("parentUnit", unitService.fetch(unitId));
         }
@@ -97,7 +100,9 @@ public class UserAction {
         if (currentUser != null) {
             Sys_user user = (Sys_user) currentUser.getPrincipal();
             if (user.isSystem()) {
-                req.setAttribute("roleList", roleService.query(Cnd.where("unitid", "=", "").or("unitid", "is", null).asc("location"), null));
+                req.setAttribute("roleList", roleService.query(Cnd.where("unitid", "=", "_system").or("unitid", "=", unitId).asc("location"), null));
+            } else {
+                req.setAttribute("roleList", roleService.query(Cnd.where("unitid", "=", unitId).asc("location"), null));
             }
         }
     }
@@ -106,7 +111,7 @@ public class UserAction {
     @Ok("json")
     @RequiresPermissions("sys:user")
     @SLog(tag = "新建用户", msg = "用户名：${args[0].username}")
-    public Object addDo(@Param("::u.") Sys_user user, @Param("::p.") Sys_user_profile profile, @Param("unitId") String unitId, @Param("roleIds") String[] roleIds, HttpServletRequest req) {
+    public Object addDo(@Param("::u.") Sys_user user, @Param("::p.") Sys_user_profile profile, @Param("unitid") String unitId, @Param("roleIds") String[] roleIds, HttpServletRequest req) {
         try {
             int num = userService.count(Cnd.where("username", "=", user.getUsername().trim()));
             if (num > 0) {
@@ -136,7 +141,7 @@ public class UserAction {
         if (currentUser != null) {
             Sys_user cuser = (Sys_user) currentUser.getPrincipal();
             if (cuser.isSystem()) {
-                cnd = Cnd.where("unitid", "=", "").or("unitid", "is", null).or("unitid", "=", unit.getId());
+                cnd = Cnd.where("unitid", "=", "_system").or("unitid", "=", unit.getId());
             }
         }
         req.setAttribute("roleList", roleService.query(cnd.asc("location"), null));
@@ -281,6 +286,21 @@ public class UserAction {
         req.setAttribute("buttons", map);
         req.setAttribute("allBtns", list);
         return userService.getMenus(userId);
+    }
+
+    @At("/unitrole/?")
+    @Ok("json")
+    @RequiresPermissions("sys:user")
+    public Object unitrole(String unitId, HttpServletRequest req) {
+        Cnd cnd = Cnd.where("unitid", "=", unitId);
+        Subject currentUser = SecurityUtils.getSubject();
+        if (currentUser != null) {
+            Sys_user user = (Sys_user) currentUser.getPrincipal();
+            if (user.isSystem()) {
+                cnd = Cnd.where("unitid", "=", "_system").or("unitid", "=", unitId);
+            }
+        }
+        return Message.success("",roleService.query(cnd.asc("location"), null),req);
     }
 
     private Map<String, List<Sys_menu>> getMap(List<Sys_menu> list) {

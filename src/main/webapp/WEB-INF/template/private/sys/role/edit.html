@@ -24,8 +24,9 @@
         <div class="content-wrap">
             <div class="wrapper">
                 <section class="panel">
-                    <form id="roleEditForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/private/sys/role/edit/edit/do" method="post">
+                    <form id="roleEditForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/private/sys/role/edit/do" method="post">
                         <input type="hidden" name="id" value="$!obj.id"/>
+                        <input type="hidden" name="oldcode" value="$!obj.code"/>
                         <div class="row mb15">
                             <div class="col-lg-12">
                                 <div class="form-group">
@@ -167,7 +168,7 @@
         var tree = $.jstree.reference("#jsTreeUnit");
         var node = tree.get_selected(true);
         $("#roleEditForm #unitName").val(node[0].text);
-        $("#roleEditForm input[name='unit.id']").val(node[0].id);
+        $("#roleEditForm input[name='unitid']").val(node[0].id);
 
         $("#dialogSelectUnit").modal("hide");
     }
@@ -188,11 +189,12 @@
                 //重置按钮状态，关闭提示框
                 btn.button("reset");
                 dialog.modal("hide");
-            });
+            },"json");
         });
     }
     $(function(){
         $('#roleEditForm').ajaxForm({
+            dataType:  'json',
             beforeSubmit:function(arr, form, options){
                 form.find("button:submit").button("loading");
             },
@@ -200,15 +202,16 @@
                 if(data.type == "success"){
                     Toast.success("角色修改成功，2秒后返回角色管理首页",function(){
                         //返回上级菜单
-                        setTimeout(function(){
-                            //返回上级菜单
-                            window.location.href="${base}/private/sys/role";
-                        }, 2000);
+                        window.location.href="${base}/private/sys/role";
                     });
+                    setTimeout(function(){
+                        //返回上级菜单
+                        window.location.href="${base}/private/sys/role";
+                    }, 2000);
                 }else{
                     Toast.error(data.error);
-                    form.find("button:submit").button("reset");
                 }
+                form.find("button:submit").button("reset");
             }
         });
         initTreeView();

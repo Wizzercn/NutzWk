@@ -26,7 +26,7 @@
 			                             			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dialogSelectUnit"><i class="ti-plus"></i> 选择</button>
 												</span>
                                         </div>
-                                        <input type="hidden" id="unitId" name="unitId" value="$!parentUnit.id" />
+                                        <input type="hidden" id="unitid" name="unitid" value="$!parentUnit.id" />
                                     </div>
                                 </div>
                             </div>
@@ -36,7 +36,7 @@
                                     <div class="col-sm-8">
                                         <select tabindex="2" id="roleIds" name="roleIds" data-placeholder="<--选择机构后，选择角色" style="width:100%" multiple class="form-control chosen" data-parsley-required="true">
                                             #foreach($!role in $!roleList)
-                                            <option value="$!role.id"> #if(!$!role.unitId)[系统]#end$!role.name
+                                            <option value="$!role.id"> #if("$!role.unitid"=="_system")[系统]#end$!role.name
                                             #end
                                         </select>
                                     </div>
@@ -209,17 +209,17 @@
         var tree = $.jstree.reference("#jsTreeUnit");
         var node = tree.get_selected(true);
         $("#userAddForm #unitName").val(node[0].text);
-        $("#userAddForm input[name='unitId']").val(node[0].id);
+        $("#userAddForm input[name='unitid']").val(node[0].id);
 
         //根据获取的机构，获取角色列表
-        jQuery.post("${base}/private/sys/user/role/"+node[0].id,{},function(data){
+        jQuery.post("${base}/private/sys/user/unitrole/"+node[0].id,{},function(data){
             var roleSelect = $("#userAddForm select[name='roleIds']");
             if(data.type="success"&&data.data.length > 0){
                 var html = "";
                 for(var i=0;i<data.data.length;i++){
                     var role = data.data[i];
                     var t="";
-                    if(""==role.unitid){
+                    if("_system"==role.unitid){
                         t="[系统]";
                     }
                     html += "<option value='"+role.id+"'>"+t+role.name+"</option>";
@@ -238,7 +238,7 @@
         $('#userAddForm').ajaxForm({
             dataType:  'json',
             beforeSubmit:function(arr, form, options){
-                if(!$("#unitId").val()){
+                if(!$("#unitid").val()){
                     Toast.error("请选择一个机构！");
                     return false;
                 }

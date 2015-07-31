@@ -59,7 +59,6 @@ public class UnitService extends BaseService<Sys_unit> {
         }
         unit.setPath(getSubPath("sys_unit", "path", path));
         unit.setParentId(pid);
-        unit.setCreateUser(StringUtils.getUid());
         dao().insert(unit);
         if (!Strings.isEmpty(pid)) {
             dao().execute(Sqls.create("update sys_unit set has_children=true where id=@pid").setParam("pid", pid));

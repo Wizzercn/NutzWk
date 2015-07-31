@@ -268,7 +268,7 @@ public class MainSetup implements Setup {
             role.setAliasName("Public");
             role.setDescription("All user's role.");
             role.setLocation(0);
-            role.setUnitid("");
+            role.setUnitid("_system");
             role.setEnabled(true);
             dao.insert(role);
             role = new Sys_role();
@@ -277,7 +277,7 @@ public class MainSetup implements Setup {
             role.setAliasName("Superadmin");
             role.setDescription("Super Admin");
             role.setLocation(1);
-            role.setUnitid("");
+            role.setUnitid("_system");
             role.setMenus(menuList);
             role.setEnabled(true);
             Sys_role dbrole = dao.insert(role);

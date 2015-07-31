@@ -19,6 +19,7 @@ import org.nutz.lang.Strings;
 import org.nutz.trans.Trans;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,17 +41,14 @@ public class UserService extends BaseService<Sys_user> {
      */
     @Aop(TransAop.READ_COMMITTED)
     public void save(Sys_user user, Sys_user_profile profile, String unitId, String[] roleIds) {
-        String uid = StringUtils.getUid();
         RandomNumberGenerator rng = new SecureRandomNumberGenerator();
         String salt = rng.nextBytes().toBase64();
         String hashedPasswordBase64 = new Sha256Hash(user.getPassword(), salt, 1024).toBase64();
         user.setSalt(salt);
         user.setPassword(hashedPasswordBase64);
-        user.setCreateUser(uid);
         user.setUsername(user.getUsername().trim());
         Sys_user u = dao().insert(user);
         profile.setUserId(u.getId());
-        profile.setCreateUser(uid);
         dao().insert(profile);
         if (!Strings.isEmpty(unitId)) {
             dao().insert("sys_user_unit", Chain.make("user_id", u.getId()).add("unit_id", unitId));
@@ -73,11 +71,13 @@ public class UserService extends BaseService<Sys_user> {
         String uid = StringUtils.getUid();
         user.setSalt(null);
         user.setPassword(null);
+        user.setCreateTime(new Date());
         user.setCreateUser(uid);
         user.setUsername(user.getUsername().trim());
         //修改时不更新密码
         Daos.ext(dao(), FieldFilter.create(Sys_user.class, FieldMatcher.make(null, "^(password|salt)$", true))).update(user);
         profile.setUserId(user.getId());
+        profile.setCreateTime(new Date());
         profile.setCreateUser(uid);
         dao().update(profile);
         if (!Strings.isEmpty(unitId)) {
@@ -153,7 +153,7 @@ public class UserService extends BaseService<Sys_user> {
         StringBuilder sb = new StringBuilder();
         for (Record record : list) {
             sb.append(record.get("name"));
-            if (Strings.isEmpty(Strings.sNull(record.get("unitid")))) {
+            if ("_system".equals(Strings.sNull(record.get("unitid")))) {
                 sb.append("[系统]");
             }
             if (!Boolean.valueOf(Strings.sNull(record.get("is_enabled")))) {
