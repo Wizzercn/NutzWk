@@ -249,13 +249,14 @@ public class LoginAction {
      */
     @At
     @Ok(">>:/private/login")
-    @RequiresAuthentication
-    public void logout() {
-        Subject currentUser = SecurityUtils.getSubject();
+    public void logout(HttpSession session) {
         try {
+            Subject currentUser = SecurityUtils.getSubject();
             Sys_user user=(Sys_user)currentUser.getPrincipal();
             Sys_log log= Sys_log.c("info","用户退出",user.getId(),user.getUsername(),"用户："+user.getUsername()+" 手动退出系统！",null);
             sysLogService.async(log);
+            userService.update(Chain.make("is_online", false), Cnd.where("id", "=", user.getId()));
+            session.setAttribute("logout","true");
             currentUser.logout();
         } catch (SessionException ise) {
             log.debug("Encountered session exception during logout.  This can generally safely be ignored.", ise);
