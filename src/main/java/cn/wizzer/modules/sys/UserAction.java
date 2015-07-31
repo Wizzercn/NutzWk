@@ -80,11 +80,22 @@ public class UserAction {
     @Ok("raw:json")
     @RequiresPermissions("sys:user")
     public Object tree(@Param("pid") String pid, HttpServletRequest req) {
-        List<Record> list;
+        List<Record> list=new ArrayList<>();
         if (!Strings.isEmpty(pid)) {
+
             list = userService.list(Sqls.create("select id,name as text,has_children as children from sys_unit where parentId = @pid order by location asc,path asc").setParam("pid", pid));
         } else {
-            list = userService.list(Sqls.create("select id,name as text,has_children as children from sys_unit where length(path)=4 order by location asc,path asc"));
+            Subject currentUser = SecurityUtils.getSubject();
+            if (currentUser != null) {
+                Sys_user user = (Sys_user) currentUser.getPrincipal();
+                if (user.isSystem()) {
+                    list = userService.list(Sqls.create("select id,name as text,has_children as children from sys_unit where length(path)=4 order by location asc,path asc"));
+                } else {
+                    list = userService.list(
+                            Sqls.create("select a.id,a.name as text,a.has_children as children from sys_unit a,sys_user_unit b " +
+                                    " where a.id=b.unit_id and b.user_id=@uid order by a.location asc,a.path asc").setParam("uid", user.getId()));
+                }
+            }
         }
         return list;
     }
@@ -300,7 +311,7 @@ public class UserAction {
                 cnd = Cnd.where("unitid", "=", "_system").or("unitid", "=", unitId);
             }
         }
-        return Message.success("",roleService.query(cnd.asc("location"), null),req);
+        return Message.success("", roleService.query(cnd.asc("location"), null), req);
     }
 
     private Map<String, List<Sys_menu>> getMap(List<Sys_menu> list) {
