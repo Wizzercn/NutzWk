@@ -33,5 +33,5 @@ NutzWk 2.0 新特性：
 
 http://121.43.107.94/private/login                 NutzWk 2.0
 
-http://115.28.27.32:9091/nutz_wk/private/login     NutzWk 1.0
+http://121.43.107.94/wzflow/private/login          NutzWk 1.0 (含Activiti工作流)
 
