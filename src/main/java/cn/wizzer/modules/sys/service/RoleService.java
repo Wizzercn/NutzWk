@@ -63,6 +63,39 @@ public class RoleService extends BaseService<Sys_role> {
         dao().update(role);
     }
 
+    /**
+     * 设置权限
+     */
+    @Aop(TransAop.READ_COMMITTED)
+    public void saveRole(String resourceIds, String roleId) {
+        dao().clear("sys_role_menu", Cnd.where("role_id", "=", roleId));
+        String[] res = StringUtils.split(resourceIds, ",");
+        for (String s : res) {
+            if (!Strings.isEmpty(s)) {
+                dao().insert("sys_role_menu", Chain.make("role_id", roleId).add("menu_id", s));
+            }
+        }
+    }
+
+    /**
+     * 设置用户
+     */
+    @Aop(TransAop.READ_COMMITTED)
+    public void saveUser(String uids, String roleId) {
+        dao().clear("sys_user_role", Cnd.where("role_id", "=", roleId));
+        String[] uid = StringUtils.split(uids, ",");
+        for (String s : uid) {
+            if (!Strings.isEmpty(s)) {
+                dao().insert("sys_user_role", Chain.make("role_id", roleId).add("user_id", s));
+            }
+        }
+    }
+
+    public void deleteById(String roleId){
+        dao().clear("sys_role_menu", Cnd.where("role_id", "=", roleId));
+        dao().clear("sys_user_role", Cnd.where("role_id", "=", roleId));
+        dao().delete(Sys_role.class,roleId);
+    }
     public Sys_role fetchByName(String name) {
         return fetch(Cnd.where("name", "=", name));
     }

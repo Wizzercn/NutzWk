@@ -1,0 +1,276 @@
+#sys_top
+
+#sys_head
+
+
+<section class="layout">
+    #sys_menu
+    <!-- 内容主体 -->
+    <section class="main-content bg-white">
+    <!-- 主体操作栏 -->
+        <header class="header navbar bg-white shadow">
+            <!-- 左按钮区 -->
+            <div class="btn-group tool-button">
+                <a class="btn btn-primary navbar-btn" href="${base}/private/sys/role"><i class="ti-angle-left"></i> 返回</a>
+            </div>
+        </header>
+        <div class="content-wrap">
+            <div class="wrapper">
+                <div class="row mb15">
+                    <div class="col-lg-12">
+                        <form id="addRoleForm" class="form-horizontal" method="post" action="${base}/private/sys/role/edit/user/do">
+                            <input type="hidden" name="id" value="$!obj.id"/>
+                            <input type="hidden" name="name" value="$!obj.name"/>
+                            <input type="hidden" name="unitid" value="$!obj.unitid"/>
+                            <input type="hidden" name="resourceIds"/>
+                            <input type="hidden" id="uids" name="uids" value="#foreach($o in $users)$!o.id,#end"/>
+                                <div class="form-group">
+                                    <div class="col-sm-8">
+                                        <div class="panel">
+                                            <div class="panel-body">
+                                                <div class="input-group input-rounded mb15 ">
+                                                    <input type="hidden" id="type" name="type" value="1">
+                                                    <input type="text" class="form-control" onclick="this.value='';" name="keyword" placeholder="搜索用户...">
+                                                    <div class="input-group-btn">
+                                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">搜索
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu pull-right">
+                                                            <li><a href="javascript:search(1);">按用户名</a></li>
+                                                            <li><a href="javascript:search(2);">按姓名</a></li>
+                                                            <li class="divider"></li>
+                                                            <li><a href="javascript:search(3);">全部匹配</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+
+                                                <table id="data"  class="table no-m">
+                                                    <thead>
+                                                    <tr>
+                                                        <th class="col-md-3 pd-l-lg">
+                                                            <span class="pd-l-sm"></span>用户名</th>
+                                                        <th class="col-md-3">姓名</th>
+                                                        <th class="col-md-3">邮箱</th>
+                                                        <th class="col-md-1"><button type="button" class="btn btn-default" onclick="allBtn()">全选</button></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                            <div class="row bt" id="__page">
+                                                <div class="col-lg-12">
+                                                    <div class="pull-left mt20" id="__pageLeft">
+                                                        第1/1页，每页显示0条，共0条数据
+                                                    </div>
+                                                    <div class="pull-right">
+                                                        <ul id="__pageControl" class="pagination">
+
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <section class="panel no-b">
+                                            <div class="panel-heading no-b">
+                                                <h5><b>已选择的</b>用户</h5>
+                                            </div>
+                                            <div class="panel-body">
+                                                <table id="xz" class="table no-m">
+                                                    <thead>
+                                                    <tr>
+                                                        <th class="col-md-4 pd-l-lg">
+                                                            <span class="pd-l-sm"></span>用户名</th>
+                                                        <th class="col-md-4">姓名</th>
+                                                        <th class="col-md-1"><button type="button" class="btn btn-default" onclick="delAllBtn()">全删</button></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    #foreach($o in $users)
+                                                    <tr id="$!o.id" username="$!o.username" nickname="$!o.nickname">
+                                                        <td>$!o.username</td><td>$!o.nickname</td>
+                                                        <td><button type="button" class="btn btn-default"
+                                                                    onclick="delBtn('$!o.id')">删除</button>
+                                                        </td></tr>
+                                                    #end
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div>
+                            <button class="stepy-finish btn btn-primary pull-right" data-loading-text="正在提交...">完成</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <a class="exit-offscreen"></a>
+    </section>
+</section>
+#sys_buttom
+<script src="${base}/include/plugins/jquery.nestable.js"></script>
+<script src="${base}/include/js/toast.js"></script>
+<script src="${base}/include/js/treetable.js"></script>
+<script src="${base}/include/js/datatables.js"></script>
+<script src="${base}/include/js/tree.js"></script>
+
+<script src="${base}/include/plugins/count-to/jquery.countTo.js"></script>
+<script src="${base}/include/plugins/switchery/switchery.js"></script>
+<script src="${base}/include/plugins/stepy/jquery.stepy.js"></script>
+<script src="${base}/include/plugins/stepy/jquery.validate.min.js"></script>
+<script src="${base}/include/plugins/icheck/icheck.js"></script>
+
+<!-- 本页面脚本 -->
+<script src="${base}/include/js/form.js"></script>
+<script src="${base}/include/js/select.js"></script>
+<script language="JavaScript">
+    function __jumpPage(page){
+        sublime.showLoadingbar($(".main-content"));
+        var __pageControl = $("#data");
+        var form = __pageControl.parent("form");
+        var param = {};
+        var inputs = $.find("input");
+        $.each(inputs, function(i,input){
+            param[input.name] = input.value;
+        });
+        param.curPage = page;
+        $.post("${base}/private/sys/role/user", param, function (data) {
+            if(!data){ return false;}
+            $("#data tbody").html(data);
+            $("#__pageLeft").html("第"+$("#pageNo").val()+"/"+$("#totalPage").val()+"页，每页显示"+$("#pageSize").val()+"条，共"+$("#totalCount").val()+"条数据");
+            $("#__pageControl").html("<li id=\"__pageFirst\" class=\"disabled\"><a href=\"javascript:;\">首页</a></li>" +
+                    "<li id=\"__pagePre\" class=\"disabled\"><a href=\"javascript:;\">上一页</a></li>" +
+                    "<li id=\"__pageNext\" class=\"disabled\"><a href=\"javascript:;\">下一页</a></li>" +
+                    "<li id=\"__pageLast\" class=\"disabled\"><a href=\"javascript:;\">末页</a></li>");
+            if(parseInt($("#pageNo").val())>1){
+                $("#__pageFirst").removeClass("disabled");
+                $("#__pagePre").removeClass("disabled");
+                $("#__pageFirst a").on("click",function(){
+                    __jumpPage(1);
+                });
+                $("#__pagePre a").on("click",function(){
+                    __jumpPage(parseInt($("#pageNo").val())-1);
+                });
+            }else{
+                $("#__pageFirst").addClass("disabled");
+                $("#__pagePre").addClass("disabled");
+                $("#__pageFirst a").off("click");
+                $("#__pagePre a").off("click");
+            }
+            if(parseInt($("#totalPage").val()) > parseInt($("#pageNo").val())){
+                $("#__pageNext").removeClass("disabled");
+                $("#__pageLast").removeClass("disabled");
+                $("#__pageNext a").on("click",function(){
+                    __jumpPage(parseInt($("#pageNo").val())+1);
+                });
+                $("#__pageLast a").on("click",function(){
+                    __jumpPage(parseInt($("#totalPage").val()));
+                });
+            }else{
+                $("#__pageNext").addClass("disabled");
+                $("#__pageLast").addClass("disabled");
+                $("#__pageNext a").off("click");
+                $("#__pageLast a").off("click");
+            }
+            sublime.closeLoadingbar($(".main-content"));
+            binBtn();
+            return false;
+        });
+    }
+    //绑定用户选择按钮事件
+    function binBtn(){
+        $("#data tbody").find("button[type='button']").each(function(){
+            var oldid=$(this).parents("tr").attr("id");
+            if($("#uids").val().indexOf(oldid+",")>-1){
+                $(this).attr("disabled",true);
+            }else{
+                $(this).attr("disabled",false);
+            }
+        });
+    }
+    //选择用户
+    function selBtn(t){
+        var obj=$("#data tbody").find("tr[id='"+t+"']");
+        if(obj!=undefined){
+            var id=obj.attr("id");
+            var username=obj.attr("username");
+            var nickname=obj.attr("nickname");
+            $("#xz tbody").append("<tr id=\""+id+"\" username=\""+username+"\" nickname=\""+nickname+"\">" +
+                    "<td>"+username+"</td><td>"+nickname+"</td><td><button type=\"button\" class=\"btn btn-default\" onclick=\"delBtn('"+id+"')\">删除</button></td></tr>");
+            obj.find("button[type='button']").attr("disabled",true);
+            var ids=$("#uids").val();
+            ids+=id+",";
+            $("#uids").val(ids);
+        }
+    }
+    //全选用户
+    function allBtn(){
+        $("#data tbody").find("button[type='button']").each(function(){
+            var obj=$(this).parents("tr");
+            var id=obj.attr("id");
+            var ids=$("#uids").val();
+            if(id!=undefined&&id!=""&&ids.indexOf(id+",")<0){
+                var username=obj.attr("username");
+                var nickname=obj.attr("nickname");
+                $("#xz tbody").append("<tr id=\""+id+"\" username=\""+username+"\" nickname=\""+nickname+"\">" +
+                        "<td>"+username+"</td><td>"+nickname+"</td><td><button type=\"button\" class=\"btn btn-default\" onclick=\"delBtn('"+id+"')\">删除</button></td></tr>");
+                $(this).attr("disabled",true);
+                ids+=id+",";
+                $("#uids").val(ids);
+            }
+
+        });
+    }
+    //删除选择用户
+    function delBtn(id){
+        $("#xz tbody").find("tr[id='"+id+"']").remove();
+        var ids=$("#uids").val().replace(id+",","");
+        $("#uids").val(ids);
+        $("#data tbody").find("tr[id='"+id+"']").find("button[type='button']").attr("disabled",false);
+    }
+    //全删用户
+    function delAllBtn(){
+        $("#uids").val("");
+        $("#xz tbody").html("");
+        binBtn();
+    }
+    function search(t){
+        $("#type").val(t);
+        __jumpPage(1);
+    }
+    $(function(){
+        //表单ajax提交
+        $("#addRoleForm").ajaxForm({
+            dataType:  'json',
+            beforeSubmit:function(arr, form, options){
+                //获取选择的菜单
+                form.find("button:submit").button("loading");
+                if(form.attr("isSubmit") == undefined){//与stepy结合使用时，要避免二次提交的问题
+                    form.attr("isSubmit", true);
+                }else{
+                    form.removeAttr("isSubmit");
+                    return false;
+                }
+            },
+            success : function(data, statusText, xhr, form) {
+                if(data.type == "success"){
+                    Toast.success("设置用户成功！");
+                }else{
+                    Toast.error(data.error);
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+        search(1);
+        binBtn();
+    });
+</script>
+</body>
+
+</html>

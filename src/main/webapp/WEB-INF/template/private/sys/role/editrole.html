@@ -1,0 +1,210 @@
+#sys_top
+
+#sys_head
+
+
+<section class="layout">
+    #sys_menu
+    <!-- 内容主体 -->
+    <section class="main-content bg-white">
+    <!-- 主体操作栏 -->
+        <header class="header navbar bg-white shadow">
+            <!-- 左按钮区 -->
+            <div class="btn-group tool-button">
+                <a class="btn btn-primary navbar-btn" href="${base}/private/sys/role"><i class="ti-angle-left"></i> 返回</a>
+            </div>
+
+        </header>
+        <div class="content-wrap">
+            <div class="wrapper">
+                <div class="row mb15">
+                    <div class="col-lg-12">
+                        <form id="addRoleForm" class="form-horizontal stepy" method="post" action="${base}/private/sys/role/edit/role/do">
+                            <input type="hidden" name="id" value="$!obj.id"/>
+                            <input type="hidden" name="name" value="$!obj.name"/>
+                            <input type="hidden" id="resourceIds" name="resourceIds"/>
+                            <input type="hidden" name="userIds"/>
+                            <fieldset title="第 1 步&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+                                <legend>分配菜单权限</legend>
+                                <div class="form-group no-b">
+                                    <div class="col-sm-8">
+                                        <div class="panel">
+                                            <div class="panel-heading no-b">
+                                                <h5>选择<b>菜单</b></h5>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div id="jsTreeMenu"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="panel">
+                                            <div class="panel-heading no-b">
+                                                <h5>菜单<b>描述</b></h5>
+                                            </div>
+                                            <div id="menuDescript" class="panel-body">
+                                                <div class='alert alert-info'>鼠标在左侧菜单树节点上悬浮，可以查看菜单描述</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset title="第 2 步&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+                                <legend>分配按钮权限</legend>
+                                <div class="form-group no-b">
+                                    <div class="col-sm-12">
+                                        <section class="panel no-b">
+                                            <div class="panel-heading no-b">
+                                                <h5><span id="menuName">菜单</span><b>按钮权限</b></h5>
+                                            </div>
+                                            <div id="divResBtn" class="panel-body">
+
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <button class="stepy-finish btn btn-primary pull-right" data-loading-text="正在提交...">完成</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <a class="exit-offscreen"></a>
+    </section>
+</section>
+#sys_buttom
+<script src="${base}/include/plugins/jquery.nestable.js"></script>
+<script src="${base}/include/js/toast.js"></script>
+<script src="${base}/include/js/treetable.js"></script>
+<script src="${base}/include/js/datatables.js"></script>
+<script src="${base}/include/js/tree.js"></script>
+
+<script src="${base}/include/plugins/count-to/jquery.countTo.js"></script>
+<script src="${base}/include/plugins/switchery/switchery.js"></script>
+<script src="${base}/include/plugins/stepy/jquery.stepy.js"></script>
+<script src="${base}/include/plugins/stepy/jquery.validate.min.js"></script>
+<script src="${base}/include/plugins/icheck/icheck.js"></script>
+
+<!-- 本页面脚本 -->
+<script src="${base}/include/js/form.js"></script>
+<script src="${base}/include/js/select.js"></script>
+<script language="JavaScript">
+    function initTree(){
+        var jsTreeMenu = $("#jsTreeMenu").jstree({
+            plugins : [ "wholerow", "checkbox" ],
+            core : {
+                data : {
+                    url : function(node){
+                        return node.id === "#" ? "${base}/private/sys/role/edit/menu/$!obj.id":"${base}/private/sys/role/edit/menu/$!obj.id?pid="+node.id;
+                    }
+                }
+            },
+            checkbox : {
+                three_state : false,
+                cascade : 'down'
+            }
+        }).on("hover_node.jstree", function(e,data){
+            if(data.node.data)
+                $("#menuDescript").text(data.node.data);
+        }).on("dehover_node.jstree", function(e,data){
+            $("#menuDescript").html("<div class='alert alert-info'>鼠标在左侧菜单树节点上悬浮，可以查看菜单描述</div>");//清空菜单描述
+        }).bind("loaded.jstree", function(){
+            //立即加载树下所有节点
+            $("#jsTreeMenu").jstree("load_all");
+        });
+        $("#resourceIds").val("");
+    }
+    $(function(){
+        $(".stepy").stepy({
+            backLabel : "上一步",
+            nextLabel : "下一步",
+            errorImage : true,
+            block : true,
+            validate : false,
+            legend : false,
+            select : function(idx){
+                if(idx == 1){
+                    initTree();
+
+                }else if(idx == 2){
+                    //获取所选菜单
+                    var tree = $.jstree.reference("#jsTreeMenu");
+                    var nodes = tree.get_selected();
+                    //查询所选节点的所有父节点
+                    for(var i=0;i<nodes.length;i++){
+                        var node = nodes[i];
+                        each(node,tree,nodes);
+                    }
+                    if(nodes.length>0){
+                        $("#divResBtn").html("<img src='${base}/include/img/loading.gif'/>正在加载...");
+                        $.get("${base}/private/sys/role/btn", {ids:nodes.toString()}, function(html){
+                            $("#divResBtn").html(html);
+                        });
+                    }else{
+                        $("#divResBtn").html("<div class='alert alert-warning'>未分配任何菜单，如需分配菜单权限，请到第1步中选择菜单！</div>");
+                    }
+                }
+            },
+            finish: function() {
+                saveResource();
+            }
+        });
+        //表单ajax提交
+        $("#addRoleForm").ajaxForm({
+            dataType:  'json',
+            beforeSubmit:function(arr, form, options){
+
+                //获取选择的菜单
+                form.find("button:submit").button("loading");
+                if(form.attr("isSubmit") == undefined){//与stepy结合使用时，要避免二次提交的问题
+                    form.attr("isSubmit", true);
+                }else{
+                    form.removeAttr("isSubmit");
+                    return false;
+                }
+            },
+            success : function(data, statusText, xhr, form) {
+                if(data.type == "success"){
+                    Toast.success("权限设置成功！");
+                }else{
+                    Toast.error(data.error);
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+        initTree();
+    });
+    function saveResource(){
+        var resourceBtns = new Array();
+        var objs = $("#divResBtn .chosen");
+        $.each(objs, function(i, sel){
+            sel = $(sel);
+            resourceBtns.push(sel.attr("name"));
+            resourceBtns.push(sel.val());
+        });
+        $("#resourceIds").val(resourceBtns.toString());
+    }
+    function complete(){
+        $('#addRoleForm').submit();
+    }
+    function each(node, tree, nodes){
+        var p = tree.get_parent(node);
+        if(p.length>1){
+            if(!isExists(p,nodes))
+                nodes.push(p);
+            each(p, tree, nodes);
+        }
+    }
+    function isExists(p, nodes){
+        for(var i=0;i<nodes.length;i++){
+            if(p == nodes[i])
+                return true;
+        }
+        return false;
+    }
+</script>
+</body>
+
+</html>

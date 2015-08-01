@@ -15,9 +15,9 @@
             <!-- 右按钮区 -->
             <div class="pull-right">
                 <div class="btn-group tool-button">
-                    <button class="btn btn-danger navbar-btn" onclick="del('$!role.id')"><i class="ti-trash"></i> 删除</button>
-                    <a class="btn btn-primary navbar-btn" href="${base}/private/sys/role/edit/role/$!role.id">修改权限 <i class="ti-angle-right"></i></a>
-                    <a class="btn btn-primary navbar-btn" href="${base}/private/sys/role/edit/user/$!role.id">分配用户 <i class="ti-angle-right"></i></a>
+                    <button class="btn btn-danger navbar-btn" onclick="del('$!obj.id')"><i class="ti-trash"></i> 删除</button>
+                    <a class="btn btn-primary navbar-btn" href="${base}/private/sys/role/edit/role/$!obj.id">修改权限 <i class="ti-angle-right"></i></a>
+                    <a class="btn btn-primary navbar-btn" href="${base}/private/sys/role/edit/user/$!obj.id">分配用户 <i class="ti-angle-right"></i></a>
                 </div>
             </div>
         </header>
@@ -67,6 +67,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                         <div class="col-lg-3"></div>
@@ -180,11 +181,11 @@
             var btn = $(this);
             btn.button("loading");
             $.post("${base}/private/sys/role/delete/"+id,{},function(data){
-                if(data.success == true){
+                if(data.type == "success"){
                     Toast.success("角色删除成功!");
                     window.location.href="${base}/private/sys/role";
                 }else{
-                    Toast.error(data.error);
+                    Toast.error(data.content);
                 }
                 //重置按钮状态，关闭提示框
                 btn.button("reset");

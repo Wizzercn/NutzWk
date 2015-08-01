@@ -16,8 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
-import org.nutz.dao.Cnd;
-import org.nutz.dao.Sqls;
+import org.nutz.dao.*;
 import org.nutz.dao.entity.Record;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -26,6 +25,7 @@ import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.Chain;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -154,7 +154,7 @@ public class RoleAction {
     @At("/user")
     @Ok("vm:template.private.sys.role.user")
     @RequiresPermissions("sys:role")
-    public Object user(@Param("unitId") String unitId, @Param("keyword") String keyword, @Param("type") int type, @Param("curPage") int curPage, @Param("pageSize") int pageSize, HttpServletRequest req) {
+    public Object user(@Param("unitid") String unitId, @Param("keyword") String keyword, @Param("type") int type, @Param("curPage") int curPage, @Param("pageSize") int pageSize, HttpServletRequest req) {
         Sql sql;
         if ("_system".equals(unitId)) {
             if (type == 1) {
@@ -276,6 +276,7 @@ public class RoleAction {
     @At("/edit/do")
     @Ok("json")
     @RequiresPermissions("sys:role")
+    @SLog(tag = "修改角色", msg = "角色名：${args[1].name}")
     public Object editDo(@Param("unitid") String unitid, @Param("..") Sys_role role, @Param("oldcode") String oldcode, HttpServletRequest req) {
         try {
             if (!oldcode.equals(role.getCode().trim())) {
@@ -285,6 +286,132 @@ public class RoleAction {
                 }
             }
             roleService.edit(role);
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
+    }
+
+    @At("/edit/role/?")
+    @Ok("vm:template.private.sys.role.editrole")
+    @RequiresPermissions("sys:role")
+    public Object edit_role(String roleId) {
+        return roleService.fetch(roleId);
+
+    }
+
+    @At("/edit/menu/?")
+    @Ok("raw:json")
+    @RequiresPermissions("sys:role")
+    public Object edit_menu(String roleId, @Param("pid") String pid, HttpServletRequest req) {
+        List<Record> list = new ArrayList<>();
+        Subject currentUser = SecurityUtils.getSubject();
+        boolean isSystem = false;
+        if (currentUser != null) {
+            Sys_user user = (Sys_user) currentUser.getPrincipal();
+            if (user.isSystem()) {
+                isSystem = true;
+            }
+        }
+        if (!Strings.isEmpty(pid)) {
+            if (isSystem) {
+                list = roleService.list(Sqls.create("select id,name as text,has_children as children,icon,description as data from sys_menu  where parentId = @pid order by location asc,path asc").setParam("pid", pid));
+
+            } else {
+                list = roleService.list(
+                        Sqls.create("select DISTINCT a.id,a.name as text,a.has_children as children,a.icon,a.description as data from sys_menu a,sys_role_menu b " +
+                                " where a.id=b.menu_id and b.role_id=@roleId and a.parentId = @pid order by a.location asc,a.path asc").setParam("roleId", roleId).setParam("pid", pid));
+            }
+        } else {
+            if (isSystem) {
+                list = roleService.list(Sqls.create("select id,name as text,has_children as children,icon,description as data from sys_menu where length(path)=4 order by location asc,path asc"));
+
+            } else {
+                list = roleService.list(
+                        Sqls.create("select DISTINCT a.id,a.name as text,a.has_children as children,a.icon,a.description as data from sys_menu a,sys_role_menu b " +
+                                " where a.id=b.menu_id and b.role_id=@roleId and length(path)=4 order by a.location asc,a.path asc").setParam("roleId", roleId));
+            }
+        }
+        return list;
+    }
+
+    @At("/edit/role/do")
+    @Ok("json")
+    @RequiresPermissions("sys:role")
+    @SLog(tag = "分配权限", msg = "角色名：${args[1]}")
+    public Object editRoleDo(@Param("resourceIds") String resourceIds, @Param("name") String name, @Param("id") String roleId, HttpServletRequest req) {
+        try {
+            roleService.saveRole(resourceIds, roleId);
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
+    }
+
+    @At("/edit/user/?")
+    @Ok("vm:template.private.sys.role.edituser")
+    @RequiresPermissions("sys:role")
+    public Object editunit(String roleId, HttpServletRequest req) {
+        req.setAttribute("users", roleService.list(Sqls.create("select a.id,a.username,b.nickname,b.email from sys_user a,sys_user_profile b,sys_user_role c where " +
+                " a.id=b.user_id and a.id=c.user_id and c.role_id=@roleId").setParam("roleId", roleId)));
+        return roleService.fetch(roleId);
+
+    }
+
+    @At("/edit/user/do")
+    @Ok("json")
+    @RequiresPermissions("sys:role")
+    @SLog(tag = "分配用户", msg = "角色名：${args[1]}")
+    public Object editUserDo(@Param("uids") String uids, @Param("name") String name, @Param("id") String roleId, HttpServletRequest req) {
+        try {
+            roleService.saveUser(uids, roleId);
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
+    }
+
+    @At("/delete/?")
+    @Ok("json")
+    @RequiresPermissions("sys:role")
+    @SLog(tag = "删除角色", msg = "角色名：${args[1].getAttribute('name')}")
+    public Object delete(String roleId, HttpServletRequest req) {
+        try {
+            Sys_role user = roleService.fetch(roleId);
+            if ("superadmin".equals(user.getCode())) {
+                return Message.error("system.not.allow", req);
+            }
+            roleService.deleteById(roleId);
+            req.setAttribute("name", user.getName());
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
+    }
+
+    @At("/enable/?")
+    @Ok("json")
+    @RequiresPermissions("sys:role")
+    @SLog(tag = "启用角色", msg = "角色ID：${args[0]}")
+    public Object enable(String roleId, HttpServletRequest req) {
+        try {
+            roleService.update(org.nutz.dao.Chain.make("is_enabled", true), Cnd.where("id", "=", roleId));
+            return Message.success("system.success", req);
+        } catch (Exception e) {
+            return Message.error("system.error", req);
+        }
+    }
+
+    @At("/disable/?")
+    @Ok("json")
+    @RequiresPermissions("sys:role")
+    @SLog(tag = "禁用角色", msg = "角色ID：${args[0]}")
+    public Object disable(String roleId, HttpServletRequest req) {
+        try {
+            if ("superadmin".equals(roleService.fetch(roleId).getCode())) {
+                return Message.error("system.not.allow", req);
+            }
+            roleService.update(org.nutz.dao.Chain.make("is_enabled", false), Cnd.where("id", "=", roleId));
             return Message.success("system.success", req);
         } catch (Exception e) {
             return Message.error("system.error", req);

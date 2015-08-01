@@ -138,12 +138,12 @@
         dialog.find("#ok").bind("click", function(event){
             var btn = $(this);
             btn.button("loading");
-            $.post("$!basePath/role/delete/"+id,{},function(data){
-                if(data.success == true){
+            $.post("${base}/private/sys/role/delete/"+id,{},function(data){
+                if(data.type == "success"){
                     Toast.success("角色删除成功!");
                     $("#"+id).remove();
                 }else{
-                    Toast.error(data.error);
+                    Toast.error(data.content);
                 }
                 //重置按钮状态，关闭提示框
                 btn.button("reset");
@@ -152,22 +152,22 @@
         });
     }
     function enableRole(id){
-        $.post("$!basePath/role/enable/"+id,{}, function(data){
-            if(data.success == true){
+        $.post("${base}/private/sys/role/enable/"+id,{}, function(data){
+            if(data.type == "success"){
                 $("#td_status_"+id).find("i").attr("class", "fa fa-circle text-success ml5");
             }else{
-                Toast.error(data.error);
+                Toast.error(data.content);
             }
         },"json");
     }
     function disableRole(id){
-        $.post("$!basePath/role/disable/"+id,{}, function(data){
-            if(data.success == true){
+        $.post("${base}/private/sys/role/disable/"+id,{}, function(data){
+            if(data.type == "success"){
                 $("#td_status_"+id).find("i").attr("class", "fa fa-circle text-danger ml5");
             }else{
-                Toast.error(data.error);
+                Toast.error(data.content);
             }
-        });
+        },"json");
     }
     $(function(){
         initTreeView();
