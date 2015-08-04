@@ -3,6 +3,7 @@ package cn.wizzer.modules.sys;
 import cn.wizzer.common.Message;
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.mvc.filter.PrivateFilter;
+import cn.wizzer.common.util.StringUtils;
 import cn.wizzer.modules.sys.bean.Sys_menu;
 import cn.wizzer.modules.sys.service.MenuService;
 import cn.wizzer.modules.sys.service.UnitService;
@@ -133,7 +134,7 @@ public class MenuAction {
     public Object delete(String id, HttpServletRequest req) {
         Sys_menu menu = menuService.fetch(id);
         req.setAttribute("name", menu.getName());
-        if ("0001".equals(menu.getPath())) {
+        if (Strings.sNull(menu.getPath()).startsWith("0001")) {
             return Message.error("system.not.allow", req);
         }
         try {
