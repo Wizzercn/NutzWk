@@ -8,9 +8,9 @@
 
         <section class="main-content">
             <header class="header navbar bg-white shadow">
-                #if(${shiro.hasPermission('sys:unit')})
+                #if(${shiro.hasPermission('sys:menu')})
                 <div class="btn-group tool-button">
-                    <a class="btn btn-primary navbar-btn" href="${base}/private/sys/unit/add"><i class="ti-plus"></i>${msg['sys.unit.add']}</a>
+                    <a class="btn btn-primary navbar-btn" href="${base}/private/sys/menu/add"><i class="ti-plus"></i>${msg['sys.menu.add']}</a>
                 </div>
                 #end
             </header>
@@ -21,10 +21,14 @@
                             <table id="unitTreeTable" class="table no-m">
                                 <thead>
                                 <tr>
-                                    <th class="col-md-3 pd-l-lg">
+                                    <th class="col-md-2 pd-l-lg">
                                         <span class="pd-l-sm ml20"></span>机构名称</th>
-                                    <th class="col-md-5">地址</th>
-                                    <th class="col-md-2">操作</th>
+                                    <th class="col-md-2">地址</th>
+                                    <th class="col-md-2">权限标识</th>
+                                    <th class="col-md-2">按钮权限</th>
+                                    <th class="col-md-1">状态</th>
+                                    <th class="col-md-1">显示</th>
+                                    <th class="col-md-1">操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -32,7 +36,11 @@
                                 <tr data-tt-id="$!o.id" #if($o.parentId)data-tt-parent-id="$!o.parentId"#else data-tt-parent-id="-1"#end data-tt-branch="$!o.hasChildren">
                                     <td>
                                         <span class="pd-l-sm"></span>$!o.name #if($o.path=="0001")(系统)#end</td>
-                                    <td>$!o.address</td>
+                                    <td>$!o.href</td>
+                                    <td>$!o.permission</td>
+                                    <td>$!o.buttons</td>
+                                    <td>$!o.is_enable</td>
+                                    <td>$!o.is_show</td>
                                     <td>
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -40,11 +48,11 @@
                                                 <span class="ti-angle-down"></span>
                                             </button>
                                             <ul class="dropdown-menu" role="menu">
-                                                <li><a href="${base}/private/sys/unit/detail/${o.id}" data-toggle="modal" data-target="#dialogUnitDetail">查看</a></li>
-                                                <li><a href="${base}/private/sys/unit/edit/${o.id}">修改</a></li>
+                                                <li><a href="${base}/private/sys/menu/detail/${o.id}" data-toggle="modal" data-target="#dialogUnitDetail">查看</a></li>
+                                                <li><a href="${base}/private/sys/menu/edit/${o.id}">修改</a></li>
                                                 <li><a href="javascript:;" onclick="del('${o.id}')">删除</a></li>
                                                 <li class="divider"></li>
-                                                <li><a href="${base}/private/sys/unit/add?pid=${o.id}">添加子机构</a></li>
+                                                <li><a href="${base}/private/sys/menu/add?pid=${o.id}">添加子机构</a></li>
 
                                             </ul>
                                         </div>
@@ -69,19 +77,19 @@
         </div>
     </div>
 </div>
-<!-- 删除机构 -->
+<!-- 删除菜单 -->
 <div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">删除机构</h4>
+                <h4 class="modal-title">删除菜单</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-xs-12">
-                        机构删除后无法恢复，并且用户也将失去此机构的关系; <br/>
-                        如果选中的是父级机构，那么父级机构下面的所有子机构也全部会删除，请谨慎操作！
+                        菜单删除后无法恢复，并且用户也将失去此菜单的关系; <br/>
+                        如果选中的是父级菜单，那么父级机构下面的所有子菜单也全部会删除，请谨慎操作！
                         <br/>确定要删除吗？
                     </div>
                 </div>
@@ -118,7 +126,7 @@
                 var node = this;
                 var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\""+node.id+"\" data-tt-branch=\"false\"><td colspan='4'><img src=\"${base}/include/img/loading.gif\"/>loading</td></tr>";
                 unitTreeTable.treetable("loadBranch", node, rows);
-                $.post("${base}/private/sys/unit/child/"+node.id,{}, function(data){
+                $.post("${base}/private/sys/menu/child/"+node.id,{}, function(data){
                     unitTreeTable.treetable("unloadBranch", node);
                     unitTreeTable.treetable("loadBranch", node, data);
                 });
@@ -132,7 +140,7 @@
         dialog.find("#ok").bind("click", function(event){
             var btn = $(this);
             btn.button("loading");
-            $.post("${base}/private/sys/unit/delete/"+id,{},function(data){
+            $.post("${base}/private/sys/menu/delete/"+id,{},function(data){
                 if(data.type == "success"){
                     Toast.success(data.content);
                     //从表格中移除此行
