@@ -3,31 +3,28 @@
         <div class="col-xs-12">
             <section class="panel panel-primary no-b">
                 <header class="panel-heading clearfix brtl brtr">
-                    #if($!parentUnit)
-                    <div class="pull-right">隶属于：$!parentUnit</div>
+                    #if($!parentMenu)
+                    <div class="pull-right">隶属于：$!parentMenu</div>
                     #end
                     <div class="overflow-hidden">
                         <a href="javascript:;" class="h4 show no-m pt5">$!obj.name</a>
-                        <small>$!obj.address</small>
+                        <small>$!obj.aliasName</small>
                     </div>
                 </header>
                 <div class="list-group">
-                    <a href="javascript:;" class="list-group-item" title="机构编码">
-                        <i class="ti-tag mr10 text-muted"></i>$!obj.unitcode
+                    <a href="javascript:;" class="list-group-item" title="URL">
+                        <i class="ti-link mr10 text-muted"></i>$!obj.href
                     </a>
-                    <a href="javascript:;" class="list-group-item" title="机构介绍">
-                        <i class="ti-comment mr10 text-muted"></i>$!obj.description
+                    <a href="javascript:;" class="list-group-item" title="权限标识">
+                        <i class="ti-na mr10 text-muted"></i>$!obj.permission
                     </a>
-                    <a href="javascript:;" class="list-group-item" title="联系方式">
-                        <i class="ti-mobile mr10 text-muted"></i>$!obj.telephone
+                    <a href="javascript:;" class="list-group-item" title="是否启用">
+                        <i class="ti-heart mr10 text-muted"></i>#if($!obj.is_enabled)<i class="fa fa-circle text-danger ml5">#else<i class="fa fa-circle text-success ml5">#end</i>
                     </a>
-                    <a href="javascript:;" class="list-group-item" title="电子邮件">
-                        <i class="ti-email mr10 text-muted"></i>$!obj.email
+                    <a href="javascript:;" class="list-group-item" title="是否显示">
+                        <i class="ti-desktop mr10 text-muted"></i>#if($!obj.is_show)<i class="fa fa-circle text-danger ml5">#else<i class="fa fa-circle text-success ml5">#end</i>
                     </a>
-                    <a href="javascript:;" class="list-group-item" title="网址">
-                        <i class="ti-world mr10 text-muted"></i>$!obj.website
-                    </a>
-                    <a href="javascript:;" class="list-group-item" title="录入时间">
+                    <a href="javascript:;" class="list-group-item" title="创建时间">
                         <i class="ti-time mr10 text-muted"></i>$!date.formatDateTime($obj.createTime)
                     </a>
                 </div>
