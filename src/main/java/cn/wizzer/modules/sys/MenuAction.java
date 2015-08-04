@@ -33,6 +33,7 @@ public class MenuAction {
     @At("")
     @Ok("vm:template.private.sys.menu.index")
     @RequiresPermissions("sys:menu")
+    @SLog(tag = "菜单列表", msg = "访问菜单列表")
     public Object index() {
         return menuService.query(Cnd.where("parentId", "=", "").asc("location").asc("path"), null);
     }
