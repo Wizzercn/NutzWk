@@ -9,13 +9,13 @@
         <section class="main-content">
             <header class="header navbar bg-white shadow">
                 <div class="btn-group tool-button">
-                    <a class="btn btn-primary navbar-btn" href="${base}/private/sys/unit"><i class="ti-angle-left"></i> 返回</a>
+                    <a class="btn btn-primary navbar-btn" href="${base}/private/sys/menu"><i class="ti-angle-left"></i> 返回</a>
                 </div>
             </header>
 
             <div class="content-wrap">
                 <div class="wrapper" style="min-height:500px;">
-                    #if(${shiro.hasPermission('sys:unit')})
+                    #if(${shiro.hasPermission('sys:menu')})
 
                     <section class="panel">
                         <form id="unitAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate action="${base}/private/sys/unit/add/do" method="post">
@@ -28,55 +28,53 @@
                                                 <input id="parentId" type="text" class="form-control" placeholder="不选择默认为顶级菜单" disabled value="$!parentMenu.name"/>
 
 			                             		<span class="input-group-btn">
-			                             			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dialogSelectParentUnit"><i class="ti-plus"></i> 选择</button>
+			                             			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dialogSelectParentMenu"><i class="ti-plus"></i> 选择</button>
 			                             		</span>
                                             </div>
                                             <input type="hidden" name="parentId" value="$!parentMenu.id">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="name" class="col-sm-2 control-label">名称</label>
+                                        <label for="name" class="col-sm-2 control-label">菜单名称</label>
                                         <div class="col-sm-8">
                                             <input type="text" id="name" class="form-control" name="name" data-parsley-required="true" placeholder="菜单名称">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="address" class="col-sm-2 control-label">地址</label>
+                                        <label for="aliasName" class="col-sm-2 control-label">菜单名称</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="address" name="address" class="form-control" placeholder="机构所在地址">
-                                            <p class="help-block no-m">例如：安徽省合肥市蜀山区合作化南路922号</p>
+                                            <input type="text" id="aliasName" class="form-control" name="aliasName" data-parsley-required="true" placeholder="菜单别名">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="unitcode" class="col-sm-2 control-label">机构编码</label>
+                                        <label for="href" class="col-sm-2 control-label">URL</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="unitcode" class="form-control" name="unitcode" placeholder="机构编码">
+                                            <input type="text" id="href" class="form-control" name="href" placeholder="URL">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="description" class="col-sm-2 control-label">机构简介</label>
+                                        <label for="permission" class="col-sm-2 control-label">权限标识</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="description" class="form-control" name="description" placeholder="机构简介">
+                                            <input type="text" id="permission" class="form-control" name="permission" placeholder="权限标识">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="telephone" class="col-sm-2 control-label">联系方式</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" id="telephone" name="telephone" class="form-control" placeholder="固定电话、手机号码等">
+                                        <label for="is_enabled" class="col-sm-2 control-label">是否启用</label>
+                                        <div class="col-sm-8 switcha">
+                                            <div class="mr15">
+                                                <input type="checkbox" id="is_enabled" name="is_enabled" class="js-switch-blue" checked>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="email" class="col-sm-2 control-label">电子邮件</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" id="email" name="email" class="form-control" placeholder="格式：xxx@xxx.xx" data-parsley-type="email" data-parsley-trigger="change">
+                                        <label for="is_show" class="col-sm-2 control-label">是否显示</label>
+                                        <div class="col-sm-8 switcha">
+                                            <div class="mr15">
+                                                <input type="checkbox" id="is_show" name="is_show" class="js-switch-green" checked>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="website" class="col-sm-2 control-label">网站地址</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" id="website" name="website" class="form-control" placeholder="http://">
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
                             <div class="col-lg-3"></div>
@@ -97,13 +95,13 @@
         </section>
 
     </section>
-<!-- 选择上级机构 -->
-<div id="dialogSelectParentUnit" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- 选择上级菜单 -->
+<div id="dialogSelectParentMenu" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">选择上级机构</h4>
+                <h4 class="modal-title">选择上级菜单</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -114,7 +112,7 @@
             </div>
             <div class="modal-footer">
                 <div class="pull-left">
-                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="selectFirstMenu()">设为顶级机构</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="selectFirstMenu()">设为顶级菜单</button>
                 </div>
                 <button type="button" class="btn btn-default" data-dismiss="modal">取  消</button>
                 <button type="button" class="btn btn-primary" onclick="selectParentMenu()">确认选择</button>
@@ -126,6 +124,8 @@
 <script src="${base}/include/js/toast.js"></script>
 <script src="${base}/include/js/tree.js"></script>
 <script src="${base}/include/js/form.js"></script>
+<script src="${base}/include/plugins/switchery/switchery.js"></script>
+
 <script src="${base}/include/plugins/parsley.min.js"></script>
 #if(!$app_language||$app_language=="zh_CN")
 <script src="${base}/include/plugins/parsley.zh_cn.js"></script>
@@ -138,7 +138,7 @@
                 data : {
                     dataType:"json",
                     url : function(node){
-                        return node.id === "#" ? "${base}/private/sys/unit/tree" : "${base}/private/sys/unit/tree?pid="+node.id
+                        return node.id === "#" ? "${base}/private/sys/menu/tree" : "${base}/private/sys/menu/tree?pid="+node.id
                     }
                 },
                 multiple : false
@@ -153,12 +153,12 @@
         var node = tree.get_selected(true);
         $("#unitAddForm #parentId").val(node[0].text);
         $("#unitAddForm input[name='parentId']").val(node[0].id);
-        $("#dialogSelectParentUnit").modal("hide");
+        $("#dialogSelectParentMenu").modal("hide");
     }
     function selectFirstMenu(){
         $("#unitAddForm #parentId").val("顶级机构");
         $("#unitAddForm input[name='parentId']").val("");
-        $("#dialogSelectParentUnit").modal("hide");
+        $("#dialogSelectParentMenu").modal("hide");
     }
     $(document).ready(function () {
         initTreeView();

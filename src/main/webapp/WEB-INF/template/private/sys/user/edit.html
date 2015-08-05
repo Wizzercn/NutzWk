@@ -114,7 +114,7 @@
                                     <label for="locked" class="col-sm-2 control-label">是否禁用</label>
                                     <div class="col-sm-8 switcha">
                                         <div class="mr15">
-                                            <input type="checkbox" id="locked" name="u.locked" #if($!obj.locked)checked="checked"#end class="js-switch-blue" >
+                                            <input type="checkbox" id="locked" name="u.locked" #if($!obj.locked)checked="checked"#end class="js-switch-red" >
                                         </div>
                                     </div>
                                 </div>
@@ -168,6 +168,8 @@
 <script src="${base}/include/js/tree.js"></script>
 <script src="${base}/include/plugins/jquery.form.js"></script>
 <script src="${base}/include/plugins/parsley.min.js"></script>
+<script src="${base}/include/js/form.js"></script>
+<script src="${base}/include/plugins/switchery/switchery.js"></script>
 #if(!$app_language||$app_language=="zh_CN")
 <script src="${base}/include/plugins/parsley.zh_cn.js"></script>
 #end
