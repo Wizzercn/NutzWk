@@ -41,21 +41,49 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="aliasName" class="col-sm-2 control-label">菜单名称</label>
+                                        <label for="aliasName" class="col-sm-2 control-label">英文名称</label>
                                         <div class="col-sm-8">
-                                            <input type="text" id="aliasName" class="form-control" name="aliasName" data-parsley-required="true" placeholder="菜单别名">
+                                            <input type="text" id="aliasName" class="form-control" name="aliasName" data-parsley-required="true" placeholder="英文名称">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description" class="col-sm-2 control-label">菜单介绍</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="description" class="form-control" name="description" placeholder="菜单介绍">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="href" class="col-sm-2 control-label">URL</label>
                                         <div class="col-sm-8">
                                             <input type="text" id="href" class="form-control" name="href" placeholder="URL">
+                                            <p class="help-block no-m">例如：/private/sys/user</p>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="permission" class="col-sm-2 control-label">权限标识</label>
                                         <div class="col-sm-8">
                                             <input type="text" id="permission" class="form-control" name="permission" placeholder="权限标识">
+                                            <p class="help-block no-m">例如：sys:user</p>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="icon" class="col-sm-2 control-label">图标</label>
+                                        <div class="col-sm-8">
+                                            <input id="icon" type="text" name="icon" class="form-control" placeholder="图标样式">
+                                            <p class="help-block no-m">效果预览：<i id="iconPreview" class="ti-plus"></i></p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="btns" class="col-sm-2 control-label">按钮权限</label>
+                                        <div class="col-sm-8">
+                                            <input id="btns" type="hidden" name="btns" >
+                                            <span class="input-group mb15">
+			                             			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dialogBtn"><i class="ti-plus"></i> 添加</button>
+			                             	</span>
+                                            <div id="btn">
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -120,6 +148,37 @@
         </div>
     </div>
 </div>
+<!-- 添加按钮 -->
+<div id="dialogBtn" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">添加按钮</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12 mb15">
+                        <label for="btnName" class="col-sm-2 control-label" style="padding-top: 7px;">按钮名称</label>
+                        <div class="">
+                            <input type="text" id="btnName" class="form-control" name="btnName" data-parsley-required="true" placeholder="按钮名称">
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb15">
+                        <label for="btnPerm" class="col-sm-2 control-label" style="padding-top: 7px;">按钮权限</label>
+                        <div class="">
+                            <input type="text" id="btnPerm" class="form-control" name="btnPerm" data-parsley-required="true" placeholder="如：sys:user:add">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取  消</button>
+                <button type="button" class="btn btn-primary" onclick="selectBtn()">确  认</button>
+            </div>
+        </div>
+    </div>
+</div>
 #sys_buttom
 <script src="${base}/include/js/toast.js"></script>
 <script src="${base}/include/js/tree.js"></script>
@@ -160,6 +219,17 @@
         $("#unitAddForm input[name='parentId']").val("");
         $("#dialogSelectParentMenu").modal("hide");
     }
+    function selectBtn(){
+        if($("#btnName").val()==""){
+            $("#btnName").focus();
+            return;
+        }
+        if($("#btnPerm").val()==""){
+            $("#btnPerm").focus();
+            return;
+        }
+        $("#btn").append("<span class=\"label label-default\">相关菜单[sys:user:del]<a href='#' title='sys:user:del'><i class=\"ti-close\"></i></a></span> ");
+    }
     $(document).ready(function () {
         initTreeView();
         $('#unitAddForm').ajaxForm({
@@ -180,6 +250,10 @@
                 }
                 form.find("button:submit").button("reset");
             }
+        });
+        //图标样式 实时预览
+        $("#icon").on("keyup", function(){
+            $("#iconPreview").attr("class", $(this).val());
         });
     });
 </script>
