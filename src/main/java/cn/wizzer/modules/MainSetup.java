@@ -1,6 +1,7 @@
 package cn.wizzer.modules;
 
 import cn.wizzer.common.mvc.config.Dict;
+import cn.wizzer.common.service.RedisService;
 import cn.wizzer.common.util.CacheUtils;
 import cn.wizzer.modules.sys.bean.*;
 import cn.wizzer.common.mvc.config.Globals;
@@ -26,6 +27,8 @@ import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.io.IOException;
 import java.util.*;
@@ -41,16 +44,29 @@ public class MainSetup implements Setup {
         try {
             Ioc ioc = config.getIoc();
             Dao dao = ioc.get(Dao.class);
-            //初始化数据表
+            // 初始化数据表
             initSysData(config, dao);
-            //初始化Velocity
+            // 初始化Velocity
             velocityInit(config);
             // 获取NutQuartzCronJobFactory从而触发计划任务的初始化与启动
             ioc.get(NutQuartzCronJobFactory.class);
             // 检查一下Ehcache CacheManager 是否正常.
             CacheManager cacheManager = ioc.get(CacheManager.class);
             log.debug("Ehcache CacheManager = " + cacheManager);
-            //初始化系统变量
+            /* redis测试
+            JedisPool jedisPool = ioc.get(JedisPool.class);
+            try (Jedis jedis = jedisPool.getResource()) {
+                String re = jedis.set("_big_fish", "Hello Word!!");
+                log.debug("1.redis say : " + re);
+                re = jedis.get("_big_fish");
+                log.debug("2.redis say : " + re);
+            } finally {}
+
+            RedisService redis = ioc.get(RedisService.class);
+            redis.set("hi", "wendal,rekoe hoho..");
+            log.debug("redis say again : " + redis.get("hi"));
+            */
+            // 初始化系统变量
             initSysSetting(config, dao);
         } catch (Exception e) {
             e.printStackTrace();
