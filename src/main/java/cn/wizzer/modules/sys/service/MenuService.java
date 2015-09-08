@@ -50,7 +50,7 @@ public class MenuService extends BaseService<Sys_menu> {
      * @param pid
      */
     @Aop(TransAop.READ_COMMITTED)
-    public void save(Sys_menu menu, String pid) {
+    public void save(Sys_menu menu, String pid,String btns) {
         String path = "";
         if (!Strings.isEmpty(pid)) {
             Sys_menu pp = this.fetch(pid);
@@ -58,7 +58,23 @@ public class MenuService extends BaseService<Sys_menu> {
         }
         menu.setPath(getSubPath("sys_menu", "path", path));
         menu.setParentId(pid);
-        dao().insert(menu);
+        Sys_menu thisMenu=dao().insert(menu);
+        System.out.println("btns::::"+btns);
+        if(thisMenu!=null&&!Strings.isEmpty(btns)){
+            String[] strs= org.apache.commons.lang3.StringUtils.split(btns,',');
+            for(String s:strs){
+                Sys_menu btnMenu=new Sys_menu();
+                String[] btn= org.apache.commons.lang3.StringUtils.split(s,'|');
+                btnMenu.setParentId(thisMenu.getId());
+                btnMenu.setName(btn[0]);
+                btnMenu.setAliasName(btn[0]);
+                btnMenu.setIs_enabled(true);
+                btnMenu.setIs_show(false);
+                btnMenu.setHasChildren(false);
+                btnMenu.setPermission(btn[1]);
+                dao().insert(btnMenu);
+            }
+        }
         if (!Strings.isEmpty(pid)) {
             dao().execute(Sqls.create("update sys_menu set has_children=true where id=@pid").setParam("pid", pid));
         }

@@ -51,13 +51,13 @@ public class MenuAction {
     @Ok("json")
     @RequiresPermissions("sys:menu")
     @SLog(tag = "新建菜单", msg = "菜单名称：${args[0].name}")
-    public Object addDo(@Param("..") Sys_menu menu, @Param("parentId") String parentId, HttpServletRequest req) {
+    public Object addDo(@Param("..") Sys_menu menu,@Param("btns")String btns, @Param("parentId") String parentId, HttpServletRequest req) {
         int sum = menuService.count(Cnd.where("parentId", "=", parentId).and("name", "=", menu.getName()));
         if (sum > 0) {
             return Message.error("菜单名称已存在！", req);
         }
         try {
-            menuService.save(menu, parentId);
+            menuService.save(menu, parentId,btns);
             return Message.success("system.success", req);
         } catch (Exception e) {
             return Message.error("system.error", req);
