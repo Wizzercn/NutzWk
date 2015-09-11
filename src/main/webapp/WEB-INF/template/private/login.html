@@ -162,7 +162,7 @@
                 }else if(data.type == "iperror"){
                     $("#verifycode").val("");
                     $("#dialogVeryCode img").attr("src", '${base}/captcha/next?_=' + new Date().getTime());
-                    return $("#dialogVeryCode").modal("show");
+                    return $("#dialogVeryCode").modal({show: true,backdrop: 'static', keyboard: false});
                 }else{
                     $("#captcha").val("");
                     $('#captcha_img').attr('src', '${base}/captcha/next?_=' + new Date().getTime());
@@ -180,6 +180,12 @@
             }
             $("#captcha").val($("#verifycode").val());
             $("#loginForm").submit();
+        });
+        $("#dialogVeryCode").on("keypress",function (event) {
+            var key = event.which;
+            if (key == 13) {
+                $("#ok").trigger("click");
+            }
         });
         $("#username").focus();
     });
