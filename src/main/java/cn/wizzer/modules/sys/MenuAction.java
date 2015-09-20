@@ -51,13 +51,13 @@ public class MenuAction {
     @Ok("json")
     @RequiresPermissions("sys:menu")
     @SLog(tag = "新建菜单", msg = "菜单名称：${args[0].name}")
-    public Object addDo(@Param("..") Sys_menu menu,@Param("btns")String btns, @Param("parentId") String parentId, HttpServletRequest req) {
+    public Object addDo(@Param("..") Sys_menu menu, @Param("btns") String btns, @Param("parentId") String parentId, HttpServletRequest req) {
         int sum = menuService.count(Cnd.where("parentId", "=", parentId).and("name", "=", menu.getName()));
         if (sum > 0) {
             return Message.error("菜单名称已存在！", req);
         }
         try {
-            menuService.save(menu, parentId,btns);
+            menuService.save(menu, parentId, btns);
             return Message.success("system.success", req);
         } catch (Exception e) {
             return Message.error("system.error", req);
@@ -67,7 +67,7 @@ public class MenuAction {
     @At("/edit/?")
     @Ok("vm:template.private.sys.menu.edit")
     @RequiresPermissions("sys:menu")
-    public Object edit(String id, HttpServletRequest req) {
+    public Sys_menu edit(String id, HttpServletRequest req) {
         Sys_menu menu = menuService.fetch(id);
         if (menu != null && !Strings.isEmpty(menu.getParentId())) {
             req.setAttribute("parentMenu", menuService.fetch(menu.getParentId()));
@@ -100,7 +100,7 @@ public class MenuAction {
     @At("/detail/?")
     @Ok("vm:template.private.sys.menu.detail")
     @RequiresPermissions("sys:menu")
-    public Object detail(String id, HttpServletRequest req) {
+    public Sys_menu detail(String id, HttpServletRequest req) {
         Sys_menu menu = menuService.fetch(id);
         if (menu != null && !Strings.isEmpty(menu.getParentId())) {
             req.setAttribute("parentMenu", menuService.getField("name", menu.getParentId()).getName());
@@ -111,7 +111,7 @@ public class MenuAction {
     @At("/child/?")
     @Ok("vm:template.private.sys.menu.child")
     @RequiresPermissions("sys:menu")
-    public Object child(String id, HttpServletRequest req) {
+    public List<Sys_menu> child(String id, HttpServletRequest req) {
         return menuService.query(Cnd.where("parentId", "=", id), null);
     }
 

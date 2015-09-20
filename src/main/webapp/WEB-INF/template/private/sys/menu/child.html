@@ -1,3 +1,4 @@
+
 #foreach($o in $obj)
 <tr data-tt-id="$!o.id" #if($o.parentId)data-tt-parent-id="$!o.parentId"#else data-tt-parent-id="-1"#end data-tt-branch="$!o.hasChildren">
     <td>
@@ -5,7 +6,7 @@
     <td>$!o.href</td>
     <td>$!o.permission</td>
     <td>$!o.buttons</td>
-    <td>$!o.is_enable</td>
+    <td>$!o.is_enabled</td>
     <td>$!o.is_show</td>
     <td>
         <div class="btn-group">
@@ -18,7 +19,7 @@
                 <li><a href="${base}/private/sys/menu/edit/${o.id}">修改</a></li>
                 <li><a href="javascript:;" onclick="del('${o.id}')">删除</a></li>
                 <li class="divider"></li>
-                <li><a href="${base}/private/sys/menu/add?pid=${o.id}">添加子机构</a></li>
+                <li><a href="${base}/private/sys/menu/add?pid=${o.id}">添加子菜单</a></li>
 
             </ul>
         </div>

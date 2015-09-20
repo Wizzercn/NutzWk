@@ -50,10 +50,10 @@ public class Sys_menu extends BasePojo implements Serializable {
     @Comment("菜单图标")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String icon;
-    @Column
+    @Column("is_show")
     @Comment("是否显示")
     private boolean is_show;
-    @Column
+    @Column("is_enabled")
     @Comment("是否启用")
     private boolean is_enabled;
     @Column

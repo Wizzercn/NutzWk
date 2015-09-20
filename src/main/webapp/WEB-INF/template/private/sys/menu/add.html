@@ -238,7 +238,7 @@
     }
     function setBtnValue(){
         var bts=[];
-        form.find(".mybtn").each(function(){
+        $(".mybtn").each(function(){
             bts.push($(this).text().replace('[','|').replace(']',''));
         });
         $("#btns").val(bts);
@@ -261,6 +261,8 @@
                     $.jstree.reference("#jsTreeParentUnit").refresh();
                     var parentName = $("#unitAddForm #parentId").val();
                     form.resetForm();
+                    $("#btns").val("");
+                    $("#btn").html("");
                     $("#unitAddForm #parentId").val(parentName);
                 }else{
                     Toast.error(data.content);

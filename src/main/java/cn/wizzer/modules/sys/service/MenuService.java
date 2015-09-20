@@ -58,6 +58,7 @@ public class MenuService extends BaseService<Sys_menu> {
         }
         menu.setPath(getSubPath("sys_menu", "path", path));
         menu.setParentId(pid);
+        menu.setHasChildren(false);
         Sys_menu thisMenu=dao().insert(menu);
         System.out.println("btns::::"+btns);
         if(thisMenu!=null&&!Strings.isEmpty(btns)){
@@ -72,6 +73,8 @@ public class MenuService extends BaseService<Sys_menu> {
                 btnMenu.setIs_show(false);
                 btnMenu.setHasChildren(false);
                 btnMenu.setPermission(btn[1]);
+                btnMenu.setPath(getSubPath("sys_menu", "path", thisMenu.getPath()));
+                btnMenu.setType("button");
                 dao().insert(btnMenu);
             }
         }
