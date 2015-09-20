@@ -49,13 +49,11 @@
             <groupId>org.nutz</groupId>
             <artifactId>nutz</artifactId>
             <version>1.b.53</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/nutz-1.b.53.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-daocache</artifactId>
-            <version>1.b.52.r1</version>
+            <version>1.b.52.r4</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -85,7 +83,7 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-shiro</artifactId>
-            <version>1.b.52.r2</version>
+            <version>1.b.52.r3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
