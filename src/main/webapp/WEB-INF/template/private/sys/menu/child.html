@@ -6,8 +6,8 @@
     <td>$!o.href</td>
     <td>$!o.permission</td>
     <td>$!o.buttons</td>
-    <td>$!o.is_enabled</td>
-    <td>$!o.is_show</td>
+    <td>#if($!o.enabled)<i class="fa fa-circle text-success ml5">#else <i class="fa fa-circle text-danger ml5">#end</td>
+    <td>#if($!o.show)<i class="fa fa-circle text-success ml5">#else <i class="fa fa-circle text-danger ml5">#end</td>
     <td>
         <div class="btn-group">
             <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">

@@ -4,8 +4,8 @@
     <td><span class="pd-l-sm"></span><a href="${base}/private/sys/user/edit/$!user.id">$!user.username</a></td>
     <td>$!user.nickname</td>
     <td><a href="mailto:$!user.email">$!user.email</a></td>
-    <td id="td_status_$!user.id">#if($!user.is_locked) <i class="fa fa-circle text-danger ml5">#else<i class="fa fa-circle text-success ml5">#end</i></td>
-    <td>#if($!user.is_online)<i class="fa fa-circle text-success ml5">#else <i class="fa fa-circle text-danger ml5">#end</i></td>
+    <td id="td_status_$!user.id">#if($!user.locked) <i class="fa fa-circle text-danger ml5">#else<i class="fa fa-circle text-success ml5">#end</i></td>
+    <td>#if($!user.online)<i class="fa fa-circle text-success ml5">#else <i class="fa fa-circle text-danger ml5">#end</i></td>
     <td>
         <div class="btn-group">
             <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">

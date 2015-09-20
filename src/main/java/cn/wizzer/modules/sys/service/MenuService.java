@@ -69,8 +69,8 @@ public class MenuService extends BaseService<Sys_menu> {
                 btnMenu.setParentId(thisMenu.getId());
                 btnMenu.setName(btn[0]);
                 btnMenu.setAliasName(btn[0]);
-                btnMenu.setIs_enabled(true);
-                btnMenu.setIs_show(false);
+                btnMenu.setEnabled(true);
+                btnMenu.setShow(false);
                 btnMenu.setHasChildren(false);
                 btnMenu.setPermission(btn[1]);
                 btnMenu.setPath(getSubPath("sys_menu", "path", thisMenu.getPath()));

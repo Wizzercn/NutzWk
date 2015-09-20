@@ -22,10 +22,10 @@
                         <i class="ti-comment mr10 text-muted"></i>$!obj.description
                     </a>
                     <a href="javascript:;" class="list-group-item" title="是否启用">
-                        <i class="ti-heart mr10 text-muted"></i>#if($!obj.is_enabled)<i class="fa fa-circle text-danger ml5">#else<i class="fa fa-circle text-success ml5">#end</i>
+                        <i class="ti-heart mr10 text-muted"></i>#if($!obj.enabled)<i class="fa fa-circle text-danger ml5">#else<i class="fa fa-circle text-success ml5">#end</i>
                     </a>
                     <a href="javascript:;" class="list-group-item" title="是否显示">
-                        <i class="ti-desktop mr10 text-muted"></i>#if($!obj.is_show)<i class="fa fa-circle text-danger ml5">#else<i class="fa fa-circle text-success ml5">#end</i>
+                        <i class="ti-desktop mr10 text-muted"></i>#if($!obj.show)<i class="fa fa-circle text-danger ml5">#else<i class="fa fa-circle text-success ml5">#end</i>
                     </a>
                     <a href="javascript:;" class="list-group-item" title="创建时间">
                         <i class="ti-time mr10 text-muted"></i>$!date.formatDateTime($obj.createTime)

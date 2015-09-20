@@ -16,7 +16,7 @@ public class Sys_menu extends BasePojo implements Serializable {
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 64)
-    @Prev(els={@EL("uuid()")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
     @Column
     @Comment("父级ID")
@@ -52,10 +52,10 @@ public class Sys_menu extends BasePojo implements Serializable {
     private String icon;
     @Column("is_show")
     @Comment("是否显示")
-    private boolean is_show;
+    private boolean show;
     @Column("is_enabled")
     @Comment("是否启用")
-    private boolean is_enabled;
+    private boolean enabled;
     @Column
     @Comment("权限标识")
     @ColDefine(type = ColType.VARCHAR, width = 500)
@@ -143,20 +143,20 @@ public class Sys_menu extends BasePojo implements Serializable {
         this.icon = icon;
     }
 
-    public boolean is_show() {
-        return is_show;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setIs_show(boolean is_show) {
-        this.is_show = is_show;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public boolean is_enabled() {
-        return is_enabled;
+    public boolean isShow() {
+        return show;
     }
 
-    public void setIs_enabled(boolean is_enabled) {
-        this.is_enabled = is_enabled;
+    public void setShow(boolean show) {
+        this.show = show;
     }
 
     public String getPermission() {
