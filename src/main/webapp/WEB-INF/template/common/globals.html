@@ -314,7 +314,7 @@
                     <span>${msg['index.home']}</span>
                 </a>
             </li>
-            #set($id=${shiro.getPrincipalProperty('idMenus').get($app_path)})
+            #set($id=$app_path)
             #if(!$id||$id=="") #set($id="wizzer.cn")#end
             #if(!$app_language||$app_language=="zh_CN")
             <!--中文-->

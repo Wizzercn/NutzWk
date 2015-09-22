@@ -50,7 +50,7 @@ public class MenuService extends BaseService<Sys_menu> {
      * @param pid
      */
     @Aop(TransAop.READ_COMMITTED)
-    public void save(Sys_menu menu, String pid,String btns) {
+    public void save(Sys_menu menu, String pid, String btns) {
         String path = "";
         if (!Strings.isEmpty(pid)) {
             Sys_menu pp = this.fetch(pid);
@@ -59,13 +59,13 @@ public class MenuService extends BaseService<Sys_menu> {
         menu.setPath(getSubPath("sys_menu", "path", path));
         menu.setParentId(pid);
         menu.setHasChildren(false);
-        Sys_menu thisMenu=dao().insert(menu);
-        System.out.println("btns::::"+btns);
-        if(thisMenu!=null&&!Strings.isEmpty(btns)){
-            String[] strs= org.apache.commons.lang3.StringUtils.split(btns,',');
-            for(String s:strs){
-                Sys_menu btnMenu=new Sys_menu();
-                String[] btn= org.apache.commons.lang3.StringUtils.split(s,'|');
+        Sys_menu thisMenu = dao().insert(menu);
+        System.out.println("btns::::" + btns);
+        if (thisMenu != null && !Strings.isEmpty(btns)) {
+            String[] strs = org.apache.commons.lang3.StringUtils.split(btns, ',');
+            for (String s : strs) {
+                Sys_menu btnMenu = new Sys_menu();
+                String[] btn = org.apache.commons.lang3.StringUtils.split(s, '|');
                 btnMenu.setParentId(thisMenu.getId());
                 btnMenu.setName(btn[0]);
                 btnMenu.setAliasName(btn[0]);
@@ -131,5 +131,18 @@ public class MenuService extends BaseService<Sys_menu> {
                 updatePath(menu.getId(), menu.getPath());
             }
         }
+    }
+
+    /**
+     * 通过路径获取path
+     *
+     * @param url
+     * @return
+     */
+    public String getPath(String url) {
+        Sys_menu menu = this.fetch(Cnd.where("href", "=", url));
+        if (menu != null)
+            return menu.getPath();
+        return "";
     }
 }

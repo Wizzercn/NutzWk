@@ -2,11 +2,13 @@ package cn.wizzer.common.mvc.filter;
 
 import cn.wizzer.common.util.StringUtils;
 import cn.wizzer.modules.sys.bean.Sys_user;
+import cn.wizzer.modules.sys.service.MenuService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionFilter;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.View;
 import org.nutz.mvc.view.RawView;
 import org.nutz.mvc.view.ServerRedirectView;
@@ -18,7 +20,7 @@ import java.util.Map;
  * Created by Wizzer.cn on 2015/7/10.
  */
 public class PrivateFilter implements ActionFilter {
-
+    private MenuService menuService = Mvcs.ctx().getDefaultIoc().get(MenuService.class);
     public View match(ActionContext context) {
         //忽略AJAX请求
         if (!"XMLHttpRequest".equalsIgnoreCase(context.getRequest().getHeader("x-requested-with"))) {
@@ -26,7 +28,7 @@ public class PrivateFilter implements ActionFilter {
             if (currentUser != null) {
                 Sys_user user = (Sys_user) currentUser.getPrincipal();
                 if (user != null) {
-                    context.getRequest().setAttribute("app_path", getMenu(StringUtils.getPath(context.getPath()), user.getIdMenus()));
+                    context.getRequest().setAttribute("app_path", getMenu(StringUtils.getPath(context.getPath())));
                 }
             } else {
                 return new ServerRedirectView("/private/login");
@@ -36,19 +38,17 @@ public class PrivateFilter implements ActionFilter {
     }
 
     /**
-     * 得到当前路径或上级路径的栏目ID
+     * 得到当前路径或上级路径的菜单path
      *
      * @param path
-     * @param map
      * @return
      */
-    private String getMenu(String path, Map map) {
-        String p = Strings.sNull(map.get(path));
-        if (Strings.isEmpty(p) && path.lastIndexOf("/") > 0) {
-            return getMenu(path.substring(0, path.lastIndexOf("/")), map);
-        } else if (!Strings.isEmpty(p)) {
-            return path;
+    private String getMenu(String path) {
+        String thisPath=path;
+        String[] p=Strings.splitIgnoreBlank(path, "/");
+        if(p.length>3){
+            thisPath="/"+p[0]+"/"+p[1]+"/"+p[2];
         }
-        return "";
+        return menuService.getPath(thisPath);
     }
 }

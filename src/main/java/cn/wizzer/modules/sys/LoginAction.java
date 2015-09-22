@@ -167,7 +167,7 @@ public class LoginAction {
             Sys_user user = (Sys_user) subject.getPrincipal();
             user.setLoginIp(StringUtils.getRemoteAddr());
             //计算左侧菜单
-            List<Sys_menu> firstMenus = getChildMenus("", user.getMenus());
+            List<Sys_menu> firstMenus =new ArrayList<>();
             Map<String, List<Sys_menu>> secondMenus = new HashMap<>();
             for (Sys_menu menu : user.getMenus()) {
                 if (menu.getPath().length() > 4) {
@@ -175,12 +175,13 @@ public class LoginAction {
                     if (s == null) s = new ArrayList<>();
                     s.add(menu);
                     secondMenus.put(getParentId(menu.getPath()), s);
+                }else if (menu.getPath().length()==4) {
+                    firstMenus.add(menu);
                 }
             }
             user.setFirstMenus(firstMenus);
             user.setSecondMenus(secondMenus);
             user.setProfile(userService.getProfile(user.getId()));
-            user.setIdMenus(getIdMenus(user.getMenus()));
             Sys_log log= Sys_log.c("info","用户登陆",user.getId(),user.getUsername(),"用户："+user.getUsername()+" 成功登陆系统！",null);
             sysLogService.async(log);
             userService.update(Chain.make("login_ip", user.getLoginIp()).add("login_time", new Date())
@@ -200,35 +201,6 @@ public class LoginAction {
         } catch (Exception e) {
             return Message.error("login.error.system", req);
         }
-    }
-
-    /**
-     * 得到一个路径和ID对应的map，用于当前栏目高亮
-     * @param menus
-     * @return
-     */
-    private Map<String,String> getIdMenus( List<Sys_menu> menus){
-        Map<String,String> menuMap=new HashMap<>();
-        for(Sys_menu menu:menus){
-            menuMap.put(StringUtils.getPath(menu.getHref()), menu.getPath());
-        }
-        return menuMap;
-    }
-
-    /**
-     * 获得第一级菜单
-     * @param id
-     * @param menus
-     * @return
-     */
-    private List<Sys_menu> getChildMenus(String id, List<Sys_menu> menus) {
-        List<Sys_menu> menuList = new ArrayList<>();
-        for (Sys_menu menu : menus) {
-            if (id.equals(getParentId(menu.getPath()))) {
-                menuList.add(menu);
-            }
-        }
-        return menuList;
     }
 
     /**
