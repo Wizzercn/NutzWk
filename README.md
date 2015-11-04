@@ -35,3 +35,9 @@ http://121.43.107.94/private/login                 NutzWk 2.0
 
 http://121.43.107.94/wzflow/private/login          NutzWk 1.0 (含Activiti工作流)
 
+============================================
+
+NutzWk 1.0 源码是这个链接： https://github.com/Wizzercn/NutzWk/tree/1.0
+
+NutzWk 1.0 含Activiti工作流的源码在这里： https://github.com/wendal/wzflow
+
