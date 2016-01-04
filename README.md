@@ -5,7 +5,7 @@ NutzWk 2.0 纯净版
 
 
 NutzWk 2.0 新特性：
-*   集成Shrio权限框架
+*   集成Shiro权限框架
 *   集成Ehcache缓存
 *   集成Redis
 *   支持语言国际化
