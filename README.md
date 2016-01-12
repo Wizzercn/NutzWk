@@ -31,9 +31,9 @@ NutzWk 2.0 新特性：
 在线演示地址
 ============================================
 
-http://121.43.107.94/private/login                 NutzWk 2.0
+https://nutzwk.nutz.cn/                 NutzWk 2.0
 
-http://121.43.107.94/wzflow/private/login          NutzWk 1.0 (含Activiti工作流)
+https://wzflow.nutz.cn/          NutzWk 1.0 (含Activiti工作流)
 
 ============================================
 
