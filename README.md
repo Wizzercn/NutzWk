@@ -1,10 +1,14 @@
-NutzWk 2.0 纯净版
+NutzWk 2.1 纯净版
 ======
 
 基于Nutz的开源企业级开发框架
 
+NutzWk 2.1 运行环境：
+*   JDK 8
+*   MAVEN 3.3.39
+*   NUTZ v1.r.57
 
-NutzWk 2.0 新特性：
+NutzWk 2.1 新特性：
 *   集成Shiro权限框架
 *   集成Ehcache缓存
 *   集成Redis
@@ -16,14 +20,14 @@ NutzWk 2.0 新特性：
 *   集成Email服务
 *   集成Quartz定时任务
 *   集成Lucene搜索引擎[Coding..]
-*   采用Bootsrtap皮肤(Sublime貌似收费?请不要吝啬那点钱买正版授权)
+*   后台管理界面采用AngularJS+Bootstrap
 
 
 使用说明：
 *   创建空的数据库
 *   修改数据库连接 /resources/config/custom/db.properties
 *   项目使用Maven构建，IDEA/Eclipse直接打开，等待包下载完毕
-*   cn.wizzer.modules.MainSetup 第45行（启动时自动建表）
+*   启动时自动建表
 *   用户名：superadmin  密码：1
 
 
