@@ -16,11 +16,11 @@ NutzWk 2.1 新特性：
 *   支持注解式事务
 *   支持动作链
 *   支持注解式日志系统
-*   支持插件式加载[Coding..]
+*   支持插件式加载
 *   集成Email服务
 *   集成Quartz定时任务
-*   集成Lucene搜索引擎[Coding..]
-*   后台管理界面采用AngularJS+Bootstrap
+*   集成Lucene搜索引擎
+*   后台管理界面采用Pjax+Bootstrap
 
 
 使用说明：
