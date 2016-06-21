@@ -1,11 +1,12 @@
-package cn.wizzer.modules;
+package cn.wizzer.nutzwk;
 
 import cn.wizzer.common.mvc.view.VelocityViewMaker;
+import cn.wizzer.nutzwk.MainSetup;
 import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.ioc.provider.ComboIocProvider;
 
 /**
- * Created by Wizzer.cn on 2015/6/26.
+ * Created by wizzer on 2016/6/21.
  */
 @Modules(scanPackage = true)
 @Ok("raw")

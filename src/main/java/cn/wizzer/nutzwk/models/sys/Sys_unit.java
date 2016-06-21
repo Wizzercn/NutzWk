@@ -1,27 +1,27 @@
-package cn.wizzer.modules.sys.bean;
+package cn.wizzer.nutzwk.models.sys;
 
-import cn.wizzer.common.service.core.BasePojo;
+import cn.wizzer.nutzwk.models.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
 
 /**
- * Created by Wizzer.cn on 2015/6/29.
+ * Created by wizzer on 2016/6/21.
  */
 @Table("sys_unit")
 @TableIndexes({@Index(name = "INDEX_SYS_UNIT_PATH", fields = {"path"}, unique = true)})
-public class Sys_unit extends BasePojo implements Serializable {
+public class Sys_unit extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column
     @Name
     @Comment("ID")
-    @ColDefine(type = ColType.VARCHAR, width = 64)
+    @ColDefine(type = ColType.VARCHAR, width = 32)
     @Prev(els={@EL("uuid()")})
     private String id;
     @Column
     @Comment("父级ID")
-    @ColDefine(type = ColType.VARCHAR, width = 64)
+    @ColDefine(type = ColType.VARCHAR, width = 32)
     private String parentId;
     @Column
     @Comment("树路径")
@@ -31,7 +31,7 @@ public class Sys_unit extends BasePojo implements Serializable {
     @Comment("单位名称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String name;
-    @Column("alias_name")
+    @Column
     @Comment("单位别名")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String aliasName;
@@ -42,7 +42,7 @@ public class Sys_unit extends BasePojo implements Serializable {
     @Column
     @Comment("单位介绍")
     @ColDefine(type = ColType.VARCHAR, width = 255)
-    private String description;
+    private String note;
     @Column
     @Comment("单位地址")
     @ColDefine(type = ColType.VARCHAR, width = 100)
@@ -62,7 +62,7 @@ public class Sys_unit extends BasePojo implements Serializable {
     @Column
     @Comment("排序字段")
     private int location;
-    @Column("has_children")
+    @Column
     @Comment("有子节点")
     private boolean hasChildren;
 
@@ -98,6 +98,14 @@ public class Sys_unit extends BasePojo implements Serializable {
         this.name = name;
     }
 
+    public String getAliasName() {
+        return aliasName;
+    }
+
+    public void setAliasName(String aliasName) {
+        this.aliasName = aliasName;
+    }
+
     public String getUnitcode() {
         return unitcode;
     }
@@ -106,12 +114,12 @@ public class Sys_unit extends BasePojo implements Serializable {
         this.unitcode = unitcode;
     }
 
-    public String getDescription() {
-        return description;
+    public String getNote() {
+        return note;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public String getAddress() {
@@ -160,13 +168,5 @@ public class Sys_unit extends BasePojo implements Serializable {
 
     public void setHasChildren(boolean hasChildren) {
         this.hasChildren = hasChildren;
-    }
-
-    public String getAliasName() {
-        return aliasName;
-    }
-
-    public void setAliasName(String aliasName) {
-        this.aliasName = aliasName;
     }
 }

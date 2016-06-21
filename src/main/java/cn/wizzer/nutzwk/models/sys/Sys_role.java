@@ -1,4 +1,4 @@
-package cn.wizzer.modules.sys.bean;
+package cn.wizzer.nutzwk.models.sys;
 
 import cn.wizzer.common.service.core.BasePojo;
 import org.nutz.dao.entity.annotation.*;
@@ -7,15 +7,14 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by Wizzer.cn on 2015/6/27.
+ * Created by wizzer on 2016/6/21.
  */
 @Table("sys_role")
 public class Sys_role extends BasePojo implements Serializable {
     private static final long serialVersionUID = 1L;
-
     @Column
     @Name
-    @ColDefine(type = ColType.VARCHAR, width = 64)
+    @ColDefine(type = ColType.VARCHAR, width = 32)
     @Prev(els={@EL("uuid()")})
     private String id;
     @Column
@@ -24,17 +23,17 @@ public class Sys_role extends BasePojo implements Serializable {
     private String code;
     @Column
     protected String aliasName;
-    @Column("is_enabled")
-    private boolean enabled;
     @Column
-    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private boolean disabled;
+    @Column
+    @ColDefine(type = ColType.VARCHAR, width = 32)
     private String unitid;
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 255)
-    private String description;
-    @Column
-    private long location;
-    @ManyMany(from="role_id", relation="sys_role_menu", target=Sys_menu.class, to="menu_id")
+    private String note;
+    @One(target = Sys_unit.class, field = "unitid")
+    public Sys_unit unit;
+    @ManyMany(from="roleId", relation="sys_role_menu", target=Sys_menu.class, to="menuId")
     protected List<Sys_menu> menus;
 
     public String getId() {
@@ -53,6 +52,14 @@ public class Sys_role extends BasePojo implements Serializable {
         this.name = name;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public String getAliasName() {
         return aliasName;
     }
@@ -61,12 +68,12 @@ public class Sys_role extends BasePojo implements Serializable {
         this.aliasName = aliasName;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isDisabled() {
+        return disabled;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public String getUnitid() {
@@ -77,20 +84,12 @@ public class Sys_role extends BasePojo implements Serializable {
         this.unitid = unitid;
     }
 
-    public String getDescription() {
-        return description;
+    public String getNote() {
+        return note;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public long getLocation() {
-        return location;
-    }
-
-    public void setLocation(long location) {
-        this.location = location;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public List<Sys_menu> getMenus() {
@@ -99,13 +98,5 @@ public class Sys_role extends BasePojo implements Serializable {
 
     public void setMenus(List<Sys_menu> menus) {
         this.menus = menus;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 }

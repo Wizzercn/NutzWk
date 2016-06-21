@@ -1,7 +1,5 @@
 package cn.wizzer.common.util;
 
-import cn.wizzer.modules.sys.bean.Sys_user;
-import org.apache.shiro.SecurityUtils;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.Mvcs;
@@ -14,51 +12,6 @@ import java.util.Random;
  */
 @IocBean
 public class StringUtils {
-    /**
-     * 获取当前登陆用户ID
-     *
-     * @return
-     */
-    public static String getUid() {
-        String uid = "";
-        try {
-            Object u = SecurityUtils.getSubject().getPrincipal();
-            if (u != null) {
-                if (u instanceof Sys_user) {
-                    uid = ((Sys_user) u).getId();
-                } else if (u instanceof String) {
-                    uid = ((String) u);
-                }
-            }
-        } catch (Exception e) {
-            return "";
-        }
-        return uid;
-    }
-
-    /**
-     * 获取当前登陆用户Username
-     *
-     * @return
-     */
-    public static String getUsername() {
-        String uid = "";
-        try {
-            Object u = SecurityUtils.getSubject().getPrincipal();
-            if (u != null) {
-                if (u instanceof Sys_user) {
-                    uid = ((Sys_user) u).getUsername();
-                } else if (u instanceof String) {
-                    uid = ((String) u);
-                }
-            }
-        } catch (Exception e) {
-
-            return "";
-        }
-        return uid;
-    }
-
     /**
      * 获得用户远程地址
      */
@@ -102,7 +55,7 @@ public class StringUtils {
     }
 
     /**
-     * 得到六位随机数
+     * 得到n位随机数
      *
      * @param s
      * @return

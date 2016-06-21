@@ -1,8 +1,8 @@
 package cn.wizzer.modules.sys.service;
 
 import cn.wizzer.common.service.core.BaseService;
-import cn.wizzer.modules.sys.bean.Sys_role;
-import cn.wizzer.modules.sys.bean.Sys_menu;
+import cn.wizzer.nutzwk.models.sys.Sys_role;
+import cn.wizzer.nutzwk.models.sys.Sys_menu;
 import cn.wizzer.modules.sys.bean.Sys_user;
 import org.apache.commons.lang3.StringUtils;
 import org.nutz.aop.interceptor.ioc.TransAop;

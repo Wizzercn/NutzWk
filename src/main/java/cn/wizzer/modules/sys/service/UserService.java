@@ -2,7 +2,9 @@ package cn.wizzer.modules.sys.service;
 
 import cn.wizzer.common.service.core.BaseService;
 import cn.wizzer.common.util.StringUtils;
-import cn.wizzer.modules.sys.bean.*;
+import cn.wizzer.nutzwk.models.sys.Sys_menu;
+import cn.wizzer.nutzwk.models.sys.Sys_role;
+import cn.wizzer.nutzwk.models.sys.Sys_unit;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -16,7 +18,6 @@ import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
-import org.nutz.trans.Trans;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -1,12 +1,14 @@
-package cn.wizzer.modules;
+package cn.wizzer.nutzwk;
 
 import cn.wizzer.common.mvc.config.Dict;
-import cn.wizzer.common.service.RedisService;
 import cn.wizzer.common.util.CacheUtils;
 import cn.wizzer.modules.sys.bean.*;
 import cn.wizzer.common.mvc.config.Globals;
 import cn.wizzer.modules.sys.service.ConfigService;
 import cn.wizzer.modules.sys.service.DictService;
+import cn.wizzer.nutzwk.models.sys.Sys_menu;
+import cn.wizzer.nutzwk.models.sys.Sys_role;
+import cn.wizzer.nutzwk.models.sys.Sys_unit;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -27,14 +29,12 @@ import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
 import java.io.IOException;
 import java.util.*;
 
 /**
- * Created by Wizzer.cn on 2015/6/27.
+ * Created by wizzer on 2016/6/21.
  */
 public class MainSetup implements Setup {
     private static final Log log = Logs.get();

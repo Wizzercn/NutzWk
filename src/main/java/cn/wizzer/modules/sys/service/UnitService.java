@@ -2,7 +2,7 @@ package cn.wizzer.modules.sys.service;
 
 import cn.wizzer.common.service.core.BaseService;
 import cn.wizzer.common.util.StringUtils;
-import cn.wizzer.modules.sys.bean.*;
+import cn.wizzer.nutzwk.models.sys.Sys_unit;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;

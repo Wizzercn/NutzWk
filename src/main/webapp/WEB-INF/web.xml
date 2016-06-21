@@ -4,7 +4,7 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
-    <display-name>NutzFw</display-name>
+    <display-name>NutzWk</display-name>
 
     <!-- XSS -->
     <filter>
@@ -20,9 +20,6 @@
     <!-- Shiro -->
     <listener>
         <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>cn.wizzer.common.mvc.listener.MySessionListener</listener-class>
     </listener>
     <filter>
         <filter-name>ShiroFilter</filter-name>
@@ -43,7 +40,7 @@
         <filter-class>org.nutz.mvc.NutFilter</filter-class>
         <init-param>
             <param-name>modules</param-name>
-            <param-value>cn.wizzer.modules.MainModule</param-value>
+            <param-value>cn.wizzer.nutzwk.MainModule</param-value>
         </init-param>
         <init-param>
             <param-name>ignore</param-name>

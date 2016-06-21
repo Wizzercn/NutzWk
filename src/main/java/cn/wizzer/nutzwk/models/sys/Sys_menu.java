@@ -1,26 +1,26 @@
-package cn.wizzer.modules.sys.bean;
+package cn.wizzer.nutzwk.models.sys;
 
-import cn.wizzer.common.service.core.BasePojo;
+import cn.wizzer.nutzwk.models.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
 
 /**
- * Created by Wizzer.cn on 2015/7/1.
+ * Created by wizzer on 2016/6/21.
  */
 @Table("sys_menu")
 @TableIndexes({@Index(name = "INDEX_SYS_MENU_PATH", fields = {"path"}, unique = true)})
-public class Sys_menu extends BasePojo implements Serializable {
+public class Sys_menu extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Name
     @Comment("ID")
-    @ColDefine(type = ColType.VARCHAR, width = 64)
+    @ColDefine(type = ColType.VARCHAR, width = 32)
     @Prev(els = {@EL("uuid()")})
     private String id;
     @Column
     @Comment("父级ID")
-    @ColDefine(type = ColType.VARCHAR, width = 64)
+    @ColDefine(type = ColType.VARCHAR, width = 32)
     private String parentId;
     @Column
     @Comment("树路径")
@@ -30,7 +30,7 @@ public class Sys_menu extends BasePojo implements Serializable {
     @Comment("菜单名称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String name;
-    @Column("alias_name")
+    @Column
     @Comment("菜单别名")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String aliasName;
@@ -40,7 +40,7 @@ public class Sys_menu extends BasePojo implements Serializable {
     private String type;
     @Column
     @Comment("菜单链接")
-    @ColDefine(type = ColType.VARCHAR, width = 1000)
+    @ColDefine(type = ColType.VARCHAR, width = 255)
     private String href;
     @Column
     @Comment("打开方式")
@@ -50,24 +50,24 @@ public class Sys_menu extends BasePojo implements Serializable {
     @Comment("菜单图标")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String icon;
-    @Column("is_show")
+    @Column
     @Comment("是否显示")
     private boolean show;
-    @Column("is_enabled")
-    @Comment("是否启用")
-    private boolean enabled;
+    @Column
+    @Comment("是否禁用")
+    private boolean disabled;
     @Column
     @Comment("权限标识")
-    @ColDefine(type = ColType.VARCHAR, width = 500)
+    @ColDefine(type = ColType.VARCHAR, width = 255)
     private String permission;
     @Column
     @Comment("菜单介绍")
     @ColDefine(type = ColType.VARCHAR, width = 255)
-    private String description;
+    private String note;
     @Column
     @Comment("排序字段")
-    private long location;
-    @Column("has_children")
+    private int location;
+    @Column
     @Comment("有子节点")
     private boolean hasChildren;
 
@@ -143,20 +143,20 @@ public class Sys_menu extends BasePojo implements Serializable {
         this.icon = icon;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public boolean isShow() {
         return show;
     }
 
     public void setShow(boolean show) {
         this.show = show;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public String getPermission() {
@@ -167,19 +167,19 @@ public class Sys_menu extends BasePojo implements Serializable {
         this.permission = permission;
     }
 
-    public String getDescription() {
-        return description;
+    public String getNote() {
+        return note;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNote(String note) {
+        this.note = note;
     }
 
-    public long getLocation() {
+    public int getLocation() {
         return location;
     }
 
-    public void setLocation(long location) {
+    public void setLocation(int location) {
         this.location = location;
     }
 

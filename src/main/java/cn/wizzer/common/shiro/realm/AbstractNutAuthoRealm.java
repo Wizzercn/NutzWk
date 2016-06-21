@@ -1,6 +1,6 @@
 package cn.wizzer.common.shiro.realm;
 
-import cn.wizzer.modules.sys.bean.Sys_role;
+import cn.wizzer.nutzwk.models.sys.Sys_role;
 import cn.wizzer.modules.sys.service.RoleService;
 import cn.wizzer.modules.sys.bean.Sys_user;
 import cn.wizzer.modules.sys.service.UserService;
