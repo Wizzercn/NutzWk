@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="false"
-    monitoring="autodetect" dynamicConfig="true" name="nutzfw">
-    <diskStore path="java.io.tmpdir/nutzfw"/>
+    monitoring="autodetect" dynamicConfig="true" name="nutzwk">
+    <diskStore path="java.io.tmpdir/nutzwk"/>
     <defaultCache
             maxElementsInMemory="10000"
             eternal="false"
