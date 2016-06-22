@@ -34,6 +34,35 @@
                     <header class="panel-heading no-b text-center" style="font-size:30px;">
                         ${AppName}
                     </header>
+                    <!-- START Language list-->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="language-dropdown dropdown hidden-xs">
+                            <a href="javascript:;" data-toggle="dropdown" id="language">
+                                #if(!$lang||$lang=="zh_CN")
+                                <img src="${base}/assets/img/flags/cn.png" class="flag">
+                                <span class="language">中文</span>
+                                #else
+                                <img src="${base}/assets/img/flags/us.png" class="flag">
+                                <span class="language">English</span>
+                                #end
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
+                                <li>
+                                    <a href="?lang=en_US">
+                                        <img src="${base}/assets/img/flags/us.png" class="flag">
+                                        <span class="language">English</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?lang=zh_CN">
+                                        <img src="${base}/assets/img/flags/cn.png" class="flag">
+                                        <span class="language">中文</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <!-- END Language list    -->
                     <div class="p15">
                         <form id="loginForm" action="/private/doLogin" data-parsley-validate="" novalidate="" role="form"
                               method="post">
@@ -42,12 +71,12 @@
                             <div class="form-group">
                                 <input type="text" id="username" name="username" value="" required
                                        class="form-control input-lg mb25"
-                                       placeholder="<%=sails.__('private.login.username')%>">
+                                       placeholder="${msg['login.username']}">
                             </div>
                             <div class="form-group">
                                 <input type="password" id="password" name="password" value="" required
                                        class="form-control input-lg mb25"
-                                       placeholder="<%=sails.__('private.login.password')%>">
+                                       placeholder="${msg['login.password']}">
                             </div>
                             <p id="tip" class="bg-danger p15" style="display:none"></p>
                             <div class="show">
@@ -72,7 +101,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" style="color:black;"><%=sails.__('private.login.inputverifycode')%>
+                <h4 class="modal-title" style="color:black;">
+                    ${msg['login.error.verifycode']}
                 </h4>
             </div>
             <div class="modal-body">
@@ -81,7 +111,7 @@
                         <div class="col-xs-2"></div>
                         <div class="col-xs-6">
                             <input type="text" id="verifycode" required class="form-control input-lg"
-                                   placeholder="<%=sails.__('private.login.verifycode')%>">
+                                   placeholder="${msg['login.captcha']}">
                         </div>
                         <div class="col-xs-4">
                             <img id="captcha_img" src="/private/login/captcha" style="height:46px;cursor: pointer;"
@@ -91,7 +121,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="ok" type="button" class="btn btn-primary" data-dismiss="modal"><%=sails.__('private.login.load')%>
+                <button id="ok" type="button" class="btn btn-primary" data-dismiss="modal">${msg['login.load']}
                 </button>
             </div>
         </div>
@@ -104,14 +134,14 @@
         $("#loginForm").ajaxForm({
             dataType: 'json',
             beforeSubmit: function (arr, form, options) {
-                form.find("button:submit").text("<%=sails.__('private.login.loading')%>...");
+                form.find("button:submit").text("${msg['login.load']}");
                 form.find("button:submit").attr("disabled", "disabled");
             },
             success: function (data, statusText, xhr, form) {
                 if (data.code == 0) {
                     $("#tip").hide();
-                    form.find("button:submit").text("<%=sails.__('private.login.load')%>");
-                    window.location.href = "/sysadmin/home";
+                    form.find("button:submit").text("${msg['login.success']}");
+                    window.location.href = "/private/home";
                 } else if (data.code == 2) {
                     $("#verifycode").val("");
                     $("#dialogVeryCode img").attr("src", '/private/login/captcha?_=' + new Date().getTime());
@@ -121,7 +151,7 @@
                     $('#captcha_img').attr('src', '/private/login/captcha?_=' + new Date().getTime());
                     $("#tip").html(data.msg);
                     $("#tip").fadeIn();
-                    form.find("button:submit").text("<%=sails.__('private.login.load')%>");
+                    form.find("button:submit").text("${msg['login.submit']}");
                     form.find("button:submit").removeAttr("disabled")
                 }
             }

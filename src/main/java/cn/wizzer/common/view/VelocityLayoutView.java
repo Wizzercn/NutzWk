@@ -52,7 +52,7 @@ public class VelocityLayoutView extends AbstractPathView {
             context.put("AppShrotName", Globals.AppShrotName);
             context.put("obj", obj);
             context.put("base", req.getContextPath());
-            context.put("lang", Strings.isBlank(req.getParameter("lang")) ? Mvcs.getDefaultLocalizationKey() : req.getParameter("lang"));
+            context.put("lang", Strings.isBlank(req.getParameter("lang")) ? Mvcs.getLocalizationKey() : req.getParameter("lang"));
             context.put("request", req);
             context.put("session", req.getSession());
             context.put("shiro",Mvcs.ctx().getDefaultIoc().get(Permission.class));
