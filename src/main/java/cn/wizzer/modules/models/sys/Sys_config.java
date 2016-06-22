@@ -1,4 +1,4 @@
-package cn.wizzer.nutzwk.models.sys;
+package cn.wizzer.modules.models.sys;
 
 import cn.wizzer.common.base.BaseModel;
 import org.nutz.dao.entity.annotation.*;

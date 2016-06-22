@@ -1,25 +1,30 @@
-NutzWk 2.1 纯净版
+NutzWk 3.0 纯净版
 ======
+目录结构调整较大，和2.0不兼容，所以起名叫3.0，主要是把过去一年Node.js开发中积累的一些经验用到此版本中，特别是后台界面功能。
 
+PS:如果对Node.js开发框架感兴趣，可以看这里：http://www.nodeshop.cn/sysadmin
+
+======
 基于Nutz的开源企业级开发框架
 
-NutzWk 2.1 运行环境：
+NutzWk 3.0 运行环境：
 *   JDK 8
-*   MAVEN 3.3.39
-*   NUTZ v1.r.57
+*   Maven 3.3.39
+*   Nutz v1.r.57
 
-NutzWk 2.1 新特性：
+NutzWk 3.0 新特性：
 *   集成Shiro权限框架
 *   集成Ehcache缓存
 *   集成Redis
 *   支持语言国际化
 *   支持注解式事务
 *   支持动作链
-*   支持注解式日志系统
+*   支持注解式日志
 *   支持插件式加载
 *   集成Email服务
 *   集成Quartz定时任务
 *   集成Lucene搜索引擎
+*   集成Velocity模板引擎
 *   后台管理界面采用Pjax+Bootstrap
 
 

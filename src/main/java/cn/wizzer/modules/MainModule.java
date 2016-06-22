@@ -1,4 +1,4 @@
-package cn.wizzer.nutzwk;
+package cn.wizzer.modules;
 
 import cn.wizzer.common.view.VelocityViewMaker;
 import org.nutz.mvc.annotation.*;

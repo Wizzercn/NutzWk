@@ -1,8 +1,8 @@
-package cn.wizzer.nutzwk.services.sys;
+package cn.wizzer.modules.services.sys;
 
-import cn.wizzer.nutzwk.models.sys.Sys_menu;
-import cn.wizzer.nutzwk.models.sys.Sys_role;
-import cn.wizzer.nutzwk.models.sys.Sys_user;
+import cn.wizzer.modules.models.sys.Sys_menu;
+import cn.wizzer.modules.models.sys.Sys_role;
+import cn.wizzer.modules.models.sys.Sys_user;
 import cn.wizzer.common.base.BaseService;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;

@@ -1,4 +1,4 @@
-package cn.wizzer.nutzwk.models.sys;
+package cn.wizzer.modules.models.sys;
 
 import cn.wizzer.common.base.BaseModel;
 import org.nutz.dao.entity.annotation.*;
@@ -8,16 +8,15 @@ import java.io.Serializable;
 /**
  * Created by wizzer on 2016/6/21.
  */
-@Table("sys_unit")
-@TableIndexes({@Index(name = "INDEX_SYS_UNIT_PATH", fields = {"path"}, unique = true)})
-public class Sys_unit extends BaseModel implements Serializable {
+@Table("sys_menu")
+@TableIndexes({@Index(name = "INDEX_SYS_MENU_PATH", fields = {"path"}, unique = true)})
+public class Sys_menu extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
-
     @Column
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els={@EL("uuid()")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
     @Column
     @Comment("父级ID")
@@ -28,37 +27,43 @@ public class Sys_unit extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String path;
     @Column
-    @Comment("单位名称")
+    @Comment("菜单名称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String name;
     @Column
-    @Comment("单位别名")
+    @Comment("菜单别名")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String aliasName;
     @Column
-    @Comment("机构编码")
-    @ColDefine(type = ColType.VARCHAR, width = 20)
-    private String unitcode;
+    @Comment("资源类型")
+    @ColDefine(type = ColType.VARCHAR, width = 10)
+    private String type;
     @Column
-    @Comment("单位介绍")
+    @Comment("菜单链接")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String href;
+    @Column
+    @Comment("打开方式")
+    @ColDefine(type = ColType.VARCHAR, width = 50)
+    private String target;
+    @Column
+    @Comment("菜单图标")
+    @ColDefine(type = ColType.VARCHAR, width = 50)
+    private String icon;
+    @Column
+    @Comment("是否显示")
+    private boolean isShow;
+    @Column
+    @Comment("是否禁用")
+    private boolean disabled;
+    @Column
+    @Comment("权限标识")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String permission;
+    @Column
+    @Comment("菜单介绍")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String note;
-    @Column
-    @Comment("单位地址")
-    @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String address;
-    @Column
-    @Comment("联系电话")
-    @ColDefine(type = ColType.VARCHAR, width = 20)
-    private String telephone;
-    @Column
-    @Comment("单位邮箱")
-    @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String email;
-    @Column
-    @Comment("单位网站")
-    @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String website;
     @Column
     @Comment("排序字段")
     private int location;
@@ -106,12 +111,60 @@ public class Sys_unit extends BaseModel implements Serializable {
         this.aliasName = aliasName;
     }
 
-    public String getUnitcode() {
-        return unitcode;
+    public String getType() {
+        return type;
     }
 
-    public void setUnitcode(String unitcode) {
-        this.unitcode = unitcode;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getHref() {
+        return href;
+    }
+
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public boolean isShow() {
+        return isShow;
+    }
+
+    public void setIsShow(boolean isShow) {
+        this.isShow = isShow;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
     public String getNote() {
@@ -120,38 +173,6 @@ public class Sys_unit extends BaseModel implements Serializable {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getTelephone() {
-        return telephone;
-    }
-
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getWebsite() {
-        return website;
-    }
-
-    public void setWebsite(String website) {
-        this.website = website;
     }
 
     public int getLocation() {

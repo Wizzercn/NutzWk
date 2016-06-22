@@ -1,5 +1,6 @@
 package cn.wizzer.common.util;
 
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.Mvcs;
@@ -9,7 +10,7 @@ import java.util.Random;
 /**
  * Created by Wizzer.cn on 2015/7/4.
  */
-
+@IocBean
 public class StringUtil {
     /**
      * 计算MD5密码

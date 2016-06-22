@@ -6,17 +6,6 @@
          version="2.5">
     <display-name>NutzWk</display-name>
 
-    <!-- XSS -->
-    <filter>
-        <filter-name>xss</filter-name>
-        <filter-class>cn.wizzer.common.filter.XssFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>xss</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-
     <!-- Shiro -->
     <listener>
         <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
@@ -40,7 +29,7 @@
         <filter-class>org.nutz.mvc.NutFilter</filter-class>
         <init-param>
             <param-name>modules</param-name>
-            <param-value>cn.wizzer.nutzwk.MainModule</param-value>
+            <param-value>cn.wizzer.modules.MainModule</param-value>
         </init-param>
         <init-param>
             <param-name>ignore</param-name>

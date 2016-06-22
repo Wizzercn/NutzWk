@@ -3,7 +3,7 @@ package cn.wizzer.common.shiro.realm;
 import cn.wizzer.common.shiro.exception.EmptyCaptchaException;
 import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.common.shiro.exception.IncorrectCaptchaException;
-import cn.wizzer.nutzwk.models.sys.Sys_user;
+import cn.wizzer.modules.models.sys.Sys_user;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -13,8 +13,6 @@ import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-
-import java.util.List;
 
 public class NutDaoRealm extends AbstractNutRealm {
 	private static final Log log = Logs.get();

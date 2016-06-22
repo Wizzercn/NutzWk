@@ -26,7 +26,7 @@ public class GlobalsSettingProcessor extends AbstractProcessor {
 		String lang=ac.getRequest().getParameter("lang");
 		if (!Strings.isEmpty(lang)) {
 			Mvcs.setLocalizationKey(lang);
-		}
+		}else lang=Mvcs.getDefaultLocalizationKey();
 		ac.getRequest().setAttribute("lang", lang);
 		doNext(ac);
 	}

@@ -1,5 +1,6 @@
 package cn.wizzer.common.view;
 
+import cn.wizzer.common.base.Globals;
 import cn.wizzer.common.shiro.velocity.Permission;
 import cn.wizzer.common.util.CacheUtil;
 import cn.wizzer.common.util.StringUtil;
@@ -44,8 +45,14 @@ public class VelocityLayoutView extends AbstractPathView {
         try {
             StringWriter sw = new StringWriter();
             Context context = new VelocityContext();
+            context.put("AppRoot", Globals.AppRoot);
+            context.put("AppBase", Globals.AppBase);
+            context.put("AppName", Globals.AppName);
+            context.put("AppDomain", Globals.AppDomain);
+            context.put("AppShrotName", Globals.AppShrotName);
             context.put("obj", obj);
             context.put("base", req.getContextPath());
+            context.put("lang", Strings.isBlank(req.getParameter("lang")) ? Mvcs.getDefaultLocalizationKey() : req.getParameter("lang"));
             context.put("request", req);
             context.put("session", req.getSession());
             context.put("shiro",Mvcs.ctx().getDefaultIoc().get(Permission.class));
