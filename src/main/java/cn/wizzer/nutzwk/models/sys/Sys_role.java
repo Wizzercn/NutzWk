@@ -1,6 +1,6 @@
 package cn.wizzer.nutzwk.models.sys;
 
-import cn.wizzer.common.service.core.BasePojo;
+import cn.wizzer.common.base.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -10,7 +10,7 @@ import java.util.List;
  * Created by wizzer on 2016/6/21.
  */
 @Table("sys_role")
-public class Sys_role extends BasePojo implements Serializable {
+public class Sys_role extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Name

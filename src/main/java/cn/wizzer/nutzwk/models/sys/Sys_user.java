@@ -1,6 +1,6 @@
 package cn.wizzer.nutzwk.models.sys;
 
-import cn.wizzer.nutzwk.models.BaseModel;
+import cn.wizzer.common.base.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -72,10 +72,14 @@ public class Sys_user extends BaseModel implements Serializable {
     @Comment("创建人")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String createBy;
+    @Column
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String unitid;
     @ManyMany(from = "userId", relation = "sys_user_role", target = Sys_role.class, to = "roleId")
     protected List<Sys_role> roles;
     @ManyMany(from = "userId", relation = "sys_user_unit", target = Sys_role.class, to = "unitId")
     protected List<Sys_unit> units;
+    protected List<Sys_menu> menus;
 
     public String getId() {
         return id;
@@ -205,6 +209,14 @@ public class Sys_user extends BaseModel implements Serializable {
         this.createBy = createBy;
     }
 
+    public String getUnitid() {
+        return unitid;
+    }
+
+    public void setUnitid(String unitid) {
+        this.unitid = unitid;
+    }
+
     public List<Sys_role> getRoles() {
         return roles;
     }
@@ -219,5 +231,13 @@ public class Sys_user extends BaseModel implements Serializable {
 
     public void setUnits(List<Sys_unit> units) {
         this.units = units;
+    }
+
+    public List<Sys_menu> getMenus() {
+        return menus;
+    }
+
+    public void setMenus(List<Sys_menu> menus) {
+        this.menus = menus;
     }
 }

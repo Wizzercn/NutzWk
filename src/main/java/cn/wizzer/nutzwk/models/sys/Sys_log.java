@@ -1,7 +1,7 @@
 package cn.wizzer.nutzwk.models.sys;
 
-import cn.wizzer.common.util.StringUtils;
-import cn.wizzer.nutzwk.models.BaseModel;
+import cn.wizzer.common.util.StringUtil;
+import cn.wizzer.common.base.BaseModel;
 import org.apache.shiro.SecurityUtils;
 import org.nutz.dao.entity.annotation.*;
 
@@ -10,6 +10,7 @@ import java.io.Serializable;
 /**
  * Created by wizzer on 2016/6/21.
  */
+@Table("sys_log")
 public class Sys_log extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
@@ -122,7 +123,7 @@ public class Sys_log extends BaseModel implements Serializable {
         sysLog.tag = tag;
         sysLog.src = source;
         sysLog.msg = msg;
-        sysLog.ip = StringUtils.getRemoteAddr();
+        sysLog.ip = StringUtil.getRemoteAddr();
         Object u = SecurityUtils.getSubject().getPrincipal();
         String uid="";
         String nickname="";

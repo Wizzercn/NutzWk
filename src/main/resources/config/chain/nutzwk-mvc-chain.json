@@ -1,0 +1,17 @@
+var chain={
+	"default" : {
+		"ps" : [
+			  "cn.wizzer.common.processor.LogTimeProcessor",
+			  "cn.wizzer.common.processor.GlobalsSettingProcessor",
+			  "org.nutz.mvc.impl.processor.UpdateRequestAttributesProcessor",
+		      "org.nutz.mvc.impl.processor.EncodingProcessor",
+		      "org.nutz.mvc.impl.processor.ModuleProcessor",
+		      "cn.wizzer.common.processor.NutShiroProcessor",
+		      "org.nutz.mvc.impl.processor.ActionFiltersProcessor",
+		      "org.nutz.mvc.impl.processor.AdaptorProcessor",
+		      "org.nutz.mvc.impl.processor.MethodInvokeProcessor",
+			  "org.nutz.mvc.impl.processor.ViewProcessor"
+		],
+		"error" : 'org.nutz.mvc.impl.processor.FailProcessor'
+	}
+};

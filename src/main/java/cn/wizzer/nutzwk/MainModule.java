@@ -1,7 +1,6 @@
 package cn.wizzer.nutzwk;
 
-import cn.wizzer.common.mvc.view.VelocityViewMaker;
-import cn.wizzer.nutzwk.MainSetup;
+import cn.wizzer.common.view.VelocityViewMaker;
 import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.ioc.provider.ComboIocProvider;
 
@@ -16,6 +15,6 @@ import org.nutz.mvc.ioc.provider.ComboIocProvider;
 @Encoding(input = "UTF-8", output = "UTF-8")
 @Views({ VelocityViewMaker.class})
 @SetupBy(value=MainSetup.class)
-@ChainBy(args="mvc/nutzfw-mvc-chain.js")
+@ChainBy(args="config/chain/nutzwk-mvc-chain.json")
 public class MainModule {
 }

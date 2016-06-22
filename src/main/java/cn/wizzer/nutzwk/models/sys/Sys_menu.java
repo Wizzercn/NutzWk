@@ -1,6 +1,6 @@
 package cn.wizzer.nutzwk.models.sys;
 
-import cn.wizzer.nutzwk.models.BaseModel;
+import cn.wizzer.common.base.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -52,7 +52,7 @@ public class Sys_menu extends BaseModel implements Serializable {
     private String icon;
     @Column
     @Comment("是否显示")
-    private boolean show;
+    private boolean isShow;
     @Column
     @Comment("是否禁用")
     private boolean disabled;
@@ -144,11 +144,11 @@ public class Sys_menu extends BaseModel implements Serializable {
     }
 
     public boolean isShow() {
-        return show;
+        return isShow;
     }
 
-    public void setShow(boolean show) {
-        this.show = show;
+    public void setIsShow(boolean isShow) {
+        this.isShow = isShow;
     }
 
     public boolean isDisabled() {

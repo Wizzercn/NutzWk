@@ -1,16 +1,14 @@
 package cn.wizzer.nutzwk.models.sys;
 
-import cn.wizzer.nutzwk.models.BaseModel;
-import org.nutz.dao.entity.annotation.ColDefine;
-import org.nutz.dao.entity.annotation.ColType;
-import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Name;
+import cn.wizzer.common.base.BaseModel;
+import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
 
 /**
  * Created by wizzer on 2016/6/21.
  */
+@Table("sys_config")
 public class Sys_config extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Name

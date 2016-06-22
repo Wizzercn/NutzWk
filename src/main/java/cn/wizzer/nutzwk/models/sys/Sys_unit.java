@@ -1,6 +1,6 @@
 package cn.wizzer.nutzwk.models.sys;
 
-import cn.wizzer.nutzwk.models.BaseModel;
+import cn.wizzer.common.base.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
