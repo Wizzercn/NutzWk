@@ -1,15 +1,11 @@
 package cn.wizzer.common.processor;
 
-import java.util.Map;
-
-import cn.wizzer.common.util.CookieUtil;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.impl.processor.AbstractProcessor;
 
 import cn.wizzer.common.base.Globals;
-import cn.wizzer.common.util.CacheUtil;
 
 /**
  * Created by wizzer on 2016/6/22.
@@ -26,7 +22,10 @@ public class GlobalsSettingProcessor extends AbstractProcessor {
 		String lang=ac.getRequest().getParameter("lang");
 		if (!Strings.isEmpty(lang)) {
 			Mvcs.setLocalizationKey(lang);
-		}else lang=Mvcs.getLocalizationKey();
+		}else{
+			// Mvcs.getLocalizationKey()  1.r.56 版本是null,所以要做两次判断, 1.r.57已修复为默认值 Nutz:Fix issue 1072
+			lang=Strings.isBlank(Mvcs.getLocalizationKey())?Mvcs.getDefaultLocalizationKey():Mvcs.getLocalizationKey();
+		}
 		ac.getRequest().setAttribute("lang", lang);
 		doNext(ac);
 	}

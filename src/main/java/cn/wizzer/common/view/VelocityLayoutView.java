@@ -52,13 +52,14 @@ public class VelocityLayoutView extends AbstractPathView {
             context.put("AppShrotName", Globals.AppShrotName);
             context.put("obj", obj);
             context.put("base", req.getContextPath());
-            context.put("lang", Strings.isBlank(req.getParameter("lang")) ? Mvcs.getLocalizationKey() : req.getParameter("lang"));
+            // Mvcs.getLocalizationKey()  1.r.56 版本是null,所以要做两次判断, 1.r.57已修复为默认值 Nutz:Fix issue 1072
+            context.put("lang", Strings.isBlank(req.getParameter("lang")) ? (Strings.isBlank(Mvcs.getLocalizationKey())?Mvcs.getDefaultLocalizationKey():Mvcs.getLocalizationKey()) : req.getParameter("lang"));
             context.put("request", req);
             context.put("session", req.getSession());
             context.put("shiro",Mvcs.ctx().getDefaultIoc().get(Permission.class));
             context.put("CacheUtil",Mvcs.ctx().getDefaultIoc().get(CacheUtil.class));
             context.put("StringUtil",Mvcs.ctx().getDefaultIoc().get(StringUtil.class));
-            //请求的参数表,需要兼容之前的p.参数, Fix issue 418
+            //请求的参数表,需要兼容之前的p.参数, Nutz:Fix issue 418
             Map<String, String> p = new HashMap<String, String>();
             for (Object o : req.getParameterMap().keySet()) {
                 String key = (String) o;

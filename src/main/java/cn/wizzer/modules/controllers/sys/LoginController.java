@@ -18,6 +18,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.nutz.dao.Chain;
@@ -176,6 +177,25 @@ public class LoginController {
             } catch (Exception e1) {
             }
             return Message.error(5, "login.error.system", req);
+        }
+    }
+
+    /**
+     * 退出系统
+     */
+    @At
+    @Ok(">>:/private/login")
+    public void logout(HttpSession session) {
+        try {
+            Subject currentUser = SecurityUtils.getSubject();
+            Sys_user user = (Sys_user) currentUser.getPrincipal();
+            sysLogService.async(Sys_log.c("info", "用户登出", "退出系统！"));
+            userService.update(Chain.make("online", false), Cnd.where("id", "=", user.getId()));
+            currentUser.logout();
+        } catch (SessionException ise) {
+            log.debug("Encountered session exception during logout.  This can generally safely be ignored.", ise);
+        } catch (Exception e) {
+            log.debug("Logout error", e);
         }
     }
 
