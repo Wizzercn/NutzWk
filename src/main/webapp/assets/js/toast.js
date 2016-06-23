@@ -56,8 +56,8 @@ var Toast = {
     toastr["error"](msg, title);
   },
   init: function () {
-    $("head").prepend("<link rel=\"stylesheet\" href=\"/plugins/toastr/toastr.min.css\">");
-    $("body").append("<script type=\"text/javascript\" src=\"/plugins/toastr/toastr.min.js\"></script>");
+    $("head").prepend("<link rel=\"stylesheet\" href=\""+base+"/assets/plugins/toastr/toastr.min.css\">");
+    $("body").append("<script type=\"text/javascript\" src=\""+base+"/assets/plugins/toastr/toastr.min.js\"></script>");
     toastr.options = {
       closeButton: false,
       debug: false,

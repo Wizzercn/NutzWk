@@ -32,21 +32,6 @@ function removeHTMLTag(str) {
   str=str.replace(/&nbsp;/ig,'');//去掉&nbsp;
   return str;
 }
-function setPrice(str){
-  if (typeof str == 'string' && str.length > 2) {
-    return str.substring(0, str.length - 2) + '.' + str.substring(str.length - 2);
-  }else if(typeof str == 'string' && str.length == 2){
-    return '0.'+str;
-  }else if(typeof str == 'string' && str.length == 1){
-    return '0.0'+str;
-  }else if(typeof str == 'string'){
-    return '0.00';
-  }
-  if (typeof str == 'number') {
-    var s = str.toString();
-    return setPrice(s);
-  }
-}
 var sublime = function () {
     var linkLocation, searchOpen = false, app = $(".app"), maxHeight = 0;
     var sidebar=false,boxed=false,scroll=false;
@@ -285,29 +270,30 @@ var sublime = function () {
     }
 
     function initMenuCollapse() {
-        $(document).on("mouseover", ".topnav a", function (e) {
-          var links = $(this).parents('li'), parentLink = $(this).closest("li"), otherLinks = $('.topnav li').not(links), subMenu = $(this).next();
-          if (!parentLink.hasClass("open")) {
-            parentLink.addClass("open");
-          }
-          if (otherLinks.hasClass("open")) {
-            otherLinks.removeClass("open");
-          }
-          $(this).children(".sub-menu").show();
-          if (subMenu.is("ul") && (!subMenu.is(":visible")))
-            subMenu.slideDown();
-          if ($(this).attr('href') === '#') {
-            e.preventDefault();
-          }
-          subMenu.find('.sub-menu').each(function(){
-            $(this).show();
-          });
-          if (subMenu.is("ul")) {
-            return false;
-          }
-          e.stopPropagation();
-          return true;
-        });
+        //顶部导航浮动显示,觉得体验不好注释掉
+        //$(document).on("mouseover", ".topnav a", function (e) {
+        //  var links = $(this).parents('li'), parentLink = $(this).closest("li"), otherLinks = $('.topnav li').not(links), subMenu = $(this).next();
+        //  if (!parentLink.hasClass("open")) {
+        //    parentLink.addClass("open");
+        //  }
+        //  if (otherLinks.hasClass("open")) {
+        //    otherLinks.removeClass("open");
+        //  }
+        //  $(this).children(".sub-menu").show();
+        //  if (subMenu.is("ul") && (!subMenu.is(":visible")))
+        //    subMenu.slideDown();
+        //  if ($(this).attr('href') === '#') {
+        //    e.preventDefault();
+        //  }
+        //  subMenu.find('.sub-menu').each(function(){
+        //    $(this).show();
+        //  });
+        //  if (subMenu.is("ul")) {
+        //    return false;
+        //  }
+        //  e.stopPropagation();
+        //  return true;
+        //});
         $(document).on("click", ".main-navigation a", function (e) {
             var links = $(this).parents('li'), parentLink = $(this).closest("li"), otherLinks = $('.main-navigation li').not(links), subMenu = $(this).next();
             if (!subMenu.hasClass("sub-menu")) {

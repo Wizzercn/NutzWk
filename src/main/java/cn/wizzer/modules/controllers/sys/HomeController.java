@@ -14,9 +14,10 @@ import org.nutz.mvc.annotation.Ok;
  */
 @IocBean
 @At("/private/home")
-@Filters({ @By(type = PrivateFilter.class) })
+@Filters({@By(type = PrivateFilter.class)})
 public class HomeController {
     private static final Log log = Logs.get();
+
     @At("")
     @Ok("beetl:/private/home.html")
     @Filters

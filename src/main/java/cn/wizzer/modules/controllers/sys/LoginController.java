@@ -60,7 +60,7 @@ public class LoginController {
     public String login() {
         Subject subject = SecurityUtils.getSubject();
         if (subject.isAuthenticated() || subject.isRemembered()) {
-            return "->:/private/home";
+            return "redirect:/private/home";
         } else {
             return "beetl:/private/login.html";
         }
@@ -76,7 +76,7 @@ public class LoginController {
      */
     @At("/theme")
     @RequiresUser
-    public void theme(@Param("path") String theme, HttpServletRequest req) {
+    public void theme(@Param("loginTheme") String theme, HttpServletRequest req) {
         if (!Strings.isEmpty(theme)) {
             Subject subject = SecurityUtils.getSubject();
             if (subject != null) {
