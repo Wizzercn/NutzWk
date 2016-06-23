@@ -59,7 +59,7 @@ public class LoginController {
     @Filters
     public String login() {
         Subject subject = SecurityUtils.getSubject();
-        if (subject.isAuthenticated() || subject.isRemembered()) {
+        if (subject.isAuthenticated()) {
             return "redirect:/private/home";
         } else {
             return "beetl:/private/login.html";

@@ -6,7 +6,7 @@ $.ajaxSetup({
     complete: function (XMLHttpRequest, textStatus) {
         var sessionstatus = XMLHttpRequest.getResponseHeader('sessionstatus'); //通过XMLHttpRequest取得响应头，sessionstatus，
         if (sessionstatus == 'timeout') {
-            top.window.location.href = '/private/login/login';
+            top.window.location.href = '/private/login';
         }
     }
 });

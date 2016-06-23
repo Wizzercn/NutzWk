@@ -41,6 +41,7 @@ public class NutShiroProcessor extends AbstractProcessor {
 				if (NutShiro.isAjax(ac.getRequest())) {
 					ac.getResponse().setHeader("sessionstatus", "timeout");
 					new RawView("").render(ac.getRequest(), ac.getResponse(), (Object) null);
+
 					// NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(),
 					// (Result.error(var3.getMessage(), ac.getRequest())));
 				} else {
