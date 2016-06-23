@@ -14,9 +14,12 @@ import java.util.Date;
  */
 public abstract class BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
-
+    @Column
+    @Comment("创建时间")
     @Prev(els = @EL("$me.now()"))
     protected int createAt;
+    @Column
+    @Comment("更新时间")
     @Prev(els = @EL("$me.now()"))
     protected int updateAt;
 

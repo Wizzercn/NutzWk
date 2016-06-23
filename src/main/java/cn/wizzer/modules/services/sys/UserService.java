@@ -29,7 +29,7 @@ public class UserService extends BaseService<Sys_user> {
      */
     public List<Sys_menu> getMenus(String userId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and" +
-                " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=false) and a.disabled=false and a.show=true and a.type='menu' order by a.location ASC,a.path asc");
+                " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=false) and a.disabled=false and a.isShow=true and a.type='menu' order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);

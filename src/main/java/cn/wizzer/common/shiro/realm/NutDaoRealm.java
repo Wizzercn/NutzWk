@@ -23,7 +23,6 @@ public class NutDaoRealm extends AbstractNutRealm {
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws DisabledAccountException {
 		CaptchaToken authcToken = (CaptchaToken) token;
 		String loginname = authcToken.getUsername();
-		String password = Strings.sBlank(authcToken.getPassword());
 		String captcha=authcToken.getCaptcha();
 		if (Strings.isBlank(loginname)) {
 			throw Lang.makeThrow(AuthenticationException.class, "Account name is empty");
@@ -45,15 +44,9 @@ public class NutDaoRealm extends AbstractNutRealm {
 		if (user.isDisbaled()) {
 			throw Lang.makeThrow(LockedAccountException.class, "Account [ %s ] is locked.",loginname);
 		}
-		if (!StringUtil.getPassword(loginname,password,user.getCreateAt()).equals(user.getPassword())) {
-			errCount++;
-			SecurityUtils.getSubject().getSession(true).setAttribute("errCount",errCount);
-			throw Lang.makeThrow(IncorrectCredentialsException.class, "Account [ %s ]'s password is error", authcToken.getUsername());
-		}
-		user.setMenus(getUserService().getMenus(user.getId()));
-		ByteSource salt = ByteSource.Util.bytes(user.getCreateAt());
+		SecurityUtils.getSubject().getSession(true).setAttribute("errCount",0);
 		SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), getName());
-		info.setCredentialsSalt(salt);
+		info.setCredentialsSalt(ByteSource.Util.bytes(user.getSalt()));
 		return info;
 	}
 }

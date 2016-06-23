@@ -80,6 +80,8 @@
                             </div>
                             <p id="tip" class="bg-danger p15" style="display:none"></p>
                             <div class="show">
+                                <label class="checkbox">
+                                    <input id="rememberMe" name="rememberMe" type="checkbox" value="1">记住 </label>
                                 <button class="btn btn-primary btn-lg btn-block" type="submit" data-loading-text="${msg['login.submit']}...">
                                     ${msg['login.submit']}
                                 </button>
@@ -121,7 +123,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="ok" type="button" class="btn btn-primary" data-dismiss="modal">${msg['login.load']}
+                <button id="ok" type="button" class="btn btn-primary" data-dismiss="modal">${msg['login.submit']}
                 </button>
             </div>
         </div>

@@ -4,6 +4,9 @@ import cn.wizzer.common.base.Globals;
 import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.modules.models.sys.*;
 import net.sf.ehcache.CacheManager;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.velocity.app.Velocity;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -67,7 +70,7 @@ public class MainSetup implements Setup {
      * @param dao
      */
     private void initSysData(NutConfig config, Dao dao) {
-        Daos.createTablesInPackage(dao, "cn.wizzer.nutzwk", true);
+        Daos.createTablesInPackage(dao, "cn.wizzer.modules", true);
         // 若必要的数据表不存在，则初始化数据库
         if (0 == dao.count(Sys_user.class)) {
 //            执行SQL脚本
@@ -270,7 +273,11 @@ public class MainSetup implements Setup {
             user.setLoginname("superadmin");
             user.setNickname("超级管理员");
             user.setCreateAt(1466571305);
-            user.setPassword(StringUtil.getPassword(user.getLoginname(), "1", user.getCreateAt()));
+            RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+            String salt = rng.nextBytes().toBase64();
+            String hashedPasswordBase64 = new Sha256Hash("1", salt, 1024).toBase64();
+            user.setSalt(salt);
+            user.setPassword(hashedPasswordBase64);
             user.setLoginIp("127.0.0.1");
             user.setEmail("wizzer@qq.com");
             user.setLoginTheme("palette.css");

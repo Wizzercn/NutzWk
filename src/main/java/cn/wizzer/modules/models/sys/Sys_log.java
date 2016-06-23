@@ -34,7 +34,7 @@ public class Sys_log extends BaseModel implements Serializable {
     private String tag;
     @Column
     @Comment("执行类")
-    @ColDefine(type = ColType.VARCHAR, width = 50)
+    @ColDefine(type = ColType.VARCHAR, width = 255)
     private String src;
     @Column
     @Comment("来源IP")

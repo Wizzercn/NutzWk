@@ -1,6 +1,7 @@
 package cn.wizzer.common.base;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by wizzer on 2016/6/22.
@@ -19,5 +20,5 @@ public class Globals {
     //文件上传路径
     public static String AppUploadPath="/upload";
     //系统自定义参数
-    public static HashMap<String,String> MyConfig=new HashMap<String,String>();
+    public static Map<String,String> MyConfig=new HashMap<>();
 }

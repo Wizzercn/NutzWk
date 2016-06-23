@@ -5,6 +5,7 @@ import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wizzer on 2016/6/21.
@@ -27,6 +28,10 @@ public class Sys_user extends BaseModel implements Serializable {
     @Comment("密码")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String password;// transient 修饰符可让此字段不在对象里显示
+    @Column
+    @Comment("密码盐")
+    @ColDefine(type = ColType.VARCHAR, width = 50)
+    private String salt;
     @Column
     @Comment("昵称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
@@ -80,6 +85,8 @@ public class Sys_user extends BaseModel implements Serializable {
     @ManyMany(from = "userId", relation = "sys_user_unit", target = Sys_role.class, to = "unitId")
     protected List<Sys_unit> units;
     protected List<Sys_menu> menus;
+    protected List<Sys_menu> firstMenus;
+    protected Map<String, List<Sys_menu>> secondMenus;
 
     public String getId() {
         return id;
@@ -103,6 +110,14 @@ public class Sys_user extends BaseModel implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public String getNickname() {
@@ -239,5 +254,21 @@ public class Sys_user extends BaseModel implements Serializable {
 
     public void setMenus(List<Sys_menu> menus) {
         this.menus = menus;
+    }
+
+    public List<Sys_menu> getFirstMenus() {
+        return firstMenus;
+    }
+
+    public void setFirstMenus(List<Sys_menu> firstMenus) {
+        this.firstMenus = firstMenus;
+    }
+
+    public Map<String, List<Sys_menu>> getSecondMenus() {
+        return secondMenus;
+    }
+
+    public void setSecondMenus(Map<String, List<Sys_menu>> secondMenus) {
+        this.secondMenus = secondMenus;
     }
 }
