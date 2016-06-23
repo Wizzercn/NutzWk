@@ -26,7 +26,7 @@ NutzWk 3.0 新特性：
 *   集成Email服务
 *   集成Quartz定时任务
 *   集成Lucene搜索引擎
-*   集成Velocity模板引擎
+*   集成Beetl模板引擎
 *   后台管理界面采用Pjax+Bootstrap
 *   自定义路由
 
