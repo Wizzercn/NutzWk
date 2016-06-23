@@ -23,7 +23,7 @@ public class PrivateFilter implements ActionFilter {
             if (!"XMLHttpRequest".equalsIgnoreCase(context.getRequest().getHeader("x-requested-with"))) {
                 return new ServerRedirectView("/private/login");
             } else {
-                context.getResponse().setHeader("sessionstatus", "timeout");
+                context.getResponse().setHeader("loginStatus", "accessDenied");
                 return new UTF8JsonView().setData(Result.error("登录失效", context.getRequest()));
             }
         }
