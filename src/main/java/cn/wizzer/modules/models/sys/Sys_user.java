@@ -87,6 +87,7 @@ public class Sys_user extends BaseModel implements Serializable {
     protected List<Sys_menu> menus;
     protected List<Sys_menu> firstMenus;
     protected Map<String, List<Sys_menu>> secondMenus;
+    protected List<Sys_menu> customMenus;
 
     public String getId() {
         return id;
@@ -270,5 +271,13 @@ public class Sys_user extends BaseModel implements Serializable {
 
     public void setSecondMenus(Map<String, List<Sys_menu>> secondMenus) {
         this.secondMenus = secondMenus;
+    }
+
+    public List<Sys_menu> getCustomMenus() {
+        return customMenus;
+    }
+
+    public void setCustomMenus(List<Sys_menu> customMenus) {
+        this.customMenus = customMenus;
     }
 }

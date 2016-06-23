@@ -10,6 +10,7 @@ import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.modules.models.sys.Sys_log;
 import cn.wizzer.modules.models.sys.Sys_menu;
 import cn.wizzer.modules.models.sys.Sys_user;
+import cn.wizzer.modules.services.sys.MenuService;
 import cn.wizzer.modules.services.sys.UserService;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.SecurityUtils;
@@ -51,6 +52,8 @@ public class LoginController {
     private static final Log log = Logs.get();
     @Inject
     UserService userService;
+    @Inject
+    MenuService menuService;
     @Inject
     SysLogService sysLogService;
 
@@ -153,6 +156,9 @@ public class LoginController {
             }
             user.setFirstMenus(firstMenus);
             user.setSecondMenus(secondMenus);
+            if(!Strings.isBlank(user.getCustomMenu())){
+               user.setCustomMenus(menuService.query(Cnd.where("id","in",user.getCustomMenu().split(","))));
+            }
             sysLogService.async(Sys_log.c("info", "用户登陆", "成功登录系统！"));
             userService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", (int) System.currentTimeMillis() / 1000)
                     .add("loginCount", user.getLoginCount() + 1).add("online", true)

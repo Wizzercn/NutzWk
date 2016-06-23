@@ -15,10 +15,11 @@ import java.util.List;
  * Created by wizzer on 2016/6/22.
  */
 @IocBean(args = {"refer:dao"})
-public class RoleService  extends BaseService<Sys_user> {
+public class RoleService extends BaseService<Sys_user> {
     public RoleService(Dao dao) {
         super(dao);
     }
+
     /**
      * 查询权限
      *

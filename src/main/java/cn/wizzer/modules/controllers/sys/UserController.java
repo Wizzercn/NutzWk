@@ -3,6 +3,7 @@ package cn.wizzer.modules.controllers.sys;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.modules.models.sys.Sys_user;
+import cn.wizzer.modules.services.sys.MenuService;
 import cn.wizzer.modules.services.sys.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
@@ -14,6 +15,7 @@ import org.nutz.dao.*;
 import org.nutz.dao.Chain;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -30,11 +32,39 @@ public class UserController {
     private static final Log log = Logs.get();
     @Inject
     UserService userService;
+    @Inject
+    MenuService menuService;
 
     @At
     @Ok("beetl:/private/sys/user/pass.html")
     public void pass() {
 
+    }
+
+    @At
+    @Ok("beetl:/private/sys/user/custom.html")
+    @RequiresUser
+    public void custom() {
+
+    }
+
+    @At
+    @Ok("json")
+    @RequiresUser
+    public Object customDo(@Param("ids") String ids, HttpServletRequest req) {
+        log.debug("ids:::" + ids);
+        try{
+            userService.update(Chain.make("customMenu",ids),Cnd.where("id","=",req.getAttribute("uid")));
+            Subject subject = SecurityUtils.getSubject();
+            Sys_user user = (Sys_user) subject.getPrincipal();
+            if(!Strings.isBlank(ids)){
+                user.setCustomMenu(ids);
+                user.setCustomMenus(menuService.query(Cnd.where("id","in",ids.split(","))));
+            }
+            return Result.success("保存成功", req);
+        }catch (Exception e){
+            return Result.error("保存失败", req);
+        }
     }
 
     @At

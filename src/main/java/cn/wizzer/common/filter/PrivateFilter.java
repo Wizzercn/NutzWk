@@ -1,6 +1,7 @@
 package cn.wizzer.common.filter;
 
 import cn.wizzer.common.base.Result;
+import cn.wizzer.modules.models.sys.Sys_user;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.nutz.log.Log;
@@ -27,6 +28,8 @@ public class PrivateFilter implements ActionFilter {
                 return new UTF8JsonView().setData(Result.error("登录失效", context.getRequest()));
             }
         }
+        Sys_user user = (Sys_user) subject.getPrincipal();
+        context.getRequest().setAttribute("uid",user.getId());
         return null;
     }
 }

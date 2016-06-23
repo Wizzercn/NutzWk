@@ -21,6 +21,7 @@ public class UserService extends BaseService<Sys_user> {
     public UserService(Dao dao) {
         super(dao);
     }
+
     /**
      * 查询用户菜单权限
      *
@@ -37,6 +38,7 @@ public class UserService extends BaseService<Sys_user> {
         dao().execute(sql);
         return sql.getList(Sys_menu.class);
     }
+
     /**
      * 查询用户角色code列表
      *
