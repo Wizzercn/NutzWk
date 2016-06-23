@@ -1,5 +1,6 @@
 package cn.wizzer.common.processor;
 
+import cn.wizzer.common.shiro.view.Permission;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.Mvcs;
@@ -16,8 +17,10 @@ public class GlobalsSettingProcessor extends AbstractProcessor {
 	public void process(ActionContext ac) throws Throwable {
 		ac.getRequest().setAttribute("AppRoot", Globals.AppRoot);
 		ac.getRequest().setAttribute("AppBase", Globals.AppBase);
+		ac.getRequest().setAttribute("AppName", Globals.AppName);
 		ac.getRequest().setAttribute("AppDomain", Globals.AppDomain);
 		ac.getRequest().setAttribute("AppShrotName", Globals.AppShrotName);
+		ac.getRequest().setAttribute("shiro", Mvcs.ctx().getDefaultIoc().get(Permission.class));
 		// 如果Cookies中有语言属性则设置
 		String lang=ac.getRequest().getParameter("lang");
 		if (!Strings.isEmpty(lang)) {

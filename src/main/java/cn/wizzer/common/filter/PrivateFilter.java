@@ -1,14 +1,10 @@
 package cn.wizzer.common.filter;
 
-import cn.wizzer.common.base.Message;
-import cn.wizzer.common.util.StringUtil;
+import cn.wizzer.common.base.Result;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.nutz.json.Json;
-import org.nutz.lang.Strings;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionFilter;
-import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.View;
 import org.nutz.mvc.view.ServerRedirectView;
 import org.nutz.mvc.view.UTF8JsonView;
@@ -24,7 +20,7 @@ public class PrivateFilter implements ActionFilter {
             if (!"XMLHttpRequest".equalsIgnoreCase(context.getRequest().getHeader("x-requested-with"))) {
                 return new ServerRedirectView("/private/login");
             } else {
-                return new UTF8JsonView().setData(Message.error("登录失效", context.getRequest()));
+                return new UTF8JsonView().setData(Result.error("登录失效", context.getRequest()));
             }
         }
         return null;

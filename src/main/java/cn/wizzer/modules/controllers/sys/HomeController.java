@@ -18,9 +18,9 @@ import org.nutz.mvc.annotation.Ok;
 public class HomeController {
     private static final Log log = Logs.get();
     @At("")
-    @Ok("vm:views.private.index")
+    @Ok("beetl:/private/home.html")
     @Filters
-    public void index() {
+    public void home() {
 
     }
 }

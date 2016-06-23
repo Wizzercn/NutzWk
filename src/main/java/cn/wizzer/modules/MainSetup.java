@@ -7,7 +7,6 @@ import net.sf.ehcache.CacheManager;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.apache.velocity.app.Velocity;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -36,7 +35,7 @@ public class MainSetup implements Setup {
             // 初始化数据表
             initSysData(config, dao);
             // 初始化Velocity
-            velocityInit(config);
+//            velocityInit(config);
             // 获取NutQuartzCronJobFactory从而触发计划任务的初始化与启动
             ioc.get(NutQuartzCronJobFactory.class);
             // 检查一下Ehcache CacheManager 是否正常.
@@ -342,28 +341,30 @@ public class MainSetup implements Setup {
      * @param config
      * @throws IOException
      */
-    private void velocityInit(NutConfig config) throws IOException {
-        log.info("Veloctiy Init Start...");
-        Properties p = new Properties();
-        p.setProperty("resource.loader", "file,classloader");
-        p.setProperty("file.resource.loader.path", config.getAppRoot());
-        p.setProperty("file", "org.apache.velocity.tools.view.WebappResourceLoader");
-        p.setProperty("classloader.resource.loader.class", "cn.wizzer.common.view.VelocityResourceLoader");
-        p.setProperty("classloader.resource.loader.path", config.getAppRoot());
-        p.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
-        p.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");
-        p.setProperty("velocimacro.library.autoreload", "false");
-        p.setProperty("classloader.resource.loader.root", config.getAppRoot());
-        p.setProperty("velocimarco.library.autoreload", "true");
-        p.setProperty("runtime.log.error.stacktrace", "false");
-        p.setProperty("runtime.log.warn.stacktrace", "false");
-        p.setProperty("runtime.log.info.stacktrace", "false");
-        p.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
-        p.setProperty("runtime.log.logsystem.log4j.category", "velocity_log");
-        p.setProperty("velocimacro.library", "/WEB-INF/views/common/globals.html");
-        Velocity.init(p);
-        log.info("Veloctiy Init End.");
-    }
+//    private void velocityInit(NutConfig config) throws IOException {
+//        log.info("Veloctiy Init Start...");
+//        Properties p = new Properties();
+//        p.setProperty("resource.loader", "file,classloader");
+//        p.setProperty("file.resource.loader.path", config.getAppRoot());
+//        p.setProperty("file", "org.apache.velocity.tools.view.WebappResourceLoader");
+//        p.setProperty("classloader.resource.loader.class", "org.apache.velocity.tools.view.WebappResourceLoader");
+//        p.setProperty("classloader.resource.loader.path", config.getAppRoot());
+//        p.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
+//        p.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");
+//        p.setProperty("velocimacro.library.autoreload", "false");
+//        p.setProperty("classloader.resource.loader.root", config.getAppRoot());
+//        p.setProperty("velocimarco.library.autoreload", "true");
+//        p.setProperty("runtime.log.error.stacktrace", "true");
+//        p.setProperty("runtime.log.warn.stacktrace", "true");
+//        p.setProperty("runtime.log.info.stacktrace", "false");
+//        p.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
+//        p.setProperty("runtime.log.logsystem.log4j.category", "velocity_log");
+//        p.setProperty("tools.view.servlet.layout.directory", "/layouts/");
+//        p.setProperty("tools.view.servlet.layout.default.template", "private.html");
+//        p.setProperty("velocimacro.library", "/WEB-INF/views/common/globals.html");
+//        Velocity.init(p);
+//        log.info("Veloctiy Init End.");
+//    }
 
     public void destroy(NutConfig config) {
     }

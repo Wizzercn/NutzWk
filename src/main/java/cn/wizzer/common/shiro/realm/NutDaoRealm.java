@@ -33,6 +33,7 @@ public class NutDaoRealm extends AbstractNutRealm {
 		}
 		int errCount=NumberUtils.toInt(Strings.sNull(SecurityUtils.getSubject().getSession(true).getAttribute("errCount")));
 		if(errCount>2){
+			//输错三次显示验证码窗口
 			if(Strings.isBlank(captcha)){
 				throw Lang.makeThrow(EmptyCaptchaException.class, "Captcha is empty");
 			}

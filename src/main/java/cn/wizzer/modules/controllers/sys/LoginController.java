@@ -1,13 +1,12 @@
 package cn.wizzer.modules.controllers.sys;
 
 import cn.apiclub.captcha.Captcha;
-import cn.wizzer.common.base.Message;
+import cn.wizzer.common.base.Result;
 import cn.wizzer.common.services.log.SysLogService;
 import cn.wizzer.common.shiro.exception.EmptyCaptchaException;
 import cn.wizzer.common.shiro.exception.IncorrectCaptchaException;
 import cn.wizzer.common.shiro.filter.CaptchaFormAuthenticationFilter;
 import cn.wizzer.common.util.StringUtil;
-import cn.wizzer.common.view.VelocityLayoutView;
 import cn.wizzer.modules.models.sys.Sys_log;
 import cn.wizzer.modules.models.sys.Sys_menu;
 import cn.wizzer.modules.models.sys.Sys_user;
@@ -17,6 +16,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
@@ -30,6 +30,7 @@ import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.View;
 import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.ServerRedirectView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,13 +55,14 @@ public class LoginController {
     SysLogService sysLogService;
 
     @At("")
+    @Ok("re")
     @Filters
-    public View login() {
+    public String login() {
         Subject subject = SecurityUtils.getSubject();
         if (subject.isAuthenticated() || subject.isRemembered()) {
-            return new ServerRedirectView("/private/home");
+            return "->:/private/home";
         } else {
-            return new VelocityLayoutView("views.private.login");
+            return "beetl:/private/login.html";
         }
     }
 
@@ -127,11 +129,13 @@ public class LoginController {
     public Object doLogin(@Attr("loginToken") AuthenticationToken token, HttpServletRequest req, HttpSession session) {
         int errCount = 0;
         try {
+            //输错三次显示验证码窗口
             errCount = NumberUtils.toInt(Strings.sNull(SecurityUtils.getSubject().getSession(true).getAttribute("errCount")));
             Subject subject = SecurityUtils.getSubject();
             ThreadContext.bind(subject);
             subject.login(token);
             Sys_user user = (Sys_user) subject.getPrincipal();
+            //获取用户菜单
             user.setMenus(userService.getMenus(user.getId()));
             user.setLoginIp(StringUtil.getRemoteAddr());
             //计算左侧菜单
@@ -153,30 +157,27 @@ public class LoginController {
             userService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", (int) System.currentTimeMillis() / 1000)
                     .add("loginCount", user.getLoginCount() + 1).add("online", true)
                     , Cnd.where("id", "=", user.getId()));
-            return Message.success("login.success", req);
+            return Result.success("login.success", req);
         } catch (IncorrectCaptchaException e) {
-            //自定义的验证码错误异常,需shrio.ini 配置authcStrategy属性，加到对应的类中
-
-            return Message.error(1, "login.error.captcha", req);
+            //自定义的验证码错误异常
+            return Result.error(1, "login.error.captcha", req);
         } catch (EmptyCaptchaException e) {
             //验证码为空
-            return Message.error(2, "login.error.captcha", req);
+            return Result.error(2, "login.error.captcha", req);
         } catch (LockedAccountException e) {
-            return Message.error(3, "login.error.locked", req);
+            return Result.error(3, "login.error.locked", req);
+        } catch (UnknownAccountException e) {
+            errCount++;
+            SecurityUtils.getSubject().getSession(true).setAttribute("errCount", errCount);
+            return Result.error(4, "login.error.user", req);
         } catch (AuthenticationException e) {
             errCount++;
-            try {
-                SecurityUtils.getSubject().getSession(true).setAttribute("errCount", errCount);
-            } catch (Exception e1) {
-            }
-            return Message.error(4, "login.error.user", req);
+            SecurityUtils.getSubject().getSession(true).setAttribute("errCount", errCount);
+            return Result.error(5, "login.error.user", req);
         } catch (Exception e) {
             errCount++;
-            try {
-                SecurityUtils.getSubject().getSession(true).setAttribute("errCount", errCount);
-            } catch (Exception e1) {
-            }
-            return Message.error(5, "login.error.system", req);
+            SecurityUtils.getSubject().getSession(true).setAttribute("errCount", errCount);
+            return Result.error(6, "login.error.system", req);
         }
     }
 
