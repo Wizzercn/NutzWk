@@ -9,10 +9,7 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.By;
-import org.nutz.mvc.annotation.Filters;
-import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.*;
 
 /**
  * Created by wizzer on 2016/6/24.
@@ -24,10 +21,25 @@ public class UnitController {
     private static final Log log = Logs.get();
     @Inject
     UnitService unitService;
+
     @At("")
     @Ok("beetl:/private/sys/unit/index.html")
     @RequiresPermissions("sys.manager.unit")
     public Object index() {
-        return unitService.query(Cnd.where("parentId","=","").asc("location").asc("path"));
+        return unitService.query(Cnd.where("parentId", "=", "").asc("location").asc("path"));
+    }
+
+    @At("/child/*")
+    @Ok("beetl:/private/sys/unit/child.html")
+    @RequiresPermissions("sys.manager.unit")
+    public Object child(@Param("id") String id) {
+        return unitService.query(Cnd.where("parentId", "=", id).asc("location").asc("path"));
+    }
+
+    @At("/detail/*")
+    @Ok("beetl:/private/sys/unit/detail.html")
+    @RequiresPermissions("sys.manager.unit")
+    public Object detail(@Param("id") String id) {
+        return unitService.fetch(id);
     }
 }
