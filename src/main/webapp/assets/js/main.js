@@ -271,29 +271,29 @@ var sublime = function () {
 
     function initMenuCollapse() {
         //顶部导航浮动显示,觉得体验不好注释掉
-        //$(document).on("mouseover", ".topnav a", function (e) {
-        //  var links = $(this).parents('li'), parentLink = $(this).closest("li"), otherLinks = $('.topnav li').not(links), subMenu = $(this).next();
-        //  if (!parentLink.hasClass("open")) {
-        //    parentLink.addClass("open");
-        //  }
-        //  if (otherLinks.hasClass("open")) {
-        //    otherLinks.removeClass("open");
-        //  }
-        //  $(this).children(".sub-menu").show();
-        //  if (subMenu.is("ul") && (!subMenu.is(":visible")))
-        //    subMenu.slideDown();
-        //  if ($(this).attr('href') === '#') {
-        //    e.preventDefault();
-        //  }
-        //  subMenu.find('.sub-menu').each(function(){
-        //    $(this).show();
-        //  });
-        //  if (subMenu.is("ul")) {
-        //    return false;
-        //  }
-        //  e.stopPropagation();
-        //  return true;
-        //});
+        $(document).on("mouseover", ".topnav a", function (e) {
+          var links = $(this).parents('li'), parentLink = $(this).closest("li"), otherLinks = $('.topnav li').not(links), subMenu = $(this).next();
+          if (!parentLink.hasClass("open")) {
+            parentLink.addClass("open");
+          }
+          if (otherLinks.hasClass("open")) {
+            otherLinks.removeClass("open");
+          }
+          $(this).children(".sub-menu").show();
+          if (subMenu.is("ul") && (!subMenu.is(":visible")))
+            subMenu.slideDown();
+          if ($(this).attr('href') === '#') {
+            e.preventDefault();
+          }
+          subMenu.find('.sub-menu').each(function(){
+            $(this).show();
+          });
+          if (subMenu.is("ul")) {
+            return false;
+          }
+          e.stopPropagation();
+          return true;
+        });
         $(document).on("click", ".main-navigation a", function (e) {
             var links = $(this).parents('li'), parentLink = $(this).closest("li"), otherLinks = $('.main-navigation li').not(links), subMenu = $(this).next();
             if (!subMenu.hasClass("sub-menu")) {

@@ -11,6 +11,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.nutz.ioc.Ioc;
+import org.nutz.json.Json;
 import org.nutz.lang.Lang;
 import org.nutz.mvc.Mvcs;
 
@@ -58,8 +59,8 @@ public abstract class AbstractNutRealm extends AuthorizingRealm {
     /**
      * 授权查询回调函数, 进行鉴权但缓存中无用户的授权信息时调用.
      */
-    @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        System.out.println("xxx:::");
         Sys_user user = (Sys_user) principals.getPrimaryPrincipal();
         if (!Lang.isEmpty(user)) {
             SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
@@ -68,6 +69,7 @@ public abstract class AbstractNutRealm extends AuthorizingRealm {
                 if (!role.isDisabled())
                     info.addStringPermissions(getRoleService().getPermissionNameList(role));
             }
+            System.out.println("info:::" + Json.toJson(info));
             return info;
         } else {
             return null;

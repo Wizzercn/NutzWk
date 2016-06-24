@@ -10,6 +10,7 @@ import java.util.List;
  * Created by wizzer on 2016/6/21.
  */
 @Table("sys_role")
+@TableIndexes({@Index(name = "INDEX_SYS_ROLE_CODE", fields = {"code"}, unique = true)})
 public class Sys_role extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column

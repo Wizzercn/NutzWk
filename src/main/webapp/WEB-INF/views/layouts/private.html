@@ -118,7 +118,7 @@
             </li>
 
         </ul>
-        <ul class="topnav nav navbar-nav hidden-xs">
+        <ul class="nav navbar-nav hidden-xs">
             <!--<li>-->
             <!--<a href="/sysadmin/home" data-pjax>-->
             <!--<i class="ti-home"></i>-->
@@ -138,7 +138,7 @@
                     <span><%if(lang=="zh_CN"){%>${firstMenu.name}<%}else{%>${firstMenu.aliasName}<%}%></span>
                     <b class="caret"></b>
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu topnav">
                     <% if(!isEmpty(@secondMenus.get(firstMenu.path))){
 
                     for(secondMenu in @secondMenus.get(firstMenu.path)){ %>
@@ -159,6 +159,9 @@
                     </li><% }} %>
                 </ul>
             </li><% }%>
+            <li>
+                <a href="https://github.com/Wizzercn/NutzWk" target="_blank">GitHub</a>
+            </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <!--通知位置-->
@@ -223,7 +226,7 @@
                 <ul class="nav">
                     <li class="open">
                         <a href="javascript:;">
-                            <%if(!isEmpty(@shiro.getPrincipalProperty('secondMenus'))){%>
+                            <%if(!isEmpty(@shiro.getPrincipalProperty('customMenus'))){%>
                             <i class="toggle-accordion"></i>
                             <%}%>
                             <i class="ti-heart"></i>

@@ -5,7 +5,7 @@ import cn.wizzer.common.base.Result;
 import cn.wizzer.common.services.log.SysLogService;
 import cn.wizzer.common.shiro.exception.EmptyCaptchaException;
 import cn.wizzer.common.shiro.exception.IncorrectCaptchaException;
-import cn.wizzer.common.shiro.filter.CaptchaFormAuthenticationFilter;
+import cn.wizzer.common.shiro.filter.AuthenticationFilter;
 import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.modules.models.sys.Sys_log;
 import cn.wizzer.modules.models.sys.Sys_menu;
@@ -18,7 +18,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authz.annotation.RequiresUser;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
@@ -29,10 +29,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.View;
 import org.nutz.mvc.annotation.*;
-import org.nutz.mvc.view.ForwardView;
-import org.nutz.mvc.view.ServerRedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -78,7 +75,7 @@ public class LoginController {
      * @RequiresAuthentication 就算记住我也需要重新验证身份
      */
     @At("/theme")
-    @RequiresUser
+    @RequiresAuthentication
     public void theme(@Param("loginTheme") String theme, HttpServletRequest req) {
         if (!Strings.isEmpty(theme)) {
             Subject subject = SecurityUtils.getSubject();
@@ -100,7 +97,7 @@ public class LoginController {
      * @RequiresAuthentication 就算记住我也需要重新验证身份
      */
     @At("/layout")
-    @RequiresUser
+    @RequiresAuthentication
     public void layout(@Param("p") String p, @Param("v") boolean v, HttpServletRequest req) {
         Subject subject = SecurityUtils.getSubject();
         if (subject != null) {
@@ -128,7 +125,7 @@ public class LoginController {
      */
     @At("/doLogin")
     @Ok("json")
-    @Filters(@By(type = CaptchaFormAuthenticationFilter.class))
+    @Filters(@By(type = AuthenticationFilter.class))
     public Object doLogin(@Attr("loginToken") AuthenticationToken token, HttpServletRequest req, HttpSession session) {
         int errCount = 0;
         try {

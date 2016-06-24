@@ -6,6 +6,7 @@ import cn.wizzer.modules.models.sys.Sys_user;
 import cn.wizzer.modules.services.sys.MenuService;
 import cn.wizzer.modules.services.sys.UserService;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -37,20 +38,21 @@ public class UserController {
 
     @At
     @Ok("beetl:/private/sys/user/pass.html")
+    @RequiresAuthentication
     public void pass() {
 
     }
 
     @At
     @Ok("beetl:/private/sys/user/custom.html")
-    @RequiresUser
+    @RequiresAuthentication
     public void custom() {
 
     }
 
     @At
     @Ok("json")
-    @RequiresUser
+    @RequiresAuthentication
     public Object customDo(@Param("ids") String ids, HttpServletRequest req) {
         log.debug("ids:::" + ids);
         try{
@@ -69,7 +71,7 @@ public class UserController {
 
     @At
     @Ok("json")
-    @RequiresUser
+    @RequiresAuthentication
     public Object doChangePassword(@Param("oldPassword") String oldPassword, @Param("newPassword") String newPassword, HttpServletRequest req) {
         Subject subject = SecurityUtils.getSubject();
         if (subject != null) {

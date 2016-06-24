@@ -36,8 +36,9 @@ public class BaseService<T> extends EntityService<T> {
     public BaseService(Dao dao) {
         super(dao);
     }
-    public int count(String tableName,Condition cnd){
-        return this.dao().count(tableName,cnd);
+
+    public int count(String tableName, Condition cnd) {
+        return this.dao().count(tableName, cnd);
     }
 
     public T fetch(long id) {
@@ -50,6 +51,14 @@ public class BaseService<T> extends EntityService<T> {
 
     public int delete(String name) {
         return this.dao().delete(this.getEntityClass(), name);
+    }
+
+    public T fetchLinks(T t, String name) {
+        return this.dao().fetchLinks(t, name);
+    }
+
+    public T fetchLinks(T t, String name, Condition cnd) {
+        return this.dao().fetchLinks(t, name, cnd);
     }
 
     public int delete(long id) {

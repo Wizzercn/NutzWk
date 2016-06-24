@@ -2,6 +2,7 @@ package cn.wizzer.modules.controllers.sys;
 
 import cn.wizzer.common.filter.PrivateFilter;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -21,6 +22,7 @@ public class HomeController {
 
     @At("")
     @Ok("beetl:/private/home.html")
+    @RequiresAuthentication
     public void home() {
         //SecurityUtils.getSubject().getSession().setTimeout(1000);
     }

@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by wizzer on 2016/6/21.
  */
 @Table("sys_menu")
-@TableIndexes({@Index(name = "INDEX_SYS_MENU_PATH", fields = {"path"}, unique = true)})
+@TableIndexes({@Index(name = "INDEX_SYS_MENU_PATH", fields = {"path"}, unique = true),@Index(name = "INDEX_SYS_MENU_PREM", fields = {"permission"}, unique = true)})
 public class Sys_menu extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column

@@ -26,6 +26,7 @@ public class ShiroActionFilter implements ActionFilter {
 
     public View match(final ActionContext actionContext) {
         try {
+            log.debug("ShiroActionFilter..............");
             ShiroAnnotationsAuthorizingMethodInterceptor.DEFAULT_AUTH.assertAuthorized(new MethodInvocation() {
 
                 public Object proceed() throws Throwable {
@@ -55,7 +56,7 @@ public class ShiroActionFilter implements ActionFilter {
     }
 
     private View view = new ServerRedirectView("/");
-    private View NOT_PERMISSION = new ServerRedirectView("/sysadmin");
+    private View NOT_PERMISSION = new ServerRedirectView("/private/login");
 
     public ShiroActionFilter() {
 
