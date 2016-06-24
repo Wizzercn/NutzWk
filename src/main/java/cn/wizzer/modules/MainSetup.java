@@ -104,7 +104,7 @@ public class MainSetup implements Setup {
             unit.setAddress("银河-太阳系-地球");
             unit.setEmail("wizzer@qq.com");
             unit.setTelephone("");
-            unit.setHasChildren(true);
+            unit.setHasChildren(false);
             unit.setParentId("");
             unit.setWebsite("http://www.wizzer.cn");
             Sys_unit dbunit = dao.insert(unit);
