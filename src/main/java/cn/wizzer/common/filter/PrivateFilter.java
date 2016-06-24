@@ -19,17 +19,8 @@ public class PrivateFilter implements ActionFilter {
     private static final Log log = Logs.get();
     public View match(ActionContext context) {
         Subject subject = SecurityUtils.getSubject();
-        if (!subject.isAuthenticated()) {
-            //判断AJAX请求
-            if (!"XMLHttpRequest".equalsIgnoreCase(context.getRequest().getHeader("x-requested-with"))) {
-                return new ServerRedirectView("/private/login");
-            } else {
-                context.getResponse().setHeader("loginStatus", "accessDenied");
-                return new UTF8JsonView().setData(Result.error("登录失效", context.getRequest()));
-            }
-        }
         Sys_user user = (Sys_user) subject.getPrincipal();
-        context.getRequest().setAttribute("uid",user.getId());
+        context.getRequest().setAttribute("uid",user==null?"":user.getId());
         return null;
     }
 }

@@ -54,7 +54,6 @@ public class UserController {
     @Ok("json")
     @RequiresAuthentication
     public Object customDo(@Param("ids") String ids, HttpServletRequest req) {
-        log.debug("ids:::" + ids);
         try{
             userService.update(Chain.make("customMenu",ids),Cnd.where("id","=",req.getAttribute("uid")));
             Subject subject = SecurityUtils.getSubject();
@@ -71,7 +70,7 @@ public class UserController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @RequiresUser
     public Object doChangePassword(@Param("oldPassword") String oldPassword, @Param("newPassword") String newPassword, HttpServletRequest req) {
         Subject subject = SecurityUtils.getSubject();
         if (subject != null) {

@@ -140,7 +140,7 @@ public class MainSetup implements Setup {
             menu.setHasChildren(true);
             menu.setParentId(m0.getId());
             menu.setType("menu");
-            menu.setPermission("sys:manager");
+            menu.setPermission("sys.manager");
             Sys_menu m1 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setDisabled(false);
@@ -151,7 +151,7 @@ public class MainSetup implements Setup {
             menu.setHref("/private/sys/unit");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
-            menu.setPermission("sys:manager:unit");
+            menu.setPermission("sys.manager.unit");
             menu.setParentId(m1.getId());
             menu.setType("menu");
             Sys_menu m2 = dao.insert(menu);
@@ -164,7 +164,7 @@ public class MainSetup implements Setup {
             menu.setHref("/private/sys/user");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
-            menu.setPermission("sys:manager:user");
+            menu.setPermission("sys.manager.user");
             menu.setHasChildren(false);
             menu.setParentId(m1.getId());
             menu.setType("menu");
@@ -176,7 +176,7 @@ public class MainSetup implements Setup {
             menu.setAliasName("Add");
             menu.setLocation(0);
             menu.setIsShow(false);
-            menu.setPermission("sys:manager:user:add");
+            menu.setPermission("sys.manager.user:add");
             menu.setParentId(m3.getId());
             menu.setType("button");
             Sys_menu m31=dao.insert(menu);
@@ -187,7 +187,7 @@ public class MainSetup implements Setup {
             menu.setAliasName("Update");
             menu.setLocation(1);
             menu.setIsShow(false);
-            menu.setPermission("sys:manager:user:update");
+            menu.setPermission("sys.manager.user:update");
             menu.setParentId(m3.getId());
             menu.setType("button");
             Sys_menu m32=dao.insert(menu);
@@ -198,7 +198,7 @@ public class MainSetup implements Setup {
             menu.setAliasName("Delete");
             menu.setLocation(2);
             menu.setIsShow(false);
-            menu.setPermission("sys:manager:user:delete");
+            menu.setPermission("sys.manager.user:delete");
             menu.setParentId(m3.getId());
             menu.setType("button");
             Sys_menu m33=dao.insert(menu);
@@ -210,7 +210,7 @@ public class MainSetup implements Setup {
             menu.setLocation(0);
             menu.setHref("/private/sys/role");
             menu.setIsShow(true);
-            menu.setPermission("sys:manager:role");
+            menu.setPermission("sys.manager.role");
             menu.setParentId(m1.getId());
             menu.setType("menu");
             Sys_menu m4=dao.insert(menu);
@@ -223,7 +223,7 @@ public class MainSetup implements Setup {
             menu.setHref("/private/sys/menu");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
-            menu.setPermission("sys:manager:menu");
+            menu.setPermission("sys.manager.menu");
             menu.setParentId(m1.getId());
             menu.setType("menu");
             Sys_menu m5 = dao.insert(menu);
@@ -236,7 +236,7 @@ public class MainSetup implements Setup {
             menu.setHref("/private/sys/config");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
-            menu.setPermission("sys:manager:config");
+            menu.setPermission("sys.manager.config");
             menu.setParentId(m1.getId());
             menu.setType("menu");
             Sys_menu m6=dao.insert(menu);
@@ -248,7 +248,7 @@ public class MainSetup implements Setup {
             menu.setLocation(0);
             menu.setHref("/private/sys/log");
             menu.setIsShow(true);
-            menu.setPermission("sys:manager:log");
+            menu.setPermission("sys.manager.log");
             menu.setParentId(m1.getId());
             menu.setType("menu");
             Sys_menu m7=dao.insert(menu);
@@ -260,7 +260,7 @@ public class MainSetup implements Setup {
             menu.setLocation(0);
             menu.setHref("/private/sys/job");
             menu.setIsShow(true);
-            menu.setPermission("sys:manager:job");
+            menu.setPermission("sys.manager.job");
             menu.setParentId(m1.getId());
             menu.setType("menu");
             Sys_menu m8=dao.insert(menu);

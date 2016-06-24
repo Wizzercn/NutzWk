@@ -26,7 +26,7 @@ public class UnitController {
     UnitService unitService;
     @At("")
     @Ok("beetl:/private/sys/unit/index.html")
-    @RequiresPermissions("sys:xxx")
+    @RequiresPermissions("sys.manager.unit")
     public Object index() {
         return unitService.query(Cnd.where("parentId","=","").asc("location").asc("path"));
     }
