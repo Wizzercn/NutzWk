@@ -1,19 +1,14 @@
 <%
 layout("/layouts/private.html"){
 %>
-${@shiro.hasPermission("sys.manager.user:add")}
-${@shiro.hasPermission("sys.manager.user")}
-${@shiro.hasPermission("sys.manager.xxx")}
-${@shiro.hasPermission("sys.manager:")}
-${@shiro.hasPermission("sys.manager.user.add")}
 <div class="content-wrap">
 
     <div class="wrapper">
         <dl class="accordion">
             <dt>
-                <a href="javascript:;">3.0</a>
+                <a href="javascript:;" class="active">3.0</a>
             </dt>
-            <dd>
+            <dd style="display: block">
                 <b>版本特性</b><br>
                 &#149; 集成Shrio权限框架<br>
                 &#149; 集成Ehcache缓存<br>
@@ -28,11 +23,15 @@ ${@shiro.hasPermission("sys.manager.user.add")}
                 &#149; 采用Bootsrtap+Pjax<br><br>
                 <b>源码地址</b><br>
                 <a href="https://github.com/Wizzercn/NutzWk" target="_blank">https://github.com/Wizzercn/NutzWk</a>
+                <br>
+                <b><span style="color: red">捐助 | 合作</span></b><br>
+                支付宝：wizzer@qq.com<br>
+                微&nbsp;信：wizzer
             </dd>
             <dt>
-                <a href="javascript:;">使用说明</a>
+                <a href="javascript:;" class="active">使用说明</a>
             </dt>
-            <dd>
+            <dd style="display: block">
                 &#149; 创建空的数据库<br>
                 &#149; 修改数据库连接 /resources/config/custom/db.properties<br>
                 &#149; 项目使用Maven构建，IDEA/Eclipse直接打开，等待包下载完毕即可<br>
