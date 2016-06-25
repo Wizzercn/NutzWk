@@ -137,6 +137,8 @@ public class Sys_log extends BaseModel implements Serializable {
         }
         sysLog.nickname=nickname;
         sysLog.createBy=uid;
+        sysLog.createAt=(int)(System.currentTimeMillis()/1000);
+        sysLog.updateAt=(int)(System.currentTimeMillis()/1000);
         return sysLog;
     }
 }
