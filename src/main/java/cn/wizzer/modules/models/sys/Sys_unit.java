@@ -62,7 +62,7 @@ public class Sys_unit extends BaseModel implements Serializable {
     @Column
     @Comment("排序字段")
     @Prev( @SQL("select max(location)+1 from sys_unit") )
-    private int location;
+    private Integer location;
     @Column
     @Comment("有子节点")
     private boolean hasChildren;
@@ -155,11 +155,11 @@ public class Sys_unit extends BaseModel implements Serializable {
         this.website = website;
     }
 
-    public int getLocation() {
+    public Integer getLocation() {
         return location;
     }
 
-    public void setLocation(int location) {
+    public void setLocation(Integer location) {
         this.location = location;
     }
 

@@ -50,7 +50,7 @@ public class Sys_user extends BaseModel implements Serializable {
     @Prev(els = @EL("$me.now()"))
     @Column
     @Comment("登陆时间")
-    protected int loginAt;
+    protected Integer loginAt;
     @Column
     @Comment("登陆IP")
     @ColDefine(type = ColType.VARCHAR, width = 15)
@@ -58,7 +58,7 @@ public class Sys_user extends BaseModel implements Serializable {
     @Column
     @Comment("登陆次数")
     @ColDefine(type = ColType.INT)
-    private int loginCount;
+    private Integer loginCount;
     @Column
     @Comment("常用菜单")
     @ColDefine(type = ColType.VARCHAR, width = 255)
@@ -153,11 +153,11 @@ public class Sys_user extends BaseModel implements Serializable {
         this.email = email;
     }
 
-    public int getLoginAt() {
+    public Integer getLoginAt() {
         return loginAt;
     }
 
-    public void setLoginAt(int loginAt) {
+    public void setLoginAt(Integer loginAt) {
         this.loginAt = loginAt;
     }
 
@@ -169,11 +169,11 @@ public class Sys_user extends BaseModel implements Serializable {
         this.loginIp = loginIp;
     }
 
-    public int getLoginCount() {
+    public Integer getLoginCount() {
         return loginCount;
     }
 
-    public void setLoginCount(int loginCount) {
+    public void setLoginCount(Integer loginCount) {
         this.loginCount = loginCount;
     }
 

@@ -61,6 +61,11 @@ public class BaseService<T> extends EntityService<T> {
         return this.dao().update(obj);
     }
 
+    /**
+     * 忽略值为null的字段
+     * @param obj
+     * @return
+     */
     public int updateIgnoreNull(Object obj) {
         return this.dao().updateIgnoreNull(obj);
     }

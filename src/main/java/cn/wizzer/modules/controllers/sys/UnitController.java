@@ -11,6 +11,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -60,21 +61,21 @@ public class UnitController {
         }
     }
 
-    @At("/child/*")
+    @At("/child/?")
     @Ok("beetl:/private/sys/unit/child.html")
     @RequiresAuthentication
     public Object child(@Param("id") String id) {
         return unitService.query(Cnd.where("parentId", "=", id).asc("path"));
     }
 
-    @At("/detail/*")
+    @At("/detail/?")
     @Ok("beetl:/private/sys/unit/detail.html")
     @RequiresAuthentication
     public Object detail(@Param("id") String id) {
         return unitService.fetch(id);
     }
 
-    @At("/edit/*")
+    @At("/edit/?")
     @Ok("beetl:/private/sys/unit/edit.html")
     @RequiresPermissions("sys.manager.unit")
     public Object edit(@Param("id") String id, HttpServletRequest req) {
@@ -91,7 +92,21 @@ public class UnitController {
     @SLog(tag = "编辑单位", msg = "单位名称:${args[0].name}")
     public Object editDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
+            unit.setUpdateAt((int) (System.currentTimeMillis() / 1000));
             unitService.updateIgnoreNull(unit);
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/delete/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.unit.delete")
+    @SLog(tag = "删除单位", msg = "单位名称:${args[0].name}")
+    public Object delete( @Param("id") String id, HttpServletRequest req) {
+        try {
+            unitService.deleteAndChild(id);
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);

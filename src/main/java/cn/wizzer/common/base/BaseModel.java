@@ -17,33 +17,33 @@ public abstract class BaseModel implements Serializable {
     @Column
     @Comment("创建时间")
     @Prev(els = @EL("$me.now()"))
-    protected int createAt;
+    protected Integer createAt;
     @Column
     @Comment("更新时间")
     @Prev(els = @EL("$me.now()"))
-    protected int updateAt;
+    protected Integer updateAt;
 
     public String toString() {
         return String.format("/*%s*/%s", super.toString(), Json.toJson(this, JsonFormat.compact()));
     }
 
-    public int getCreateAt() {
+    public Integer getCreateAt() {
         return createAt;
     }
 
-    public void setCreateAt(int createAt) {
+    public void setCreateAt(Integer createAt) {
         this.createAt = createAt;
     }
 
-    public int getUpdateAt() {
+    public Integer getUpdateAt() {
         return updateAt;
     }
 
-    public void setUpdateAt(int updateAt) {
+    public void setUpdateAt(Integer updateAt) {
         this.updateAt = updateAt;
     }
 
-    public int now() {
+    public Integer now() {
         return  (int)(System.currentTimeMillis()/1000);
     }
 
