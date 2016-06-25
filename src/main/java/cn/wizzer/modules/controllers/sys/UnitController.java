@@ -5,7 +5,9 @@ import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.modules.models.sys.Sys_unit;
 import cn.wizzer.modules.services.sys.UnitService;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -33,21 +35,21 @@ public class UnitController {
 
     @At("")
     @Ok("beetl:/private/sys/unit/index.html")
-    @RequiresPermissions("sys.manager.unit")
+    @RequiresAuthentication
     public Object index() {
         return unitService.query(Cnd.where("parentId", "=", "").asc("location").asc("path"));
     }
 
     @At
     @Ok("beetl:/private/sys/unit/add.html")
-    @RequiresPermissions("sys.manager.unit")
+    @RequiresAuthentication
     public Object add(@Param("pid") String pid) {
         return Strings.isBlank(pid) ? null : unitService.fetch(pid);
     }
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.unit")
+    @RequiresPermissions("sys.manager.unit.add")
     @SLog(tag = "新建单位", msg = "单位名称：${args[0].name}")
     public Object addDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
@@ -60,14 +62,14 @@ public class UnitController {
 
     @At("/child/*")
     @Ok("beetl:/private/sys/unit/child.html")
-    @RequiresPermissions("sys.manager.unit")
+    @RequiresAuthentication
     public Object child(@Param("id") String id) {
         return unitService.query(Cnd.where("parentId", "=", id).asc("location").asc("path"));
     }
 
     @At("/detail/*")
     @Ok("beetl:/private/sys/unit/detail.html")
-    @RequiresPermissions("sys.manager.unit")
+    @RequiresAuthentication
     public Object detail(@Param("id") String id) {
         return unitService.fetch(id);
     }
@@ -84,7 +86,8 @@ public class UnitController {
     }
 
     @At
-    @RequiresPermissions("sys.manager.unit")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.unit.edit")
     public Object editDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
             unitService.update(unit);
@@ -96,7 +99,7 @@ public class UnitController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.unit")
+    @RequiresAuthentication
     public Object tree(@Param("pid") String pid) {
         List<Sys_unit> list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("location").asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();

@@ -1,6 +1,11 @@
 <%
 layout("/layouts/private.html"){
 %>
+${@shiro.hasPermission("sys.manager.user:add")}
+${@shiro.hasPermission("sys.manager.user")}
+${@shiro.hasPermission("sys.manager.xxx")}
+${@shiro.hasPermission("sys.manager:")}
+${@shiro.hasPermission("sys.manager.user.add")}
 <div class="content-wrap">
 
     <div class="wrapper">

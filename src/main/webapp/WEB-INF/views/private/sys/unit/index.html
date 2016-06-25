@@ -3,7 +3,9 @@ layout("/layouts/private.html"){
 %>
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
+        <%if(@shiro.hasPermission("sys.manager.unit.add")){%>
         <a class="btn btn-primary navbar-btn" href="/private/sys/unit/add" data-pjax><i class="ti-plus"></i>新建单位</a>
+        <%}%>
     </div>
 </header>
 <div class="content-wrap">

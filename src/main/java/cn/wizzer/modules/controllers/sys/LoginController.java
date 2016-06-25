@@ -193,7 +193,7 @@ public class LoginController {
         try {
             Subject currentUser = SecurityUtils.getSubject();
             Sys_user user = (Sys_user) currentUser.getPrincipal();
-            sysLogService.async(Sys_log.c("info", "用户登出", "退出系统！"));
+            sysLogService.sync(Sys_log.c("info", "用户登出", "退出系统！"));
             userService.update(Chain.make("online", false), Cnd.where("id", "=", user.getId()));
             currentUser.logout();
         } catch (SessionException ise) {
