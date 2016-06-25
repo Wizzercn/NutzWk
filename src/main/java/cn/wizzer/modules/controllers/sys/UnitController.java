@@ -103,9 +103,14 @@ public class UnitController {
     @At("/delete/?")
     @Ok("json")
     @RequiresPermissions("sys.manager.unit.delete")
-    @SLog(tag = "删除单位", msg = "单位名称:${args[0].name}")
-    public Object delete( @Param("id") String id, HttpServletRequest req) {
+    @SLog(tag = "删除单位", msg = "单位名称:${args[1].getAttribute('name')}")
+    public Object delete(@Param("id") String id, HttpServletRequest req) {
         try {
+            Sys_unit unit = unitService.fetch(id);
+            req.setAttribute("name", unit.getName());
+            if ("0001".equals(unit.getPath())) {
+                return Result.error("system.not.allow", req);
+            }
             unitService.deleteAndChild(id);
             return Result.success("system.success", req);
         } catch (Exception e) {

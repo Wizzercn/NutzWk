@@ -48,16 +48,14 @@ public class UnitService extends BaseService<Sys_unit> {
      */
     @Aop(TransAop.READ_COMMITTED)
     public void deleteAndChild(String id) {
-        String pid = this.fetch(id).getParentId();
-        dao().execute(Sqls.create("delete from sys_unit where id= @id").setParam("id", id));
-        dao().execute(Sqls.create("select xx from sys_unit"));
-        dao().execute(Sqls.create("delete from sys_unit where parentId = @id").setParam("id", id));
+        Sys_unit unit = this.fetch(id);
+        dao().execute(Sqls.create("delete from sys_unit where path like @path").setParam("path", unit.getPath() + "%"));
         dao().execute(Sqls.create("delete from sys_user_unit where unitId=@id or unitId in(SELECT id FROM sys_unit WHERE parentId=@id)").setParam("id", id));
         dao().execute(Sqls.create("delete from sys_role where unitid=@id or unitid in(SELECT id FROM sys_unit WHERE parentId=@id)").setParam("id", id));
-        if (!Strings.isEmpty(pid)) {
-            int count = count(Cnd.where("parentId", "=", pid));
+        if (!Strings.isEmpty(unit.getParentId())) {
+            int count = count(Cnd.where("parentId", "=", unit.getParentId()));
             if (count < 1) {
-                dao().execute(Sqls.create("update sys_unit set hasChildren=false where id=@pid").setParam("pid", pid));
+                dao().execute(Sqls.create("update sys_unit set hasChildren=false where id=@pid").setParam("pid", unit.getParentId()));
             }
         }
     }
