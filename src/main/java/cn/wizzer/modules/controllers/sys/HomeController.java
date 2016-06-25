@@ -40,6 +40,8 @@ public class HomeController {
     public void left(@Param("url") String url, HttpServletRequest req) {
         String path = "";
         String perpath = "";
+        if(Strings.sBlank(url).indexOf("?")>0)
+            url=url.substring(0,url.indexOf("?"));
         Sys_menu menu = menuService.fetch(Cnd.where("href", "=", url));
         if (menu != null) {
             if (menu.getPath().length() > 8) {
@@ -59,6 +61,8 @@ public class HomeController {
     @RequiresAuthentication
     public void path(@Param("url") String url, HttpServletRequest req) {
         if (Strings.sBlank(url).indexOf("//") > 0) {
+            if(Strings.sBlank(url).indexOf("?")>0)
+                url=url.substring(0,url.indexOf("?"));
             String[] u = url.split("//");
             String[] urls = u[1].split("/");
             List<String> list = new ArrayList<>();
