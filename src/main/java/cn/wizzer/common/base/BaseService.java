@@ -57,6 +57,10 @@ public class BaseService<T> extends EntityService<T> {
         return this.dao().fetchLinks(t, name);
     }
 
+    public int update(Object obj) {
+        return this.dao().update(obj);
+    }
+
     public T fetchLinks(T t, String name, Condition cnd) {
         return this.dao().fetchLinks(t, name, cnd);
     }

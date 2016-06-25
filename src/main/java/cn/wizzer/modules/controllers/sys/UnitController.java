@@ -72,6 +72,28 @@ public class UnitController {
         return unitService.fetch(id);
     }
 
+    @At("/edit/*")
+    @Ok("beetl:/private/sys/unit/edit.html")
+    @RequiresPermissions("sys.manager.unit")
+    public Object edit(@Param("id") String id, HttpServletRequest req) {
+        Sys_unit unit = unitService.fetch(id);
+        if (unit != null) {
+            req.setAttribute("parentUnit", unitService.fetch(unit.getParentId()));
+        }
+        return unit;
+    }
+
+    @At
+    @RequiresPermissions("sys.manager.unit")
+    public Object editDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
+        try {
+            unitService.update(unit);
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.unit")

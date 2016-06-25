@@ -176,7 +176,7 @@ public class MainSetup implements Setup {
             menu.setAliasName("Add");
             menu.setLocation(0);
             menu.setIsShow(false);
-            menu.setPermission("sys.manager.user:add");
+            menu.setPermission("sys.manager.user.add");
             menu.setParentId(m3.getId());
             menu.setType("button");
             Sys_menu m31=dao.insert(menu);
@@ -187,7 +187,7 @@ public class MainSetup implements Setup {
             menu.setAliasName("Update");
             menu.setLocation(1);
             menu.setIsShow(false);
-            menu.setPermission("sys.manager.user:update");
+            menu.setPermission("sys.manager.user.edit");
             menu.setParentId(m3.getId());
             menu.setType("button");
             Sys_menu m32=dao.insert(menu);
@@ -198,7 +198,7 @@ public class MainSetup implements Setup {
             menu.setAliasName("Delete");
             menu.setLocation(2);
             menu.setIsShow(false);
-            menu.setPermission("sys.manager.user:delete");
+            menu.setPermission("sys.manager.user.delete");
             menu.setParentId(m3.getId());
             menu.setType("button");
             Sys_menu m33=dao.insert(menu);
