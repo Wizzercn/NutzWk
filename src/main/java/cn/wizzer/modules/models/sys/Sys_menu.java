@@ -66,6 +66,7 @@ public class Sys_menu extends BaseModel implements Serializable {
     private String note;
     @Column
     @Comment("排序字段")
+    @Prev( @SQL("select max(location)+1 from sys_menu") )
     private int location;
     @Column
     @Comment("有子节点")

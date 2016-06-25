@@ -37,7 +37,7 @@ public class UnitController {
     @Ok("beetl:/private/sys/unit/index.html")
     @RequiresAuthentication
     public Object index() {
-        return unitService.query(Cnd.where("parentId", "=", "").asc("location").asc("path"));
+        return unitService.query(Cnd.where("parentId", "=", "").asc("path"));
     }
 
     @At
@@ -50,7 +50,7 @@ public class UnitController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.unit.add")
-    @SLog(tag = "新建单位", msg = "单位名称：${args[0].name}")
+    @SLog(tag = "新建单位", msg = "单位名称:${args[0].name}")
     public Object addDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
             unitService.save(unit, parentId);
@@ -64,7 +64,7 @@ public class UnitController {
     @Ok("beetl:/private/sys/unit/child.html")
     @RequiresAuthentication
     public Object child(@Param("id") String id) {
-        return unitService.query(Cnd.where("parentId", "=", id).asc("location").asc("path"));
+        return unitService.query(Cnd.where("parentId", "=", id).asc("path"));
     }
 
     @At("/detail/*")
@@ -88,9 +88,10 @@ public class UnitController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.unit.edit")
+    @SLog(tag = "编辑单位", msg = "单位名称:${args[0].name}")
     public Object editDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
-            unitService.update(unit);
+            unitService.updateIgnoreNull(unit);
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);
@@ -101,7 +102,7 @@ public class UnitController {
     @Ok("json")
     @RequiresAuthentication
     public Object tree(@Param("pid") String pid) {
-        List<Sys_unit> list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("location").asc("path"));
+        List<Sys_unit> list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();
         for (Sys_unit unit : list) {
             Map<String, Object> obj = new HashMap<>();

@@ -61,6 +61,7 @@ public class Sys_unit extends BaseModel implements Serializable {
     private String website;
     @Column
     @Comment("排序字段")
+    @Prev( @SQL("select max(location)+1 from sys_unit") )
     private int location;
     @Column
     @Comment("有子节点")
