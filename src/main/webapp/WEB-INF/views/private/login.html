@@ -63,7 +63,7 @@
                     </ul>
                     <!-- END Language list    -->
                     <div class="p15">
-                        <form id="loginForm" action="/private/login/doLogin" data-parsley-validate="" novalidate=""
+                        <form id="loginForm" action="${base!}/private/login/doLogin" data-parsley-validate="" novalidate=""
                               role="form"
                               method="post">
                             <input type="hidden" id="captcha" name="captcha">
@@ -116,8 +116,8 @@
                                    placeholder="${msg['login.captcha']}">
                         </div>
                         <div class="col-xs-4">
-                            <img id="captcha_img" src="/private/login/captcha" style="height:46px;cursor: pointer;"
-                                 onclick="$('#captcha_img').attr('src', '/private/login/captcha?_=' + new Date().getTime())"/>
+                            <img id="captcha_img" src="${base!}/private/login/captcha" style="height:46px;cursor: pointer;"
+                                 onclick="$('#captcha_img').attr('src', '${base!}/private/login/captcha?_=' + new Date().getTime())"/>
                         </div>
                     </div>
                 </form>
@@ -143,14 +143,14 @@
                 if (data.code == 0) {
                     $("#tip").hide();
                     form.find("button:submit").text("${msg['login.success']}");
-                    window.location.href = "/private/home";
+                    window.location.href = "${base!}/private/home";
                 } else if (data.code == 2) {
                     $("#verifycode").val("");
-                    $("#dialogVeryCode img").attr("src", '/private/login/captcha?_=' + new Date().getTime());
+                    $("#dialogVeryCode img").attr("src", '${base!}/private/login/captcha?_=' + new Date().getTime());
                     return $("#dialogVeryCode").modal({show: true, backdrop: 'static', keyboard: false});
                 } else {
                     $("#captcha").val("");
-                    $('#captcha_img').attr('src', '/private/login/captcha?_=' + new Date().getTime());
+                    $('#captcha_img').attr('src', '${base!}/private/login/captcha?_=' + new Date().getTime());
                     $("#tip").html(data.msg);
                     $("#tip").fadeIn();
                     form.find("button:submit").text("${msg['login.submit']}");

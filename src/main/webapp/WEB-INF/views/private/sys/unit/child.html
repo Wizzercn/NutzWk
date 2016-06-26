@@ -13,12 +13,12 @@
                 <span class="ti-angle-down"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li><a href="/private/sys/unit/detail/${o.id}" data-toggle="modal"
+                <li><a href="${base}/private/sys/unit/detail/${o.id}" data-toggle="modal"
                        data-target="#dialogUnitDetail">查看</a></li>
-                <li><a href="/private/sys/unit/edit/${o.id}" data-pjax>修改</a></li>
+                <li><a href="${base}/private/sys/unit/edit/${o.id}" data-pjax>修改</a></li>
                 <li><a href="javascript:;" onclick="del('${o.id}')">删除</a></li>
                 <li class="divider"></li>
-                <li><a href="/private/sys/unit/add?pid=${o.id}" data-pjax>添加子单位</a></li>
+                <li><a href="${base}/private/sys/unit/add?pid=${o.id}" data-pjax>添加子单位</a></li>
 
             </ul>
         </div>

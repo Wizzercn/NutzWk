@@ -3,7 +3,7 @@ layout("/layouts/private.html"){
 %>
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="/private/sys/unit" data-pjax><i class="ti-angle-left"></i> 返回</a>
+        <a class="btn btn-primary navbar-btn" href="${base}/private/sys/unit" data-pjax><i class="ti-angle-left"></i> 返回</a>
     </div>
 </header>
 
@@ -11,7 +11,7 @@ layout("/layouts/private.html"){
     <div class="wrapper" style="min-height:500px;">
         <section class="panel panel-form">
             <form id="unitAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
-                  action="/private/sys/unit/addDo" method="post">
+                  action="${base}/private/sys/unit/addDo" method="post">
                 <div class="row mb10">
                     <div class="col-lg-12">
                         <div class="form-group has-feedback">
@@ -122,7 +122,7 @@ layout("/layouts/private.html"){
                 data: {
                     dataType: "json",
                     url: function (node) {
-                        return node.id === "#" ? "/private/sys/unit/tree" : "/private/sys/unit/tree?pid=" + node.id
+                        return node.id === "#" ? "${base}/private/sys/unit/tree" : "${base}/private/sys/unit/tree?pid=" + node.id
                     }
                 },
                 multiple: false

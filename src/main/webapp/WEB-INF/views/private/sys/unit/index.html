@@ -3,7 +3,7 @@ layout("/layouts/private.html"){
 %>
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="/private/sys/unit/add" data-pjax><i class="ti-plus"></i>新建单位</a>
+        <a class="btn btn-primary navbar-btn" href="${base}/private/sys/unit/add" data-pjax><i class="ti-plus"></i>新建单位</a>
     </div>
 </header>
 <div class="content-wrap">
@@ -37,12 +37,12 @@ layout("/layouts/private.html"){
                                     <span class="ti-angle-down"></span>
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="/private/sys/unit/detail/${o.id}" data-toggle="modal"
+                                    <li><a href="${base}/private/sys/unit/detail/${o.id}" data-toggle="modal"
                                            data-target="#dialogUnitDetail">查看</a></li>
-                                    <li><a href="/private/sys/unit/edit/${o.id}" data-pjax>修改</a></li>
+                                    <li><a href="${base}/private/sys/unit/edit/${o.id}" data-pjax>修改</a></li>
                                     <li><a href="javascript:;" onclick="del('${o.id}')">删除</a></li>
                                     <li class="divider"></li>
-                                    <li><a href="/private/sys/unit/add?pid=${o.id}" data-pjax>添加子单位</a></li>
+                                    <li><a href="${base}/private/sys/unit/add?pid=${o.id}" data-pjax>添加子单位</a></li>
 
                                 </ul>
                             </div>
@@ -109,7 +109,7 @@ layout("/layouts/private.html"){
                 var node = this;
                 var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\""+node.id+"\" data-tt-branch=\"false\"><td colspan='5'><img src=\""+base+"/assets/img/loading.gif\"/>loading</td></tr>";
                 unitTreeTable.treetable("loadBranch", node, rows);
-                $.post("/private/sys/unit/child/"+node.id,{}, function(data){
+                $.post("${base}/private/sys/unit/child/"+node.id,{}, function(data){
                     unitTreeTable.treetable("unloadBranch", node);
                     unitTreeTable.treetable("loadBranch", node, data);
                 });
@@ -124,7 +124,7 @@ layout("/layouts/private.html"){
         dialog.find("#ok").bind("click", function(event){
             var btn = $(this);
             btn.button("loading");
-            $.post("/private/sys/unit/delete/"+id,{},function(data){
+            $.post("${base}/private/sys/unit/delete/"+id,{},function(data){
                 //重置按钮状态，关闭提示框
                 dialog.modal("hide");
                 if(data.code==0){

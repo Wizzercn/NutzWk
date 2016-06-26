@@ -58,7 +58,7 @@
             var ids =chk();
             if (ids.length<6) {
                 $('#homeDetail').modal('hide');
-                $.post("/private/sys/user/customDo", {ids: ids.toString()}, function (data) {
+                $.post("${base}/private/sys/user/customDo", {ids: ids.toString()}, function (data) {
                     if (data.code == 0) {
                         Toast.success(data.msg);
                     } else {
