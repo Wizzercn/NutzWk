@@ -4,7 +4,7 @@ NutzWk 3.0 纯净版（开发中...完成时会打tag）
 
 主要是把过去一年Node.js开发中积累的一些经验用到此版本中，特别是后台界面功能。
 
-PS：如果对Node.js开发框架感兴趣，可以看这里：http://www.nodeshop.cn/sysadmin
+PS：如果对Node.js开发框架感兴趣，可以看这里：https://github.com/Wizzercn/NodeWk
 
 ======
 基于Nutz的开源企业级开发框架
