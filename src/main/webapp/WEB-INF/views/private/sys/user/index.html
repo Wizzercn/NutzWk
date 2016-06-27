@@ -34,7 +34,7 @@ layout("/layouts/private.html"){
                     <th>用户名</th>
                     <th>姓名/昵称</th>
                     <th>状态</th>
-                    <th>是否在线</th>
+                    <th>Email</th>
                     <th>操作</th>
             </table>
         </div>
@@ -173,7 +173,7 @@ layout("/layouts/private.html"){
                 {"data": "loginname", "bSortable": true},
                 {"data": "nickname", "bSortable": true},
                 {"data": "disabled", "bSortable": true},
-                {"data": "online", "bSortable": true}
+                {"data": "email", "bSortable": true}
             ],
             "columnDefs": [
                 {
@@ -193,16 +193,6 @@ layout("/layouts/private.html"){
                                 '</ul></div>';
                     },
                     "targets": 4
-                },
-                {
-                    "render": function (data, type, row) {
-                        if (data) {
-                            return '<i class="fa fa-circle text-success ml5"></i>';
-                        } else {
-                            return '<i class="fa fa-circle text-danger ml5"></i>';
-                        }
-                    },
-                    "targets": 3
                 },
                 {
                     "render": function (data, type, row) {
