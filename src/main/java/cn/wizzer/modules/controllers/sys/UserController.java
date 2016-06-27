@@ -101,11 +101,11 @@ public class UserController {
     public Object menu(@Param("id") String id, HttpServletRequest req) {
         Sys_user user = userService.fetch(id);
         List<Sys_menu> menus = userService.getMenusAndButtons(id);
-        List<Sys_menu> buttons = userService.getButtons(id);
+        List<Sys_menu> datas = userService.getDatas(id);
         List<Sys_menu> firstMenus = new ArrayList<>();
         List<Sys_menu> secondMenus = new ArrayList<>();
         for (Sys_menu menu : menus) {
-            for (Sys_menu bt : buttons) {
+            for (Sys_menu bt : datas) {
                 if (menu.getPath().equals(bt.getPath().substring(0, bt.getPath().length() - 4))) {
                     menu.setHasChildren(true);
                     break;
