@@ -16,7 +16,7 @@ layout("/layouts/private.html"){
 <section class="content-wrap bg-white">
     <header class="header navbar bg-white shadow">
         <div class="btn-group tool-button">
-            <a class="btn btn-primary navbar-btn" href="${base}/private/sys/user/add" data-pjax><i class="ti-plus"></i> 新建用户</a>
+            <a id="add" class="btn btn-primary navbar-btn" href="${base}/private/sys/user/add" data-pjax><i class="ti-plus"></i> 新建用户</a>
             <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
         </div>
         <div class="pull-right offscreen-right">
@@ -239,6 +239,7 @@ layout("/layouts/private.html"){
         }).on("select_node.jstree", function (node, selected) {
             var id = selected.selected;
             $("#unitid").val(id);
+            $("#add").attr("href","${base}/private/sys/user/add?unitid="+id);
             $("#searchForm").find("input[type='text']").val("");
             if (datatable) {
                 $(".cd-panel-content").find("input").val("");

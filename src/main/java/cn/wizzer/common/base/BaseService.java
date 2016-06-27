@@ -61,6 +61,14 @@ public class BaseService<T> extends EntityService<T> {
         return this.dao().fetchLinks(t, name);
     }
 
+    public T insert(T t) {
+        return this.dao().insert(t);
+    }
+
+    public T fastInsert(T t) {
+        return this.dao().fastInsert(t);
+    }
+
     public int update(Object obj) {
         return this.dao().update(obj);
     }
@@ -327,12 +335,12 @@ public class BaseService<T> extends EntityService<T> {
     /**
      * DataTable Page
      *
-     * @param length 页大小
-     * @param start start
-     * @param draw draw
-     * @param orders 排序
-     * @param columns 字段
-     * @param cnd 查询条件
+     * @param length   页大小
+     * @param start    start
+     * @param draw     draw
+     * @param orders   排序
+     * @param columns  字段
+     * @param cnd      查询条件
      * @param linkname 关联查询
      * @return
      */

@@ -1,5 +1,6 @@
 package cn.wizzer.modules.controllers.sys;
 
+import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
@@ -11,6 +12,7 @@ import cn.wizzer.modules.services.sys.UnitService;
 import cn.wizzer.modules.services.sys.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -52,6 +54,26 @@ public class UserController {
     @RequiresAuthentication
     public void index() {
 
+    }
+
+    @At
+    @Ok("beetl:/private/sys/user/add.html")
+    @RequiresAuthentication
+    public Object add(@Param("unitid") String unitid) {
+        return Strings.isBlank(unitid) ? null : unitService.fetch(unitid);
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.user.add")
+    @SLog(tag = "新建用户", msg = "用户名:${args[0].loginname}")
+    public Object addDo(@Param("..") Sys_user user, HttpServletRequest req) {
+        try {
+            userService.insert(user);
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
     }
 
     @At
