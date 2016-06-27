@@ -12,10 +12,11 @@
                 <table id="menuTreeTable" class="table no-m">
                     <thead>
                     <tr>
-                        <th class="col-md-2 pd-l-lg">
+                        <th class="col-md-3 pd-l-lg">
                             <span class="pd-l-sm ml20"></span>菜单名称
                         </th>
-                        <th class="col-md-3">URL</th>
+                        <th class="col-md-2">URL</th>
+                        <th class="col-md-1">权限类型</th>
                         <th class="col-md-2">权限标识</th>
                     </tr>
                     </thead>
@@ -28,6 +29,7 @@
                         data-tt-branch="${firstMenu.hasChildren}">
                         <td><span class="pd-l-sm"></span><i class="${firstMenu.icon!} mr5"></i> ${firstMenu.name!}</td>
                         <td>${firstMenu.href!}</td>
+                        <td><%if(firstMenu.type=='menu'){%>菜单<%}else{%>按钮<%}%></td>
                         <td>${firstMenu.permission!}</td>
                     </tr>
                     <%
@@ -66,11 +68,16 @@
                     }
                 });
                 $.each(childs, function (i, n) {
-                    var url = n.url || '';
+                    var url = n.href || '';
+                    var type = '菜单';
+                    if(n.type=='button'){
+                        type = '按钮';
+                    }
                     var permission = n.permission || '';
                     var row = "<tr data-tt-id='" + n.id + "' data-tt-parent-id='" + n.parentId + "' data-tt-branch='" + n.hasChildren + "'>";
                     row += "<td><span class='pd-l-sm'></span><i class='" + n.icon + " mr5'></i> " + n.name + "</td>";
                     row += "<td>" + url + "</td>";
+                    row += "<td>" + type + "</td>";
                     row += "<td>" + permission + "</td>";
                     row += "</tr>";
                     data += row;

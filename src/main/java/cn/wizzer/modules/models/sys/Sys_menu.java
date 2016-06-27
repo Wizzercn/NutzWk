@@ -4,12 +4,13 @@ import cn.wizzer.common.base.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by wizzer on 2016/6/21.
  */
 @Table("sys_menu")
-@TableIndexes({@Index(name = "INDEX_SYS_MENU_PATH", fields = {"path"}, unique = true),@Index(name = "INDEX_SYS_MENU_PREM", fields = {"permission"}, unique = true)})
+@TableIndexes({@Index(name = "INDEX_SYS_MENU_PATH", fields = {"path"}, unique = true), @Index(name = "INDEX_SYS_MENU_PREM", fields = {"permission"}, unique = true)})
 public class Sys_menu extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
@@ -66,11 +67,12 @@ public class Sys_menu extends BaseModel implements Serializable {
     private String note;
     @Column
     @Comment("排序字段")
-    @Prev( @SQL("select max(location)+1 from sys_menu") )
+    @Prev(@SQL("select max(location)+1 from sys_menu"))
     private Integer location;
     @Column
     @Comment("有子节点")
     private boolean hasChildren;
+    private List<Sys_menu> buttons;
 
     public String getId() {
         return id;
@@ -190,5 +192,13 @@ public class Sys_menu extends BaseModel implements Serializable {
 
     public void setHasChildren(boolean hasChildren) {
         this.hasChildren = hasChildren;
+    }
+
+    public List<Sys_menu> getButtons() {
+        return buttons;
+    }
+
+    public void setButtons(List<Sys_menu> buttons) {
+        this.buttons = buttons;
     }
 }
