@@ -151,7 +151,7 @@ layout("/layouts/private.html"){
             "select": true,
             "ordering": true,
             "language": {
-                "url": "${base}/plugins/datatables/cn.json"
+                "url": "${base}/assets/plugins/datatables/cn.json"
             },
             "preDrawCallback": function () {
                 sublime.showLoadingbar($(".main-content"));
@@ -247,10 +247,7 @@ layout("/layouts/private.html"){
                 initDatatable();
             }
         }).on("loaded.jstree", function (node, jstree) {
-            var id = $(node.target).find("li:first").attr("id");
-            if (id) {
-                jstree.instance.select_node(id);
-            }
+            $(node.target).find("li:first div").addClass("jstree-wholerow-clicked");
         });
     }
     function del(id) {

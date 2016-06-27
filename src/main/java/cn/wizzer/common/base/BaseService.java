@@ -1,5 +1,8 @@
 package cn.wizzer.common.base;
 
+import cn.wizzer.common.page.DataTableColumn;
+import cn.wizzer.common.page.DataTableOrder;
+import cn.wizzer.common.page.OffsetPager;
 import cn.wizzer.common.page.Pagination;
 import org.apache.commons.lang.math.NumberUtils;
 import org.nutz.dao.*;
@@ -18,6 +21,7 @@ import org.nutz.service.EntityService;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +67,7 @@ public class BaseService<T> extends EntityService<T> {
 
     /**
      * 忽略值为null的字段
+     *
      * @param obj
      * @return
      */
@@ -319,5 +324,35 @@ public class BaseService<T> extends EntityService<T> {
         return pageSize == 0 ? DEFAULT_PAGE_NUMBER : pageSize;
     }
 
-
+    /**
+     * DataTable Page
+     *
+     * @param length 页大小
+     * @param start start
+     * @param draw draw
+     * @param orders 排序
+     * @param columns 字段
+     * @param cnd 查询条件
+     * @param linkname 关联查询
+     * @return
+     */
+    public NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkname) {
+        NutMap re = new NutMap();
+        if (orders != null && orders.size() > 0) {
+            for (DataTableOrder order : orders) {
+                DataTableColumn col = columns.get(order.getColumn());
+                cnd.orderBy(Sqls.escapeSqlFieldValue(col.getData()).toString(), order.getDir());
+            }
+        }
+        Pager pager = new OffsetPager(start, length);
+        re.put("recordsFiltered", this.dao().count(getEntityClass(), cnd));
+        List<?> list = this.dao().query(getEntityClass(), cnd, pager);
+        if (!Strings.isBlank(linkname)) {
+            this.dao().fetchLinks(list, linkname);
+        }
+        re.put("data", list);
+        re.put("draw", draw);
+        re.put("recordsTotal", length);
+        return re;
+    }
 }
