@@ -79,6 +79,8 @@ public class Sys_user extends BaseModel implements Serializable {
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String unitid;
+    @One(target = Sys_unit.class, field = "unitid")
+    private Sys_unit unit;
     @ManyMany(from = "userId", relation = "sys_user_role", target = Sys_role.class, to = "roleId")
     protected List<Sys_role> roles;
     @ManyMany(from = "userId", relation = "sys_user_unit", target = Sys_role.class, to = "unitId")
@@ -230,6 +232,14 @@ public class Sys_user extends BaseModel implements Serializable {
 
     public void setUnitid(String unitid) {
         this.unitid = unitid;
+    }
+
+    public Sys_unit getUnit() {
+        return unit;
+    }
+
+    public void setUnit(Sys_unit unit) {
+        this.unit = unit;
     }
 
     public List<Sys_role> getRoles() {

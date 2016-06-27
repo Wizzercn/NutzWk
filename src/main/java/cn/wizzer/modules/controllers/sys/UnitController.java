@@ -64,21 +64,21 @@ public class UnitController {
     @At("/child/?")
     @Ok("beetl:/private/sys/unit/child.html")
     @RequiresAuthentication
-    public Object child(@Param("id") String id) {
+    public Object child(String id) {
         return unitService.query(Cnd.where("parentId", "=", id).asc("path"));
     }
 
     @At("/detail/?")
     @Ok("beetl:/private/sys/unit/detail.html")
     @RequiresAuthentication
-    public Object detail(@Param("id") String id) {
+    public Object detail(String id) {
         return unitService.fetch(id);
     }
 
     @At("/edit/?")
     @Ok("beetl:/private/sys/unit/edit.html")
     @RequiresPermissions("sys.manager.unit")
-    public Object edit(@Param("id") String id, HttpServletRequest req) {
+    public Object edit(String id, HttpServletRequest req) {
         Sys_unit unit = unitService.fetch(id);
         if (unit != null) {
             req.setAttribute("parentUnit", unitService.fetch(unit.getParentId()));
@@ -104,7 +104,7 @@ public class UnitController {
     @Ok("json")
     @RequiresPermissions("sys.manager.unit.delete")
     @SLog(tag = "删除单位", msg = "单位名称:${args[1].getAttribute('name')}")
-    public Object delete(@Param("id") String id, HttpServletRequest req) {
+    public Object delete(String id, HttpServletRequest req) {
         try {
             Sys_unit unit = unitService.fetch(id);
             req.setAttribute("name", unit.getName());

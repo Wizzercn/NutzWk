@@ -84,10 +84,123 @@ public class UserController {
         }
     }
 
+    @At("/edit/?")
+    @Ok("beetl:/private/sys/user/edit.html")
+    @RequiresAuthentication
+    public Object edit(String id) {
+        return userService.fetchLinks(userService.fetch(id), "unit");
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.user.edit")
+    @SLog(tag = "修改用户", msg = "用户名:${args[1]}->${args[0].loginname}")
+    public Object editDo(@Param("..") Sys_user user, @Param("oldLoginname") String oldLoginname, HttpServletRequest req) {
+        try {
+            if (!Strings.sBlank(oldLoginname).equals(user.getLoginname())) {
+                Sys_user u = userService.fetch(Cnd.where("loginname", "=", user.getLoginname()));
+                if (u != null)
+                    return Result.error("用户名已存在", req);
+            }
+            user.setUpdateAt((int) (System.currentTimeMillis() / 1000));
+            userService.updateIgnoreNull(user);
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/resetPwd/?")
+    @Ok("json")
+    @RequiresAuthentication
+    @SLog(tag = "重置密码", msg = "用户名:${args[1].getAttribute('loginname')}")
+    public Object resetPwd(String id, HttpServletRequest req) {
+        try {
+            Sys_user user = userService.fetch(id);
+            RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+            String salt = rng.nextBytes().toBase64();
+            String hashedPasswordBase64 = new Sha256Hash("ET922", salt, 1024).toBase64();
+            userService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", id));
+            req.setAttribute("loginname", user.getLoginname());
+            return Result.success("system.success", "ET922", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/delete/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.user.delete")
+    @SLog(tag = "删除用户", msg = "用户名：${args[1].getAttribute('loginname')}")
+    public Object delete(String userId, HttpServletRequest req) {
+        try {
+            Sys_user user = userService.fetch(userId);
+            if ("superadmin".equals(user.getLoginname())) {
+                return Result.error("system.not.allow", req);
+            }
+            userService.deleteById(userId);
+            req.setAttribute("loginname", user.getLoginname());
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/delete")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.user.delete")
+    @SLog(tag = "批量删除用户", msg = "用户ID：${args[1].getAttribute('ids')}")
+    public Object deletes(@Param("ids") String[] userIds, HttpServletRequest req) {
+        try {
+            Sys_user user = userService.fetch(Cnd.where("loginname", "=", "superadmin"));
+            StringBuilder sb = new StringBuilder();
+            for (String s : userIds) {
+                if (s.equals(user.getId())) {
+                    return Result.error("system.not.allow", req);
+                }
+                sb.append(s).append(",");
+            }
+            userService.deleteByIds(userIds);
+            req.setAttribute("ids", sb.toString());
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/enable/?")
+    @Ok("json")
+    @RequiresAuthentication
+    @SLog(tag = "启用用户", msg = "用户ID：${args[0]}")
+    public Object enable(String userId, HttpServletRequest req) {
+        try {
+            userService.update(Chain.make("disabled", false), Cnd.where("id", "=", userId));
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/disable/?")
+    @Ok("json")
+    @RequiresAuthentication
+    @SLog(tag = "禁用用户", msg = "用户ID：${args[0]}")
+    public Object disable(String userId, HttpServletRequest req) {
+        try {
+            if ("superadmin".equals(userService.fetch(userId).getLoginname())) {
+                return Result.error("system.not.allow", req);
+            }
+            userService.update(Chain.make("disabled", true), Cnd.where("id", "=", userId));
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
     @At("/detail/?")
     @Ok("beetl:/private/sys/user/detail.html")
     @RequiresAuthentication
-    public Object detail(@Param("id") String id) {
+    public Object detail(String id) {
         if (!Strings.isBlank(id)) {
             Sys_user user = userService.fetch(id);
             return userService.fetchLinks(user, "roles");
@@ -98,7 +211,7 @@ public class UserController {
     @At("/menu/?")
     @Ok("beetl:/private/sys/user/menu.html")
     @RequiresAuthentication
-    public Object menu(@Param("id") String id, HttpServletRequest req) {
+    public Object menu(String id, HttpServletRequest req) {
         Sys_user user = userService.fetch(id);
         List<Sys_menu> menus = userService.getMenusAndButtons(id);
         List<Sys_menu> datas = userService.getDatas(id);

@@ -4,10 +4,13 @@ import cn.wizzer.modules.models.sys.Sys_menu;
 import cn.wizzer.modules.models.sys.Sys_role;
 import cn.wizzer.modules.models.sys.Sys_user;
 import cn.wizzer.common.base.BaseService;
+import org.nutz.aop.interceptor.ioc.TransAop;
+import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.sql.Sql;
+import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 
 import java.util.ArrayList;
@@ -58,6 +61,7 @@ public class UserService extends BaseService<Sys_user> {
 
     /**
      * 查询用户按钮权限
+     *
      * @param userId
      * @return
      */
@@ -86,5 +90,29 @@ public class UserService extends BaseService<Sys_user> {
                 roleNameList.add(role.getCode());
         }
         return roleNameList;
+    }
+
+    /**
+     * 删除一个用户
+     *
+     * @param userId
+     */
+    @Aop(TransAop.READ_COMMITTED)
+    public void deleteById(String userId) {
+        dao().clear("sys_user_unit", Cnd.where("userId", "=", userId));
+        dao().clear("sys_user_role", Cnd.where("userId", "=", userId));
+        dao().clear("sys_user", Cnd.where("id", "=", userId));
+    }
+
+    /**
+     * 批量删除用户
+     *
+     * @param userIds
+     */
+    @Aop(TransAop.READ_COMMITTED)
+    public void deleteByIds(String[] userIds) {
+        dao().clear("sys_user_unit", Cnd.where("userId", "in", userIds));
+        dao().clear("sys_user_role", Cnd.where("userId", "in", userIds));
+        dao().clear("sys_user", Cnd.where("id", "in", userIds));
     }
 }
