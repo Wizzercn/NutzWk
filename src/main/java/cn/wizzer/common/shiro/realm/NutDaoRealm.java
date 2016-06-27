@@ -42,7 +42,7 @@ public class NutDaoRealm extends AbstractNutRealm {
                 throw Lang.makeThrow(IncorrectCaptchaException.class, "Captcha is error");
             }
         }
-        if (user.isDisbaled()) {
+        if (user.isDisabled()) {
             throw Lang.makeThrow(LockedAccountException.class, "Account [ %s ] is locked.", loginname);
         }
         SecurityUtils.getSubject().getSession(true).setAttribute("errCount", 0);

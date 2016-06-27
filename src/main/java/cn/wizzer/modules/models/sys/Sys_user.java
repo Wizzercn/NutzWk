@@ -43,11 +43,10 @@ public class Sys_user extends BaseModel implements Serializable {
     @Column
     @Comment("是否禁用")
     @ColDefine(type = ColType.BOOLEAN)
-    private boolean disbaled;
+    private boolean disabled;
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String email;
-    @Prev(els = @EL("$me.now()"))
     @Column
     @Comment("登陆时间")
     protected Integer loginAt;
@@ -137,12 +136,12 @@ public class Sys_user extends BaseModel implements Serializable {
         this.online = online;
     }
 
-    public boolean isDisbaled() {
-        return disbaled;
+    public boolean isDisabled() {
+        return disabled;
     }
 
-    public void setDisbaled(boolean disbaled) {
-        this.disbaled = disbaled;
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public String getEmail() {

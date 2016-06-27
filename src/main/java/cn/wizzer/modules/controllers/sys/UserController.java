@@ -5,6 +5,8 @@ import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
 import cn.wizzer.common.page.DataTableOrder;
+import cn.wizzer.common.util.StringUtil;
+import cn.wizzer.modules.models.sys.Sys_menu;
 import cn.wizzer.modules.models.sys.Sys_unit;
 import cn.wizzer.modules.models.sys.Sys_user;
 import cn.wizzer.modules.services.sys.MenuService;
@@ -69,6 +71,12 @@ public class UserController {
     @SLog(tag = "新建用户", msg = "用户名:${args[0].loginname}")
     public Object addDo(@Param("..") Sys_user user, HttpServletRequest req) {
         try {
+            RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+            String salt = rng.nextBytes().toBase64();
+            String hashedPasswordBase64 = new Sha256Hash(user.getPassword(), salt, 1024).toBase64();
+            user.setSalt(salt);
+            user.setPassword(hashedPasswordBase64);
+            user.setCreateBy(Strings.sBlank(req.getAttribute("uid")));
             userService.insert(user);
             return Result.success("system.success", req);
         } catch (Exception e) {
@@ -76,12 +84,44 @@ public class UserController {
         }
     }
 
+    @At("/detail/?")
+    @Ok("beetl:/private/sys/user/detail.html")
+    @RequiresAuthentication
+    public Object detail(@Param("id") String id) {
+        if (!Strings.isBlank(id)) {
+            Sys_user user = userService.fetch(id);
+            return userService.fetchLinks(user, "roles");
+        }
+        return null;
+    }
+
+    @At("/menu/?")
+    @Ok("beetl:/private/sys/user/menu.html")
+    @RequiresAuthentication
+    public Object menu(@Param("id") String id, HttpServletRequest req) {
+        Sys_user user = userService.fetch(id);
+        List<Sys_menu> menus = userService.getMenusAndButtons(id);
+        List<Sys_menu> firstMenus = new ArrayList<>();
+        List<Sys_menu> secondMenus =  new ArrayList<>();
+        for (Sys_menu menu : menus) {
+            if (menu.getPath().length() == 4) {
+                firstMenus.add(menu);
+            }else {
+                secondMenus.add(menu);
+            }
+        }
+        req.setAttribute("userFirstMenus", firstMenus);
+        req.setAttribute("userSecondMenus", secondMenus);
+        req.setAttribute("jsonSecondMenus", Json.toJson(secondMenus));
+        return user;
+    }
+
     @At
     @Ok("json:full")
     @RequiresAuthentication
     public Object data(@Param("unitid") String unitid, @Param("loginname") String loginname, @Param("nickname") String nickname, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
-        if (!Strings.isBlank(unitid)&&!"root".equals(unitid))
+        if (!Strings.isBlank(unitid) && !"root".equals(unitid))
             cnd.and("unitid", "=", unitid);
         if (!Strings.isBlank(loginname))
             cnd.and("loginname", "like", "%" + loginname + "%");
