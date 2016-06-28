@@ -42,7 +42,7 @@ public class Sys_log extends BaseModel implements Serializable {
     private String ip;
     @Column
     @Comment("日志内容")
-    @ColDefine(type = ColType.VARCHAR, width = 500)
+    @ColDefine(type = ColType.TEXT)
     private String msg;
 
     public long getId() {

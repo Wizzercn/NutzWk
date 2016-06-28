@@ -1,5 +1,6 @@
 package cn.wizzer.modules.controllers.sys;
 
+import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
@@ -86,6 +87,7 @@ public class RoleController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.role.add")
+    @SLog(tag = "添加角色", msg = "角色名称:${args[1].name}")
     public Object addDo(@Param("menuIds") String menuIds, @Param("..") Sys_role role, HttpServletRequest req) {
         try {
             int num = roleService.count(Cnd.where("code", "=", role.getCode().trim()));
@@ -93,7 +95,7 @@ public class RoleController {
                 return Result.error("sys.role.code", req);
             }
             String[] ids = StringUtils.split(menuIds, ",");
-            if("root".equals(role.getUnitid()))
+            if ("root".equals(role.getUnitid()))
                 role.setUnitid("");
             Sys_role r = roleService.insert(role);
             for (String s : ids) {
@@ -164,6 +166,7 @@ public class RoleController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.role.menu")
+    @SLog(tag = "修改角色菜单", msg = "角色名称:${args[2].getAttribute('name')},菜单ID:${args[0]}")
     public Object editMenuDo(@Param("menuIds") String menuIds, @Param("roleid") String roleid, HttpServletRequest req) {
         try {
             String[] ids = StringUtils.split(menuIds, ",");
@@ -173,6 +176,8 @@ public class RoleController {
                     roleService.insert("sys_role_menu", org.nutz.dao.Chain.make("roleId", roleid).add("menuId", s));
                 }
             }
+            Sys_role role = roleService.fetch(roleid);
+            req.setAttribute("name", role.getName());
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);
@@ -241,10 +246,13 @@ public class RoleController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.role.user")
+    @SLog(tag = "从角色中删除用户", msg = "角色名称:${args[2].getAttribute('name')},用户ID:${args[0]}")
     public Object delUser(@Param("menuIds") String menuIds, @Param("roleid") String roleid, HttpServletRequest req) {
         try {
             String[] ids = StringUtils.split(menuIds, ",");
             roleService.dao().clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleid));
+            Sys_role role = roleService.fetch(roleid);
+            req.setAttribute("name", role.getName());
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);
@@ -254,6 +262,7 @@ public class RoleController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.role.user")
+    @SLog(tag = "添加用户到角色", msg = "角色名称:${args[2].getAttribute('name')},用户ID:${args[0]}")
     public Object pushUser(@Param("menuIds") String menuIds, @Param("roleid") String roleid, HttpServletRequest req) {
         try {
             String[] ids = StringUtils.split(menuIds, ",");
@@ -262,6 +271,8 @@ public class RoleController {
                     roleService.insert("sys_user_role", org.nutz.dao.Chain.make("roleId", roleid).add("userId", s));
                 }
             }
+            Sys_role role = roleService.fetch(roleid);
+            req.setAttribute("name", role.getName());
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);
@@ -311,21 +322,95 @@ public class RoleController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.role.edit")
+    @SLog(tag = "修改角色", msg = "角色名称:${args[0].name}")
     public Object editDo(@Param("..") Sys_role role, @Param("oldCode") String oldCode, HttpServletRequest req) {
         try {
-            if(!Strings.sBlank(oldCode).equals(role.getCode())){
+            if (!Strings.sBlank(oldCode).equals(role.getCode())) {
                 int num = roleService.count(Cnd.where("code", "=", role.getCode().trim()));
                 if (num > 0) {
                     return Result.error("sys.role.code", req);
                 }
             }
-            if("root".equals(role.getUnitid()))
+            if ("root".equals(role.getUnitid()))
                 role.setUnitid("");
-            role.setUpdateAt((int)(System.currentTimeMillis()/1000));
+            role.setUpdateAt((int) (System.currentTimeMillis() / 1000));
             roleService.updateIgnoreNull(role);
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);
         }
     }
+
+    @At("/delete/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.delete")
+    @SLog(tag = "删除角色", msg = "角色名称:${args[1].getAttribute('name')}")
+    public Object delete(String roleId, HttpServletRequest req) {
+        try {
+            Sys_role role = roleService.fetch(roleId);
+            if (!"sysadmin".equals(role.getCode()) || !"public".equals(role.getCode())) {
+                return Result.error("system.not.allow", req);
+            }
+            roleService.delete(roleId);
+            roleService.dao().clear("sys_user_role", Cnd.where("roleId", "=", roleId));
+            req.setAttribute("name", role.getName());
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/delete")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.delete")
+    @SLog(tag = "批量删除角色", msg = "角色ID：${args[1].getAttribute('ids')}")
+    public Object deletes(@Param("roleIds") String[] roleIds, HttpServletRequest req) {
+        try {
+            Sys_role role = roleService.fetch(Cnd.where("code", "=", "sysadmin"));
+            Sys_role role1 = roleService.fetch(Cnd.where("code", "=", "public"));
+            StringBuilder sb = new StringBuilder();
+            for (String s : roleIds) {
+                if (s.equals(role.getId()) || s.equals(role1.getId())) {
+                    return Result.error("system.not.allow", req);
+                }
+                sb.append(s).append(",");
+            }
+            roleService.delete(roleIds);
+            req.setAttribute("ids", sb.toString());
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/enable/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.edit")
+    @SLog(tag = "启用角色", msg = "角色名称:${args[1].getAttribute('name')}")
+    public Object enable(String roleId, HttpServletRequest req) {
+        try {
+            Sys_role role = roleService.fetch(roleId);
+            roleService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", roleId));
+            req.setAttribute("name", role.getName());
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/disable/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.edit")
+    @SLog(tag = "禁用角色", msg = "角色名称:${args[1].getAttribute('name')}")
+    public Object disable(String roleId, HttpServletRequest req) {
+        try {
+            Sys_role role = roleService.fetch(roleId);
+            roleService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", roleId));
+            req.setAttribute("name", role.getName());
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
 }

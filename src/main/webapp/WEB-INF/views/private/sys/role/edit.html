@@ -20,12 +20,13 @@ layout("/layouts/private.html"){
                             <div class="col-sm-8">
                                 <div class="input-group">
                                     <input id="parentId" type="text" class="form-control" placeholder="选择单位or系统角色" disabled
-                                           value="<%if(!isEmpty(unit)){%>${unit.name}<%}%>" data-parsley-required="true"/>
+                                           value="<%if(!isEmpty(unit)){%>${unit.name}<%}else{%>系统角色<%}%>" data-parsley-required="true"/>
 
 			                             		<span class="input-group-btn">
-			                             			<button type="button" class="btn btn-primary" data-toggle="modal"
-                                                            data-target="#dialogSelectParentUnit"><i class="ti-plus"></i>选择
+			                             			<button type="button" class="btn btn-primary" <%if("sysadmin"!=obj.code&&"public"!=obj.code){%>data-toggle="modal"
+                                                            data-target="#dialogSelectParentUnit"<%}%>><i class="ti-plus"></i>选择
                                                     </button>
+
 			                             		</span>
                                 </div>
                                 <input type="hidden" name="id" value="${obj.id!}">
@@ -39,7 +40,7 @@ layout("/layouts/private.html"){
 
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" id="name" name="name" data-parsley-required="true"  placeholder="角色名称"
-                                       maxlength="20" value="${obj.name!}">
+                                       maxlength="20" value="${obj.name!}" <%if("sysadmin"==obj.code||"public"==obj.code){%>readonly<%}%>>
                             </div>
                         </div>
                         <div class="form-group">
@@ -47,7 +48,7 @@ layout("/layouts/private.html"){
 
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" id="code" name="code" data-parsley-required="true"  placeholder="权限标识"
-                                       maxlength="50" value="${obj.code!}">
+                                       maxlength="50" value="${obj.code!}" <%if("sysadmin"==obj.code||"public"==obj.code){%>readonly<%}%>>
                             </div>
                         </div>
                         <div class="form-group">
