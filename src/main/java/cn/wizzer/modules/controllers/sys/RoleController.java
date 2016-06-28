@@ -93,6 +93,8 @@ public class RoleController {
                 return Result.error("sys.role.code", req);
             }
             String[] ids = StringUtils.split(menuIds, ",");
+            if("root".equals(role.getUnitid()))
+                role.setUnitid("");
             Sys_role r = roleService.insert(role);
             for (String s : ids) {
                 if (!Strings.isEmpty(s)) {
@@ -242,7 +244,7 @@ public class RoleController {
     public Object delUser(@Param("menuIds") String menuIds, @Param("roleid") String roleid, HttpServletRequest req) {
         try {
             String[] ids = StringUtils.split(menuIds, ",");
-            roleService.dao().clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId","=",roleid));
+            roleService.dao().clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleid));
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);
@@ -297,4 +299,33 @@ public class RoleController {
         return tree;
     }
 
+    @At("/edit/?")
+    @Ok("beetl:/private/sys/role/edit.html")
+    @RequiresAuthentication
+    public Object edit(String roleId, HttpServletRequest req) {
+        Sys_role role = roleService.fetch(roleId);
+        req.setAttribute("unit", unitService.fetch(role.getUnitid()));
+        return role;
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.edit")
+    public Object editDo(@Param("..") Sys_role role, @Param("oldCode") String oldCode, HttpServletRequest req) {
+        try {
+            if(!Strings.sBlank(oldCode).equals(role.getCode())){
+                int num = roleService.count(Cnd.where("code", "=", role.getCode().trim()));
+                if (num > 0) {
+                    return Result.error("sys.role.code", req);
+                }
+            }
+            if("root".equals(role.getUnitid()))
+                role.setUnitid("");
+            role.setUpdateAt((int)(System.currentTimeMillis()/1000));
+            roleService.updateIgnoreNull(role);
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
 }
