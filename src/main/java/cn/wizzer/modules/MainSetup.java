@@ -356,13 +356,46 @@ public class MainSetup implements Setup {
             menu.setName("系统参数");
             menu.setAliasName("Param");
             menu.setLocation(0);
-            menu.setHref("/private/sys/config");
+            menu.setHref("/private/sys/conf");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
-            menu.setPermission("sys.manager.config");
+            menu.setPermission("sys.manager.conf");
             menu.setParentId(m1.getId());
             menu.setType("menu");
             Sys_menu m6 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100050001");
+            menu.setName("添加参数");
+            menu.setAliasName("Add");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.conf.add");
+            menu.setParentId(m6.getId());
+            menu.setType("data");
+            Sys_menu m61 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100050002");
+            menu.setName("修改参数");
+            menu.setAliasName("Edit");
+            menu.setLocation(2);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.conf.edit");
+            menu.setParentId(m6.getId());
+            menu.setType("data");
+            Sys_menu m62 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100050003");
+            menu.setName("删除参数");
+            menu.setAliasName("Delete");
+            menu.setLocation(3);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.conf.delete");
+            menu.setParentId(m6.getId());
+            menu.setType("data");
+            Sys_menu m63 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("000100010006");
@@ -452,6 +485,9 @@ public class MainSetup implements Setup {
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m52.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m53.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m6.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m61.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m62.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m63.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m7.getId() + "')"));
             //另外一种写法(安全)
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values(@a,@b)").setParam("a", dbrole.getId()).setParam("b", m8.getId()));
@@ -465,60 +501,11 @@ public class MainSetup implements Setup {
      * @param dao
      */
     private void initSysSetting(NutConfig config, Dao dao) {
-        List<Sys_config> configList = dao.query(Sys_config.class, Cnd.NEW());
-        for (Sys_config sysConfig : configList) {
-            switch (sysConfig.getConfigKey()) {
-                case "AppName":
-                    Globals.AppName = sysConfig.getConfigValue();
-                    break;
-                case "AppShrotName":
-                    Globals.AppShrotName = sysConfig.getConfigValue();
-                    break;
-                case "AppDomain":
-                    Globals.AppDomain = sysConfig.getConfigValue();
-                    break;
-                case "AppUploadPath":
-                    Globals.AppUploadPath = sysConfig.getConfigValue();
-                    break;
-                default:
-                    Globals.MyConfig.put(sysConfig.getConfigKey(), sysConfig.getConfigValue());
-                    break;
-            }
-        }
         Globals.AppRoot = Strings.sNull(config.getAppRoot());//项目路径
         Globals.AppBase = Strings.sNull(config.getServletContext().getContextPath());//部署名
+        Globals.init(dao);
     }
 
-    /**
-     * 初始化Velocity
-     *
-     * @param config
-     * @throws IOException
-     */
-//    private void velocityInit(NutConfig config) throws IOException {
-//        log.info("Veloctiy Init Start...");
-//        Properties p = new Properties();
-//        p.setProperty("resource.loader", "file,classloader");
-//        p.setProperty("file.resource.loader.path", config.getAppRoot());
-//        p.setProperty("file", "org.apache.velocity.tools.view.WebappResourceLoader");
-//        p.setProperty("classloader.resource.loader.class", "org.apache.velocity.tools.view.WebappResourceLoader");
-//        p.setProperty("classloader.resource.loader.path", config.getAppRoot());
-//        p.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
-//        p.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");
-//        p.setProperty("velocimacro.library.autoreload", "false");
-//        p.setProperty("classloader.resource.loader.root", config.getAppRoot());
-//        p.setProperty("velocimarco.library.autoreload", "true");
-//        p.setProperty("runtime.log.error.stacktrace", "true");
-//        p.setProperty("runtime.log.warn.stacktrace", "true");
-//        p.setProperty("runtime.log.info.stacktrace", "false");
-//        p.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
-//        p.setProperty("runtime.log.logsystem.log4j.category", "velocity_log");
-//        p.setProperty("tools.view.servlet.layout.directory", "/layouts/");
-//        p.setProperty("tools.view.servlet.layout.default.template", "private.html");
-//        p.setProperty("velocimacro.library", "/WEB-INF/views/common/globals.html");
-//        Velocity.init(p);
-//        log.info("Veloctiy Init End.");
-//    }
     public void destroy(NutConfig config) {
     }
 }

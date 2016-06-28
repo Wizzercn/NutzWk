@@ -184,7 +184,7 @@ public class UserController {
 
     @At("/disable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.user.edit")
+    @RequiresPermissions("sys.manager.menu.edit")
     @SLog(tag = "禁用用户", msg = "用户名:${args[1].getAttribute('loginname')}")
     public Object disable(String userId, HttpServletRequest req) {
         try {
