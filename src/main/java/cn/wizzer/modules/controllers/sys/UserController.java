@@ -110,7 +110,7 @@ public class UserController {
 
     @At("/resetPwd/?")
     @Ok("json")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.user.edit")
     @SLog(tag = "重置密码", msg = "用户名:${args[1].getAttribute('loginname')}")
     public Object resetPwd(String id, HttpServletRequest req) {
         try {
