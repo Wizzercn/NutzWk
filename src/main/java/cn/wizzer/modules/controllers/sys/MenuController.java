@@ -1,11 +1,15 @@
 package cn.wizzer.modules.controllers.sys;
 
+import cn.wizzer.common.annotation.SLog;
+import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.modules.models.sys.Sys_menu;
+import cn.wizzer.modules.models.sys.Sys_unit;
 import cn.wizzer.modules.services.sys.MenuService;
 import cn.wizzer.modules.services.sys.UnitService;
 import cn.wizzer.modules.services.sys.UserService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -16,7 +20,9 @@ import org.nutz.mvc.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wizzer on 2016/6/28.
@@ -45,6 +51,42 @@ public class MenuController {
     @RequiresAuthentication
     public Object add(@Param("pid") String pid, HttpServletRequest req) {
         return Strings.isBlank(pid) ? null : menuService.fetch(pid);
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.menu.add")
+    @SLog(tag = "新建单位", msg = "单位名称:${args[0].name}")
+    public Object addDo(@Param("..") Sys_menu menu, @Param("parentId") String parentId, HttpServletRequest req) {
+        try {
+            int num = menuService.count(Cnd.where("permission", "=", menu.getPermission().trim()));
+            if (num > 0) {
+                return Result.error("sys.role.code", req);
+            }
+            if("data".equals(menu.getType())){
+                menu.setIsShow(false);
+            }else menu.setIsShow(true);
+            menuService.save(menu, parentId);
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At
+    @Ok("json")
+    @RequiresAuthentication
+    public Object tree(@Param("pid") String pid) {
+        List<Sys_menu> list = menuService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).and("type", "=", "menu").asc("location").asc("path"));
+        List<Map<String, Object>> tree = new ArrayList<>();
+        for (Sys_menu menu : list) {
+            Map<String, Object> obj = new HashMap<>();
+            obj.put("id", menu.getId());
+            obj.put("text", menu.getName());
+            obj.put("children", menu.isHasChildren());
+            tree.add(obj);
+        }
+        return tree;
     }
 
     @At("/child/?")
