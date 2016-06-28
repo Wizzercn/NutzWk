@@ -8,7 +8,7 @@ PS：如果对Node.js开发框架感兴趣，可以看这里：https://github.co
 
 在线演示地址
 ======
-https://nutzwk.wizzer.cn/                 NutzWk v3.0.0
+http://nutzwk.wizzer.cn/                 NutzWk v3.0.0
 
 ======
 基于Nutz的开源企业级开发框架
