@@ -75,7 +75,7 @@ layout("/layouts/private.html"){
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
-                        var s='<li><a href="javascript:;" onclick="del(' + row.id + ')">删除</a></li>';
+                        var s='<li><a href="javascript:;" onclick="del(\'' + row.configKey + '\')">删除</a></li>';
                         if(row.configKey.indexOf('App')>-1){
                             s='';
                         }

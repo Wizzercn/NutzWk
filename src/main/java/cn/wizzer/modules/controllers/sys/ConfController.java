@@ -84,6 +84,24 @@ public class ConfController {
         }
     }
 
+    @At("/delete/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.conf.delete")
+    @SLog(tag = "删除参数", msg = "参数:${args[0]}")
+    public Object delete(String configKey, HttpServletRequest req) {
+        try {
+            if (Strings.sBlank(configKey).startsWith("App")) {
+                return Result.error("系统参数不可删除", req);
+            }
+            if (configService.delete(configKey) > 0) {
+                Globals.init(configService.dao());
+            }
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
     @At
     @Ok("json:full")
     @RequiresAuthentication
