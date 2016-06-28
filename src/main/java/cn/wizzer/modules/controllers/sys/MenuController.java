@@ -3,17 +3,21 @@ package cn.wizzer.modules.controllers.sys;
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
+import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.modules.models.sys.Sys_menu;
 import cn.wizzer.modules.models.sys.Sys_unit;
 import cn.wizzer.modules.services.sys.MenuService;
 import cn.wizzer.modules.services.sys.UnitService;
 import cn.wizzer.modules.services.sys.UserService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.*;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -187,4 +191,43 @@ public class MenuController {
         return list;
     }
 
+    @At
+    @Ok("beetl:/private/sys/menu/sort.html")
+    @RequiresAuthentication
+    public void sort(HttpServletRequest req) {
+        List<Sys_menu> list = menuService.query(Cnd.orderBy().asc("location").asc("path"));
+        List<Sys_menu> firstMenus = new ArrayList<>();
+        Map<String, List<Sys_menu>> secondMenus = new HashMap<>();
+        for (Sys_menu menu : list) {
+            if (menu.getPath().length() > 4) {
+                List<Sys_menu> s = secondMenus.get(StringUtil.getParentId(menu.getPath()));
+                if (s == null) s = new ArrayList<>();
+                s.add(menu);
+                secondMenus.put(StringUtil.getParentId(menu.getPath()), s);
+            } else if (menu.getPath().length() == 4) {
+                firstMenus.add(menu);
+            }
+        }
+        req.setAttribute("firstMenus", firstMenus);
+        req.setAttribute("secondMenus", secondMenus);
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.menu.edit")
+    public Object sortDo(@Param("ids") String ids, HttpServletRequest req) {
+        try {
+            String[] menuIds= StringUtils.split(ids,",");
+            int i=0;
+            for(String s:menuIds){
+                if(!Strings.isBlank(s)){
+                    menuService.update(org.nutz.dao.Chain.make("location",i),Cnd.where("id","=",s));
+                    i++;
+                }
+            }
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
 }

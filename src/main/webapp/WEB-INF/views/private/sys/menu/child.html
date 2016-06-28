@@ -15,10 +15,10 @@
                 <span class="ti-angle-down"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li><a href="/private/sys/menu/edit/${o.id!}" data-pjax>修改</a></li>
+                <li><a href="${base}/private/sys/menu/edit/${o.id!}" data-pjax>修改</a></li>
                 <li><a href="javascript:;" onclick="del('${o.id!}')">删除</a></li>
                 <li class="divider"></li>
-                <li><a href="/private/sys/menu/add?pid=${o.id!}" data-pjax>添加子菜单</a></li>
+                <li><a href="${base}/private/sys/menu/add?pid=${o.id!}" data-pjax>添加子菜单</a></li>
                 <li class="divider"></li>
                 <li><a href="javascript:;" onclick="enableRole('${o.id!}')">启用</a></li>
                 <li><a href="javascript:;" onclick="disableRole('${o.id!}')">禁用</a></li>
