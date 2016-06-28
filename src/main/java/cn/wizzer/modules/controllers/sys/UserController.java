@@ -131,7 +131,7 @@ public class UserController {
     @At("/delete/?")
     @Ok("json")
     @RequiresPermissions("sys.manager.user.delete")
-    @SLog(tag = "删除用户", msg = "用户名：${args[1].getAttribute('loginname')}")
+    @SLog(tag = "删除用户", msg = "用户名:${args[1].getAttribute('loginname')}")
     public Object delete(String userId, HttpServletRequest req) {
         try {
             Sys_user user = userService.fetch(userId);
@@ -149,7 +149,7 @@ public class UserController {
     @At("/delete")
     @Ok("json")
     @RequiresPermissions("sys.manager.user.delete")
-    @SLog(tag = "批量删除用户", msg = "用户ID：${args[1].getAttribute('ids')}")
+    @SLog(tag = "批量删除用户", msg = "用户ID:${args[1].getAttribute('ids')}")
     public Object deletes(@Param("ids") String[] userIds, HttpServletRequest req) {
         try {
             Sys_user user = userService.fetch(Cnd.where("loginname", "=", "superadmin"));
@@ -170,10 +170,11 @@ public class UserController {
 
     @At("/enable/?")
     @Ok("json")
-    @RequiresAuthentication
-    @SLog(tag = "启用用户", msg = "用户ID：${args[0]}")
+    @RequiresPermissions("sys.manager.user.edit")
+    @SLog(tag = "启用用户", msg = "用户名:${args[1].getAttribute('loginname')}")
     public Object enable(String userId, HttpServletRequest req) {
         try {
+            req.setAttribute("loginname", userService.fetch(userId).getLoginname());
             userService.update(Chain.make("disabled", false), Cnd.where("id", "=", userId));
             return Result.success("system.success", req);
         } catch (Exception e) {
@@ -183,13 +184,15 @@ public class UserController {
 
     @At("/disable/?")
     @Ok("json")
-    @RequiresAuthentication
-    @SLog(tag = "禁用用户", msg = "用户ID：${args[0]}")
+    @RequiresPermissions("sys.manager.user.edit")
+    @SLog(tag = "禁用用户", msg = "用户名:${args[1].getAttribute('loginname')}")
     public Object disable(String userId, HttpServletRequest req) {
         try {
-            if ("superadmin".equals(userService.fetch(userId).getLoginname())) {
+            String loginname = userService.fetch(userId).getLoginname();
+            if ("superadmin".equals(loginname)) {
                 return Result.error("system.not.allow", req);
             }
+            req.setAttribute("loginname", loginname);
             userService.update(Chain.make("disabled", true), Cnd.where("id", "=", userId));
             return Result.success("system.success", req);
         } catch (Exception e) {

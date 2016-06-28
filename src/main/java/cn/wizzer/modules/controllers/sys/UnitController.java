@@ -77,7 +77,7 @@ public class UnitController {
 
     @At("/edit/?")
     @Ok("beetl:/private/sys/unit/edit.html")
-    @RequiresPermissions("sys.manager.unit")
+    @RequiresAuthentication
     public Object edit(String id, HttpServletRequest req) {
         Sys_unit unit = unitService.fetch(id);
         if (unit != null) {
@@ -111,7 +111,7 @@ public class UnitController {
             if ("0001".equals(unit.getPath())) {
                 return Result.error("system.not.allow", req);
             }
-            unitService.deleteAndChild(id);
+            unitService.deleteAndChild(unit);
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);

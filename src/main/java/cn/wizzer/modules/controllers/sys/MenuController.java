@@ -10,13 +10,14 @@ import cn.wizzer.modules.services.sys.UnitService;
 import cn.wizzer.modules.services.sys.UserService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.nutz.dao.Cnd;
+import org.nutz.dao.*;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.Chain;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -56,17 +57,94 @@ public class MenuController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.menu.add")
-    @SLog(tag = "新建单位", msg = "单位名称:${args[0].name}")
+    @SLog(tag = "新建菜单", msg = "菜单名称:${args[0].name}")
     public Object addDo(@Param("..") Sys_menu menu, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
             int num = menuService.count(Cnd.where("permission", "=", menu.getPermission().trim()));
             if (num > 0) {
                 return Result.error("sys.role.code", req);
             }
-            if("data".equals(menu.getType())){
+            if ("data".equals(menu.getType())) {
                 menu.setIsShow(false);
-            }else menu.setIsShow(true);
+            } else menu.setIsShow(true);
             menuService.save(menu, parentId);
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/edit/?")
+    @Ok("beetl:/private/sys/menu/edit.html")
+    @RequiresAuthentication
+    public Object edit(String id, HttpServletRequest req) {
+        Sys_menu menu = menuService.fetch(id);
+        if (menu != null) {
+            req.setAttribute("parentMenu", menuService.fetch(menu.getParentId()));
+        }
+        return menu;
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.menu.edit")
+    @SLog(tag = "编辑菜单", msg = "菜单名称:${args[0].name}")
+    public Object editDo(@Param("..") Sys_menu menu, @Param("oldPermission") String oldPermission, HttpServletRequest req) {
+        try {
+            if (!Strings.sBlank(oldPermission).equals(menu.getPermission())) {
+                int num = menuService.count(Cnd.where("permission", "=", menu.getPermission().trim()));
+                if (num > 0) {
+                    return Result.error("sys.role.code", req);
+                }
+            }
+            menu.setUpdateAt((int) (System.currentTimeMillis() / 1000));
+            menuService.updateIgnoreNull(menu);
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/delete/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.menu.delete")
+    @SLog(tag = "删除菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
+    public Object delete(String id, HttpServletRequest req) {
+        try {
+            Sys_menu menu = menuService.fetch(id);
+            req.setAttribute("name", menu.getName());
+            if (menu.getPath().startsWith("0001")) {
+                return Result.error("system.not.allow", req);
+            }
+            menuService.deleteAndChild(menu);
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/enable/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.menu.edit")
+    @SLog(tag = "启用菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
+    public Object enable(String menuId, HttpServletRequest req) {
+        try {
+            req.setAttribute("name", menuService.fetch(menuId).getName());
+            menuService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", menuId));
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/disable/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.menu.edit")
+    @SLog(tag = "禁用菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
+    public Object disable(String menuId, HttpServletRequest req) {
+        try {
+            req.setAttribute("name", menuService.fetch(menuId).getName());
+            menuService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", menuId));
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);
