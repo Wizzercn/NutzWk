@@ -7,6 +7,7 @@ import cn.wizzer.common.page.DataTableOrder;
 import cn.wizzer.modules.models.sys.Sys_menu;
 import cn.wizzer.modules.models.sys.Sys_role;
 import cn.wizzer.modules.models.sys.Sys_unit;
+import cn.wizzer.modules.models.sys.Sys_user;
 import cn.wizzer.modules.services.sys.MenuService;
 import cn.wizzer.modules.services.sys.RoleService;
 import cn.wizzer.modules.services.sys.UnitService;
@@ -15,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
+import org.nutz.dao.Sqls;
+import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
@@ -62,18 +65,18 @@ public class RoleController {
         List<Sys_menu> datas = roleService.getDatas();
         List<NutMap> menus = new ArrayList<>();
         for (Sys_menu menu : list) {
-            NutMap map=new NutMap();
+            NutMap map = new NutMap();
             for (Sys_menu bt : datas) {
                 if (menu.getPath().equals(bt.getPath().substring(0, bt.getPath().length() - 4))) {
                     menu.setHasChildren(true);
                     break;
                 }
             }
-            map.put("id",menu.getId());
-            map.put("text",menu.getName());
-            map.put("icon",Strings.sBlank(menu.getIcon()));
-            map.put("parent",menu.getParentId().equals("")?"#":menu.getParentId());
-            map.put("data",menu.getHref());
+            map.put("id", menu.getId());
+            map.put("text", menu.getName());
+            map.put("icon", Strings.sBlank(menu.getIcon()));
+            map.put("parent", menu.getParentId().equals("") ? "#" : menu.getParentId());
+            map.put("data", menu.getHref());
             menus.add(map);
         }
         req.setAttribute("menus", Json.toJson(menus));
@@ -90,10 +93,171 @@ public class RoleController {
                 return Result.error("sys.role.code", req);
             }
             String[] ids = StringUtils.split(menuIds, ",");
-            Sys_role r=roleService.insert(role);
+            Sys_role r = roleService.insert(role);
             for (String s : ids) {
                 if (!Strings.isEmpty(s)) {
                     roleService.insert("sys_role_menu", org.nutz.dao.Chain.make("roleId", r.getId()).add("menuId", s));
+                }
+            }
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/menu/?")
+    @Ok("beetl:/private/sys/role/menu.html")
+    @RequiresAuthentication
+    public Object menu(String id, HttpServletRequest req) {
+        Sys_role role = roleService.fetch(id);
+        List<Sys_menu> menus = roleService.getMenusAndButtons(id);
+        List<Sys_menu> datas = roleService.getDatas(role.getId());
+        List<Sys_menu> firstMenus = new ArrayList<>();
+        List<Sys_menu> secondMenus = new ArrayList<>();
+        for (Sys_menu menu : menus) {
+            for (Sys_menu bt : datas) {
+                if (menu.getPath().equals(bt.getPath().substring(0, bt.getPath().length() - 4))) {
+                    menu.setHasChildren(true);
+                    break;
+                }
+            }
+            if (menu.getPath().length() == 4) {
+                firstMenus.add(menu);
+            } else {
+                secondMenus.add(menu);
+            }
+        }
+        req.setAttribute("userFirstMenus", firstMenus);
+        req.setAttribute("userSecondMenus", secondMenus);
+        req.setAttribute("jsonSecondMenus", Json.toJson(secondMenus));
+        return role;
+    }
+
+    @At("/editMenu/?")
+    @Ok("beetl:/private/sys/role/editMenu.html")
+    @RequiresAuthentication
+    public Object editMenu(String roleId, HttpServletRequest req) {
+        List<Sys_menu> list = menuService.query(Cnd.orderBy().asc("location").asc("path"));
+        List<Sys_menu> datas = roleService.getDatas();
+        List<NutMap> menus = new ArrayList<>();
+        for (Sys_menu menu : list) {
+            NutMap map = new NutMap();
+            for (Sys_menu bt : datas) {
+                if (menu.getPath().equals(bt.getPath().substring(0, bt.getPath().length() - 4))) {
+                    menu.setHasChildren(true);
+                    break;
+                }
+            }
+            map.put("id", menu.getId());
+            map.put("text", menu.getName());
+            map.put("icon", Strings.sBlank(menu.getIcon()));
+            map.put("parent", menu.getParentId().equals("") ? "#" : menu.getParentId());
+            map.put("data", menu.getHref());
+            menus.add(map);
+        }
+        req.setAttribute("menus", Json.toJson(menus));
+        return Strings.isBlank(roleId) ? null : roleService.fetch(roleId);
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.menu")
+    public Object editMenuDo(@Param("menuIds") String menuIds, @Param("roleid") String roleid, HttpServletRequest req) {
+        try {
+            String[] ids = StringUtils.split(menuIds, ",");
+            roleService.dao().clear("sys_role_menu", Cnd.where("roleid", "=", roleid));
+            for (String s : ids) {
+                if (!Strings.isEmpty(s)) {
+                    roleService.insert("sys_role_menu", org.nutz.dao.Chain.make("roleId", roleid).add("menuId", s));
+                }
+            }
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At("/editUser/?")
+    @Ok("beetl:/private/sys/role/editUser.html")
+    @RequiresAuthentication
+    public Object editUser(String roleId, HttpServletRequest req) {
+        return roleService.fetch(roleId);
+    }
+
+    @At
+    @Ok("json:full")
+    @RequiresAuthentication
+    public Object userData(@Param("roleid") String roleid, @Param("loginname") String loginname, @Param("nickname") String nickname, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+        String sql = "SELECT a.* FROM sys_user a,sys_user_role b WHERE a.id=b.userId ";
+        if (!Strings.isBlank(roleid)) {
+            sql += " and b.roleId='" + roleid + "'";
+        }
+        if (!Strings.isBlank(loginname)) {
+            sql += " and a.loginname like '%" + loginname + "%'";
+        }
+        if (!Strings.isBlank(nickname)) {
+            sql += " and a.nickname like '%" + nickname + "%'";
+        }
+        String s = sql;
+        if (order != null && order.size() > 0) {
+            for (DataTableOrder o : order) {
+                DataTableColumn col = columns.get(o.getColumn());
+                s += " order by a." + Sqls.escapeSqlFieldValue(col.getData()).toString() + " " + o.getDir();
+            }
+        }
+        return roleService.data(length, start, draw, Sqls.create(sql), Sqls.create(s));
+    }
+
+    @At
+    @Ok("beetl:/private/sys/role/selectUser.html")
+    @RequiresAuthentication
+    public void selectUser(HttpServletRequest req) {
+
+    }
+
+    @At
+    @Ok("json:full")
+    @RequiresAuthentication
+    public Object selectData(@Param("roleid") String roleid, @Param("name") String name, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+        String sql = "SELECT a.* FROM sys_user a WHERE 1=1 ";
+        if (!Strings.isBlank(roleid)) {
+            sql += " and a.id NOT IN(SELECT b.userId FROM sys_user_role b WHERE b.roleId='" + roleid + "')";
+        }
+        if (!Strings.isBlank(name)) {
+            sql += " and (a.loginname like '%" + name + "%' or a.nickname like '%" + name + "%') ";
+        }
+        String s = sql;
+        if (order != null && order.size() > 0) {
+            for (DataTableOrder o : order) {
+                DataTableColumn col = columns.get(o.getColumn());
+                s += " order by a." + Sqls.escapeSqlFieldValue(col.getData()).toString() + " " + o.getDir();
+            }
+        }
+        return roleService.data(length, start, draw, Sqls.create(sql), Sqls.create(s));
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.user")
+    public Object delUser(@Param("menuIds") String menuIds, @Param("roleid") String roleid, HttpServletRequest req) {
+        try {
+            String[] ids = StringUtils.split(menuIds, ",");
+            roleService.dao().clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId","=",roleid));
+            return Result.success("system.success", req);
+        } catch (Exception e) {
+            return Result.error("system.error", req);
+        }
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.user")
+    public Object pushUser(@Param("menuIds") String menuIds, @Param("roleid") String roleid, HttpServletRequest req) {
+        try {
+            String[] ids = StringUtils.split(menuIds, ",");
+            for (String s : ids) {
+                if (!Strings.isEmpty(s)) {
+                    roleService.insert("sys_user_role", org.nutz.dao.Chain.make("roleId", roleid).add("userId", s));
                 }
             }
             return Result.success("system.success", req);

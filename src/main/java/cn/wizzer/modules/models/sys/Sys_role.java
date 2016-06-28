@@ -16,7 +16,7 @@ public class Sys_role extends BaseModel implements Serializable {
     @Column
     @Name
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els={@EL("uuid()")})
+    @Prev(els = {@EL("uuid()")})
     private String id;
     @Column
     private String name;
@@ -34,8 +34,10 @@ public class Sys_role extends BaseModel implements Serializable {
     private String note;
     @One(target = Sys_unit.class, field = "unitid")
     public Sys_unit unit;
-    @ManyMany(from="roleId", relation="sys_role_menu", target=Sys_menu.class, to="menuId")
+    @ManyMany(from = "roleId", relation = "sys_role_menu", target = Sys_menu.class, to = "menuId")
     protected List<Sys_menu> menus;
+    @ManyMany(from = "roleId", relation = "sys_user_role", target = Sys_menu.class, to = "userId")
+    protected List<Sys_user> users;
 
     public String getId() {
         return id;
@@ -99,5 +101,13 @@ public class Sys_role extends BaseModel implements Serializable {
 
     public void setMenus(List<Sys_menu> menus) {
         this.menus = menus;
+    }
+
+    public List<Sys_user> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<Sys_user> users) {
+        this.users = users;
     }
 }

@@ -367,4 +367,28 @@ public class BaseService<T> extends EntityService<T> {
         re.put("recordsTotal", length);
         return re;
     }
+
+    /**
+     * DataTable Page SQL
+     *
+     * @param length   页大小
+     * @param start    start
+     * @param draw     draw
+     * @param countSql 查询条件
+     * @param orderSql 排序语句
+     * @return
+     */
+    public NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql) {
+        NutMap re = new NutMap();
+        Pager pager = new OffsetPager(start, length);
+        pager.setRecordCount((int) Daos.queryCount(dao(), countSql.toString()));// 记录数需手动设置
+        orderSql.setPager(pager);
+        orderSql.setCallback(Sqls.callback.records());
+        this.dao().execute(orderSql);
+        re.put("recordsFiltered", pager.getRecordCount());
+        re.put("data", orderSql.getList(Record.class));
+        re.put("draw", draw);
+        re.put("recordsTotal", length);
+        return re;
+    }
 }
