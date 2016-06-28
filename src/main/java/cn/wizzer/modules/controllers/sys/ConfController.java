@@ -7,7 +7,6 @@ import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
 import cn.wizzer.common.page.DataTableOrder;
 import cn.wizzer.modules.models.sys.Sys_config;
-import cn.wizzer.modules.models.sys.Sys_user;
 import cn.wizzer.modules.services.sys.ConfigService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;

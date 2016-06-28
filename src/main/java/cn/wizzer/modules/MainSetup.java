@@ -410,6 +410,17 @@ public class MainSetup implements Setup {
             menu.setType("menu");
             Sys_menu m7 = dao.insert(menu);
             menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100060001");
+            menu.setName("清除日志");
+            menu.setAliasName("Delete");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.log.delete");
+            menu.setParentId(m7.getId());
+            menu.setType("data");
+            Sys_menu m71 = dao.insert(menu);
+            menu = new Sys_menu();
             menu.setDisabled(true);
             menu.setPath("000100010007");
             menu.setName("定时任务");
@@ -489,6 +500,7 @@ public class MainSetup implements Setup {
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m62.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m63.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m7.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m71.getId() + "')"));
             //另外一种写法(安全)
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values(@a,@b)").setParam("a", dbrole.getId()).setParam("b", m8.getId()));
         }
