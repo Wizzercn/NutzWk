@@ -153,12 +153,13 @@ public class LoginController {
             }
             user.setFirstMenus(firstMenus);
             user.setSecondMenus(secondMenus);
-            if(!Strings.isBlank(user.getCustomMenu())){
-               user.setCustomMenus(menuService.query(Cnd.where("id","in",user.getCustomMenu().split(","))));
+            if (!Strings.isBlank(user.getCustomMenu())) {
+                user.setCustomMenus(menuService.query(Cnd.where("id", "in", user.getCustomMenu().split(","))));
             }
+            int count = user.getLoginCount() == null ? 0 : user.getLoginCount();
             sysLogService.async(Sys_log.c("info", "用户登陆", "成功登录系统！"));
             userService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", (int) (System.currentTimeMillis() / 1000))
-                    .add("loginCount", user.getLoginCount() + 1).add("online", true)
+                    .add("loginCount", count + 1).add("online", true)
                     , Cnd.where("id", "=", user.getId()));
             return Result.success("login.success", req);
         } catch (IncorrectCaptchaException e) {

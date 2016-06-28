@@ -65,6 +65,10 @@ public class BaseService<T> extends EntityService<T> {
         return this.dao().insert(t);
     }
 
+    public void insert(String tableName, Chain chain) {
+        this.dao().insert(tableName, chain);
+    }
+
     public T fastInsert(T t) {
         return this.dao().fastInsert(t);
     }

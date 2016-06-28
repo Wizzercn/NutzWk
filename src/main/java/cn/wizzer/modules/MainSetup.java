@@ -28,6 +28,7 @@ import java.util.*;
  */
 public class MainSetup implements Setup {
     private static final Log log = Logs.get();
+
     public void init(NutConfig config) {
         try {
             Ioc ioc = config.getIoc();
@@ -158,36 +159,36 @@ public class MainSetup implements Setup {
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("0001000100010001");
-            menu.setName("添加");
+            menu.setName("添加单位");
             menu.setAliasName("Add");
             menu.setLocation(0);
             menu.setIsShow(false);
             menu.setPermission("sys.manager.unit.add");
             menu.setParentId(m2.getId());
             menu.setType("data");
-            Sys_menu m21=dao.insert(menu);
+            Sys_menu m21 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("0001000100010002");
-            menu.setName("修改");
+            menu.setName("修改单位");
             menu.setAliasName("Edit");
             menu.setLocation(0);
             menu.setIsShow(false);
             menu.setPermission("sys.manager.unit.edit");
             menu.setParentId(m2.getId());
             menu.setType("data");
-            Sys_menu m22=dao.insert(menu);
+            Sys_menu m22 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("0001000100010003");
-            menu.setName("删除");
+            menu.setName("删除单位");
             menu.setAliasName("Delete");
             menu.setLocation(0);
             menu.setIsShow(false);
             menu.setPermission("sys.manager.unit.delete");
             menu.setParentId(m2.getId());
             menu.setType("data");
-            Sys_menu m23=dao.insert(menu);
+            Sys_menu m23 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("000100010002");
@@ -205,36 +206,36 @@ public class MainSetup implements Setup {
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("0001000100020001");
-            menu.setName("添加");
+            menu.setName("添加用户");
             menu.setAliasName("Add");
             menu.setLocation(0);
             menu.setIsShow(false);
             menu.setPermission("sys.manager.user.add");
             menu.setParentId(m3.getId());
             menu.setType("data");
-            Sys_menu m31=dao.insert(menu);
+            Sys_menu m31 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("0001000100020002");
-            menu.setName("修改");
+            menu.setName("修改用户");
             menu.setAliasName("Edit");
             menu.setLocation(1);
             menu.setIsShow(false);
             menu.setPermission("sys.manager.user.edit");
             menu.setParentId(m3.getId());
             menu.setType("data");
-            Sys_menu m32=dao.insert(menu);
+            Sys_menu m32 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("0001000100020003");
-            menu.setName("删除");
+            menu.setName("删除用户");
             menu.setAliasName("Delete");
             menu.setLocation(2);
             menu.setIsShow(false);
             menu.setPermission("sys.manager.user.delete");
             menu.setParentId(m3.getId());
             menu.setType("data");
-            Sys_menu m33=dao.insert(menu);
+            Sys_menu m33 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("000100010003");
@@ -247,7 +248,62 @@ public class MainSetup implements Setup {
             menu.setTarget("data-pjax");
             menu.setParentId(m1.getId());
             menu.setType("menu");
-            Sys_menu m4=dao.insert(menu);
+            Sys_menu m4 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100030001");
+            menu.setName("添加角色");
+            menu.setAliasName("Add");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.role.add");
+            menu.setParentId(m4.getId());
+            menu.setType("data");
+            Sys_menu m41 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100030002");
+            menu.setName("修改角色");
+            menu.setAliasName("Edit");
+            menu.setLocation(2);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.role.edit");
+            menu.setParentId(m4.getId());
+            menu.setType("data");
+            Sys_menu m42 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100030003");
+            menu.setName("删除角色");
+            menu.setAliasName("Delete");
+            menu.setLocation(3);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.role.delete");
+            menu.setParentId(m4.getId());
+            menu.setType("data");
+            Sys_menu m43 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100030004");
+            menu.setName("分配菜单");
+            menu.setAliasName("SetMenu");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.role.menu");
+            menu.setParentId(m4.getId());
+            menu.setType("data");
+            Sys_menu m44 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100030005");
+            menu.setName("分配用户");
+            menu.setAliasName("SetUser");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.role.user");
+            menu.setParentId(m4.getId());
+            menu.setType("data");
+            Sys_menu m45 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("000100010004");
@@ -273,7 +329,7 @@ public class MainSetup implements Setup {
             menu.setPermission("sys.manager.config");
             menu.setParentId(m1.getId());
             menu.setType("menu");
-            Sys_menu m6=dao.insert(menu);
+            Sys_menu m6 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("000100010006");
@@ -286,7 +342,7 @@ public class MainSetup implements Setup {
             menu.setPermission("sys.manager.log");
             menu.setParentId(m1.getId());
             menu.setType("menu");
-            Sys_menu m7=dao.insert(menu);
+            Sys_menu m7 = dao.insert(menu);
             menu = new Sys_menu();
             menu.setDisabled(true);
             menu.setPath("000100010007");
@@ -299,7 +355,7 @@ public class MainSetup implements Setup {
             menu.setPermission("sys.manager.job");
             menu.setParentId(m1.getId());
             menu.setType("menu");
-            Sys_menu m8=dao.insert(menu);
+            Sys_menu m8 = dao.insert(menu);
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
@@ -329,6 +385,8 @@ public class MainSetup implements Setup {
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
             user.setLoginIp("127.0.0.1");
+            user.setLoginAt(0);
+            user.setLoginCount(0);
             user.setEmail("wizzer@qq.com");
             user.setLoginTheme("palette.css");
             user.setLoginBoxed(false);
@@ -351,6 +409,11 @@ public class MainSetup implements Setup {
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m32.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m33.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m4.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m41.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m42.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m43.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m44.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m45.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m5.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m6.getId() + "')"));
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m7.getId() + "')"));
@@ -366,20 +429,20 @@ public class MainSetup implements Setup {
      * @param dao
      */
     private void initSysSetting(NutConfig config, Dao dao) {
-        List<Sys_config> configList = dao.query(Sys_config.class,Cnd.NEW());
+        List<Sys_config> configList = dao.query(Sys_config.class, Cnd.NEW());
         for (Sys_config sysConfig : configList) {
-            switch (sysConfig.getConfigKey()){
+            switch (sysConfig.getConfigKey()) {
                 case "AppName":
-                    Globals.AppName=sysConfig.getConfigValue();
+                    Globals.AppName = sysConfig.getConfigValue();
                     break;
                 case "AppShrotName":
-                    Globals.AppShrotName=sysConfig.getConfigValue();
+                    Globals.AppShrotName = sysConfig.getConfigValue();
                     break;
                 case "AppDomain":
-                    Globals.AppDomain=sysConfig.getConfigValue();
+                    Globals.AppDomain = sysConfig.getConfigValue();
                     break;
                 case "AppUploadPath":
-                    Globals.AppUploadPath=sysConfig.getConfigValue();
+                    Globals.AppUploadPath = sysConfig.getConfigValue();
                     break;
                 default:
                     Globals.MyConfig.put(sysConfig.getConfigKey(), sysConfig.getConfigValue());
@@ -420,7 +483,6 @@ public class MainSetup implements Setup {
 //        Velocity.init(p);
 //        log.info("Veloctiy Init End.");
 //    }
-
     public void destroy(NutConfig config) {
     }
 }

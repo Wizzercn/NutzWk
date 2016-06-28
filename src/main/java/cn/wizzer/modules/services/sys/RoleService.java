@@ -5,6 +5,9 @@ import cn.wizzer.modules.models.sys.Sys_role;
 import cn.wizzer.modules.models.sys.Sys_user;
 import cn.wizzer.common.base.BaseService;
 import org.nutz.dao.Dao;
+import org.nutz.dao.Sqls;
+import org.nutz.dao.entity.Entity;
+import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 
@@ -18,6 +21,15 @@ import java.util.List;
 public class RoleService extends BaseService<Sys_role> {
     public RoleService(Dao dao) {
         super(dao);
+    }
+
+    public List<Sys_menu> getDatas() {
+        Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and a.type='data' order by a.location ASC,a.path asc");
+        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
+        sql.setEntity(entity);
+        sql.setCallback(Sqls.callback.entities());
+        dao().execute(sql);
+        return sql.getList(Sys_menu.class);
     }
 
     /**
