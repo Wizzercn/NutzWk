@@ -75,6 +75,8 @@ public class UserController {
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
             user.setCreateBy(Strings.sBlank(req.getAttribute("uid")));
+            user.setLoginCount(0);
+            user.setLoginAt(0);
             userService.insert(user);
             return Result.success("system.success", req);
         } catch (Exception e) {
