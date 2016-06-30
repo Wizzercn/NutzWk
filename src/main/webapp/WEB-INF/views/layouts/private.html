@@ -100,7 +100,7 @@
             <a href="javascript:;" class="ti-menu off-left visible-xs" data-toggle="offscreen" data-move="ltr"></a>
 
 
-            <a href="/private/home"  data-pjax class="navbar-brand">
+            <a href="${base!}/private/home"  data-pjax class="navbar-brand">
                 <img src="${base!}/assets/img/logo.png" alt="" class="o_img o_hide">
                 <span class="heading-font o_img">
 		            <img src="${base!}/assets/img/logoa.png">
@@ -120,7 +120,7 @@
         </ul>
         <ul id="topnav" class="nav navbar-nav hidden-xs">
             <!--<li>-->
-            <!--<a href="/sysadmin/home" data-pjax>-->
+            <!--<a href="${base!}/sysadmin/home" data-pjax>-->
             <!--<i class="ti-home"></i>-->
             <!--<span>首页</span>-->
             <!--</a>-->
@@ -200,7 +200,7 @@
                 </a>
                 <ul class="dropdown-menu animated fadeInLeft">
                     <li>
-                        <a href="/private/sys/user/custom" data-toggle="modal"
+                        <a href="${base!}/private/sys/user/custom" data-toggle="modal"
                            data-target="#homeDetail">${msg['index.custommenu']}</a>
                     </li>
 
@@ -210,13 +210,13 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/private/sys/user/pass" data-toggle="modal"
+                        <a href="${base!}/private/sys/user/pass" data-toggle="modal"
                            data-target="#homeDetail">${msg['index.user.password']}</a>
                     </li>
                 </ul>
             </li>
             <li class="off-right">
-                <a href="/private/login/logout">
+                <a href="${base!}/private/login/logout">
                     <i class="ti-power-off"></i>
                 </a>
             </li>
@@ -333,12 +333,12 @@
             $(document).pjax('a[data-pjax]', '#container', {maxCacheLength:0,push:false, replace:true,fragment: '#container', timeout: 8000});
             bindLeft();
             $('#topnav a[data-pjax]').on('click',function(){
-                $.get("/private/home/left?url="+$(this).attr("href"),function (data) {
+                $.get("${base!}/private/home/left?url="+$(this).attr("href"),function (data) {
                     $("#leftnav").html(data);
                     bindLeft();
                 }, "html");
             });
-            $.get("/private/home/path?url="+window.location.href,function (data) {
+            $.get("${base!}/private/home/path?url="+window.location.href,function (data) {
                 $("#leftnav").html(data);
                 bindLeft();
             }, "html");

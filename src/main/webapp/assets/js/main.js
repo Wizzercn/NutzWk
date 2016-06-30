@@ -6,7 +6,7 @@ $.ajaxSetup({
     complete: function (XMLHttpRequest, textStatus) {
         var sessionstatus = XMLHttpRequest.getResponseHeader('loginStatus'); //通过XMLHttpRequest取得响应头，sessionstatus，
         if (sessionstatus == 'accessDenied') {
-            top.window.location.href = '/private/login';
+            top.window.location.href = base+ '/private/login';
         }
     }
 });
@@ -386,7 +386,7 @@ var sublime = function () {
                         $(this).slimScroll(data);
                     });
                 }
-                jQuery.post("/private/login/layout", {p:"sidebar",v:false});
+                jQuery.post(base+"/private/login/layout", {p:"sidebar",v:false});
             } else if (!app.hasClass("small-menu")) {
                 app.addClass("small-menu");
                 if (!$.browser.mobile && $.fn.slimScroll) {
@@ -394,7 +394,7 @@ var sublime = function () {
                         $(this).slimScroll({destroy: true}).removeAttr('style');
                     });
                 }
-                jQuery.post("/private/login/layout", {p:"sidebar",v:true});
+                jQuery.post(base+"/private/login/layout", {p:"sidebar",v:true});
             }
         });
     }
@@ -403,10 +403,10 @@ var sublime = function () {
         $(document).on("click", ".toggle-boxed", function (e) {
             if(app.hasClass("boxed")){
                 app.removeClass("boxed");
-                jQuery.post("/private/login/layout", {p:"boxed",v:false});
+                jQuery.post(base+"/private/login/layout", {p:"boxed",v:false});
             }else{
                 app.addClass("boxed");
-                jQuery.post("/private/login/layout", {p:"boxed",v:true});
+                jQuery.post(base+"/private/login/layout", {p:"boxed",v:true});
             }
             e.preventDefault();
             e.stopPropagation();
@@ -417,10 +417,10 @@ var sublime = function () {
         $(document).on("click", ".toggle-scroll", function (e) {
             if(app.hasClass("fixed-scroll")){
                 app.removeClass("fixed-scroll");
-                jQuery.post("/private/login/layout", {p:"scroll",v:false});
+                jQuery.post(base+"/private/login/layout", {p:"scroll",v:false});
             }else{
                 app.addClass("fixed-scroll");
-                jQuery.post("/private/login/layout", {p:"scroll",v:true});
+                jQuery.post(base+"/private/login/layout", {p:"scroll",v:true});
             }
             e.preventDefault();
             e.stopPropagation();
@@ -543,7 +543,7 @@ var sublime = function () {
         },
         initIcheck : initIcheck,//初始化复选框控件
         changeTheme:function(obj){
-            jQuery.post("/private/login/theme", {loginTheme:obj});
+            jQuery.post(base+"/private/login/theme", {loginTheme:obj});
         },
         showLoadingbar : function(obj){//显示顶部进度条
             var clz = "waiting";

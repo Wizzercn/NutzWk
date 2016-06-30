@@ -1,5 +1,6 @@
 package cn.wizzer.modules.gm.sys.controllers;
 
+import cn.wizzer.common.base.Globals;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.modules.gm.sys.models.Sys_menu;
 import cn.wizzer.modules.gm.sys.services.MenuService;
@@ -40,8 +41,11 @@ public class HomeController {
     public void left(@Param("url") String url, HttpServletRequest req) {
         String path = "";
         String perpath = "";
-        if(Strings.sBlank(url).indexOf("?")>0)
-            url=url.substring(0,url.indexOf("?"));
+        if (!Strings.isBlank(Globals.AppBase)) {
+            url = Strings.sBlank(url).substring(Globals.AppBase.length());
+        }
+        if (Strings.sBlank(url).indexOf("?") > 0)
+            url = url.substring(0, url.indexOf("?"));
         Sys_menu menu = menuService.fetch(Cnd.where("href", "=", url));
         if (menu != null) {
             if (menu.getPath().length() > 8) {
@@ -61,10 +65,14 @@ public class HomeController {
     @RequiresAuthentication
     public void path(@Param("url") String url, HttpServletRequest req) {
         if (Strings.sBlank(url).indexOf("//") > 0) {
-            if(Strings.sBlank(url).indexOf("?")>0)
-                url=url.substring(0,url.indexOf("?"));
+            if (Strings.sBlank(url).indexOf("?") > 0)
+                url = url.substring(0, url.indexOf("?"));
             String[] u = url.split("//");
-            String[] urls = u[1].split("/");
+            String s = u[1].substring(u[1].indexOf("/"));
+            if (!Strings.isBlank(Globals.AppBase)) {
+                s = s.substring(Globals.AppBase.length());
+            }
+            String[] urls = s.split("/");
             List<String> list = new ArrayList<>();
             if (urls.length >= 5) {
                 list.add("/" + urls[1] + "/" + urls[2] + "/" + urls[3] + "/" + urls[4]);
