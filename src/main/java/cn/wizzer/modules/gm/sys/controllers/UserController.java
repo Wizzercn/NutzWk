@@ -240,7 +240,7 @@ public class UserController {
     }
 
     @At
-    @Ok("json:full")
+    @Ok("json:{locked:'password|salt',ignoreNull:false}") // 忽略password和createAt属性,忽略空属性的json输出
     @RequiresAuthentication
     public Object data(@Param("unitid") String unitid, @Param("loginname") String loginname, @Param("nickname") String nickname, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
