@@ -1,7 +1,7 @@
-package cn.wizzer.modules.services.sys;
+package cn.wizzer.modules.gm.sys.services;
 
-import cn.wizzer.common.base.BaseService;
-import cn.wizzer.modules.models.sys.Sys_unit;
+import cn.wizzer.common.base.Service;
+import cn.wizzer.modules.gm.sys.models.Sys_unit;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -15,7 +15,7 @@ import org.nutz.lang.Strings;
  * Created by wizzer on 2016/6/24.
  */
 @IocBean(args = {"refer:dao"})
-public class UnitService extends BaseService<Sys_unit> {
+public class UnitService extends Service<Sys_unit> {
     public UnitService(Dao dao) {
         super(dao);
     }

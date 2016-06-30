@@ -1,14 +1,12 @@
-package cn.wizzer.modules;
+package cn.wizzer.common.core;
 
 import cn.wizzer.common.base.Globals;
-import cn.wizzer.common.util.StringUtil;
-import cn.wizzer.modules.models.sys.*;
+import cn.wizzer.modules.gm.sys.models.*;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.dao.Chain;
-import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.util.Daos;
@@ -17,16 +15,14 @@ import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
-import org.nutz.mvc.Setup;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
  * Created by wizzer on 2016/6/21.
  */
-public class MainSetup implements Setup {
+public class Setup implements org.nutz.mvc.Setup {
     private static final Log log = Logs.get();
 
     public void init(NutConfig config) {

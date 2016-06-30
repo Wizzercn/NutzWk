@@ -1,6 +1,6 @@
-package cn.wizzer.modules.models.sys;
+package cn.wizzer.modules.gm.sys.models;
 
-import cn.wizzer.common.base.BaseModel;
+import cn.wizzer.common.base.Model;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 @Table("sys_unit")
 @TableIndexes({@Index(name = "INDEX_SYS_UNIT_PATH", fields = {"path"}, unique = true)})
-public class Sys_unit extends BaseModel implements Serializable {
+public class Sys_unit extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column

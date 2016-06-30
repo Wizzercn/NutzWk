@@ -1,6 +1,6 @@
-package cn.wizzer.modules.models.sys;
+package cn.wizzer.modules.gm.sys.models;
 
-import cn.wizzer.common.base.BaseModel;
+import cn.wizzer.common.base.Model;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Table("sys_menu")
 @TableIndexes({@Index(name = "INDEX_SYS_MENU_PATH", fields = {"path"}, unique = true), @Index(name = "INDEX_SYS_MENU_PREM", fields = {"permission"}, unique = true)})
-public class Sys_menu extends BaseModel implements Serializable {
+public class Sys_menu extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Name

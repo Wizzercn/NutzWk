@@ -1,6 +1,6 @@
-package cn.wizzer.modules.models.sys;
+package cn.wizzer.modules.gm.sys.models;
 
-import cn.wizzer.common.base.BaseModel;
+import cn.wizzer.common.base.Model;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -12,7 +12,7 @@ import java.util.Map;
  */
 @Table("sys_user")
 @TableIndexes({@Index(name = "INDEX_SYS_USER_LOGINNAMAE", fields = {"loginname"}, unique = true)})
-public class Sys_user extends BaseModel implements Serializable {
+public class Sys_user extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Name

@@ -1,17 +1,12 @@
 package cn.wizzer.common.services.log;
 
-import cn.wizzer.modules.models.sys.Sys_log;
-import org.apache.commons.lang3.math.NumberUtils;
+import cn.wizzer.modules.gm.sys.models.Sys_log;
 import org.nutz.dao.Dao;
-import org.nutz.dao.util.Daos;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;

@@ -1,18 +1,16 @@
-package cn.wizzer.modules.controllers.sys;
+package cn.wizzer.modules.gm.sys.controllers;
 
 import cn.wizzer.common.annotation.SLog;
-import cn.wizzer.common.base.Globals;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
 import cn.wizzer.common.page.DataTableOrder;
-import cn.wizzer.modules.services.sys.LogService;
+import cn.wizzer.modules.gm.sys.services.LogService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;

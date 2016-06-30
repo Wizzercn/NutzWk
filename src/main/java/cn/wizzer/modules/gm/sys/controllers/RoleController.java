@@ -1,17 +1,17 @@
-package cn.wizzer.modules.controllers.sys;
+package cn.wizzer.modules.gm.sys.controllers;
 
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
 import cn.wizzer.common.page.DataTableOrder;
-import cn.wizzer.modules.models.sys.Sys_menu;
-import cn.wizzer.modules.models.sys.Sys_role;
-import cn.wizzer.modules.models.sys.Sys_unit;
-import cn.wizzer.modules.services.sys.MenuService;
-import cn.wizzer.modules.services.sys.RoleService;
-import cn.wizzer.modules.services.sys.UnitService;
-import cn.wizzer.modules.services.sys.UserService;
+import cn.wizzer.modules.gm.sys.models.Sys_menu;
+import cn.wizzer.modules.gm.sys.models.Sys_role;
+import cn.wizzer.modules.gm.sys.models.Sys_unit;
+import cn.wizzer.modules.gm.sys.services.MenuService;
+import cn.wizzer.modules.gm.sys.services.RoleService;
+import cn.wizzer.modules.gm.sys.services.UnitService;
+import cn.wizzer.modules.gm.sys.services.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;

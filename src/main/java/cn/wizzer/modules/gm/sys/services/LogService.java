@@ -1,7 +1,7 @@
-package cn.wizzer.modules.services.sys;
+package cn.wizzer.modules.gm.sys.services;
 
-import cn.wizzer.common.base.BaseService;
-import cn.wizzer.modules.models.sys.Sys_log;
+import cn.wizzer.common.base.Service;
+import cn.wizzer.modules.gm.sys.models.Sys_log;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.IocBean;
 
@@ -9,7 +9,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
  * Created by wizzer on 2016/6/29.
  */
 @IocBean(args = {"refer:dao"})
-public class LogService extends BaseService<Sys_log> {
+public class LogService extends Service<Sys_log> {
     public LogService(Dao dao) {
         super(dao);
     }

@@ -1,6 +1,6 @@
-package cn.wizzer.modules.models.sys;
+package cn.wizzer.modules.gm.sys.models;
 
-import cn.wizzer.common.base.BaseModel;
+import cn.wizzer.common.base.Model;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by wizzer on 2016/6/21.
  */
 @Table("sys_config")
-public class Sys_config extends BaseModel implements Serializable {
+public class Sys_config extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Name
     @Column

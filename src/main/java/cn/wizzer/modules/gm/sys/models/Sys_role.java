@@ -1,6 +1,6 @@
-package cn.wizzer.modules.models.sys;
+package cn.wizzer.modules.gm.sys.models;
 
-import cn.wizzer.common.base.BaseModel;
+import cn.wizzer.common.base.Model;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Table("sys_role")
 @TableIndexes({@Index(name = "INDEX_SYS_ROLE_CODE", fields = {"code"}, unique = true)})
-public class Sys_role extends BaseModel implements Serializable {
+public class Sys_role extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Name

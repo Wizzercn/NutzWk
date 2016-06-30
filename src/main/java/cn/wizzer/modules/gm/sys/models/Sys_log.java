@@ -1,7 +1,7 @@
-package cn.wizzer.modules.models.sys;
+package cn.wizzer.modules.gm.sys.models;
 
 import cn.wizzer.common.util.StringUtil;
-import cn.wizzer.common.base.BaseModel;
+import cn.wizzer.common.base.Model;
 import org.apache.shiro.SecurityUtils;
 import org.nutz.dao.entity.annotation.*;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Created by wizzer on 2016/6/21.
  */
 @Table("sys_log")
-public class Sys_log extends BaseModel implements Serializable {
+public class Sys_log extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Id

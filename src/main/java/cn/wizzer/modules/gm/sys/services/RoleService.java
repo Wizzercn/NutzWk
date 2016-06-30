@@ -1,9 +1,8 @@
-package cn.wizzer.modules.services.sys;
+package cn.wizzer.modules.gm.sys.services;
 
-import cn.wizzer.modules.models.sys.Sys_menu;
-import cn.wizzer.modules.models.sys.Sys_role;
-import cn.wizzer.modules.models.sys.Sys_user;
-import cn.wizzer.common.base.BaseService;
+import cn.wizzer.modules.gm.sys.models.Sys_menu;
+import cn.wizzer.modules.gm.sys.models.Sys_role;
+import cn.wizzer.common.base.Service;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
@@ -18,7 +17,7 @@ import java.util.List;
  * Created by wizzer on 2016/6/22.
  */
 @IocBean(args = {"refer:dao"})
-public class RoleService extends BaseService<Sys_role> {
+public class RoleService extends Service<Sys_role> {
     public RoleService(Dao dao) {
         super(dao);
     }

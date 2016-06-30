@@ -1,13 +1,12 @@
-package cn.wizzer.modules.controllers.sys;
+package cn.wizzer.modules.gm.sys.controllers;
 
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
-import cn.wizzer.modules.models.sys.Sys_unit;
-import cn.wizzer.modules.services.sys.UnitService;
+import cn.wizzer.modules.gm.sys.models.Sys_unit;
+import cn.wizzer.modules.gm.sys.services.UnitService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;

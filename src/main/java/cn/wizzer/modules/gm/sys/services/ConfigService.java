@@ -1,7 +1,7 @@
-package cn.wizzer.modules.services.sys;
+package cn.wizzer.modules.gm.sys.services;
 
-import cn.wizzer.modules.models.sys.Sys_config;
-import cn.wizzer.common.base.BaseService;
+import cn.wizzer.modules.gm.sys.models.Sys_config;
+import cn.wizzer.common.base.Service;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.IocBean;
 
@@ -9,7 +9,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
  * Created by wizzer on 2016/6/22.
  */
 @IocBean(args = {"refer:dao"})
-public class ConfigService extends BaseService<Sys_config> {
+public class ConfigService extends Service<Sys_config> {
     public ConfigService(Dao dao) {
         super(dao);
     }

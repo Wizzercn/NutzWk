@@ -12,7 +12,7 @@ import java.util.Date;
 /**
  * Created by wizzer on 2016/6/21.
  */
-public abstract class BaseModel implements Serializable {
+public abstract class Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Comment("创建时间")

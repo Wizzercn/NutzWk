@@ -1,9 +1,9 @@
-package cn.wizzer.modules.services.sys;
+package cn.wizzer.modules.gm.sys.services;
 
-import cn.wizzer.modules.models.sys.Sys_menu;
-import cn.wizzer.modules.models.sys.Sys_role;
-import cn.wizzer.modules.models.sys.Sys_user;
-import cn.wizzer.common.base.BaseService;
+import cn.wizzer.modules.gm.sys.models.Sys_menu;
+import cn.wizzer.modules.gm.sys.models.Sys_role;
+import cn.wizzer.modules.gm.sys.models.Sys_user;
+import cn.wizzer.common.base.Service;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -20,7 +20,7 @@ import java.util.List;
  * Created by wizzer on 2016/6/22.
  */
 @IocBean(args = {"refer:dao"})
-public class UserService extends BaseService<Sys_user> {
+public class UserService extends Service<Sys_user> {
     public UserService(Dao dao) {
         super(dao);
     }

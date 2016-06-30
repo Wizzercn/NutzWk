@@ -29,15 +29,15 @@ import java.util.Map;
 /**
  * Created by wizzer on 2016/6/21.
  */
-public class BaseService<T> extends EntityService<T> {
+public class Service<T> extends EntityService<T> {
     protected final static int DEFAULT_PAGE_NUMBER = 10;
     protected final static JsonFormat jsonFormat = new JsonFormat().setIgnoreNull(false);
 
-    public BaseService() {
+    public Service() {
         super();
     }
 
-    public BaseService(Dao dao) {
+    public Service(Dao dao) {
         super(dao);
     }
 

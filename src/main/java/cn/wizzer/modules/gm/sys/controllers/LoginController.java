@@ -1,4 +1,4 @@
-package cn.wizzer.modules.controllers.sys;
+package cn.wizzer.modules.gm.sys.controllers;
 
 import cn.apiclub.captcha.Captcha;
 import cn.wizzer.common.base.Result;
@@ -7,11 +7,11 @@ import cn.wizzer.common.shiro.exception.EmptyCaptchaException;
 import cn.wizzer.common.shiro.exception.IncorrectCaptchaException;
 import cn.wizzer.common.shiro.filter.AuthenticationFilter;
 import cn.wizzer.common.util.StringUtil;
-import cn.wizzer.modules.models.sys.Sys_log;
-import cn.wizzer.modules.models.sys.Sys_menu;
-import cn.wizzer.modules.models.sys.Sys_user;
-import cn.wizzer.modules.services.sys.MenuService;
-import cn.wizzer.modules.services.sys.UserService;
+import cn.wizzer.modules.gm.sys.models.Sys_log;
+import cn.wizzer.modules.gm.sys.models.Sys_menu;
+import cn.wizzer.modules.gm.sys.models.Sys_user;
+import cn.wizzer.modules.gm.sys.services.MenuService;
+import cn.wizzer.modules.gm.sys.services.UserService;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
