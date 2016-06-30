@@ -62,7 +62,7 @@ public class LoginController {
         if (subject.isAuthenticated()) {
             return "redirect:/private/home";
         } else {
-            return "beetl:/private/login.html";
+            return "beetl:/private/sys/login.html";
         }
     }
 

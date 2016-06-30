@@ -28,14 +28,14 @@ public class HomeController {
     MenuService menuService;
 
     @At("")
-    @Ok("beetl:/private/home.html")
+    @Ok("beetl:/private/sys/home.html")
     @RequiresAuthentication
     public void home() {
         //SecurityUtils.getSubject().getSession().setTimeout(1000);
     }
 
     @At
-    @Ok("beetl:/private/left.html")
+    @Ok("beetl:/private/sys/left.html")
     @RequiresAuthentication
     public void left(@Param("url") String url, HttpServletRequest req) {
         String path = "";
@@ -57,7 +57,7 @@ public class HomeController {
     }
 
     @At
-    @Ok("beetl:/private/left.html")
+    @Ok("beetl:/private/sys/left.html")
     @RequiresAuthentication
     public void path(@Param("url") String url, HttpServletRequest req) {
         if (Strings.sBlank(url).indexOf("//") > 0) {
