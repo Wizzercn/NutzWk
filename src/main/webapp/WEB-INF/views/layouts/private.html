@@ -143,7 +143,7 @@
 
                     for(secondMenu in @secondMenus.get(firstMenu.path)){ %>
                     <li class="dropdown">
-                        <a href="<% if(!isEmpty(secondMenu.href)){ %> ${secondMenu.href} <% }else{ %>javascript:;<% } %>" ${secondMenu.target!}>
+                        <a href="<% if(!isEmpty(secondMenu.href)){ %> <%if(@string.startWith(secondMenu.href,'/')){%>${base}${secondMenu.href!}<%}else{%>${secondMenu.href!}<%}%> <% }else{ %>javascript:;<% } %>" <%if(@string.startWith(secondMenu.target,'_')){%>target="${secondMenu.target!}"<%}else{%>${secondMenu.target!}<%}%>>
                             <% if(!isEmpty(@secondMenus.get(secondMenu.path))){ %><i class="toggle-accordion"></i><%}%>
                             <span><%if(lang=="zh_CN"){%>${secondMenu.name}<%}else{%>${secondMenu.aliasName}<%}%></span>
                         </a>
@@ -151,7 +151,7 @@
                         <ul class="sub-menu">
                             <% for(thMenu in @secondMenus.get(secondMenu.path)){ %>
                             <li class="clearfix" >
-                                <a <% if(!isEmpty(thMenu.href)){ %>href="${thMenu.href}" <% }else{ %>href="javascript:;"<% } %> ${thMenu.target!}>
+                                <a <% if(!isEmpty(thMenu.href)){ %>href="<%if(@string.startWith(thMenu.href,'/')){%>${base}${thMenu.href!}<%}else{%>${thMenu.href!}<%}%>" <% }else{ %>href="javascript:;"<% } %> <%if(@string.startWith(thMenu.target,'_')){%>target="${thMenu.target!}"<%}else{%>${thMenu.target!}<%}%>>
                                 <span><%if(lang=="zh_CN"){%>${thMenu.name}<%}else{%>${thMenu.aliasName}<%}%></span>
                                 </a>
                             </li><% }%>

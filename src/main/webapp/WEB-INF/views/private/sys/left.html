@@ -4,7 +4,7 @@ var secondMenus=@shiro.getPrincipalProperty('secondMenus');
 
 <% for(firstMenu in @secondMenus.get(perpath)){ %>
 <li <% if(mpath==firstMenu.path){%>class="active"<%}%> <%if(@path.indexOf(firstMenu.path)==0){%>class="open"<%}%>>
-<a <% if(!isEmpty(firstMenu.href)){ %>href="${firstMenu.href}" ${firstMenu.target!} <% }else{ %>href="javascript:;"<% } %> <% if(mpath==firstMenu.path){%>class="active"<%}%> <%if(@path.indexOf(firstMenu.path)==0){%>class="active"<%}%>>
+<a <% if(!isEmpty(firstMenu.href)){ %>href="<%if(@string.startWith(firstMenu.href,'/')){%>${base}${firstMenu.href!}<%}else{%>${firstMenu.href!}<%}%>"  <%if(@string.startWith(firstMenu.target,'_')){%>target="${firstMenu.target!}"<%}else{%>${firstMenu.target!}<%}%>  <% }else{ %>href="javascript:;"<% } %> <% if(mpath==firstMenu.path){%>class="active"<%}%> <%if(@path.indexOf(firstMenu.path)==0){%>class="active"<%}%>>
 <% if(!isEmpty(@secondMenus.get(firstMenu.path))){ %>
 <i class="toggle-accordion"></i>
 <% } %>
@@ -20,7 +20,7 @@ var secondMenus=@shiro.getPrincipalProperty('secondMenus');
     <% for(secondMenu in @secondMenus.get(firstMenu.path)){ %>
 
     <li <% if(mpath == secondMenu.path){ %>class="active"<% }else if(path==secondMenu.path){ %>class="open"<% } %> >
-    <a <% if(!isEmpty(secondMenu.href)){ %>href="${secondMenu.href!}" ${secondMenu.target!}<% }else{ %>href="javascript:;"<% } %>>
+    <a <% if(!isEmpty(secondMenu.href)){ %>href="<%if(@string.startWith(secondMenu.href,'/')){%>${base}${secondMenu.href!}<%}else{%>${secondMenu.href!}<%}%>"  <%if(@string.startWith(secondMenu.target,'_')){%>target="${secondMenu.target!}"<%}else{%>${secondMenu.target!}<%}%> <% }else{ %>href="javascript:;"<% } %>>
     <span>
     <%if(lang=="zh_CN"){%>${secondMenu.name}<%}else{%>${secondMenu.aliasName}<%}%>
     </span>

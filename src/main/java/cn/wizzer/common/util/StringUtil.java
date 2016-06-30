@@ -4,6 +4,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.Mvcs;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Random;
 
@@ -14,15 +15,17 @@ import java.util.Random;
 public class StringUtil {
     /**
      * 计算MD5密码
+     *
      * @param loginname
      * @param password
      * @param createAt
      * @return
      */
-    public static String getPassword(String loginname,String password,int createAt){
+    public static String getPassword(String loginname, String password, int createAt) {
         String p = Lang.md5(Lang.md5(password) + loginname + createAt);
         return 'w' + p.substring(0, p.length() - 1);
     }
+
     /**
      * 获得用户远程地址
      */
@@ -78,5 +81,15 @@ public class StringUtil {
             sb.append(String.valueOf(ra.nextInt(8)));
         }
         return sb.toString();
+    }
+
+    /**
+     * 判断是否以字符串开头
+     * @param str
+     * @param s
+     * @return
+     */
+    public boolean startWith(String str, String s) {
+        return Strings.sNull(str).startsWith(Strings.sNull(s));
     }
 }
