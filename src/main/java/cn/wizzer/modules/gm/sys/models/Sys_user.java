@@ -20,74 +20,98 @@ public class Sys_user extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Prev(els = {@EL("uuid()")})
     private String id;
+
     @Column
     @Comment("用户名")
     @ColDefine(type = ColType.VARCHAR, width = 120)
     private String loginname;
+
     @Column
     @Comment("密码")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String password;// transient 修饰符可让此字段不在对象里显示
+
     @Column
     @Comment("密码盐")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String salt;
+
     @Column
     @Comment("昵称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String nickname;
+
     @Column
     @Comment("是否在线")
     @ColDefine(type = ColType.BOOLEAN)
     private boolean online;
+
     @Column
     @Comment("是否禁用")
     @ColDefine(type = ColType.BOOLEAN)
     private boolean disabled;
+
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String email;
+
     @Column
     @Comment("登陆时间")
     protected Integer loginAt;
+
     @Column
     @Comment("登陆IP")
     @ColDefine(type = ColType.VARCHAR, width = 15)
     private String loginIp;
+
     @Column
     @Comment("登陆次数")
     @ColDefine(type = ColType.INT)
     private Integer loginCount;
+
     @Column
     @Comment("常用菜单")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String customMenu;
+
     @Column
     @Comment("皮肤样式")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String loginTheme;
+
     @Column
     private boolean loginSidebar;
+
     @Column
     private boolean loginBoxed;
+
     @Column
     private boolean loginScroll;
+
     @Column
     @Comment("创建人")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String createBy;
+
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String unitid;
+
     @One(target = Sys_unit.class, field = "unitid")
     private Sys_unit unit;
+
     @ManyMany(from = "userId", relation = "sys_user_role", target = Sys_role.class, to = "roleId")
     protected List<Sys_role> roles;
+
     @ManyMany(from = "userId", relation = "sys_user_unit", target = Sys_role.class, to = "unitId")
     protected List<Sys_unit> units;
+
     protected List<Sys_menu> menus;
+
     protected List<Sys_menu> firstMenus;
+
     protected Map<String, List<Sys_menu>> secondMenus;
+
     protected List<Sys_menu> customMenus;
 
     public String getId() {

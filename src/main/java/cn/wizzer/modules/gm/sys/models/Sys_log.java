@@ -16,30 +16,37 @@ public class Sys_log extends Model implements Serializable {
     @Column
     @Id
     private long id;
+
     @Column
     @Comment("创建人")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String createBy;
+
     @Column
     @Comment("创建昵称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String nickname;
+
     @Column// aop.before aop.after aop.error
     @Comment("日志类型")
     @ColDefine(type = ColType.VARCHAR, width = 20)
     private String type;
+
     @Column
     @Comment("日志标识")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String tag;
+
     @Column
     @Comment("执行类")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String src;
+
     @Column
     @Comment("来源IP")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String ip;
+
     @Column
     @Comment("日志内容")
     @ColDefine(type = ColType.TEXT)
@@ -125,8 +132,8 @@ public class Sys_log extends Model implements Serializable {
         sysLog.msg = msg;
         sysLog.ip = StringUtil.getRemoteAddr();
         Object u = SecurityUtils.getSubject().getPrincipal();
-        String uid="";
-        String nickname="";
+        String uid = "";
+        String nickname = "";
         if (u != null) {
             if (u instanceof Sys_user) {
                 nickname = ((Sys_user) u).getNickname();
@@ -135,10 +142,10 @@ public class Sys_log extends Model implements Serializable {
                 nickname = ((String) u);
             }
         }
-        sysLog.nickname=nickname;
-        sysLog.createBy=uid;
-        sysLog.createAt=(int)(System.currentTimeMillis()/1000);
-        sysLog.updateAt=(int)(System.currentTimeMillis()/1000);
+        sysLog.nickname = nickname;
+        sysLog.createBy = uid;
+        sysLog.createAt = (int) (System.currentTimeMillis() / 1000);
+        sysLog.updateAt = (int) (System.currentTimeMillis() / 1000);
         return sysLog;
     }
 }

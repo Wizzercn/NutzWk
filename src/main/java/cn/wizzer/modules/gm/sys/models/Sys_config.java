@@ -15,9 +15,11 @@ public class Sys_config extends Model implements Serializable {
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String configKey;
+
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String configValue;
+
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String note;

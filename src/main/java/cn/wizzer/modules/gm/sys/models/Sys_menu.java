@@ -19,59 +19,74 @@ public class Sys_menu extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Prev(els = {@EL("uuid()")})
     private String id;
+
     @Column
     @Comment("父级ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String parentId;
+
     @Column
     @Comment("树路径")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String path;
+
     @Column
     @Comment("菜单名称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String name;
+
     @Column
     @Comment("菜单别名")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String aliasName;
+
     @Column
     @Comment("资源类型")
     @ColDefine(type = ColType.VARCHAR, width = 10)
     private String type;
+
     @Column
     @Comment("菜单链接")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String href;
+
     @Column
     @Comment("打开方式")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String target;
+
     @Column
     @Comment("菜单图标")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String icon;
+
     @Column
     @Comment("是否显示")
     private boolean isShow;
+
     @Column
     @Comment("是否禁用")
     private boolean disabled;
+
     @Column
     @Comment("权限标识")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String permission;
+
     @Column
     @Comment("菜单介绍")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String note;
+
     @Column
     @Comment("排序字段")
     @Prev(@SQL("select max(location)+1 from sys_menu"))
     private Integer location;
+
     @Column
     @Comment("有子节点")
     private boolean hasChildren;
+
     private List<Sys_menu> buttons;
 
     public String getId() {

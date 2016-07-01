@@ -18,24 +18,33 @@ public class Sys_role extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Prev(els = {@EL("uuid()")})
     private String id;
+
     @Column
     private String name;
+
     @Column
     private String code;
+
     @Column
     protected String aliasName;
+
     @Column
     private boolean disabled;
+
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String unitid;
+
     @Column
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String note;
+
     @One(target = Sys_unit.class, field = "unitid")
     public Sys_unit unit;
+
     @ManyMany(from = "roleId", relation = "sys_role_menu", target = Sys_menu.class, to = "menuId")
     protected List<Sys_menu> menus;
+
     @ManyMany(from = "roleId", relation = "sys_user_role", target = Sys_menu.class, to = "userId")
     protected List<Sys_user> users;
 
