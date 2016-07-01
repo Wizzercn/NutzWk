@@ -33,7 +33,7 @@ var ioc = {
 			type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
 			fields : {
 				cacheProvider : {refer:"cacheProvider"},
-				cachedTableNames : ["sys_user", "sys_role", "sys_permission", "sys_role_permission"]
+				cachedTableNames : ["sys_user", "sys_role", "sys_menu"]
 			}
 		},
 		/*
@@ -52,7 +52,7 @@ var ioc = {
 		cacheProvider : {
 			type : "org.nutz.plugins.cache.dao.impl.provider.EhcacheDaoCacheProvider",
 			fields : {
-				cacheManager : {refer:"cacheManager"} // 引用ehcache.js中定义的CacheManager
+				cacheManager : {refer:"cacheManager"} // 引用ehcache.json中定义的CacheManager
 			},
 			events : {
 				create : "init"
