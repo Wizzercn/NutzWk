@@ -66,11 +66,6 @@ public class Wx_config extends Model implements Serializable {
     @Comment("jsapi_time")
     protected Integer jsapi_time;
 
-    @Column
-    @Comment("创建人")
-    @ColDefine(type = ColType.VARCHAR, width = 32)
-    private String createBy;
-
     public String getId() {
         return id;
     }
@@ -157,13 +152,5 @@ public class Wx_config extends Model implements Serializable {
 
     public void setJsapi_time(Integer jsapi_time) {
         this.jsapi_time = jsapi_time;
-    }
-
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
     }
 }
