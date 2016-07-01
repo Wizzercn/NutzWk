@@ -90,7 +90,8 @@ public class UnitController {
     @SLog(tag = "编辑单位", msg = "单位名称:${args[0].name}")
     public Object editDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
-            unit.setUpdateAt((int) (System.currentTimeMillis() / 1000));
+            unit.setOpBy(Strings.sNull(req.getAttribute("uid")));
+            unit.setOpAt((int) (System.currentTimeMillis() / 1000));
             unitService.updateIgnoreNull(unit);
             return Result.success("system.success", req);
         } catch (Exception e) {

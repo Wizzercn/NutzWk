@@ -18,11 +18,6 @@ public class Sys_log extends Model implements Serializable {
     private long id;
 
     @Column
-    @Comment("创建人")
-    @ColDefine(type = ColType.VARCHAR, width = 32)
-    private String createBy;
-
-    @Column
     @Comment("创建昵称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String nickname;
@@ -58,14 +53,6 @@ public class Sys_log extends Model implements Serializable {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
     }
 
     public String getNickname() {
@@ -142,10 +129,9 @@ public class Sys_log extends Model implements Serializable {
                 nickname = ((String) u);
             }
         }
+        sysLog.setOpBy(uid);
+        sysLog.setOpAt((int)(System.currentTimeMillis()/1000));
         sysLog.nickname = nickname;
-        sysLog.createBy = uid;
-        sysLog.createAt = (int) (System.currentTimeMillis() / 1000);
-        sysLog.updateAt = (int) (System.currentTimeMillis() / 1000);
         return sysLog;
     }
 }

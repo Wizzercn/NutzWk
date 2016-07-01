@@ -89,11 +89,6 @@ public class Sys_user extends Model implements Serializable {
     private boolean loginScroll;
 
     @Column
-    @Comment("创建人")
-    @ColDefine(type = ColType.VARCHAR, width = 32)
-    private String createBy;
-
-    @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String unitid;
 
@@ -240,14 +235,6 @@ public class Sys_user extends Model implements Serializable {
 
     public void setLoginScroll(boolean loginScroll) {
         this.loginScroll = loginScroll;
-    }
-
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
     }
 
     public String getUnitid() {

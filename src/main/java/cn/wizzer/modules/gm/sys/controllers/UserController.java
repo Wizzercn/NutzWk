@@ -74,7 +74,6 @@ public class UserController {
             String hashedPasswordBase64 = new Sha256Hash(user.getPassword(), salt, 1024).toBase64();
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
-            user.setCreateBy(Strings.sBlank(req.getAttribute("uid")));
             user.setLoginCount(0);
             user.setLoginAt(0);
             userService.insert(user);
@@ -102,7 +101,8 @@ public class UserController {
                 if (u != null)
                     return Result.error("用户名已存在", req);
             }
-            user.setUpdateAt((int) (System.currentTimeMillis() / 1000));
+            user.setOpBy(Strings.sNull(req.getAttribute("uid")));
+            user.setOpAt((int) (System.currentTimeMillis() / 1000));
             userService.updateIgnoreNull(user);
             return Result.success("system.success", req);
         } catch (Exception e) {

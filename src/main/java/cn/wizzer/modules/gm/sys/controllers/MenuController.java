@@ -97,7 +97,8 @@ public class MenuController {
                     return Result.error("sys.role.code", req);
                 }
             }
-            menu.setUpdateAt((int) (System.currentTimeMillis() / 1000));
+            menu.setOpBy(Strings.sNull(req.getAttribute("uid")));
+            menu.setOpAt((int) (System.currentTimeMillis() / 1000));
             menuService.updateIgnoreNull(menu);
             return Result.success("system.success", req);
         } catch (Exception e) {

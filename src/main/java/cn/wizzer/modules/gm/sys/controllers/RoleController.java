@@ -331,7 +331,8 @@ public class RoleController {
             }
             if ("root".equals(role.getUnitid()))
                 role.setUnitid("");
-            role.setUpdateAt((int) (System.currentTimeMillis() / 1000));
+            role.setOpBy(Strings.sNull(req.getAttribute("uid")));
+            role.setOpAt((int) (System.currentTimeMillis() / 1000));
             roleService.updateIgnoreNull(role);
             return Result.success("system.success", req);
         } catch (Exception e) {

@@ -1,5 +1,8 @@
 package cn.wizzer.common.base;
 
+import cn.wizzer.modules.gm.sys.models.Sys_user;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.nutz.dao.entity.annotation.*;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
@@ -15,36 +18,65 @@ import java.util.Date;
 public abstract class Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
-    @Comment("创建时间")
-    @Prev(els = @EL("$me.now()"))
-    protected Integer createAt;
+    @Comment("操作人")
+    @Prev(els = @EL("$me.uid()"))
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String opBy;
+
     @Column
-    @Comment("更新时间")
+    @Comment("操作时间")
     @Prev(els = @EL("$me.now()"))
-    protected Integer updateAt;
+    protected Integer opAt;
+
+    @Column
+    @Comment("删除标记")
+    @Prev(els = @EL("$me.flag()"))
+    protected Boolean delFlag;
 
     public String toString() {
         return String.format("/*%s*/%s", super.toString(), Json.toJson(this, JsonFormat.compact()));
     }
 
-    public Integer getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(Integer createAt) {
-        this.createAt = createAt;
-    }
-
-    public Integer getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(Integer updateAt) {
-        this.updateAt = updateAt;
+    public Boolean flag() {
+        return false;
     }
 
     public Integer now() {
-        return  (int)(System.currentTimeMillis()/1000);
+        return (int) (System.currentTimeMillis() / 1000);
+    }
+
+    public String uid() {
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            Sys_user user = (Sys_user) subject.getPrincipal();
+            return user == null ? "" : user.getId();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public String getOpBy() {
+        return opBy;
+    }
+
+    public void setOpBy(String opBy) {
+        this.opBy = opBy;
+    }
+
+    public Integer getOpAt() {
+        return opAt;
+    }
+
+    public void setOpAt(Integer opAt) {
+        this.opAt = opAt;
+    }
+
+    public Boolean getDelFlag() {
+        return delFlag;
+    }
+
+    public void setDelFlag(Boolean delFlag) {
+        this.delFlag = delFlag;
     }
 
     public String uuid() {

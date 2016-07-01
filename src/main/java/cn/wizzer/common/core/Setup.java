@@ -451,7 +451,7 @@ public class Setup implements org.nutz.mvc.Setup {
             Sys_user user = new Sys_user();
             user.setLoginname("superadmin");
             user.setNickname("超级管理员");
-            user.setCreateAt(1466571305);
+            user.setOpAt(1466571305);
             RandomNumberGenerator rng = new SecureRandomNumberGenerator();
             String salt = rng.nextBytes().toBase64();
             String hashedPasswordBase64 = new Sha256Hash("1", salt, 1024).toBase64();
