@@ -32,9 +32,9 @@ public class XssSqlFilterProcessor extends AbstractProcessor {
         if (checkParams(ac)) {
             if (NutShiro.isAjax(ac.getRequest())) {
                 ac.getResponse().addHeader("loginStatus", "paramsDenied");
-                NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error(Mvcs.getMessage(ac.getRequest(),"system.paramserror"), ac.getRequest()));
+                NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error(Mvcs.getMessage(ac.getRequest(), "system.paramserror"), ac.getRequest()));
             } else {
-                new ForwardView(lerrorUri).render(ac.getRequest(), ac.getResponse(), Mvcs.getMessage(ac.getRequest(),"system.paramserror"));
+                new ForwardView(lerrorUri).render(ac.getRequest(), ac.getResponse(), Mvcs.getMessage(ac.getRequest(), "system.paramserror"));
             }
             return;
         }
@@ -52,22 +52,20 @@ public class XssSqlFilterProcessor extends AbstractProcessor {
         while (values.hasNext()) {
             String[] valueArray = (String[]) values.next();
             for (int i = 0; i < valueArray.length; i++) {
-                String value = valueArray[i];
+                String value = valueArray[i].toLowerCase();
                 //分拆关键字
                 String[] inj_stra = StringUtils.split(regEx_sql, "|");
                 for (int j = 0; j < inj_stra.length; j++) {
                     // 判断如果路径参数值中含有关键字则返回true,并且结束循环
                     if ("and".equals(inj_stra[j]) || "or".equals(inj_stra[j]) || "into".equals(inj_stra[j])) {
-                        if (value.toLowerCase()
-                                .contains(" " + inj_stra[j] + " ")) {
+                        if (value.contains(" " + inj_stra[j] + " ")) {
                             isError = true;
                             log.debugf("[%-4s]URI=%s %s", req.getMethod(), req.getRequestURI(), "SQL关键字过滤:" + value);
                             break;
                         }
                     } else {
-                        if (value.toLowerCase()
-                                .contains(" " + inj_stra[j] + " ")
-                                || value.toLowerCase().contains(
+                        if (value.contains(" " + inj_stra[j] + " ")
+                                || value.contains(
                                 inj_stra[j] + " ")) {
                             isError = true;
                             log.debugf("[%-4s]URI=%s %s", req.getMethod(), req.getRequestURI(), "SQL关键字过滤:" + value);
@@ -88,14 +86,14 @@ public class XssSqlFilterProcessor extends AbstractProcessor {
             while (values2.hasNext()) {
                 String[] valueArray = (String[]) values2.next();
                 for (int i = 0; i < valueArray.length; i++) {
-                    String value = valueArray[i];
+                    String value = valueArray[i].toLowerCase();
                     // 分拆关键字
                     String[] inj_stra = StringUtils.split(regEx_xss, "|");
                     for (int j = 0; j < inj_stra.length; j++) {
                         // 判断如果路径参数值中含有关键字则返回true,并且结束循环
-                        if (value.toLowerCase().contains("<" + inj_stra[j] + ">")
-                                || value.toLowerCase().contains("<" + inj_stra[j])
-                                || value.toLowerCase().contains(inj_stra[j] + ">")) {
+                        if (value.contains("<" + inj_stra[j] + ">")
+                                || value.contains("<" + inj_stra[j])
+                                || value.contains(inj_stra[j] + ">")) {
                             log.debugf("[%-4s]URI=%s %s", req.getMethod(), req.getRequestURI(), "XSS关键字过滤:" + value);
                             isError = true;
                             break;
