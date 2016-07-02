@@ -80,7 +80,7 @@ public class Sys_menu extends Model implements Serializable {
 
     @Column
     @Comment("排序字段")
-    @Prev(@SQL("select max(location)+1 from sys_menu"))
+    @Prev(@SQL("SELECT MAX(IFNULL(location,0))+1 FROM sys_menu"))
     private Integer location;
 
     @Column

@@ -26,7 +26,7 @@ public class Wx_reply extends Model implements Serializable {
     @Column
     @Comment("消息类型")
     @ColDefine(type = ColType.VARCHAR, width = 20)
-    private String msgtype;
+    private String msgType;
 
     @Column
     @Comment("关键词")
@@ -62,12 +62,12 @@ public class Wx_reply extends Model implements Serializable {
         this.type = type;
     }
 
-    public String getMsgtype() {
-        return msgtype;
+    public String getMsgType() {
+        return msgType;
     }
 
-    public void setMsgtype(String msgtype) {
-        this.msgtype = msgtype;
+    public void setMsgType(String msgType) {
+        this.msgType = msgType;
     }
 
     public String getKeyword() {

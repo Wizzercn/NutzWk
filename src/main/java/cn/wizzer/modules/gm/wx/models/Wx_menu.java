@@ -31,17 +31,17 @@ public class Wx_menu extends Model implements Serializable {
     @Column
     @Comment("菜单名称")
     @ColDefine(type = ColType.VARCHAR, width = 20)
-    private String name;
+    private String menuName;
 
     @Column
     @Comment("菜单类型")
     @ColDefine(type = ColType.VARCHAR, width = 20)
-    private String type;
+    private String menuType;
 
     @Column
     @Comment("关键词")
     @ColDefine(type = ColType.VARCHAR, width = 20)
-    private String key;
+    private String menuKey;
 
     @Column
     @Comment("网址")
@@ -50,7 +50,7 @@ public class Wx_menu extends Model implements Serializable {
 
     @Column
     @Comment("排序字段")
-    @Prev(@SQL("select max(location)+1 from wx_menu"))
+    @Prev(@SQL("SELECT MAX(IFNULL(location,0))+1 FROM wx_menu"))
     private Integer location;
 
     @Column
@@ -89,28 +89,28 @@ public class Wx_menu extends Model implements Serializable {
         this.path = path;
     }
 
-    public String getName() {
-        return name;
+    public String getMenuName() {
+        return menuName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMenuName(String menuName) {
+        this.menuName = menuName;
     }
 
-    public String getType() {
-        return type;
+    public String getMenuType() {
+        return menuType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setMenuType(String menuType) {
+        this.menuType = menuType;
     }
 
-    public String getKey() {
-        return key;
+    public String getMenuKey() {
+        return menuKey;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setMenuKey(String menuKey) {
+        this.menuKey = menuKey;
     }
 
     public String getUrl() {

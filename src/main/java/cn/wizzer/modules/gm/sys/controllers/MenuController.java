@@ -216,6 +216,7 @@ public class MenuController {
         try {
             String[] menuIds= StringUtils.split(ids,",");
             int i=0;
+            menuService.dao().execute(Sqls.create("update sys_menu set location=0"));
             for(String s:menuIds){
                 if(!Strings.isBlank(s)){
                     menuService.update(org.nutz.dao.Chain.make("location",i),Cnd.where("id","=",s));

@@ -9,8 +9,6 @@ import org.nutz.json.JsonFormat;
 import org.nutz.lang.random.R;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Created by wizzer on 2016/6/21.

@@ -9,6 +9,8 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
+import org.nutz.dao.impl.FileSqlManager;
+import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
 import org.nutz.ioc.Ioc;
 import org.nutz.lang.Strings;
@@ -56,7 +58,6 @@ public class Setup implements org.nutz.mvc.Setup {
         }
     }
 
-
     /**
      * 初始化数据库
      *
@@ -67,10 +68,6 @@ public class Setup implements org.nutz.mvc.Setup {
         Daos.createTablesInPackage(dao, "cn.wizzer.modules", false);
         // 若必要的数据表不存在，则初始化数据库
         if (0 == dao.count(Sys_user.class)) {
-//            执行SQL脚本
-//            FileSqlManager fm = new FileSqlManager("init_sys_dict.sql");
-//            List<Sql> sqlList = fm.createCombo(fm.keys());
-//            dao.execute(sqlList.toArray(new Sql[sqlList.size()]));
             //初始化配置表
             Sys_config conf = new Sys_config();
             conf.setConfigKey("AppName");
@@ -499,6 +496,13 @@ public class Setup implements org.nutz.mvc.Setup {
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m71.getId() + "')"));
             //另外一种写法(安全)
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values(@a,@b)").setParam("a", dbrole.getId()).setParam("b", m8.getId()));
+            //执行SQL脚本
+            FileSqlManager fm = new FileSqlManager("db/init.sql");
+            List<Sql> sqlList = fm.createCombo(fm.keys());
+            Sql[] sqls=sqlList.toArray(new Sql[sqlList.size()]);
+            for(Sql sql:sqls){
+                dao.execute(sql.setParam("roleId",dbrole.getId()));
+            }
         }
     }
 
