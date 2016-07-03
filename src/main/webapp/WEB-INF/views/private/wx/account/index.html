@@ -79,7 +79,7 @@ layout("/layouts/private.html"){
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                                 ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
                                 '<li><a href="${base}/private/wx/conf/account/edit/' + row.id + '" data-pjax>修改</a></li>' +
-                                '<li><a href="javascript:;" onclick="del(' + row.id + ')">删除</a></li>' +
+                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
                                 '</ul></div>';
                     },
                     "targets": 4
