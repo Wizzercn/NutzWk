@@ -2,6 +2,7 @@ package cn.wizzer.common.services.wx;
 
 import cn.wizzer.modules.back.wx.models.*;
 import cn.wizzer.modules.back.wx.services.*;
+import com.vdurmont.emoji.EmojiParser;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.impl.PropertiesProxy;
@@ -94,7 +95,7 @@ public class WxHandler extends AbstractWxHandler {
         Wx_user usr = wxUserService.fetch(Cnd.where("openid", "=", msg.getFromUserName()));
         Wx_msg wxMsg = new Wx_msg();
         wxMsg.setOpenid(msg.getFromUserName());
-        wxMsg.setContent(msg.getContent());
+        wxMsg.setContent(EmojiParser.parseToAliases(msg.getContent(), EmojiParser.FitzpatrickAction.REMOVE));
         wxMsg.setWxid(msg.getExtkey());
         wxMsg.setType("txt");
         wxMsg.setNickname(usr == null ? "匿名" : usr.getNickname());
@@ -117,12 +118,14 @@ public class WxHandler extends AbstractWxHandler {
         WxResp resp = api.user_info(msg.getFromUserName(), "zh_CN");
         if (usr == null) {
             usr = Json.fromJson(Wx_user.class, Json.toJson(resp.user()));
+            usr.setNickname(EmojiParser.parseToAliases(usr.getNickname(), EmojiParser.FitzpatrickAction.REMOVE));
             usr.setSubscribeAt((int) (resp.user().getSubscribe_time()));
             usr.setWxid(msg.getExtkey());
             wxUserService.insert(usr);
         } else {
             String id = usr.getId();
             usr = Json.fromJson(Wx_user.class, Json.toJson(resp.user()));
+            usr.setNickname(EmojiParser.parseToAliases(usr.getNickname(), EmojiParser.FitzpatrickAction.REMOVE));
             usr.setOpAt((int) (System.currentTimeMillis() / 1000));
             usr.setWxid(msg.getExtkey());
             usr.setId(id);
