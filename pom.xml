@@ -4,7 +4,7 @@
     <groupId>cn.wizzer</groupId>
     <artifactId>nutzwk</artifactId>
     <packaging>war</packaging>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
     <name>NutzWk</name>
     <url>http://www.wizzer.cn</url>
     <properties>
@@ -305,9 +305,9 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*</exclude>
-                </excludes>
+                <includes>
+                    <include>**/*</include>
+                </includes>
                 <filtering>true</filtering>
             </resource>
         </resources>
