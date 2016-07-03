@@ -41,7 +41,11 @@ a:active, a:focus, a:hover {
     background-color: #1377c9;
   }
 }
-
+@media screen and (max-width: 768px) {
+  .header .nav > li > a:hover, .header .nav > li > a:focus, .header .nav .open > a, .header .nav .open > a:hover, .header .nav .open > a:focus {
+    background-color: #1377c9;
+  }
+}
 .header .nav .dropdown-menu .open > a{
     background-color: #dcdff0;
 }
