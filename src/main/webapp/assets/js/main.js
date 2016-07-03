@@ -337,7 +337,7 @@ var sublime = function () {
             var data = $(this).data();
             $(this).slimScroll(data);
         });
-      $(document).on("click", ".header .dropdown-menu a", function (e) {
+      $(document).on("click", ".header  .dropdown-menu a", function (e) {
         var links = $(this).parents('li'), parentLink = $(this).closest("li"), otherLinks = $('.header .dropdown  li').not(links),
           subMenu = $(this).next();
         otherLinks.removeClass('open');
@@ -356,6 +356,8 @@ var sublime = function () {
         }
         if ($(this).attr('href') === '#'||$(this).attr('href') === 'javascript:;') {
           e.preventDefault();
+        }else{
+        	$(".dropdown").removeClass('open');
         }
         e.stopPropagation();
         return true;
