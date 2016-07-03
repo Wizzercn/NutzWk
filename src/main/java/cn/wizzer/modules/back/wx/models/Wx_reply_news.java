@@ -38,6 +38,11 @@ public class Wx_reply_news extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String url;
 
+    @Column
+    @Comment("排序字段")
+    @Prev(@SQL("SELECT MAX(IFNULL(location,0))+1 FROM wx_reply_news"))
+    private Integer location;
+
     public String getId() {
         return id;
     }
@@ -76,5 +81,13 @@ public class Wx_reply_news extends Model implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Integer getLocation() {
+        return location;
+    }
+
+    public void setLocation(Integer location) {
+        this.location = location;
     }
 }

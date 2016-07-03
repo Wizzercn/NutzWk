@@ -48,24 +48,6 @@ public class Wx_config extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String token;
 
-    @Column
-    @Comment("Access_token")
-    @ColDefine(type = ColType.VARCHAR, width = 255)
-    private String access_token;
-
-    @Column
-    @Comment("Expire_time")
-    protected Integer expire_time;
-
-    @Column
-    @Comment("jsapi_ticket")
-    @ColDefine(type = ColType.VARCHAR, width = 255)
-    private String jsapi_ticket;
-
-    @Column
-    @Comment("jsapi_time")
-    protected Integer jsapi_time;
-
     public String getId() {
         return id;
     }
@@ -120,37 +102,5 @@ public class Wx_config extends Model implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getAccess_token() {
-        return access_token;
-    }
-
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
-    }
-
-    public Integer getExpire_time() {
-        return expire_time;
-    }
-
-    public void setExpire_time(Integer expire_time) {
-        this.expire_time = expire_time;
-    }
-
-    public String getJsapi_ticket() {
-        return jsapi_ticket;
-    }
-
-    public void setJsapi_ticket(String jsapi_ticket) {
-        this.jsapi_ticket = jsapi_ticket;
-    }
-
-    public Integer getJsapi_time() {
-        return jsapi_time;
-    }
-
-    public void setJsapi_time(Integer jsapi_time) {
-        this.jsapi_time = jsapi_time;
     }
 }

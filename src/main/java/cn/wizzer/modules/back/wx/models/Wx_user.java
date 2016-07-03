@@ -38,6 +38,11 @@ public class Wx_user extends Model implements Serializable {
     private boolean subscribe;
 
     @Column
+    @Comment("关注时间")
+    @ColDefine(type = ColType.INT, width = 11)
+    protected Integer subscribeAt;
+
+    @Column
     @Comment("性别")
     @ColDefine(type = ColType.INT, width = 1)
     protected Integer sex;
@@ -108,6 +113,14 @@ public class Wx_user extends Model implements Serializable {
 
     public void setSubscribe(boolean subscribe) {
         this.subscribe = subscribe;
+    }
+
+    public Integer getSubscribeAt() {
+        return subscribeAt;
+    }
+
+    public void setSubscribeAt(Integer subscribeAt) {
+        this.subscribeAt = subscribeAt;
     }
 
     public Integer getSex() {

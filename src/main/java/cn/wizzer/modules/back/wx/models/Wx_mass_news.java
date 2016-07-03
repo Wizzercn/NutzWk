@@ -54,6 +54,11 @@ public class Wx_mass_news extends Model implements Serializable {
     protected Integer show_cover_pic;
 
     @Column
+    @Comment("排序字段")
+    @Prev(@SQL("SELECT MAX(IFNULL(location,0))+1 FROM wx_mass_news"))
+    private Integer location;
+
+    @Column
     @Comment("微信ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String wxid;
@@ -123,6 +128,14 @@ public class Wx_mass_news extends Model implements Serializable {
 
     public void setShow_cover_pic(Integer show_cover_pic) {
         this.show_cover_pic = show_cover_pic;
+    }
+
+    public Integer getLocation() {
+        return location;
+    }
+
+    public void setLocation(Integer location) {
+        this.location = location;
     }
 
     public String getWxid() {
