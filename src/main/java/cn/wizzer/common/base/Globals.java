@@ -1,6 +1,6 @@
 package cn.wizzer.common.base;
 
-import cn.wizzer.modules.gm.sys.models.Sys_config;
+import cn.wizzer.modules.back.sys.models.Sys_config;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 
