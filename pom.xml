@@ -4,7 +4,7 @@
     <groupId>cn.wizzer</groupId>
     <artifactId>nutzwk</artifactId>
     <packaging>war</packaging>
-    <version>2.1-SNAPSHOT</version>
+    <version>3.0.0</version>
     <name>NutzWk</name>
     <url>http://www.wizzer.cn</url>
     <properties>
@@ -32,6 +32,13 @@
         </developer>
     </developers>
     <repositories>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -74,6 +81,11 @@
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-shiro</artifactId>
             <version>1.r.56</version>
+        </dependency>
+        <dependency>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutzwx</artifactId>
+            <version>1.r.57-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
