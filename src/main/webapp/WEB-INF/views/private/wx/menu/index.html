@@ -31,7 +31,7 @@ layout("/layouts/private.html"){
         <div class="panel-heading no-b">
         </div>
         <div class="panel-body" style="padding-top: 30px;">
-            <% if(!isEmpty(firstMenu)){ %>
+            <% if(!isEmpty(firstMenus)){ %>
             <div class="cf nestable-lists">
                 <div class="dd" id="nestable3">
                     <ol class="dd-list">
@@ -109,8 +109,7 @@ layout("/layouts/private.html"){
                 dialog.modal("hide");
                 if(data.code==0){
                     Toast.success(data.msg);
-                    treeTable.treetable("removeNode", id);
-                    //从表格中移除此行
+                    window.location.reload();
                 }else{
                     Toast.error(data.msg);
                 }
@@ -118,8 +117,19 @@ layout("/layouts/private.html"){
             },"json");
         });
     }
+    var ids=[];
+    function getId(ob){
+        $.each(ob,function(i,o){
+            ids.push(o.id);
+            if(o.children){
+                getId(o.children);
+            }
+        });
+    }
     function sort(){
-        $.post("${base}/private/wx/conf/menu/sortDo", {wxid:'${wxid}',ids: $("#nestable3").nestable('serialize')}, function (data) {
+        ids=[];
+        getId($("#nestable3").nestable('serialize'));
+        $.post("${base}/private/wx/conf/menu/sortDo", {wxid:'${wxid}',ids: ids.toString()}, function (data) {
             if (data.code == 0) {
                 Toast.success(data.msg);
             } else {
@@ -129,7 +139,7 @@ layout("/layouts/private.html"){
     }
     function complete(){
         sublime.showLoadingbar($(".main-content"));
-        $.post("${base}/private/wx/conf/menu/pushMenu", {wxid:'${wxid}'}, function (data) {
+        $.post("${base}/private/wx/conf/menu/pushMenu/${wxid}", {}, function (data) {
             sublime.closeLoadingbar($(".main-content"));
             if (data.code == 0) {
                 Toast.success(data.msg);
@@ -139,6 +149,7 @@ layout("/layouts/private.html"){
             }
         }, "json");
     }
+
     $(function () {
         $("#nestable3").nestable();
         $("#wxid").on("change",function(){

@@ -17,8 +17,8 @@ public class WxConfigService extends Service<Wx_config> {
         super(dao);
     }
 
-    public WxApi2 getWxApi2(String key) {
-        Wx_config appInfo = this.fetch(Cnd.where("id", "=", key));
+    public WxApi2 getWxApi2(String wxid) {
+        Wx_config appInfo = this.fetch(Cnd.where("id", "=", wxid));
         WxApi2Impl wxApi2 = new WxApi2Impl();
         wxApi2.setAppid(appInfo.getAppid());
         wxApi2.setAppsecret(appInfo.getAppsecret());
