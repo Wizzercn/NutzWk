@@ -101,7 +101,7 @@ public class WxHandler extends AbstractWxHandler {
         wxMsg.setNickname(usr == null ? "匿名" : usr.getNickname());
         wxMsg.setDelFlag(false);
         wxMsgService.insert(wxMsg);
-        return Wxs.respText(null, "您的留言已收到");
+        return Wxs.respText(null, "您的留言已收到！");
     }
 
     public WxOutMsg eventClick(WxInMsg msg) {

@@ -356,6 +356,8 @@ var sublime = function () {
         }
         if ($(this).attr('href') === '#'||$(this).attr('href') === 'javascript:;') {
           e.preventDefault();
+        }else{
+            $(".dropdown").removeClass('open');
         }
         e.stopPropagation();
         return true;
