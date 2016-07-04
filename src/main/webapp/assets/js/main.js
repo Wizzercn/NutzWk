@@ -357,6 +357,10 @@ var sublime = function () {
         if ($(this).attr('href') === '#'||$(this).attr('href') === 'javascript:;') {
           e.preventDefault();
         }else{
+        	/**
+        	 * close submenu when the third level menu is on click
+        	 * 
+        	 */
         	$(".dropdown").removeClass('open');
         }
         e.stopPropagation();
