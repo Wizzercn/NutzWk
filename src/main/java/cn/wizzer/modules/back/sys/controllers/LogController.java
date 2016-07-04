@@ -1,11 +1,11 @@
-package cn.wizzer.modules.gm.sys.controllers;
+package cn.wizzer.modules.back.sys.controllers;
 
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
 import cn.wizzer.common.page.DataTableOrder;
-import cn.wizzer.modules.gm.sys.services.LogService;
+import cn.wizzer.modules.back.sys.services.LogService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;

@@ -1,6 +1,6 @@
 package cn.wizzer.common.services.log;
 
-import cn.wizzer.modules.gm.sys.models.Sys_log;
+import cn.wizzer.modules.back.sys.models.Sys_log;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;

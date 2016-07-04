@@ -1,4 +1,4 @@
-package cn.wizzer.modules.gm.sys.models;
+package cn.wizzer.modules.back.sys.models;
 
 import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.common.base.Model;

@@ -1,6 +1,6 @@
 package cn.wizzer.common.filter;
 
-import cn.wizzer.modules.gm.sys.models.Sys_user;
+import cn.wizzer.modules.back.sys.models.Sys_user;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.nutz.log.Log;

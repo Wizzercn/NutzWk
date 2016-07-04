@@ -1,6 +1,6 @@
 package cn.wizzer.common.base;
 
-import cn.wizzer.modules.gm.sys.models.Sys_user;
+import cn.wizzer.modules.back.sys.models.Sys_user;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.nutz.dao.entity.annotation.*;
@@ -9,8 +9,6 @@ import org.nutz.json.JsonFormat;
 import org.nutz.lang.random.R;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Created by wizzer on 2016/6/21.

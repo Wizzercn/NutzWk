@@ -1,9 +1,9 @@
 package cn.wizzer.common.shiro.realm;
 
-import cn.wizzer.modules.gm.sys.models.Sys_role;
-import cn.wizzer.modules.gm.sys.models.Sys_user;
-import cn.wizzer.modules.gm.sys.services.RoleService;
-import cn.wizzer.modules.gm.sys.services.UserService;
+import cn.wizzer.modules.back.sys.models.Sys_role;
+import cn.wizzer.modules.back.sys.models.Sys_user;
+import cn.wizzer.modules.back.sys.services.RoleService;
+import cn.wizzer.modules.back.sys.services.UserService;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.Cache;

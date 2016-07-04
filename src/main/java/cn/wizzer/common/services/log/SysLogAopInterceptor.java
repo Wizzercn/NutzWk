@@ -1,7 +1,7 @@
 package cn.wizzer.common.services.log;
 
 import cn.wizzer.common.annotation.SLog;
-import cn.wizzer.modules.gm.sys.models.Sys_log;
+import cn.wizzer.modules.back.sys.models.Sys_log;
 import org.nutz.aop.InterceptorChain;
 import org.nutz.aop.MethodInterceptor;
 import org.nutz.el.El;

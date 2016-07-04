@@ -1,9 +1,9 @@
-package cn.wizzer.modules.gm.sys.controllers;
+package cn.wizzer.modules.back.sys.controllers;
 
 import cn.wizzer.common.base.Globals;
 import cn.wizzer.common.filter.PrivateFilter;
-import cn.wizzer.modules.gm.sys.models.Sys_menu;
-import cn.wizzer.modules.gm.sys.services.MenuService;
+import cn.wizzer.modules.back.sys.models.Sys_menu;
+import cn.wizzer.modules.back.sys.services.MenuService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;

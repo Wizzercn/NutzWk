@@ -1,17 +1,17 @@
-package cn.wizzer.modules.gm.sys.controllers;
+package cn.wizzer.modules.back.sys.controllers;
 
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
 import cn.wizzer.common.page.DataTableOrder;
-import cn.wizzer.modules.gm.sys.models.Sys_menu;
-import cn.wizzer.modules.gm.sys.models.Sys_role;
-import cn.wizzer.modules.gm.sys.models.Sys_unit;
-import cn.wizzer.modules.gm.sys.services.MenuService;
-import cn.wizzer.modules.gm.sys.services.RoleService;
-import cn.wizzer.modules.gm.sys.services.UnitService;
-import cn.wizzer.modules.gm.sys.services.UserService;
+import cn.wizzer.modules.back.sys.models.Sys_role;
+import cn.wizzer.modules.back.sys.models.Sys_unit;
+import cn.wizzer.modules.back.sys.models.Sys_menu;
+import cn.wizzer.modules.back.sys.services.MenuService;
+import cn.wizzer.modules.back.sys.services.RoleService;
+import cn.wizzer.modules.back.sys.services.UnitService;
+import cn.wizzer.modules.back.sys.services.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
