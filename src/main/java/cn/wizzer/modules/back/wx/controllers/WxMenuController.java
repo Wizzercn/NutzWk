@@ -67,11 +67,27 @@ public class WxMenuController {
         req.setAttribute("wxid", Strings.sBlank(wxid));
     }
 
-    @At
+    @At("/add/?")
     @Ok("beetl:/private/wx/menu/add.html")
     @RequiresAuthentication
-    public void add() {
+    public void add(String wxid, HttpServletRequest req) {
+        req.setAttribute("wxid", wxid);
+        req.setAttribute("menus", wxMenuService.fetch(Cnd.where("wxid", "=", wxid).and("parentId", "=", "").asc("location")));
+        req.setAttribute("config", wxConfigService.fetch(wxid));
+    }
 
+    @At
+    @Ok("json")
+    @RequiresAuthentication
+    public Object checkDo(@Param("wxid") String wxid, @Param("parentId") String parentId, HttpServletRequest req) {
+        int count = wxMenuService.count(Cnd.where("wxid", "=", Strings.sBlank(wxid)).and("parentId", "=", Strings.sBlank(parentId)));
+        if (Strings.isBlank(parentId) && count > 2) {
+            return Result.error("只可设置三个一级菜单", req);
+        }
+        if (!Strings.isBlank(parentId) && count > 4) {
+            return Result.error("只可设置五个二级菜单", req);
+        }
+        return Result.success("", req);
     }
 
     @At
@@ -80,6 +96,9 @@ public class WxMenuController {
     @SLog(tag = "添加菜单", msg = "菜单名称:${args[0].menuName}")
     public Object addDo(@Param("..") Wx_menu menu, HttpServletRequest req) {
         try {
+            if(Strings.isBlank(menu.getWxid())){
+                return Result.error("",req);
+            }
             wxMenuService.insert(menu);
             return Result.success("system.success", req);
         } catch (Exception e) {
