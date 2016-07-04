@@ -238,7 +238,9 @@ public class WxMenuController {
                 }
             }
             WxResp wxResp = wxApi2.menu_create(m1);
-            log.debug(Json.toJson(wxResp));
+            if(wxResp.errcode()!=0){
+                return Result.error(wxResp.errmsg(), req);
+            }
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);
