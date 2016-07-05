@@ -4,7 +4,7 @@ layout("/layouts/private.html"){
 
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/private/wx/reply/txt/add" data-pjax><i class="ti-plus"></i> 添加文本</a>
+        <a class="btn btn-primary navbar-btn" href="${base}/private/wx/reply/news/add" data-pjax><i class="ti-plus"></i> 添加图文</a>
         <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
     </div>
 </header>
@@ -15,7 +15,7 @@ layout("/layouts/private.html"){
             <thead>
             <tr>
                 <th>标题</th>
-                <th>内容</th>
+                <th>摘要</th>
                 <th>操作</th>
         </table>
     </div>
@@ -61,7 +61,7 @@ layout("/layouts/private.html"){
                 sublime.closeLoadingbar($(".main-content"));
             },
             "ajax": {
-                "url": "${base}/private/wx/reply/txt/data",
+                "url": "${base}/private/wx/reply/news/data",
                 "type": "post",
                 "data": function (d) {
                 }
@@ -69,14 +69,14 @@ layout("/layouts/private.html"){
             "order": [[0, "asc"]],
             "columns": [
                 {"data": "title", "bSortable": true},
-                {"data": "content", "bSortable": false}
+                {"data": "description", "bSortable": false}
             ],
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                                 ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/private/wx/reply/txt/edit/' + row.id + '" data-pjax>修改</a></li>' +
+                                '<li><a href="${base}/private/wx/reply/news/edit/' + row.id + '" data-pjax>修改</a></li>' +
                                 '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
                                 '</ul></div>';
                     },
@@ -98,7 +98,7 @@ layout("/layouts/private.html"){
         dialog.find("#ok").bind("click", function (event) {
             var btn = $(this);
             btn.button("loading");
-            $.post("${base}/private/wx/reply/txt/delete/" + id, {}, function (data) {
+            $.post("${base}/private/wx/reply/news/delete/" + id, {}, function (data) {
                 if (data.code == 0) {
                     datatable.ajax.reload(null,false);
                 } else {
@@ -123,7 +123,7 @@ layout("/layouts/private.html"){
             dialog.find("#ok").bind("click", function (event) {
                 var btn = $(this);
                 btn.button("loading");
-                $.post("${base}/private/wx/reply/txt/delete", {ids: ids.toString()}, function (data) {
+                $.post("${base}/private/wx/reply/news/delete", {ids: ids.toString()}, function (data) {
                     if (data.code == 0) {
                         datatable.ajax.reload(null,false);
                     } else {
