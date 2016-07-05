@@ -3,7 +3,6 @@ package cn.wizzer.modules.open.file;
 import cn.wizzer.common.base.Globals;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.util.DateUtil;
-import org.nutz.img.Images;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
 import org.nutz.lang.random.R;
@@ -15,11 +14,7 @@ import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
 
 import javax.servlet.http.HttpServletRequest;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.text.DateFormat;
 import java.util.Date;
 
 /**
@@ -42,7 +37,7 @@ public class UploadController {
         } else {
             try {
                 String p = Globals.AppRoot;
-                String f = Globals.AppUploadPath + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU64() + tf.getMeta().getFileExtension();
+                String f = Globals.AppUploadPath + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getMeta().getFileExtension();
                 Files.copy(tf.getFile(), new File(p + f));
                 return Result.success("上传成功", f, req);
             } catch (Exception e) {
