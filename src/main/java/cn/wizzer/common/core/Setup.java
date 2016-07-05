@@ -496,8 +496,8 @@ public class Setup implements org.nutz.mvc.Setup {
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m71.getId() + "')"));
             //另外一种写法(安全)
             dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values(@a,@b)").setParam("a", dbrole.getId()).setParam("b", m8.getId()));
-            //执行SQL脚本
-            FileSqlManager fm = new FileSqlManager("db/init.sql");
+            //执行微信菜单SQL脚本
+            FileSqlManager fm = new FileSqlManager("db/init_menu_weixin.sql");
             List<Sql> sqlList = fm.createCombo(fm.keys());
             Sql[] sqls=sqlList.toArray(new Sql[sqlList.size()]);
             for(Sql sql:sqls){
