@@ -50,7 +50,7 @@ public class WxReplyNewsController {
     @At
     @Ok("json")
     @RequiresPermissions("wx.reply.news.add")
-    @SLog(tag = "添加回复文本", msg = "文本标题:${args[0].title}")
+    @SLog(tag = "添加回复图文", msg = "图文标题:${args[0].title}")
     public Object addDo(@Param("..") Wx_reply_news news, HttpServletRequest req) {
         try {
             wxReplyNewsService.insert(news);
@@ -70,7 +70,7 @@ public class WxReplyNewsController {
     @At
     @Ok("json")
     @RequiresPermissions("wx.reply.news.edit")
-    @SLog(tag = "修改回复文本", msg = "文本标题:${args[0].title}")
+    @SLog(tag = "修改回复图文", msg = "图文标题:${args[0].title}")
     public Object editDo(@Param("..") Wx_reply_news news, HttpServletRequest req) {
         try {
             wxReplyNewsService.updateIgnoreNull(news);
@@ -83,7 +83,7 @@ public class WxReplyNewsController {
     @At("/delete/?")
     @Ok("json")
     @RequiresPermissions("wx.reply.news.delete")
-    @SLog(tag = "删除回复文本", msg = "文本标题:${args[1].getAttribute('title')}}")
+    @SLog(tag = "删除回复图文", msg = "图文标题:${args[1].getAttribute('title')}}")
     public Object delete(String id, HttpServletRequest req) {
         try {
             req.setAttribute("title", wxReplyNewsService.fetch(id).getTitle());
@@ -97,7 +97,7 @@ public class WxReplyNewsController {
     @At("/delete")
     @Ok("json")
     @RequiresPermissions("wx.reply.news.delete")
-    @SLog(tag = "删除回复文本", msg = "ID:${args[0]}")
+    @SLog(tag = "删除回复图文", msg = "ID:${args[0]}")
     public Object deletes(@Param("ids") String id, HttpServletRequest req) {
         try {
             wxReplyNewsService.delete(StringUtils.split(id, ","));

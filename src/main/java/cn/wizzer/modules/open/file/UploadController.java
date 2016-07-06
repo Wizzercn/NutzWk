@@ -3,9 +3,12 @@ package cn.wizzer.modules.open.file;
 import cn.wizzer.common.base.Globals;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.util.DateUtil;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Files;
 import org.nutz.lang.random.R;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -29,9 +32,11 @@ public class UploadController {
     @POST
     @At
     @Ok("json")
-    public Object image(@Param("Filedata") TempFile tf, AdaptorErrorContext err, HttpServletRequest req) {
+    @RequiresAuthentication
+    //AdaptorErrorContext必须是最后一个参数
+    public Object image(@Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
         if (err != null && err.getAdaptorErr() != null) {
-            return Result.error("文件大小不符合规定", req);
+            return NutMap.NEW().addv("code", 1).addv("msg", "文件不合法");
         } else if (tf == null) {
             return Result.error("空文件", req);
         } else {
