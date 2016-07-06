@@ -31,7 +31,7 @@ import java.util.List;
  * Created by wizzer on 2016/7/6.
  */
 @IocBean
-@At("/private/wx/reply")
+@At("/private/wx/reply/conf")
 @Filters({@By(type = PrivateFilter.class)})
 public class WxReplyController {
     private static final Log log = Logs.get();
@@ -44,10 +44,10 @@ public class WxReplyController {
     @Inject
     WxConfigService wxConfigService;
 
-    @At({"/conf", "/conf/?"})
-    @Ok("beetl:/private/wx/reply/index.html")
+    @At("/?")
+    @Ok("beetl:/private/wx/reply/conf/index.html")
     @RequiresAuthentication
-    public void index(String wxid, @Param("type") String type, HttpServletRequest req) {
+    public void index(String type, @Param("wxid") String wxid, HttpServletRequest req) {
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
             wxid = list.get(0).getId();
@@ -57,18 +57,21 @@ public class WxReplyController {
         req.setAttribute("type", type);
     }
 
-    @At
-    @Ok("beetl:/private/wx/reply/add.html")
+    @At("/?/add")
+    @Ok("beetl:/private/wx/reply/conf/add.html")
     @RequiresAuthentication
-    public void add() {
+    public void add(String type, @Param("wxid") String wxid, HttpServletRequest req) {
+        req.setAttribute("config", wxConfigService.fetch(wxid));
+        req.setAttribute("type", type);
+        req.setAttribute("wxid", wxid);
 
     }
 
-    @At
+    @At("/?/addDo")
     @Ok("json")
     @RequiresPermissions(value = {"wx.reply.follow.add", "wx.reply.keyword.add"}, logical = Logical.OR)
-    @SLog(tag = "添加绑定", msg = "绑定类型:${args[0].type}")
-    public Object addDo(@Param("..") Wx_reply reply, HttpServletRequest req) {
+    @SLog(tag = "添加绑定", msg = "绑定类型:${args[0]}")
+    public Object addDo(String type, @Param("..") Wx_reply reply, HttpServletRequest req) {
         try {
             wxReplyService.insert(reply);
             return Result.success("system.success", req);
@@ -77,18 +80,18 @@ public class WxReplyController {
         }
     }
 
-    @At("/edit/?")
-    @Ok("beetl:/private/wx/reply/edit.html")
+    @At("/?/edit/?")
+    @Ok("beetl:/private/wx/reply/conf/edit.html")
     @RequiresAuthentication
-    public Object edit(String id) {
+    public Object edit(String type, String id) {
         return wxReplyService.fetch(id);
     }
 
-    @At
+    @At("/?/editDo")
     @Ok("json")
     @RequiresPermissions(value = {"wx.reply.follow.edit", "wx.reply.keyword.edit"}, logical = Logical.OR)
-    @SLog(tag = "修改绑定", msg = "绑定类型:${args[0].type}")
-    public Object editDo(@Param("..") Wx_reply reply, HttpServletRequest req) {
+    @SLog(tag = "修改绑定", msg = "绑定类型:${args[0]}")
+    public Object editDo(String type, @Param("..") Wx_reply reply, HttpServletRequest req) {
         try {
             wxReplyService.updateIgnoreNull(reply);
             return Result.success("system.success", req);
@@ -97,13 +100,12 @@ public class WxReplyController {
         }
     }
 
-    @At("/delete/?")
+    @At("/?/delete/?")
     @Ok("json")
     @RequiresPermissions(value = {"wx.reply.follow.delete", "wx.reply.keyword.delete"}, logical = Logical.OR)
-    @SLog(tag = "删除绑定", msg = "绑定类型:${args[1].getAttribute('type')}}")
-    public Object delete(String id, HttpServletRequest req) {
+    @SLog(tag = "删除绑定", msg = "绑定类型:${args[0]}")
+    public Object delete(String type, String id, HttpServletRequest req) {
         try {
-            req.setAttribute("type", wxReplyService.fetch(id).getType());
             wxReplyService.delete(id);
             return Result.success("system.success", req);
         } catch (Exception e) {
@@ -111,11 +113,11 @@ public class WxReplyController {
         }
     }
 
-    @At("/delete")
+    @At("/?/delete")
     @Ok("json")
     @RequiresPermissions(value = {"wx.reply.follow.delete", "wx.reply.keyword.delete"}, logical = Logical.OR)
-    @SLog(tag = "删除绑定", msg = "ID:${args[0]}")
-    public Object deletes(@Param("ids") String id, HttpServletRequest req) {
+    @SLog(tag = "删除绑定", msg = "绑定类型:${args[0]}")
+    public Object deletes(String type, @Param("ids") String id, HttpServletRequest req) {
         try {
             wxReplyService.delete(StringUtils.split(id, ","));
             return Result.success("system.success", req);
@@ -124,10 +126,10 @@ public class WxReplyController {
         }
     }
 
-    @At
+    @At("/?/data")
     @Ok("json:full")
     @RequiresAuthentication
-    public Object data(@Param("type") String type, @Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+    public Object data(String type, @Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(type)) {
             cnd.and("type", "=", type);
@@ -136,5 +138,26 @@ public class WxReplyController {
             cnd.and("wxid", "=", wxid);
         }
         return wxReplyService.data(length, start, draw, order, columns, cnd, null);
+    }
+
+    @At("/?/select")
+    @Ok("beetl:/private/wx/reply/conf/select.html")
+    @RequiresAuthentication
+    public void select(String type, @Param("wxid") String wxid, @Param("msgType") String msgType, HttpServletRequest req) {
+        req.setAttribute("type", type);
+        req.setAttribute("wxid", wxid);
+        req.setAttribute("msgType", msgType);
+    }
+
+    @At("/?/selectData")
+    @Ok("json:full")
+    @RequiresAuthentication
+    public Object selectData(String type, @Param("msgType") String msgType, @Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+        Cnd cnd = Cnd.NEW();
+        if ("txt".equals(msgType)) {
+            return wxReplyTxtService.data(length, start, draw, order, columns, cnd, null);
+        } else {
+            return wxReplyNewsService.data(length, start, draw, order, columns, cnd, null);
+        }
     }
 }
