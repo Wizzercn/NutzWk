@@ -24,7 +24,9 @@ layout("/layouts/private.html"){
         <table class="table table-bordered table-striped mg-t datatable">
             <thead>
             <tr>
+                <%if(type=='keyword'){%>
                 <th>关键词</th>
+                <%}%>
                 <th>事件类型</th>
                 <th>消息类型</th>
                 <th>操作</th>
@@ -80,7 +82,9 @@ layout("/layouts/private.html"){
             },
             "order": [[0, "desc"]],
             "columns": [
+            <%if(type=='keyword'){%>
                 {"data": "keyword", "bSortable": true},
+            <%}%>
                 {"data": "type", "bSortable": false},
                 {"data": "msgType", "bSortable": false}
             ],
@@ -93,7 +97,7 @@ layout("/layouts/private.html"){
                                 '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
                                 '</ul></div>';
                     },
-                    "targets": 3
+                    "targets": <%if(type=='keyword'){%>3<%}else{%>2<%}%>
                 },
                 {
                     "render": function (data, type, row) {
@@ -102,7 +106,7 @@ layout("/layouts/private.html"){
                         }
                         return '图文消息';
                     },
-                    "targets": 2
+                    "targets": <%if(type=='keyword'){%>2<%}else{%>1<%}%>
                 },
                 {
                     "render": function (data, type, row) {
@@ -111,7 +115,7 @@ layout("/layouts/private.html"){
                         }
                         return '关键词事件';
                     },
-                    "targets": 1
+                    "targets": <%if(type=='keyword'){%>1<%}else{%>0<%}%>
                 }
             ]
         });

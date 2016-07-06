@@ -73,7 +73,7 @@
             $.each(chks, function (i, n) {
                 str+='<li class="dd-item dd3-item" data-id="'+ n.id+'">';
                 str+='<div class="dd-handle dd3-handle">Drag</div>';
-                str+='<div class="dd3-content">'+ n.title+'<i class="fa fa-close pull-right" onclick="delContent('+ n.id+')"></i> </div>';
+                str+='<div class="dd3-content">'+ n.title+'<i class="fa fa-close pull-right" onclick="delContent(\''+ n.id+'\')"></i> </div>';
                 str+='</li>';
             });
             $("#dialogSelect").modal("hide");

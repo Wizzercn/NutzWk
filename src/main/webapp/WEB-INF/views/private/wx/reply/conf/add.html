@@ -46,7 +46,6 @@ layout("/layouts/private.html"){
                                 <input name="keyword" type="text" data-parsley-required="true" class="form-control"
                                        data-parsley-maxlength="20">
 
-                                <p class="help-block no-m">缺省关键词：default</p>
                             </div>
                         </div>
                         <%
@@ -106,6 +105,7 @@ layout("/layouts/private.html"){
 <script language="JavaScript">
     var msgtype;
     $(document).ready(function () {
+        $("#nestable3").nestable();
         $('input:radio[name=msgtype]').click(function () {
             $("#nestable3 .dd-list").html("");
         });

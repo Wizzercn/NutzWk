@@ -71,13 +71,13 @@ public class WxHandler extends AbstractWxHandler {
 
     // 用户发送的是文本的时候调用这个方法
     public WxOutMsg text(WxInMsg msg) {
-        Wx_reply reply = wxReplyService.fetch(Cnd.where("wxid", "=", msg.getExtkey()).and("keyword", "=", msg.getContent()));
+        Wx_reply reply = wxReplyService.fetch(Cnd.where("wxid", "=", msg.getExtkey()).and("type", "=", "keyword").and("keyword", "=", msg.getContent()));
         if (reply != null) {
-            if ("txt".equals(reply.getType())) {
+            if ("txt".equals(reply.getMsgType())) {
                 String txtId = reply.getContent();
                 Wx_reply_txt txt = wxReplyTxtService.fetch(txtId);
                 return Wxs.respText(null, txt == null ? "" : txt.getContent());
-            } else if ("news".equals(reply.getType())) {
+            } else if ("news".equals(reply.getMsgType())) {
                 String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
                 List<WxArticle> list = new ArrayList<>();
                 List<Wx_reply_news> newsList = wxReplyNewsService.query(Cnd.where("id", "in", newsIds).asc("location"));
@@ -130,6 +130,27 @@ public class WxHandler extends AbstractWxHandler {
             usr.setWxid(msg.getExtkey());
             usr.setId(id);
             wxUserService.updateIgnoreNull(usr);
+        }
+        Wx_reply reply = wxReplyService.fetch(Cnd.where("wxid", "=", msg.getExtkey()).and("type", "=", "follow"));
+        if (reply != null) {
+            if ("txt".equals(reply.getMsgType())) {
+                String txtId = reply.getContent();
+                Wx_reply_txt txt = wxReplyTxtService.fetch(txtId);
+                return Wxs.respText(null, txt == null ? "" : txt.getContent());
+            } else if ("news".equals(reply.getMsgType())) {
+                String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
+                List<WxArticle> list = new ArrayList<>();
+                List<Wx_reply_news> newsList = wxReplyNewsService.query(Cnd.where("id", "in", newsIds).asc("location"));
+                for (Wx_reply_news news : newsList) {
+                    WxArticle wxArticle = new WxArticle();
+                    wxArticle.setDescription(news.getDescription());
+                    wxArticle.setPicUrl(news.getPicUrl());
+                    wxArticle.setTitle(news.getTitle());
+                    wxArticle.setUrl(news.getUrl());
+                    list.add(wxArticle);
+                }
+                return Wxs.respNews(null, list);
+            }
         }
         return Wxs.respText(null, "谢谢您的关注！");
     }

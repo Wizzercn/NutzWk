@@ -7,6 +7,7 @@ import cn.wizzer.common.page.DataTableColumn;
 import cn.wizzer.common.page.DataTableOrder;
 import cn.wizzer.modules.back.wx.models.Wx_config;
 import cn.wizzer.modules.back.wx.models.Wx_reply;
+import cn.wizzer.modules.back.wx.models.Wx_reply_news;
 import cn.wizzer.modules.back.wx.models.Wx_reply_txt;
 import cn.wizzer.modules.back.wx.services.WxConfigService;
 import cn.wizzer.modules.back.wx.services.WxReplyNewsService;
@@ -16,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.nutz.dao.Cnd;
+import org.nutz.dao.*;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
@@ -73,7 +74,27 @@ public class WxReplyController {
     @SLog(tag = "添加绑定", msg = "绑定类型:${args[0]}")
     public Object addDo(String type, @Param("..") Wx_reply reply, HttpServletRequest req) {
         try {
+            if ("follow".equals(reply.getType())) {
+                int c = wxReplyService.count(Cnd.where("type", "=", "follow").and("wxid", "=", reply.getWxid()));
+                if (c > 0) {
+                    return Result.error("关注事件只可设置一条", req);
+                }
+            }
+            if ("keyword".equals(reply.getType())) {
+                int c = wxReplyService.count(Cnd.where("keyword", "=", reply.getKeyword()).and("wxid", "=", reply.getWxid()));
+                if (c > 0) {
+                    return Result.error("关键词已存在", req);
+                }
+            }
             wxReplyService.insert(reply);
+            if ("news".equals(reply.getMsgType())) {
+                String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
+                int i = 0;
+                for (String id : newsIds) {
+                    wxReplyNewsService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", id));
+                    i++;
+                }
+            }
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);
@@ -83,8 +104,19 @@ public class WxReplyController {
     @At("/?/edit/?")
     @Ok("beetl:/private/wx/reply/conf/edit.html")
     @RequiresAuthentication
-    public Object edit(String type, String id) {
-        return wxReplyService.fetch(id);
+    public Object edit(String type, String id, HttpServletRequest req) {
+        Wx_reply reply = wxReplyService.fetch(id);
+        if ("txt".equals(reply.getMsgType())) {
+            req.setAttribute("txt", wxReplyTxtService.fetch(reply.getContent()));
+        } else if ("news".equals(reply.getMsgType())) {
+            String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
+            List<Wx_reply_news> newsList = wxReplyNewsService.query(Cnd.where("id", "in", newsIds).asc("location"));
+            req.setAttribute("news", newsList);
+        }
+        req.setAttribute("type", reply.getType());
+        req.setAttribute("wxid", reply.getWxid());
+        req.setAttribute("config", wxConfigService.fetch(reply.getWxid()));
+        return reply;
     }
 
     @At("/?/editDo")
@@ -94,6 +126,14 @@ public class WxReplyController {
     public Object editDo(String type, @Param("..") Wx_reply reply, HttpServletRequest req) {
         try {
             wxReplyService.updateIgnoreNull(reply);
+            if ("news".equals(reply.getMsgType())) {
+                String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
+                int i = 0;
+                for (String id : newsIds) {
+                    wxReplyNewsService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", id));
+                    i++;
+                }
+            }
             return Result.success("system.success", req);
         } catch (Exception e) {
             return Result.error("system.error", req);
