@@ -44,9 +44,10 @@ public class HomeController {
         if (!Strings.isBlank(Globals.AppBase)) {
             url = Strings.sBlank(url).substring(Globals.AppBase.length());
         }
+        String fullUrl = url;
         if (Strings.sBlank(url).indexOf("?") > 0)
             url = url.substring(0, url.indexOf("?"));
-        Sys_menu menu = menuService.fetch(Cnd.where("href", "=", url));
+        Sys_menu menu = menuService.fetch(Cnd.where("href", "=", fullUrl).or("href", "=", url).desc("href").desc("path"));
         if (menu != null) {
             if (menu.getPath().length() > 8) {
                 path = menu.getPath().substring(0, 8);
@@ -64,11 +65,13 @@ public class HomeController {
     @Ok("beetl:/private/sys/left.html")
     @RequiresAuthentication
     public void path(@Param("url") String url, HttpServletRequest req) {
+        log.debug("/private/home/path::url:" + url);
         if (Strings.sBlank(url).indexOf("//") > 0) {
-            if (Strings.sBlank(url).indexOf("?") > 0)
-                url = url.substring(0, url.indexOf("?"));
             String[] u = url.split("//");
             String s = u[1].substring(u[1].indexOf("/"));
+            String fullUrl = s.substring(s.indexOf("/"));
+            if (Strings.sBlank(s).indexOf("?") > 0)
+                s = s.substring(0, s.indexOf("?"));
             if (!Strings.isBlank(Globals.AppBase)) {
                 s = s.substring(Globals.AppBase.length());
             }
@@ -91,7 +94,7 @@ public class HomeController {
             } else list.add(url);
             String path = "";
             String perpath = "";
-            Sys_menu menu = menuService.fetch(Cnd.where("href", "in", list).desc("href").desc("path"));
+            Sys_menu menu = menuService.fetch(Cnd.where("href", "=", fullUrl).or("href", "in", list).desc("href").desc("path"));
             if (menu != null) {
                 if (menu.getPath().length() > 8) {
                     path = menu.getPath().substring(0, 8);
