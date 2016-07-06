@@ -18,6 +18,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.adaptor.WhaleAdaptor;
 import org.nutz.mvc.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +53,8 @@ public class WxReplyNewsController {
     @Ok("json")
     @RequiresPermissions("wx.reply.news.add")
     @SLog(tag = "添加回复图文", msg = "图文标题:${args[0].title}")
+    @AdaptBy(type = WhaleAdaptor.class)
+    //uploadifive上传文件后contentTypy改变,需要用WhaleAdaptor接收参数
     public Object addDo(@Param("..") Wx_reply_news news, HttpServletRequest req) {
         try {
             wxReplyNewsService.insert(news);
@@ -72,6 +75,8 @@ public class WxReplyNewsController {
     @Ok("json")
     @RequiresPermissions("wx.reply.news.edit")
     @SLog(tag = "修改回复图文", msg = "图文标题:${args[0].title}")
+    @AdaptBy(type = WhaleAdaptor.class)
+    //uploadifive上传文件后contentTypy改变,需要用WhaleAdaptor接收参数
     public Object editDo(@Param("..") Wx_reply_news news, HttpServletRequest req) {
         try {
             wxReplyNewsService.updateIgnoreNull(news);

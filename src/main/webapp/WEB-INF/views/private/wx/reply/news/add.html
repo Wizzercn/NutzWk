@@ -56,7 +56,7 @@ layout("/layouts/private.html"){
                         <label></label>
 
                         <div>
-                            <button class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="正在提交...">提 交</button>
+                            <button id="submitBtn" class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="正在提交...">提 交</button>
                         </div>
                     </div>
                 </div>
@@ -68,6 +68,7 @@ layout("/layouts/private.html"){
 <script language="JavaScript">
     function clearFile() {
         $("#img").html("");
+        $("#queue").html("");
         $("#picUrl").val("");
     }
     $(document).ready(function () {
@@ -112,7 +113,7 @@ layout("/layouts/private.html"){
             success: function (data, statusText, xhr, form) {
                 if (data.code == 0) {
                     Toast.success(data.msg);
-                    //刷新父级菜单
+                    clearFile();
                     form.resetForm();
                 } else {
                     Toast.error(data.msg);
