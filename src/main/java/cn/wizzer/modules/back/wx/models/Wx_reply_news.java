@@ -40,7 +40,7 @@ public class Wx_reply_news extends Model implements Serializable {
 
     @Column
     @Comment("排序字段")
-    @Prev(@SQL("SELECT MAX(IFNULL(location,0))+1 FROM wx_reply_news"))
+    @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM wx_reply_news"))
     private Integer location;
 
     public String getId() {

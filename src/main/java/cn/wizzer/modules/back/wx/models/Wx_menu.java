@@ -50,7 +50,7 @@ public class Wx_menu extends Model implements Serializable {
 
     @Column
     @Comment("排序字段")
-    @Prev(@SQL("SELECT MAX(IFNULL(location,0))+1 FROM wx_menu"))
+    @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM wx_menu"))
     private Integer location;
 
     @Column

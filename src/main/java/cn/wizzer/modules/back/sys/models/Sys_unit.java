@@ -72,7 +72,7 @@ public class Sys_unit extends Model implements Serializable {
 
     @Column
     @Comment("排序字段")
-    @Prev(@SQL("SELECT MAX(IFNULL(location,0))+1 FROM sys_unit"))
+    @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM sys_unit"))
     private Integer location;
 
     @Column

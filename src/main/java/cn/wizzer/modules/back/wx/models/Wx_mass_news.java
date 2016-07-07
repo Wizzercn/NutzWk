@@ -55,7 +55,7 @@ public class Wx_mass_news extends Model implements Serializable {
 
     @Column
     @Comment("排序字段")
-    @Prev(@SQL("SELECT MAX(IFNULL(location,0))+1 FROM wx_mass_news"))
+    @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM wx_mass_news"))
     private Integer location;
 
     @Column
