@@ -51,9 +51,9 @@ public class LogController {
     public Object delete(HttpServletRequest req) {
         try {
             logService.clear();
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 }

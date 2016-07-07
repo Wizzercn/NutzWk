@@ -70,7 +70,7 @@ public class NutShiroProcessor extends AbstractProcessor {
     protected void whenUnauthenticated(ActionContext ac, UnauthenticatedException e) throws Exception {
         if (NutShiro.isAjax(ac.getRequest())) {
             ac.getResponse().addHeader("loginStatus", "accessDenied");
-            NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error("登录失效", ac.getRequest()));
+            NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error("登录失效"));
         } else {
             new ServerRedirectView(loginUri).render(ac.getRequest(), ac.getResponse(), null);
         }
@@ -79,7 +79,7 @@ public class NutShiroProcessor extends AbstractProcessor {
     protected void whenUnauthorized(ActionContext ac, UnauthorizedException e) throws Exception {
         if (NutShiro.isAjax(ac.getRequest())) {
             ac.getResponse().addHeader("loginStatus", "unauthorized");
-            NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error("没有权限", ac.getRequest()));
+            NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error("没有权限"));
         } else {
             new ServerRedirectView(noAuthUri).render(ac.getRequest(), ac.getResponse(), null);
         }
@@ -88,7 +88,7 @@ public class NutShiroProcessor extends AbstractProcessor {
     protected void whenOtherException(ActionContext ac, Exception e) throws Exception {
         if (NutShiro.isAjax(ac.getRequest())) {
             ac.getResponse().addHeader("loginStatus", "accessDenied");
-            NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error("登录失效", ac.getRequest()));
+            NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error("登录失效"));
         } else {
             new ServerRedirectView(loginUri).render(ac.getRequest(), ac.getResponse(), null);
         }

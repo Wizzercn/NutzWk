@@ -62,15 +62,15 @@ public class MenuController {
         try {
             int num = menuService.count(Cnd.where("permission", "=", menu.getPermission().trim()));
             if (num > 0) {
-                return Result.error("sys.role.code", req);
+                return Result.error("sys.role.code");
             }
             if ("data".equals(menu.getType())) {
                 menu.setIsShow(false);
             } else menu.setIsShow(true);
             menuService.save(menu, parentId);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -94,15 +94,15 @@ public class MenuController {
             if (!Strings.sBlank(oldPermission).equals(menu.getPermission())) {
                 int num = menuService.count(Cnd.where("permission", "=", menu.getPermission().trim()));
                 if (num > 0) {
-                    return Result.error("sys.role.code", req);
+                    return Result.error("sys.role.code");
                 }
             }
             menu.setOpBy(Strings.sNull(req.getAttribute("uid")));
             menu.setOpAt((int) (System.currentTimeMillis() / 1000));
             menuService.updateIgnoreNull(menu);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -115,12 +115,12 @@ public class MenuController {
             Sys_menu menu = menuService.fetch(id);
             req.setAttribute("name", menu.getName());
             if (menu.getPath().startsWith("0001")) {
-                return Result.error("system.not.allow", req);
+                return Result.error("system.not.allow");
             }
             menuService.deleteAndChild(menu);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -132,9 +132,9 @@ public class MenuController {
         try {
             req.setAttribute("name", menuService.fetch(menuId).getName());
             menuService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", menuId));
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -146,9 +146,9 @@ public class MenuController {
         try {
             req.setAttribute("name", menuService.fetch(menuId).getName());
             menuService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", menuId));
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -216,15 +216,16 @@ public class MenuController {
         try {
             String[] menuIds= StringUtils.split(ids,",");
             int i=0;
+            menuService.dao().execute(Sqls.create("update sys_menu set location=0"));
             for(String s:menuIds){
                 if(!Strings.isBlank(s)){
                     menuService.update(org.nutz.dao.Chain.make("location",i),Cnd.where("id","=",s));
                     i++;
                 }
             }
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 }

@@ -32,7 +32,7 @@ public class XssSqlFilterProcessor extends AbstractProcessor {
         if (checkParams(ac)) {
             if (NutShiro.isAjax(ac.getRequest())) {
                 ac.getResponse().addHeader("loginStatus", "paramsDenied");
-                NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error(Mvcs.getMessage(ac.getRequest(), "system.paramserror"), ac.getRequest()));
+                NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error("system.paramserror"));
             } else {
                 new ForwardView(lerrorUri).render(ac.getRequest(), ac.getResponse(), Mvcs.getMessage(ac.getRequest(), "system.paramserror"));
             }
