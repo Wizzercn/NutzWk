@@ -55,9 +55,9 @@ public class WxReplyTxtController {
     public Object addDo(@Param("..") Wx_reply_txt txt, HttpServletRequest req) {
         try {
             wxReplyTxtService.insert(txt);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -75,9 +75,9 @@ public class WxReplyTxtController {
     public Object editDo(@Param("..") Wx_reply_txt txt, HttpServletRequest req) {
         try {
             wxReplyTxtService.updateIgnoreNull(txt);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -89,9 +89,9 @@ public class WxReplyTxtController {
         try {
             req.setAttribute("title", wxReplyTxtService.fetch(id).getTitle());
             wxReplyTxtService.delete(id);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -102,9 +102,9 @@ public class WxReplyTxtController {
     public Object deletes(@Param("ids") String id, HttpServletRequest req) {
         try {
             wxReplyTxtService.delete(StringUtils.split(id, ","));
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 

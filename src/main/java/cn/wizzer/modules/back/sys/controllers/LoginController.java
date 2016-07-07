@@ -161,27 +161,27 @@ public class LoginController {
             userService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", (int) (System.currentTimeMillis() / 1000))
                     .add("loginCount", count + 1).add("online", true)
                     , Cnd.where("id", "=", user.getId()));
-            return Result.success("login.success", req);
+            return Result.success("login.success");
         } catch (IncorrectCaptchaException e) {
             //自定义的验证码错误异常
-            return Result.error(1, "login.error.captcha", req);
+            return Result.error(1, "login.error.captcha");
         } catch (EmptyCaptchaException e) {
             //验证码为空
-            return Result.error(2, "login.error.captcha", req);
+            return Result.error(2, "login.error.captcha");
         } catch (LockedAccountException e) {
-            return Result.error(3, "login.error.locked", req);
+            return Result.error(3, "login.error.locked");
         } catch (UnknownAccountException e) {
             errCount++;
             SecurityUtils.getSubject().getSession(true).setAttribute("errCount", errCount);
-            return Result.error(4, "login.error.user", req);
+            return Result.error(4, "login.error.user");
         } catch (AuthenticationException e) {
             errCount++;
             SecurityUtils.getSubject().getSession(true).setAttribute("errCount", errCount);
-            return Result.error(5, "login.error.user", req);
+            return Result.error(5, "login.error.user");
         } catch (Exception e) {
             errCount++;
             SecurityUtils.getSubject().getSession(true).setAttribute("errCount", errCount);
-            return Result.error(6, "login.error.system", req);
+            return Result.error(6, "login.error.system");
         }
     }
 

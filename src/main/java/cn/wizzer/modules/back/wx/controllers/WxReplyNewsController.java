@@ -58,9 +58,9 @@ public class WxReplyNewsController {
     public Object addDo(@Param("..") Wx_reply_news news, HttpServletRequest req) {
         try {
             wxReplyNewsService.insert(news);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -80,9 +80,9 @@ public class WxReplyNewsController {
     public Object editDo(@Param("..") Wx_reply_news news, HttpServletRequest req) {
         try {
             wxReplyNewsService.updateIgnoreNull(news);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -94,9 +94,9 @@ public class WxReplyNewsController {
         try {
             req.setAttribute("title", wxReplyNewsService.fetch(id).getTitle());
             wxReplyNewsService.delete(id);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -107,9 +107,9 @@ public class WxReplyNewsController {
     public Object deletes(@Param("ids") String id, HttpServletRequest req) {
         try {
             wxReplyNewsService.delete(StringUtils.split(id, ","));
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 

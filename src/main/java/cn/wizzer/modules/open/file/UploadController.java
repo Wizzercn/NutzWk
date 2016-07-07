@@ -38,17 +38,17 @@ public class UploadController {
         if (err != null && err.getAdaptorErr() != null) {
             return NutMap.NEW().addv("code", 1).addv("msg", "文件不合法");
         } else if (tf == null) {
-            return Result.error("空文件", req);
+            return Result.error("空文件");
         } else {
             try {
                 String p = Globals.AppRoot;
                 String f = Globals.AppUploadPath + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getMeta().getFileExtension();
                 Files.copy(tf.getFile(), new File(p + f));
-                return Result.success("上传成功", f, req);
+                return Result.success("上传成功", f);
             } catch (Exception e) {
-                return Result.error("系统错误", req);
+                return Result.error("系统错误");
             } catch (Throwable e) {
-                return Result.error("图片格式错误", req);
+                return Result.error("图片格式错误");
             }
         }
     }

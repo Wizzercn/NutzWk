@@ -53,9 +53,9 @@ public class UnitController {
     public Object addDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
             unitService.save(unit, parentId);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -93,9 +93,9 @@ public class UnitController {
             unit.setOpBy(Strings.sNull(req.getAttribute("uid")));
             unit.setOpAt((int) (System.currentTimeMillis() / 1000));
             unitService.updateIgnoreNull(unit);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -108,12 +108,12 @@ public class UnitController {
             Sys_unit unit = unitService.fetch(id);
             req.setAttribute("name", unit.getName());
             if ("0001".equals(unit.getPath())) {
-                return Result.error("system.not.allow", req);
+                return Result.error("system.not.allow");
             }
             unitService.deleteAndChild(unit);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 

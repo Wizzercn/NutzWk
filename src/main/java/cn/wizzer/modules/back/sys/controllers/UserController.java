@@ -77,9 +77,9 @@ public class UserController {
             user.setLoginCount(0);
             user.setLoginAt(0);
             userService.insert(user);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -99,14 +99,14 @@ public class UserController {
             if (!Strings.sBlank(oldLoginname).equals(user.getLoginname())) {
                 Sys_user u = userService.fetch(Cnd.where("loginname", "=", user.getLoginname()));
                 if (u != null)
-                    return Result.error("用户名已存在", req);
+                    return Result.error("用户名已存在");
             }
             user.setOpBy(Strings.sNull(req.getAttribute("uid")));
             user.setOpAt((int) (System.currentTimeMillis() / 1000));
             userService.updateIgnoreNull(user);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -122,9 +122,9 @@ public class UserController {
             String hashedPasswordBase64 = new Sha256Hash("ET922", salt, 1024).toBase64();
             userService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", id));
             req.setAttribute("loginname", user.getLoginname());
-            return Result.success("system.success", "ET922", req);
+            return Result.success("system.success", "ET922");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -136,13 +136,13 @@ public class UserController {
         try {
             Sys_user user = userService.fetch(userId);
             if ("superadmin".equals(user.getLoginname())) {
-                return Result.error("system.not.allow", req);
+                return Result.error("system.not.allow");
             }
             userService.deleteById(userId);
             req.setAttribute("loginname", user.getLoginname());
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -156,15 +156,15 @@ public class UserController {
             StringBuilder sb = new StringBuilder();
             for (String s : userIds) {
                 if (s.equals(user.getId())) {
-                    return Result.error("system.not.allow", req);
+                    return Result.error("system.not.allow");
                 }
                 sb.append(s).append(",");
             }
             userService.deleteByIds(userIds);
             req.setAttribute("ids", sb.toString());
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -176,9 +176,9 @@ public class UserController {
         try {
             req.setAttribute("loginname", userService.fetch(userId).getLoginname());
             userService.update(Chain.make("disabled", false), Cnd.where("id", "=", userId));
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -190,13 +190,13 @@ public class UserController {
         try {
             String loginname = userService.fetch(userId).getLoginname();
             if ("superadmin".equals(loginname)) {
-                return Result.error("system.not.allow", req);
+                return Result.error("system.not.allow");
             }
             req.setAttribute("loginname", loginname);
             userService.update(Chain.make("disabled", true), Cnd.where("id", "=", userId));
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -300,9 +300,9 @@ public class UserController {
                 user.setCustomMenu(ids);
                 user.setCustomMenus(menuService.query(Cnd.where("id", "in", ids.split(","))));
             }
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -320,9 +320,9 @@ public class UserController {
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
             userService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", user.getId()));
-            return Result.success("修改成功", req);
+            return Result.success("修改成功");
         } else {
-            return Result.error("原密码不正确", req);
+            return Result.error("原密码不正确");
         }
     }
 }

@@ -89,12 +89,12 @@ public class WxMenuController {
     public Object checkDo(@Param("wxid") String wxid, @Param("parentId") String parentId, HttpServletRequest req) {
         int count = wxMenuService.count(Cnd.where("wxid", "=", Strings.sBlank(wxid)).and("parentId", "=", Strings.sBlank(parentId)));
         if (Strings.isBlank(parentId) && count > 2) {
-            return Result.error("只可设置三个一级菜单", req);
+            return Result.error("只可设置三个一级菜单");
         }
         if (!Strings.isBlank(parentId) && count > 4) {
-            return Result.error("只可设置五个二级菜单", req);
+            return Result.error("只可设置五个二级菜单");
         }
-        return Result.success("", req);
+        return Result.success("");
     }
 
     @At
@@ -104,12 +104,12 @@ public class WxMenuController {
     public Object addDo(@Param("..") Wx_menu menu, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
             if (Strings.isBlank(menu.getWxid())) {
-                return Result.error("请选择公众号", req);
+                return Result.error("请选择公众号");
             }
             wxMenuService.save(menu, parentId);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -127,9 +127,9 @@ public class WxMenuController {
                     i++;
                 }
             }
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -149,9 +149,9 @@ public class WxMenuController {
     public Object editDo(@Param("..") Wx_config conf, HttpServletRequest req) {
         try {
             wxMenuService.updateIgnoreNull(conf);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -164,9 +164,9 @@ public class WxMenuController {
             Wx_menu menu = wxMenuService.fetch(id);
             req.setAttribute("menuName", menu.getMenuName());
             wxMenuService.deleteAndChild(menu);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -239,11 +239,11 @@ public class WxMenuController {
             }
             WxResp wxResp = wxApi2.menu_create(m1);
             if(wxResp.errcode()!=0){
-                return Result.error(wxResp.errmsg(), req);
+                return Result.error(wxResp.errmsg());
             }
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 }

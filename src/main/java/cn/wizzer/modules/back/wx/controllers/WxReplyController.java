@@ -77,13 +77,13 @@ public class WxReplyController {
             if ("follow".equals(reply.getType())) {
                 int c = wxReplyService.count(Cnd.where("type", "=", "follow").and("wxid", "=", reply.getWxid()));
                 if (c > 0) {
-                    return Result.error("关注事件只可设置一条", req);
+                    return Result.error("关注事件只可设置一条");
                 }
             }
             if ("keyword".equals(reply.getType())) {
                 int c = wxReplyService.count(Cnd.where("keyword", "=", reply.getKeyword()).and("wxid", "=", reply.getWxid()));
                 if (c > 0) {
-                    return Result.error("关键词已存在", req);
+                    return Result.error("关键词已存在");
                 }
             }
             wxReplyService.insert(reply);
@@ -95,9 +95,9 @@ public class WxReplyController {
                     i++;
                 }
             }
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -134,9 +134,9 @@ public class WxReplyController {
                     i++;
                 }
             }
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -147,9 +147,9 @@ public class WxReplyController {
     public Object delete(String type, String id, HttpServletRequest req) {
         try {
             wxReplyService.delete(id);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -160,9 +160,9 @@ public class WxReplyController {
     public Object deletes(String type, @Param("ids") String id, HttpServletRequest req) {
         try {
             wxReplyService.delete(StringUtils.split(id, ","));
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 

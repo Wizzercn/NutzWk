@@ -52,9 +52,9 @@ public class WxConfigController {
     public Object addDo(@Param("..") Wx_config conf, HttpServletRequest req) {
         try {
             wxConfigService.insert(conf);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -72,9 +72,9 @@ public class WxConfigController {
     public Object editDo(@Param("..") Wx_config conf, HttpServletRequest req) {
         try {
             wxConfigService.updateIgnoreNull(conf);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -86,9 +86,9 @@ public class WxConfigController {
         try {
             req.setAttribute("appname", wxConfigService.fetch(id).getAppname());
             wxConfigService.delete(id);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 

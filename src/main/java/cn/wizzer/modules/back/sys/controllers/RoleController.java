@@ -90,7 +90,7 @@ public class RoleController {
         try {
             int num = roleService.count(Cnd.where("code", "=", role.getCode().trim()));
             if (num > 0) {
-                return Result.error("sys.role.code", req);
+                return Result.error("sys.role.code");
             }
             String[] ids = StringUtils.split(menuIds, ",");
             if ("root".equals(role.getUnitid()))
@@ -101,9 +101,9 @@ public class RoleController {
                     roleService.insert("sys_role_menu", org.nutz.dao.Chain.make("roleId", r.getId()).add("menuId", s));
                 }
             }
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -176,9 +176,9 @@ public class RoleController {
             }
             Sys_role role = roleService.fetch(roleid);
             req.setAttribute("name", role.getName());
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -251,9 +251,9 @@ public class RoleController {
             roleService.dao().clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleid));
             Sys_role role = roleService.fetch(roleid);
             req.setAttribute("name", role.getName());
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -271,9 +271,9 @@ public class RoleController {
             }
             Sys_role role = roleService.fetch(roleid);
             req.setAttribute("name", role.getName());
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -326,7 +326,7 @@ public class RoleController {
             if (!Strings.sBlank(oldCode).equals(role.getCode())) {
                 int num = roleService.count(Cnd.where("code", "=", role.getCode().trim()));
                 if (num > 0) {
-                    return Result.error("sys.role.code", req);
+                    return Result.error("sys.role.code");
                 }
             }
             if ("root".equals(role.getUnitid()))
@@ -334,9 +334,9 @@ public class RoleController {
             role.setOpBy(Strings.sNull(req.getAttribute("uid")));
             role.setOpAt((int) (System.currentTimeMillis() / 1000));
             roleService.updateIgnoreNull(role);
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -348,14 +348,14 @@ public class RoleController {
         try {
             Sys_role role = roleService.fetch(roleId);
             if (!"sysadmin".equals(role.getCode()) || !"public".equals(role.getCode())) {
-                return Result.error("system.not.allow", req);
+                return Result.error("system.not.allow");
             }
             roleService.delete(roleId);
             roleService.dao().clear("sys_user_role", Cnd.where("roleId", "=", roleId));
             req.setAttribute("name", role.getName());
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -370,15 +370,15 @@ public class RoleController {
             StringBuilder sb = new StringBuilder();
             for (String s : roleIds) {
                 if (s.equals(role.getId()) || s.equals(role1.getId())) {
-                    return Result.error("system.not.allow", req);
+                    return Result.error("system.not.allow");
                 }
                 sb.append(s).append(",");
             }
             roleService.delete(roleIds);
             req.setAttribute("ids", sb.toString());
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -391,9 +391,9 @@ public class RoleController {
             Sys_role role = roleService.fetch(roleId);
             roleService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", roleId));
             req.setAttribute("name", role.getName());
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -406,9 +406,9 @@ public class RoleController {
             Sys_role role = roleService.fetch(roleId);
             roleService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", roleId));
             req.setAttribute("name", role.getName());
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 

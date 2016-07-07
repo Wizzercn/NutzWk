@@ -50,14 +50,14 @@ public class ConfController {
     @Ok("json")
     @RequiresPermissions("sys.manager.conf.add")
     @SLog(tag = "添加参数", msg = "${args[0].configKey}:${args[0].configValue}")
-    public Object addDo(@Param("..") Sys_config conf, HttpServletRequest req) {
+    public Object addDo(@Param("..") Sys_config conf) {
         try {
             if (configService.insert(conf) != null) {
                 Globals.init(configService.dao());
             }
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -72,14 +72,14 @@ public class ConfController {
     @Ok("json")
     @RequiresPermissions("sys.manager.conf.edit")
     @SLog(tag = "修改参数", msg = "${args[0].configKey}:${args[0].configValue}")
-    public Object editDo(@Param("..") Sys_config conf, HttpServletRequest req) {
+    public Object editDo(@Param("..") Sys_config conf) {
         try {
             if (configService.updateIgnoreNull(conf) > 0) {
                 Globals.init(configService.dao());
             }
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
@@ -87,17 +87,17 @@ public class ConfController {
     @Ok("json")
     @RequiresPermissions("sys.manager.conf.delete")
     @SLog(tag = "删除参数", msg = "参数:${args[0]}")
-    public Object delete(String configKey, HttpServletRequest req) {
+    public Object delete(String configKey) {
         try {
             if (Strings.sBlank(configKey).startsWith("App")) {
-                return Result.error("系统参数不可删除", req);
+                return Result.error("系统参数不可删除");
             }
             if (configService.delete(configKey) > 0) {
                 Globals.init(configService.dao());
             }
-            return Result.success("system.success", req);
+            return Result.success("system.success");
         } catch (Exception e) {
-            return Result.error("system.error", req);
+            return Result.error("system.error");
         }
     }
 
