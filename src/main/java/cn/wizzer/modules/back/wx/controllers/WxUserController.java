@@ -80,7 +80,7 @@ public class WxUserController {
                         throws ExitLoop, ContinueLoop, LoopException {
                     WxResp resp = wxApi2.user_info(_ele, "zh_CN");
                     log.info(Json.toJson(resp));
-                    System.out.println(index
+                    log.debug(index
                             + " : "
                             + _ele
                             + ", nickname: "
