@@ -170,12 +170,13 @@ layout("/layouts/private.html"){
             dialog.find("#ok").bind("click", function (event) {
                 var btn = $(this);
                 btn.button("loading");
-                $.post("${base}/private/wx/user/down", {wxid:'${wxid!}'}, function (data) {
+                $.post("${base}/private/wx/user/down/${wxid!}", {}, function (data) {
                     //重置按钮状态，关闭提示框
                     btn.button("reset");
                     dialog.modal("hide");
                     if (data.code == 0) {
                         Toast.success(data.msg);
+                        datatable.ajax.reload();
                     } else {
                         Toast.error(data.msg);
                     }

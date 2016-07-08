@@ -9,6 +9,7 @@ import java.io.Serializable;
  * Created by wizzer on 2016/7/2.
  */
 @Table("wx_user")
+@TableIndexes({@Index(name = "INDEX_WX_USER_OPENID", fields = {"openid"}, unique = true)})
 public class Wx_user extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
