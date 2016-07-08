@@ -139,16 +139,16 @@ public class WxMenuController {
     public Object edit(String id, HttpServletRequest req) {
         Wx_menu menu = wxMenuService.fetch(id);
         req.setAttribute("config", wxConfigService.fetch(menu.getWxid()));
-        return menu;
+        return wxMenuService.fetchLinks(menu,"wxConfig");
     }
 
     @At
     @Ok("json")
     @RequiresPermissions("wx.conf.menu.edit")
     @SLog(tag = "修改菜单", msg = "菜单名称:${args[0].menuName}")
-    public Object editDo(@Param("..") Wx_config conf, HttpServletRequest req) {
+    public Object editDo(@Param("..") Wx_menu menu, HttpServletRequest req) {
         try {
-            wxMenuService.updateIgnoreNull(conf);
+            wxMenuService.updateIgnoreNull(menu);
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");

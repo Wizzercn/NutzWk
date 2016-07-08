@@ -3,7 +3,7 @@ layout("/layouts/private.html"){
 %>
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/private/wx/conf/menu/index/${obj.wxid!}" data-pjax><i
+        <a class="btn btn-primary navbar-btn" href="${base}/private/wx/conf/menu/index/${obj.wxid!}" data-pjax id="goback"><i
                 class="ti-angle-left"></i> 返回</a>
     </div>
 </header>
@@ -11,24 +11,18 @@ layout("/layouts/private.html"){
     <div class="wrapper" style="min-height:500px;">
         <section class="panel">
             <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
-                  action="${base}/private/wx/conf/menu/addDo" method="post">
+                  action="${base}/private/wx/conf/menu/editDo" method="post">
+                <input id="id" name="id" type="hidden" value="${obj.id!}">
                 <input id="wxid" name="wxid" type="hidden" value="${obj.wxid!}">
-
                 <div class="row mb10">
                     <div class="col-lg-12">
                         <div class="form-group">
                             <label for="parentId" class="col-sm-2 control-label">上级菜单</label>
 
                             <div class="col-sm-8">
-                                <select id="parentId" name="parentId" class="form-control">
+                                <select id="parentId" name="parentId" class="form-control" readonly>
                                     <option value="">无</option>
-                                    <%
-                                    if(!isEmpty(menus)){
-                                    for(m in menus){
-                                    %>
-                                    <option value="${m.id}" <%if(m.id==obj.parentId){%>selected<%}%>>${m.menuName}</option>
-                                    <%
-                                    } }%>
+                                    <option value="${obj.wxid!}" selected>${obj.wxConfig.appname}</option>
                                 </select>
                                 <input id="errMsg" value="false" type="hidden">
                                 <p class="help-block no-m" style="color: red;" id="_errMsg"></p>
@@ -172,7 +166,9 @@ layout("/layouts/private.html"){
             success: function (data, statusText, xhr, form) {
                 if (data.code == 0) {
                     Toast.success(data.msg);
-                    form.resetForm();checkDo();
+                    setTimeout(function () {
+                        $("#goback").trigger("click");
+                    }, 1000);
                 } else {
                     Toast.error(data.msg);
                 }

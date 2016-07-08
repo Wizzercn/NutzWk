@@ -81,7 +81,7 @@ layout("/layouts/private.html"){
                 {
                     "render": function (data, type, row) {
                         if (data) {
-                            return new Date(parseInt(data*1000)).Format("yyyy-MM-dd hh:mm:ss");
+                            return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss"); ;
                         }
                     },
                     "targets": 3
