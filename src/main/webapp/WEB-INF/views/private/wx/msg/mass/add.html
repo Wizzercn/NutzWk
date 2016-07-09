@@ -1,3 +1,5 @@
+<script src="${base!}/assets/plugins/ueditor/ueditor.configWx.js"></script>
+<script src="${base!}/assets/plugins/ueditor/ueditor.all.min.js"></script>
 <div class="modal-body no-p">
     <div class="row">
         <div class="col-xs-12">
@@ -69,6 +71,7 @@
     <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
     <button onclick="doSave()" id="ok" type="button" class="btn btn-primary" data-loading-text="正在提交...">确 定</button>
 </div>
+
 <script type="text/javascript">
     function doSave(){
         var btn = $("#ok");
@@ -139,3 +142,4 @@
         });
     });
 </script>
+

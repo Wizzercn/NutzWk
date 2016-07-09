@@ -64,7 +64,6 @@ public class WxController {
             try {
                 WxApi2 wxApi2 = wxConfigService.getWxApi2(wxid);
                 WxResp resp = wxApi2.uploadimg(tf.getFile());
-                log.debug("resp:::" + Json.toJson(resp));
                 if (resp.errcode() > 0) {
                     nutMap.addv("state", "FAIL");
                     return nutMap;
