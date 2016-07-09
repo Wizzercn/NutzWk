@@ -28,9 +28,10 @@ layout("/layouts/private.html"){
             <thead>
             <tr>
                 <th>群发名称</th>
-                <th>群发类型</th>
-                <th>群发范围</th>
-                <th>群发时间</th>
+                <th>发送类型</th>
+                <th>发送范围</th>
+                <th>发送状态</th>
+                <th>发送时间</th>
                 <th>操作</th>
         </table>
     </div>
@@ -66,11 +67,12 @@ layout("/layouts/private.html"){
                 "data": function (d) {
                 }
             },
-            "order": [[3, "desc"]],
+            "order": [[4, "desc"]],
             "columns": [
                 {"data": "name", "bSortable": true},
                 {"data": "type", "bSortable": true},
                 {"data": "scope", "bSortable": true},
+                {"data": "status", "bSortable": true},
                 {"data": "opAt", "bSortable": true}
             ],
             "columnDefs": [
@@ -94,22 +96,31 @@ layout("/layouts/private.html"){
                 },
                 {
                     "render": function (data, type, row) {
-                        if (data) {
-                            return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss");
+                        if (data==1) {
+                            return '发送成功';
                         }
-                        return '';
+                        return '发送失败';
                     },
                     "targets": 3
                 },
                 {
                     "render": function (data, type, row) {
+                        if (data) {
+                            return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss");
+                        }
+                        return '';
+                    },
+                    "targets": 4
+                },
+                {
+                    "render": function (data, type, row) {
                         var str='<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                                 ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">';
-                        str+= '<li><a href="${base}/private/wx/msg/mass/detail/' + row.id + '"  data-toggle="modal" data-target="#dialogDetail">查看</a></li>' +
+                        str+= '<li><a href="${base}/private/wx/msg/mass/sendDetail/' + row.id + '"  data-toggle="modal" data-target="#dialogDetail">查看</a></li>' +
                                 '</ul></div>';
                         return str;
                     },
-                    "targets": 4
+                    "targets": 5
                 }
             ]
         });

@@ -39,6 +39,11 @@ public class Wx_mass extends Model implements Serializable {
     private String scope;
 
     @Column
+    @Comment("Content")
+    @ColDefine(type = ColType.TEXT)
+    private String content;
+
+    @Column
     @Comment("发送状态")
     @ColDefine(type = ColType.INT, width = 1)
     protected Integer status;
@@ -89,6 +94,14 @@ public class Wx_mass extends Model implements Serializable {
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public Integer getStatus() {

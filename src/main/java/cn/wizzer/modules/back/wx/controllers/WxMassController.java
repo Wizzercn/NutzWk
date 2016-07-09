@@ -8,8 +8,10 @@ import cn.wizzer.common.page.DataTableOrder;
 import cn.wizzer.modules.back.wx.models.Wx_config;
 import cn.wizzer.modules.back.wx.models.Wx_mass;
 import cn.wizzer.modules.back.wx.models.Wx_mass_news;
+import cn.wizzer.modules.back.wx.models.Wx_mass_send;
 import cn.wizzer.modules.back.wx.services.WxConfigService;
 import cn.wizzer.modules.back.wx.services.WxMassNewsService;
+import cn.wizzer.modules.back.wx.services.WxMassSendService;
 import cn.wizzer.modules.back.wx.services.WxMassService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -48,6 +50,8 @@ public class WxMassController {
     private static final Log log = Logs.get();
     @Inject
     WxMassService wxMassService;
+    @Inject
+    WxMassSendService wxMassSendService;
     @Inject
     WxMassNewsService wxMassNewsService;
     @Inject
@@ -193,9 +197,10 @@ public class WxMassController {
                     i++;
                 }
                 List<Wx_mass_news> newsList = wxMassNewsService.query(Cnd.where("id", "in", ids).asc("location"));
-                List<WxMassArticle> articles = Json.fromJsonAsList(WxMassArticle.class,Json.toJson(newsList));
+                List<WxMassArticle> articles = Json.fromJsonAsList(WxMassArticle.class, Json.toJson(newsList));
                 WxResp resp = wxApi2.uploadnews(articles);
-                String media_id=resp.media_id();
+                String media_id = resp.media_id();
+                mass.setMedia_id(media_id);
                 outMsg.setMedia_id(media_id);
                 outMsg.setMsgType("mpnews");
             }
@@ -203,15 +208,26 @@ public class WxMassController {
                 outMsg.setContent(content);
                 outMsg.setMsgType("text");
             }
+            WxResp resp;
             if ("all".equals(mass.getScope())) {
-                WxResp resp1 = wxApi2.mass_sendall(true, null, outMsg);
+                resp = wxApi2.mass_sendall(true, null, outMsg);
             } else {
                 String[] ids = StringUtils.split(openids, ",");
-                WxResp resp2 = wxApi2.mass_send(Arrays.asList(ids), outMsg);
-                log.debug("resp:::" + Json.toJson(resp2));
-
+                resp = wxApi2.mass_send(Arrays.asList(ids), outMsg);
             }
-            wxMassService.insert(mass);
+            mass.setStatus(resp.errcode() == 0 ? 1 : 2);
+            Wx_mass wxMass = wxMassService.insert(mass);
+            Wx_mass_send send = new Wx_mass_send();
+            send.setWxid(wxMass.getWxid());
+            send.setMassId(wxMass.getId());
+            send.setErrCode(String.valueOf(resp.errcode()));
+            send.setMsgId(resp.getString("msg_id"));
+            if (!"all".equals(mass.getScope())) {
+                send.setReceivers(content);
+            }
+            send.setErrMsg(resp.getString("errmsg"));
+            send.setStatus(resp.errcode() == 0 ? 1 : 2);
+            wxMassSendService.insert(send);
             return Result.success("system.success");
         } catch (Exception e) {
             e.printStackTrace();
@@ -220,5 +236,18 @@ public class WxMassController {
             e.printStackTrace();
             return Result.error("system.error");
         }
+    }
+
+    @At("/sendDetail/?")
+    @Ok("beetl:/private/wx/msg/mass/sendDetail.html")
+    @RequiresAuthentication
+    public Object sendDetail(String id, HttpServletRequest req) {
+        Wx_mass mass=wxMassService.fetch(id);
+        if("news".equals(mass.getType())){
+            String[] ids = StringUtils.split(mass.getContent(), ",");
+            req.setAttribute("news",wxMassNewsService.query(Cnd.where("id", "in", ids).asc("location")));
+        }
+        req.setAttribute("send",wxMassSendService.fetch(Cnd.where("massId","=",mass.getId())));
+        return mass;
     }
 }
