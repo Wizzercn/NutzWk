@@ -307,7 +307,7 @@
 <script src="${base!}/assets/plugins/jquery.qrcode.min.js"></script>
 <script src="${base!}/assets/plugins/jquery.sparkline.js"></script>
 <script src="${base!}/assets/plugins/x-editable/bootstrap-editable.js"></script>
-<%if(has(wx)){%>
+<%if(!isEmpty(wxid)){%>
 <script src="${base!}/assets/plugins/ueditor/ueditor.configWx.js"></script>
 <%}else{%>
 <script src="${base!}/assets/plugins/ueditor/ueditor.config.js"></script>

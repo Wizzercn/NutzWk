@@ -8001,7 +8001,10 @@ var fillCharReg = new RegExp(domUtils.fillChar, 'g');
             var actionName = this.getOpt(action) || action,
                 imageUrl = this.getOpt('imageUrl'),
                 serverUrl = this.getOpt('serverUrl');
-
+            console.log("actionName::"+actionName);
+            if(action.indexOf("/")>-1){
+                return actionName;
+            }
             if(!serverUrl && imageUrl) {
                 serverUrl = imageUrl.replace(/^(.*[\/]).+([\.].+)$/, '$1controller$2');
             }

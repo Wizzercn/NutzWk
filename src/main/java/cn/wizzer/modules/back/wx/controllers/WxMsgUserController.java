@@ -8,18 +8,14 @@ import cn.wizzer.common.page.DataTableOrder;
 import cn.wizzer.modules.back.wx.models.Wx_config;
 import cn.wizzer.modules.back.wx.models.Wx_msg;
 import cn.wizzer.modules.back.wx.models.Wx_msg_reply;
-import cn.wizzer.modules.back.wx.models.Wx_user;
 import cn.wizzer.modules.back.wx.services.WxConfigService;
 import cn.wizzer.modules.back.wx.services.WxMsgReplyService;
-import cn.wizzer.modules.back.wx.services.WxMsgUserService;
-import cn.wizzer.modules.back.wx.services.WxUserService;
-import com.vdurmont.emoji.EmojiParser;
+import cn.wizzer.modules.back.wx.services.WxMsgService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.*;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.json.Json;
 import org.nutz.lang.*;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -40,7 +36,7 @@ import java.util.List;
 public class WxMsgUserController {
     private static final Log log = Logs.get();
     @Inject
-    WxMsgUserService wxMsgUserService;
+    WxMsgService wxMsgService;
     @Inject
     WxConfigService wxConfigService;
     @Inject
@@ -72,14 +68,14 @@ public class WxMsgUserController {
         if (!Strings.isBlank(content)) {
             cnd.and("content", "like", "%" + content + "%");
         }
-        return wxMsgUserService.data(length, start, draw, order, columns, cnd, null);
+        return wxMsgService.data(length, start, draw, order, columns, cnd, null);
     }
 
     @At({"/reply/?"})
     @Ok("beetl:/private/wx/msg/user/reply.html")
     @RequiresAuthentication
     public Object reply(String id, @Param("type") int type, HttpServletRequest req) {
-        Wx_msg msg = wxMsgUserService.fetch(id);
+        Wx_msg msg = wxMsgService.fetch(id);
         req.setAttribute("wxid", msg.getWxid());
         req.setAttribute("type", type);
         return msg;
@@ -98,7 +94,7 @@ public class WxMsgUserController {
             cnd.and("openid", "=", openid);
         }
         cnd.desc("opAt");
-        return wxMsgUserService.data(5, start, draw, order, columns, cnd, "reply");
+        return wxMsgService.data(5, start, draw, order, columns, cnd, "reply");
     }
 
 
@@ -129,7 +125,7 @@ public class WxMsgUserController {
             reply.setWxid(wxid);
             Wx_msg_reply reply1 = wxMsgReplyService.insert(reply);
             if (reply1 != null) {
-                wxMsgUserService.update(org.nutz.dao.Chain.make("replyId", reply1.getId()), Cnd.where("id", "=", id));
+                wxMsgService.update(org.nutz.dao.Chain.make("replyId", reply1.getId()), Cnd.where("id", "=", id));
             }
             return Result.success("system.success");
         } catch (Exception e) {
