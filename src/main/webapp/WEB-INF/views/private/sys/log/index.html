@@ -17,6 +17,7 @@ layout("/layouts/private.html"){
             <tr>
                 <th>日志类型</th>
                 <th>日志内容</th>
+                <th>执行类</th>
                 <th>操作人</th>
                 <th>操作时间</th>
                 <th>操作IP</th>
@@ -69,10 +70,11 @@ layout("/layouts/private.html"){
                 "data": function (d) {
                 }
             },
-            "order": [[3, "desc"]],
+            "order": [[4, "desc"]],
             "columns": [
                 {"data": "tag", "bSortable": true},
                 {"data": "msg", "bSortable": false},
+                {"data": "src", "bSortable": false},
                 {"data": "nickname", "bSortable": true},
                 {"data": "opAt", "bSortable": true},
                 {"data": "ip", "bSortable": true}
@@ -84,7 +86,7 @@ layout("/layouts/private.html"){
                             return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss"); ;
                         }
                     },
-                    "targets": 3
+                    "targets": 4
                 }
             ]
         });
