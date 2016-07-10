@@ -41,8 +41,8 @@ layout("/layouts/private.html"){
     </div>
 </div>
 <div id="dialogDetail" class="modal fade bs-modal" tabindex="-3" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" style="min-width: 800px;">
-        <div class="modal-content" style="min-width: 800px;">
+    <div class="modal-dialog" style="min-width: 850px;">
+        <div class="modal-content" style="min-width: 850px;">
         </div>
     </div>
 </div>
@@ -90,6 +90,7 @@ layout("/layouts/private.html"){
                     "render": function (data, type, row) {
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                                 ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">'+
+                                '<li><a href="${base}/private/wx/msg/mass/newsDetail/' + row.id + '"  data-toggle="modal" data-target="#dialogDetail">查看</a></li>'+
                                 '<li><a href="javascript:;" onclick="del(\''+row.id+'\')">删除</a></li>'+
                                 '</ul></div>';
                     },

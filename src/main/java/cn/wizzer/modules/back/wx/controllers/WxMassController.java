@@ -1,23 +1,24 @@
 package cn.wizzer.modules.back.wx.controllers;
 
-import cn.wizzer.common.base.Globals;
+import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
 import cn.wizzer.common.page.DataTableOrder;
-import cn.wizzer.common.util.DateUtil;
 import cn.wizzer.modules.back.wx.models.Wx_config;
+import cn.wizzer.modules.back.wx.models.Wx_mass;
+import cn.wizzer.modules.back.wx.models.Wx_mass_news;
 import cn.wizzer.modules.back.wx.services.WxConfigService;
 import cn.wizzer.modules.back.wx.services.WxMassNewsService;
 import cn.wizzer.modules.back.wx.services.WxMassService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
-import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
-import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -25,12 +26,16 @@ import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.impl.AdaptorErrorContext;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
+import org.nutz.weixin.bean.WxArticle;
+import org.nutz.weixin.bean.WxMassArticle;
+import org.nutz.weixin.bean.WxOutMsg;
 import org.nutz.weixin.spi.WxApi2;
 import org.nutz.weixin.spi.WxResp;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.util.Date;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -89,12 +94,46 @@ public class WxMassController {
         return wxMassNewsService.data(length, start, draw, order, columns, cnd, null);
     }
 
+    @At("/deleteNews/?")
+    @Ok("json")
+    @RequiresPermissions("wx.msg.mass.delNews")
+    @SLog(tag = "删除图文", msg = "图文标题:${args[1].getAttribute('title')}}")
+    public Object deleteNews(String id, HttpServletRequest req) {
+        try {
+            req.setAttribute("title", wxMassNewsService.fetch(id).getTitle());
+            wxMassNewsService.delete(id);
+            return Result.success("system.success");
+        } catch (Exception e) {
+            return Result.error("system.error");
+        }
+    }
+
     @At("/addNews/?")
     @Ok("beetl:/private/wx/msg/mass/add.html")
     @RequiresAuthentication
     public void add(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
         req.getSession().setAttribute("wxid", wxid);
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("wx.msg.mass.addNews")
+    @SLog(tag = "添加图文", msg = "图文标题:${args[0].title}")
+    public Object addDo(@Param("..") Wx_mass_news news, HttpServletRequest req) {
+        try {
+            wxMassNewsService.insert(news);
+            return Result.success("system.success");
+        } catch (Exception e) {
+            return Result.error("system.error");
+        }
+    }
+
+    @At("/newsDetail/?")
+    @Ok("beetl:/private/wx/msg/mass/detail.html")
+    @RequiresAuthentication
+    public Object newsDetail(String id, HttpServletRequest req) {
+        return wxMassNewsService.fetch(id);
     }
 
     @AdaptBy(type = UploadAdaptor.class, args = {"ioc:imageUpload"})
@@ -112,15 +151,74 @@ public class WxMassController {
             try {
                 WxApi2 wxApi2 = wxConfigService.getWxApi2(wxid);
                 WxResp resp = wxApi2.media_upload("thumb", tf.getFile());
-                if (resp.errcode() > 0) {
+                if (resp.errcode() != 0) {
                     return Result.error(resp.errmsg());
                 }
-                return Result.success("上传成功",resp.get("thumb_media_id"));
+                return Result.success("上传成功", resp.get("thumb_media_id"));
             } catch (Exception e) {
                 return Result.error("系统错误");
             } catch (Throwable e) {
                 return Result.error("图片格式错误");
             }
+        }
+    }
+
+    @At("/send/?")
+    @Ok("beetl:/private/wx/msg/mass/send.html")
+    @RequiresAuthentication
+    public void send(String wxid, HttpServletRequest req) {
+        req.setAttribute("wxid", wxid);
+    }
+
+    @At("/select/?")
+    @Ok("beetl:/private/wx/msg/mass/select.html")
+    @RequiresAuthentication
+    public void select(String wxid, HttpServletRequest req) {
+        req.setAttribute("wxid", wxid);
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("wx.msg.mass.pushNews")
+    @SLog(tag = "群发消息", msg = "群发名称:${args[0].name}")
+    public Object sendDo(@Param("..") Wx_mass mass, @Param("content") String content, @Param("openids") String openids, HttpServletRequest req) {
+        try {
+            WxApi2 wxApi2 = wxConfigService.getWxApi2(mass.getWxid());
+            WxOutMsg outMsg = new WxOutMsg();
+            if ("news".equals(mass.getType())) {
+                String[] ids = StringUtils.split(content, ",");
+                int i = 0;
+                for (String id : ids) {
+                    wxMassNewsService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", id));
+                    i++;
+                }
+                List<Wx_mass_news> newsList = wxMassNewsService.query(Cnd.where("id", "in", ids).asc("location"));
+                List<WxMassArticle> articles = Json.fromJsonAsList(WxMassArticle.class,Json.toJson(newsList));
+                WxResp resp = wxApi2.uploadnews(articles);
+                String media_id=resp.media_id();
+                outMsg.setMedia_id(media_id);
+                outMsg.setMsgType("mpnews");
+            }
+            if ("text".equals(mass.getType())) {
+                outMsg.setContent(content);
+                outMsg.setMsgType("text");
+            }
+            if ("all".equals(mass.getScope())) {
+                WxResp resp1 = wxApi2.mass_sendall(true, null, outMsg);
+            } else {
+                String[] ids = StringUtils.split(openids, ",");
+                WxResp resp2 = wxApi2.mass_send(Arrays.asList(ids), outMsg);
+                log.debug("resp:::" + Json.toJson(resp2));
+
+            }
+            wxMassService.insert(mass);
+            return Result.success("system.success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("system.error");
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Result.error("system.error");
         }
     }
 }
