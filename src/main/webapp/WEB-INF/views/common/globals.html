@@ -1,0 +1,366 @@
+#macro (private_header)
+<!DOCTYPE html>
+<html class="signin no-js" lang="${lang}">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="${AppName}">
+    <title>${AppName}</title>
+    <link rel="stylesheet" href="${base}/assets/plugins/stepy/jquery.stepy.css">
+    <link rel="stylesheet" href="${base}/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${base}/assets/css/font-awesome.css">
+    <link rel="stylesheet" href="${base}/assets/css/themify-icons.css">
+    <link rel="stylesheet" href="${base}/assets/css/animate.min.css">
+    <link rel="stylesheet" href="${base}/assets/css/skins/palette.css">
+    <link rel="stylesheet" href="${base}/assets/css/fonts/font.css">
+    <link rel="stylesheet" href="${base}/assets/css/main.css">
+    <link rel="stylesheet" href="${base}/assets/css/panel.css">
+    <link rel="stylesheet" href="${base}/assets/plugins/jstree/themes/default/style.min.css">
+    <link rel="stylesheet" href="${base}/assets/plugins/treetable/jquery.treetable.css">
+    <link rel="stylesheet" href="${base}/assets/plugins/datatables/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="${base}/assets/plugins/chosen/chosen.min.css">
+    <link rel="stylesheet" href="${base}/assets/plugins/datepicker/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="${base}/assets/plugins/emoji/emoji.css">
+    <link rel="stylesheet" href="${base}/assets/plugins/x-editable/bootstrap-editable.css">
+    <!--[if lt IE 9]>
+    <script src="${base}/assets/js/html5shiv.js"></script>
+    <script src="${base}/assets/js/respond.min.js"></script>
+    <script src="${base}/assets/js/json2.js"></script>
+    <![endif]-->
+    #if($shiro.getPrincipalProperty('loginTheme'))
+    <link rel="stylesheet" href="${base}/assets/css/skins/${shiro.getPrincipalProperty('loginTheme')}" id="skin">
+    #else
+    <link rel="stylesheet" href="${base}/assets/css/skins/palette.css" id="skin">
+    #end
+    <script src="${base}/assets/plugins/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript">
+        var base = '${base}';
+    </script>
+</head>
+<body>
+<div class="gallery-loader" style="background-color:transparent;">
+    <div class="loader"></div>
+</div>
+
+<div class="playground hidden-xs">
+    <div class="options">
+        <div class="pg-close ti-close"></div>
+        <div class="options-container color-options">
+            <h6>${msg['index.themes']}</h6>
+            <a onclick="sublime.changeTheme('palette.css')" href="${base}/assets/css/skins/palette.css"
+               class="css_orange cs_color cs_1 #if( 'palette.css' == $shiro.getPrincipalProperty('loginTheme')||!$shiro.getPrincipalProperty('loginTheme'))active#end">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+            <a onclick="sublime.changeTheme('palette.2.css')" href="${base}/assets/css/skins/palette.2.css"
+               class="css_orange cs_color cs_2 #if('palette.2.css' == $shiro.getPrincipalProperty('loginTheme'))active#end">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+            <a onclick="sublime.changeTheme('palette.3.css')" href="${base}/assets/css/skins/palette.3.css"
+               class="css_orange cs_color cs_3 #if('palette.3.css' == $shiro.getPrincipalProperty('loginTheme'))active#end">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+            <a onclick="sublime.changeTheme('palette.4.css')" href="${base}/assets/css/skins/palette.4.css"
+               class="css_orange cs_color cs_4 #if('palette.4.css' == $shiro.getPrincipalProperty('loginTheme'))active#end">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+        </div>
+        <div class="options-container">
+            <h6>${msg['index.layout']}</h6>
+            <a class="pg-val toggle-sidebar toggle-active #if($shiro.getPrincipalProperty('loginSidebar'))active#end" href="javascript:;">
+                <img src="${base}/assets/img/panel/small.png" alt="">
+            </a>
+            <a class="pg-val toggle-scroll toggle-active #if($shiro.getPrincipalProperty('loginScroll'))active#end" href="javascript:;">
+                <img src="${base}/assets/img/panel/scroll.png" alt="">
+            </a>
+            <a class="pg-val toggle-boxed toggle-active #if($shiro.getPrincipalProperty('loginBoxed'))active#end" href="javascript:;">
+                <img src="${base}/assets/img/panel/boxed.png" alt="">
+            </a>
+        </div>
+        <small class="pg-footer"><i class="ti-info-alt mr5"></i>${msg['index.panel']}</small>
+    </div>
+</div>
+<div class="app #if(${shiro.getPrincipalProperty('loginSidebar')})small-menu#end #if(${shiro.getPrincipalProperty('loginScroll')})fixed-scroll#end #if(${shiro.getPrincipalProperty('loginBoxed')})boxed#end">
+    <header class="header header-fixed navbar">
+        <div class="brand">
+
+            <a href="javascript:;" class="ti-menu off-left visible-xs" data-toggle="offscreen" data-move="ltr"></a>
+
+
+            <a href="${base}/private/home"  data-pjax class="navbar-brand">
+                <img src="${base}/assets/img/logo.png" alt="" class="o_img o_hide">
+                <span class="heading-font o_img">
+		            <img src="${base}/assets/img/logoa.png">
+                </span>
+            </a>
+
+        </div>
+        <ul class="nav navbar-nav navbar-left">
+            <li class="hidden-xs">
+
+                <a href="javascript:;" class="toggle-sidebar">
+                    <i class="ti-menu"></i>
+                </a>
+
+            </li>
+
+        </ul>
+        <ul id="topnav" class="nav navbar-nav hidden-xs">
+            <!--<li>-->
+            <!--<a href="${base}/sysadmin/home" data-pjax>-->
+            <!--<i class="ti-home"></i>-->
+            <!--<span>首页</span>-->
+            <!--</a>-->
+            <!--</li>-->
+
+            #set($secondMenus=${shiro.getPrincipalProperty('secondMenus')})
+            #foreach($firstMenu in ${shiro.getPrincipalProperty('firstMenus')})
+
+            <li class="dropdown">
+                <a href="javascript:;" data-toggle="dropdown">
+                    #if(${firstMenu.icon})
+                    <i class="${firstMenu.icon}"></i>
+                    #end
+                    <span>#if($lang=="zh_CN")${firstMenu.name} #else ${firstMenu.aliasName}#end</span>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu topnav">
+                    #if(${secondMenus.get($firstMenu.path)})
+                    #foreach($secondMenu in ${secondMenus.get($firstMenu.path)})
+                    <li class="dropdown">
+                        <a #if(${secondMenu.href}!="") #if($string.startWith($secondMenu.href,"/"))href="${base}${secondMenu.href}"#else href="${secondMenu.href}"#end #else href="javascript:;"#end #if($string.startWith($secondMenu.target,"_"))target="${secondMenu.target}"#else${secondMenu.target}#end>
+                        #if($secondMenus.get($secondMenu.path))<i class="toggle-accordion"></i>#end
+                        <span>#if($lang=="zh_CN") ${secondMenu.name} #else ${secondMenu.aliasName}#end</span>
+                        </a>
+                        #if($secondMenus.get($secondMenu.path))
+                        <ul class="sub-menu">
+                            #foreach($thMenu in ${secondMenus.get($secondMenu.path)})
+                            <li class="clearfix" >
+                                <a #if(${thMenu.href}!="") #if($string.startWith($thMenu.href,"/"))href="${base}${thMenu.href}"#else href="${thMenu.href}"#end #else href="javascript:;"#end #if($string.startWith($thMenu.target,"_"))target="${thMenu.target}"#else${thMenu.target}#end>
+                                <span>#if($lang=="zh_CN") ${thMenu.name} #else ${thMenu.aliasName}#end</span>
+                                </a>
+                            </li>
+                            #end
+                        </ul>
+                        #end
+                    </li>
+                    #end
+                    #end
+                </ul>
+            </li>
+            #end
+            <li>
+                <a href="https://github.com/Wizzercn/NutzWk" target="_blank">GitHub</a>
+            </li>
+            <li>
+                <a href="http://www.wizzer.cn" target="_blank">Blog</a>
+            </li>
+            <li>
+                <a href="https://github.com/Wizzercn/NodeWk" target="_blank">NodeWk</a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <!--通知位置-->
+            <li class="language-dropdown dropdown hidden-xs">
+                <a href="javascript:;" data-toggle="dropdown" id="language">
+                    #if($lang==""||$lang=="zh_CN")
+                    <img src="${base}/assets/img/flags/cn.png" class="flag">
+                    #else
+                    <img src="${base}/assets/img/flags/us.png" class="flag">
+                    #end
+                    <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
+                        <li>
+                            <a href="?lang=en_US">
+                                <img src="${base}/assets/img/flags/us.png" class="flag">
+                                <span class="language">English</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?lang=zh_CN">
+                                <img src="${base}/assets/img/flags/cn.png" class="flag">
+                                <span class="language">中文</span>
+                            </a>
+                        </li>
+                    </ul>
+            </li>
+            <li class="off-right">
+                <a href="javascript:;" data-toggle="dropdown">
+                    <span class="hidden-xs ml10">${shiro.getPrincipalProperty('nickname')}</span>
+                    <i class="ti-angle-down ti-caret hidden-xs"></i>
+                </a>
+                <ul class="dropdown-menu animated fadeInLeft">
+                    <li>
+                        <a href="${base}/private/sys/user/custom" data-toggle="modal"
+                           data-target="#homeDetail">${msg['index.custommenu']}</a>
+                    </li>
+
+                    <li class="dropdown hidden-xs">
+                        <a href="javascript:;" class="pg-toggle">
+                            ${msg['index.user.layout']}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="${base}/private/sys/user/pass" data-toggle="modal"
+                           data-target="#homeDetail">${msg['index.user.password']}</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="off-right">
+                <a href="${base}/private/login/logout">
+                    <i class="ti-power-off"></i>
+                </a>
+            </li>
+        </ul>
+    </header>
+    <section class="layout">
+
+        <aside class="sidebar offscreen-left">
+
+            <nav class="main-navigation" data-height="auto" data-size="6px" data-distance="0" data-rail-visible="true"
+                 data-wheel-step="10">
+                <!--<p class="nav-title">MENU</p>-->
+                <ul class="nav">
+                    <li class="open">
+                        <a href="javascript:;">
+                            #if($shiro.getPrincipalProperty('customMenus'))
+                            <i class="toggle-accordion"></i>
+                            #end
+                            <i class="ti-heart"></i>
+                            <span>${msg['index.custommenu']}</span>
+                        </a>
+                        #if($shiro.getPrincipalProperty('customMenus'))
+                        <ul class="sub-menu">
+                            #foreach($o in $shiro.getPrincipalProperty('customMenus'))
+
+                            <li>
+                                <a #if(${o.href})href="${o.href}" #if('data-pjax'==${o.target})data-pjax#end #else href="javascript:;"#end>
+                                <span>#if($lang=="zh_CN")${o.name}#else${o.aliasName}#end</span>
+                                </a>
+                            </li>
+
+                            #end
+                        </ul>
+                        #end
+                    </li>
+
+                </ul>
+                <ul id="leftnav" class="nav">
+                </ul>
+            </nav>
+        </aside>
+        <section class="main-content" id="container">
+#end
+#macro (private_footer)
+        </section>
+    </section>
+
+
+</div>
+<div id="homeDetail" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<!--script-->
+<script src="${base}/assets/plugins/modernizr.js"></script>
+<script src="${base}/assets/js/jquery.pjax.js"></script>
+<script src="${base}/assets/bootstrap/js/bootstrap.js"></script>
+<script src="${base}/assets/plugins/jquery.form.js"></script>
+<script src="${base}/assets/plugins/parsley.min.js"></script>
+<script src="${base}/assets/plugins/parsley.zh_cn.js"></script>
+<script src="${base}/assets/plugins/jquery.sortable.js"></script>
+<script src="${base}/assets/plugins/jquery.nestable.js"></script>
+<script src="${base}/assets/plugins/icheck/icheck.js"></script>
+<script src="${base}/assets/plugins/jquery.slimscroll.min.js"></script>
+<script src="${base}/assets/plugins/jquery.easing.min.js"></script>
+<script src="${base}/assets/plugins/appear/jquery.appear.js"></script>
+<script src="${base}/assets/plugins/jquery.placeholder.js"></script>
+<script src="${base}/assets/plugins/fastclick.js"></script>
+<script src="${base}/assets/plugins/count-to/jquery.countTo.js"></script>
+<script src="${base}/assets/js/toast.js"></script>
+<script src="${base}/assets/plugins/chosen/chosen.jquery.min.js"></script>
+<script src="${base}/assets/plugins/treetable/jquery.treetable.js"></script>
+<script src="${base}/assets/plugins/datatables/jquery.dataTables.js"></script>
+<script src="${base}/assets/plugins/datatables/dataTables.bootstrap.js"></script>
+<script src="${base}/assets/plugins/jstree/jstree.min.js"></script>
+<script src="${base}/assets/plugins/switchery/switchery.js"></script>
+<script src="${base}/assets/plugins/stepy/jquery.stepy.js"></script>
+<script src="${base}/assets/plugins/stepy/jquery.validate.min.js"></script>
+<script src="${base}/assets/plugins/icheck/icheck.js"></script>
+<script src="${base}/assets/plugins/chosen/chosen.jquery.min.js"></script>
+<script src="${base}/assets/plugins/jquery.form.js"></script>
+<script src="${base}/assets/plugins/uploadifive/jquery.uploadifive.min.js"></script>
+<script src="${base}/assets/plugins/datepicker/bootstrap-datetimepicker.min.js"></script>
+<script src="${base}/assets/plugins/datepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="${base}/assets/plugins/emoji/emoji.js"></script>
+<script src="${base}/assets/plugins/sorttable/Sortable.min.js"></script>
+<script src="${base}/assets/plugins/jquery.qrcode.min.js"></script>
+<script src="${base}/assets/plugins/jquery.sparkline.js"></script>
+<script src="${base}/assets/plugins/x-editable/bootstrap-editable.js"></script>
+<script src="${base}/assets/plugins/moment.min.js"></script>
+<script src="${base}/assets/js/form.js"></script>
+<script src="${base}/assets/js/offscreen.js"></script>
+<script src="${base}/assets/js/main.js"></script>
+<script src="${base}/assets/js/page.js"></script>
+<script src="${base}/assets/js/date.js"></script>
+
+<script type="text/javascript">
+    function bindLeft(){
+        $('.main-navigation a[data-pjax]').on('click',function(){
+            $('.main-navigation a[data-pjax]').each(function(){
+                $(this).parent().removeClass('active');
+            });
+            $(this).parent().addClass('active');
+        });
+    }
+    $(document).ready(function () {
+        if($.support.pjax) {
+            $(document).pjax('a[data-pjax]', '#container', {maxCacheLength:0,push:false, replace:true,fragment: '#container', timeout: 8000});
+            bindLeft();
+            $('#topnav a[data-pjax]').on('click',function(){
+                $.get("${base}/private/home/left?url="+$(this).attr("href"),function (data) {
+                    $("#leftnav").html(data);
+                    bindLeft();
+                }, "html");
+            });
+            $.get("${base}/private/home/path?url="+window.location.href,function (data) {
+                $("#leftnav").html(data);
+                bindLeft();
+            }, "html");
+            $(document).on('pjax:send', function () { //pjax链接点击后显示加载动画；
+                $(".gallery-loader").fadeIn();
+            });
+            $(document).on('pjax:complete', function () { //pjax链接加载完成后隐藏加载动画；
+                setTimeout(function(){$(".gallery-loader").fadeOut()},250);
+            });
+        }
+        try {
+            $(".gallery-loader").fadeOut();
+        } catch (e) {
+        }
+        $('#homeDetail').on('hidden.bs.modal',function(){
+            $(this).removeData("bs.modal");
+        });
+        $(".toggle-sidebar").click(function(){
+            $(".o_img").toggleClass("o_hide");
+        });
+    });
+</script>
+<!--script-->
+</body>
+</html>
+#end
