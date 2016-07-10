@@ -1,14 +1,23 @@
-NutzWk 3.0 纯净版（后续功能持续开发中...）
+NutzWk 3.1 微信+
 ======
-目录结构调整较大，重构权限体系，优化代码等，和2.0不兼容，所以起名叫3.0。
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-主要是把过去一年Node.js开发中积累的一些经验用到此版本中，特别是后台界面功能。
+NutzWk 3.2.x   CMS+
 
-PS：如果对Node.js开发框架感兴趣，可以看这里：https://github.com/Wizzercn/NodeWk
+NutzWk 3.1.x   微信+
+
+NutzWk 3.0.x   纯净版
+
+NutzWk 2.0.x   试验版
+
+NutzWk 1.0.x   传统版
+
 
 在线演示地址
 ======
-http://nutzwk.wizzer.cn/                 NutzWk v3.0.0
+http://nutzwk.wizzer.cn/                 NutzWk v3.0.x
+
+https://github.com/Wizzercn/NodeWk       Node.js版源码
 
 ======
 基于Nutz的开源企业级开发框架
