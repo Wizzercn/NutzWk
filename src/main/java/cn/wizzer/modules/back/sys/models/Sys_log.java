@@ -103,15 +103,19 @@ public class Sys_log extends Model implements Serializable {
         this.msg = msg;
     }
 
-    public static Sys_log c(String type, String tag, String msg) {
+    public static Sys_log c(String type, String tag, String msg, String source) {
         Sys_log sysLog = new Sys_log();
         if (type == null || tag == null || msg == null) {
             throw new RuntimeException("type/tag/msg can't null");
         }
-        String source = "";
-        StackTraceElement[] tmp = Thread.currentThread().getStackTrace();
-        if (tmp.length > 2) {
-            source = tmp[2].getClassName() + "#" + tmp[2].getMethodName();
+        if (source == null) {
+            StackTraceElement[] tmp = Thread.currentThread().getStackTrace();
+            if (tmp.length > 2) {
+                source = tmp[2].getClassName() + "#" + tmp[2].getMethodName();
+            } else {
+                source = "main";
+            }
+
         }
         sysLog.type = type;
         sysLog.tag = tag;
@@ -130,7 +134,7 @@ public class Sys_log extends Model implements Serializable {
             }
         }
         sysLog.setOpBy(uid);
-        sysLog.setOpAt((int)(System.currentTimeMillis()/1000));
+        sysLog.setOpAt((int) (System.currentTimeMillis() / 1000));
         sysLog.nickname = nickname;
         return sysLog;
     }
