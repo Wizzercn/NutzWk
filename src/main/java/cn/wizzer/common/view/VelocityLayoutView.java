@@ -49,26 +49,6 @@ public class VelocityLayoutView extends AbstractPathView {
             context.put("base", req.getContextPath());
             context.put("request", req);
             context.put("session", req.getSession());
-            context.put("AppRoot", Globals.AppRoot);
-            context.put("AppBase", Globals.AppBase);
-            context.put("AppName", Globals.AppName);
-            context.put("AppDomain", Globals.AppDomain);
-            context.put("AppShrotName", Globals.AppShrotName);
-            context.put("shiro", Mvcs.ctx().getDefaultIoc().get(Permission.class));
-            context.put("date", Mvcs.ctx().getDefaultIoc().get(DateUtil.class));
-            context.put("string", Mvcs.ctx().getDefaultIoc().get(StringUtil.class));
-            // 如果Cookies中有语言属性则设置
-            String lang=req.getParameter("lang");
-            if (!Strings.isEmpty(lang)) {
-                Mvcs.setLocalizationKey(lang);
-            }else{
-                // Mvcs.getLocalizationKey()  1.r.56 版本是null,所以要做两次判断, 1.r.57已修复为默认值 Nutz:Fix issue 1072
-                lang=Strings.isBlank(Mvcs.getLocalizationKey())?Mvcs.getDefaultLocalizationKey():Mvcs.getLocalizationKey();
-            }
-            context.put("lang", lang);
-            context.put("shiro",Mvcs.ctx().getDefaultIoc().get(Permission.class));
-            context.put("string",Mvcs.ctx().getDefaultIoc().get(StringUtil.class));
-            context.put("date",Mvcs.ctx().getDefaultIoc().get(DateUtil.class));
             //context.put("cookie", CookieUtils.getCookie(req,resp));
             //请求的参数表,需要兼容之前的p.参数, Fix issue 418
             Map<String, String> p = new HashMap<String, String>();
