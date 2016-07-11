@@ -62,6 +62,12 @@ NutzWk 3.x 新特性：
 *   国际化字符串
 *   ……
 
+代码生成器
+======
+https://github.com/enilu/nutzwk-code-generator  NutzWk 3.0
+
+https://github.com/Wizzercn/NutzCodematic       NutzWk 1.0
+
 在线演示地址
 ======
 
