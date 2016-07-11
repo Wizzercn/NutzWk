@@ -10,7 +10,7 @@ NutzWk 3.0.x   纯净版(beetl / beetl+velocity)
 
 NutzWk 2.0.x   试验版(velocity)
 
-NutzWk 1.0.x   传统版(velocity)
+NutzWk 1.0.x   传统版(velocity 支持IE6)
 
 注:_velocity后缀为同时支持beetl和velocity两种模板引擎版本  
 
