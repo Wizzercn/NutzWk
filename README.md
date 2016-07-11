@@ -2,19 +2,19 @@ NutzWk 3.1 微信+
 ======
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-NutzWk 3.2.x   CMS+
+NutzWk 3.2.x   CMS+ (beetl / beetl+velocity)
 
-NutzWk 3.1.x   微信+   
+NutzWk 3.1.x   微信+ (beetl / beetl+velocity)  
 
-NutzWk 3.0.x   纯净版
+NutzWk 3.0.x   纯净版(beetl / beetl+velocity)
 
-NutzWk 2.0.x   试验版
+NutzWk 2.0.x   试验版(velocity)
 
-NutzWk 1.0.x   传统版
+NutzWk 1.0.x   传统版(velocity)
 
 注:_velocity后缀为同时支持beetl和velocity两种模板引擎版本  
 
-交流群:Nutz ② 群 68428921
+交流群:68428921
 
 在线演示地址
 ======
