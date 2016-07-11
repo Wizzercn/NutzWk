@@ -64,9 +64,11 @@ NutzWk 3.x 新特性：
 
 代码生成器
 ======
-https://github.com/enilu/nutzwk-code-generator  NutzWk 3.0
+https://github.com/Wizzercn/NutzCodematic/tree/v3.0.0       适用于NutzWk v3.x（可视化界面）
 
-https://github.com/Wizzercn/NutzCodematic       NutzWk 1.0
+https://github.com/enilu/nutzwk-code-generator              适用于NutzWk v3.x（命令行）
+
+https://github.com/Wizzercn/NutzCodematic/tree/v1.0.0       适用于NutzWk 1.0
 
 在线演示地址
 ======
