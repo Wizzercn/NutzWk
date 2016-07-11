@@ -35,6 +35,10 @@
             <param-name>ignore</param-name>
             <param-value>^(.+[.])(jsp|png|gif|jpg|js|css|jspx|jpeg|html|mp3|mp4)$</param-value>
         </init-param>
+        <init-param>
+            <param-name>exclusions</param-name>
+            <param-value>/assets/*,/druid/*</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>nutz</filter-name>
@@ -48,6 +52,10 @@
         <init-param>
             <param-name>allow</param-name>
             <param-value>127.0.0.1</param-value>
+        </init-param>
+        <init-param>
+            <param-name>exclusions</param-name>
+            <param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/rs/*</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
