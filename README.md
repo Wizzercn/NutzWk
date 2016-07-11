@@ -4,7 +4,7 @@ NutzWk 3.1 微信+
 
 NutzWk 3.2.x   CMS+
 
-NutzWk 3.1.x   微信+
+NutzWk 3.1.x   微信+   
 
 NutzWk 3.0.x   纯净版
 
@@ -12,22 +12,23 @@ NutzWk 2.0.x   试验版
 
 NutzWk 1.0.x   传统版
 
+注:_velocity后缀为同时支持beetl和velocity两种模板引擎版本
 
 在线演示地址
 ======
-http://nutzwk.wizzer.cn/                 NutzWk v3.0.x
+http://nutzwk.wizzer.cn/                 NutzWk v3.1.x
 
 https://github.com/Wizzercn/NodeWk       Node.js版源码
 
 ======
 基于Nutz的开源企业级开发框架
 
-NutzWk 3.0 运行环境：
+NutzWk 3.x 运行环境：
 *   JDK 8
 *   Maven 3.3.39
 *   Nutz v1.r.57
 
-NutzWk 3.0 新特性：
+NutzWk 3.x 新特性：
 *   集成Shiro权限框架
 *   集成Ehcache缓存
 *   集成Redis
