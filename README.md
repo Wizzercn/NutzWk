@@ -12,7 +12,9 @@ NutzWk 2.0.x   试验版
 
 NutzWk 1.0.x   传统版
 
-注:_velocity后缀为同时支持beetl和velocity两种模板引擎版本
+注:_velocity后缀为同时支持beetl和velocity两种模板引擎版本  
+
+交流群:Nutz ② 群 68428921
 
 在线演示地址
 ======
