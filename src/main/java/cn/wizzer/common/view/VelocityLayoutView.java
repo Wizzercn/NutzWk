@@ -1,9 +1,5 @@
 package cn.wizzer.common.view;
 
-import cn.wizzer.common.base.Globals;
-import cn.wizzer.common.shiro.view.Permission;
-import cn.wizzer.common.util.DateUtil;
-import cn.wizzer.common.util.StringUtil;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;

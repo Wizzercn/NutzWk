@@ -103,8 +103,10 @@ Released under the UploadiFive Standard License <http://www.uploadify.com/upload
                     'position'  : 'absolute',
                     'right'     : '-3px',
                     'top'       : '-3px',
-                    'z-index'   : 999 
-                });
+                    'z-index'   : 999 ,
+                    'width' : settings.width
+
+                    });
 
                 // Create a new input
                 $data.createInput = function() {
