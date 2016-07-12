@@ -1,24 +1,36 @@
-NutzWk 3.0 纯净版（后续功能持续开发中...）
+NutzWk 3.1 微信+
 ======
-目录结构调整较大，重构权限体系，优化代码等，和2.0不兼容，所以起名叫3.0。
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-主要是把过去一年Node.js开发中积累的一些经验用到此版本中，特别是后台界面功能。
+NutzWk 3.2.x   CMS+ (beetl / beetl+velocity)
 
-PS：如果对Node.js开发框架感兴趣，可以看这里：https://github.com/Wizzercn/NodeWk
+NutzWk 3.1.x   微信+ (beetl / beetl+velocity)  
+
+NutzWk 3.0.x   纯净版(beetl / beetl+velocity)
+
+NutzWk 2.0.x   试验版(velocity)
+
+NutzWk 1.0.x   传统版(velocity 支持IE6)
+
+注:_velocity后缀为同时支持beetl和velocity两种模板引擎版本  
+
+交流群:68428921
 
 在线演示地址
 ======
-http://nutzwk.wizzer.cn/                 NutzWk v3.0.0
+http://nutzwk.wizzer.cn/                 NutzWk v3.1.x
+
+https://github.com/Wizzercn/NodeWk       Node.js版源码
 
 ======
 基于Nutz的开源企业级开发框架
 
-NutzWk 3.0 运行环境：
+NutzWk 3.x 运行环境：
 *   JDK 8
 *   Maven 3.3.39
 *   Nutz v1.r.57
 
-NutzWk 3.0 新特性：
+NutzWk 3.x 新特性：
 *   集成Shiro权限框架
 *   集成Ehcache缓存
 *   集成Redis
@@ -51,6 +63,14 @@ NutzWk 3.0 新特性：
 *   DataTables等JS插件的使用
 *   国际化字符串
 *   ……
+
+代码生成器
+======
+https://github.com/Wizzercn/NutzCodematic/tree/v3.0.0       适用于NutzWk v3.x（可视化界面）
+
+https://github.com/enilu/nutzwk-code-generator              适用于NutzWk v3.x（命令行）
+
+https://github.com/Wizzercn/NutzCodematic/tree/v1.0.0       适用于NutzWk 1.0
 
 在线演示地址
 ======
