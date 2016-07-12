@@ -37,7 +37,7 @@
         </init-param>
         <init-param>
             <param-name>exclusions</param-name>
-            <param-value>/assets/*,/druid/*</param-value>
+            <param-value>/assets/*,/druid/*,/upload/*</param-value>
         </init-param>
     </filter>
     <filter-mapping>
@@ -55,7 +55,7 @@
         </init-param>
         <init-param>
             <param-name>exclusions</param-name>
-            <param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/rs/*</param-value>
+            <param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/assets/*,/upload/*</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
