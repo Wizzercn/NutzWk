@@ -299,6 +299,9 @@ public class UserController {
             if (!Strings.isBlank(ids)) {
                 user.setCustomMenu(ids);
                 user.setCustomMenus(menuService.query(Cnd.where("id", "in", ids.split(","))));
+            }else {
+                user.setCustomMenu("");
+                user.setCustomMenus(new ArrayList<>());
             }
             return Result.success("system.success");
         } catch (Exception e) {
