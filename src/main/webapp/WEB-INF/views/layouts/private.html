@@ -101,8 +101,8 @@
 
 
             <a href="${base!}/private/home"  data-pjax class="navbar-brand">
-                <img src="${base!}/assets/img/logo.png" alt="" class="o_img o_hide">
-                <span class="heading-font o_img">
+                <img src="${base!}/assets/img/logo.png" alt="" class="o_img <% if(!@shiro.getPrincipalProperty('loginSidebar')){ %>o_hide<% } %>">
+                <span class="heading-font o_img <% if(@shiro.getPrincipalProperty('loginSidebar')){ %>o_hide<% } %>">
 		            <img src="${base!}/assets/img/logoa.png">
                 </span>
             </a>
