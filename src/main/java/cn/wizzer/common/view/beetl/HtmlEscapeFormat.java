@@ -1,4 +1,4 @@
-package cn.wizzer.common.beetl;
+package cn.wizzer.common.view.beetl;
 
 import org.beetl.core.Format;
 import org.nutz.lang.Strings;
