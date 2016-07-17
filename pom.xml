@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-daocache</artifactId>
-            <version>1.r.56</version>
+            <version>1.r.57-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
