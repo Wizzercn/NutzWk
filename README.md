@@ -2,7 +2,7 @@ NutzWk 3.1 微信+
 ======
 
 
-[![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=master)](https://travis-ci.org/Wizzercn/NutzWk)
+[![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 NutzWk 3.2.x   CMS+ (beetl / beetl+velocity)
