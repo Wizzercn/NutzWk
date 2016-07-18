@@ -3,6 +3,7 @@ package cn.wizzer.modules.back.sys.models;
 import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.common.base.Model;
 import org.apache.shiro.SecurityUtils;
+import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -15,6 +16,11 @@ public class Sys_log extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Id
+//    @Prev({
+//            //仅做演示,实际使用oracle时,请使用触发器+序列的方式实现自增长ID,否则高并发下此种写法性能是个瓶颈
+//            //实际上不推荐在主键上使用@Prev
+//            @SQL(db = DB.ORACLE, value = "SELECT SYS_LOG_S.nextval FROM dual")
+//    })
     private long id;
 
     @Column
