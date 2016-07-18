@@ -24,10 +24,6 @@ http://nutzwk.wizzer.cn/                 NutzWk v3.1.x
 
 https://github.com/Wizzercn/NodeWk       Node.js版源码
 
-![登陆界面截图](nutzwk_login.png)
-
-![主界面截图](nutzwk_home.png)
-
 ======
 基于Nutz的开源企业级开发框架
 
@@ -99,3 +95,7 @@ NutzWk 1.0 源码是这个链接： https://github.com/Wizzercn/NutzWk/tree/1.0
 
 NutzWk 1.0 含Activiti工作流的源码在这里： https://github.com/wendal/wzflow
 
+
+![登陆界面截图](nutzwk_login.png)
+
+![主界面截图](nutzwk_home.png)
