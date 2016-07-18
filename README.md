@@ -1,6 +1,6 @@
-NutzWk 基于Nutz的开源企业级开发框架 (当前版本 3.1 微信+)
+NutzWk 基于Nutz的开源企业级开发框架 
 ======
-
+(当前版本 3.1 微信+)
 
 [![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
 [![GitHub release](https://img.shields.io/github/release/Wizzercn/NutzWk.svg)](https://github.com/Wizzercn/NutzWk/releases)
@@ -95,7 +95,6 @@ NutzWk 1.0 源码是这个链接： https://github.com/Wizzercn/NutzWk/tree/1.0
 
 NutzWk 1.0 含Activiti工作流的源码在这里： https://github.com/wendal/wzflow
 
-
-![登陆界面截图](nutzwk_login.png)
-
+NutzWk v3.x 运行截图
+======
 ![主界面截图](nutzwk_home.png)
