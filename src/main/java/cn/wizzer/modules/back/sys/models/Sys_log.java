@@ -18,7 +18,7 @@ public class Sys_log extends Model implements Serializable {
     @Id
 //    @Prev({
 //            //仅做演示,实际使用oracle时,请使用触发器+序列的方式实现自增长ID,否则高并发下此种写法性能是个瓶颈
-//            //实际上不推荐在主键上使用@Prev
+//            //实际上不推荐在主键上使用自定义sql来生成
 //            @SQL(db = DB.ORACLE, value = "SELECT SYS_LOG_S.nextval FROM dual")
 //    })
     private long id;
