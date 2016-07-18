@@ -50,6 +50,7 @@ public class Cms_article extends Model implements Serializable {
 
     @Column
     @Comment("是否禁用")
+    @ColDefine(type = ColType.BOOLEAN)
     private boolean disabled;
 
     @Column

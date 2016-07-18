@@ -56,10 +56,12 @@ public class Cms_channel extends Model implements Serializable {
 
     @Column
     @Comment("是否显示")
+    @ColDefine(type = ColType.BOOLEAN)
     private boolean isShow;
 
     @Column
     @Comment("是否禁用")
+    @ColDefine(type = ColType.BOOLEAN)
     private boolean disabled;
 
     @Column

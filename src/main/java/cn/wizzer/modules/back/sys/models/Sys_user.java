@@ -57,11 +57,12 @@ public class Sys_user extends Model implements Serializable {
 
     @Column
     @Comment("登陆时间")
-    protected Integer loginAt;
+    @ColDefine(type = ColType.INT, width = 11)
+    private Integer loginAt;
 
     @Column
     @Comment("登陆IP")
-    @ColDefine(type = ColType.VARCHAR, width = 15)
+    @ColDefine(type = ColType.VARCHAR, width = 255)
     private String loginIp;
 
     @Column
@@ -96,7 +97,7 @@ public class Sys_user extends Model implements Serializable {
     private Sys_unit unit;
 
     @ManyMany(from = "userId", relation = "sys_user_role", target = Sys_role.class, to = "roleId")
-    protected List<Sys_role> roles;
+    private List<Sys_role> roles;
 
     @ManyMany(from = "userId", relation = "sys_user_unit", target = Sys_role.class, to = "unitId")
     protected List<Sys_unit> units;
@@ -107,7 +108,7 @@ public class Sys_user extends Model implements Serializable {
 
     protected Map<String, List<Sys_menu>> secondMenus;
 
-    protected List<Sys_menu> customMenus;
+    private List<Sys_menu> customMenus;
 
     public String getId() {
         return id;
