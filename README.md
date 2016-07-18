@@ -24,6 +24,10 @@ http://nutzwk.wizzer.cn/                 NutzWk v3.1.x
 
 https://github.com/Wizzercn/NodeWk       Node.js版源码
 
+![登陆界面截图](nutzwk_login.png)
+
+![主界面截图](nutzwk_home.png)
+
 ======
 基于Nutz的开源企业级开发框架
 
