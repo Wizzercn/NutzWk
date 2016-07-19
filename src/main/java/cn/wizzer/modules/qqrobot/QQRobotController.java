@@ -50,34 +50,41 @@ public class QQRobotController  {
     public synchronized String msg(@Param("..") NutMap data, HttpServletRequest req)
             throws IOException {
          //String groupId = data.getString("GroupId");
-    	InputStream is  = null;
-    	BufferedReader br = null;
-    	try {
-			StringBuffer sb = new StringBuffer();
-			 is = req.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			 br = new BufferedReader(isr);
-			String s = "";
-			while ((s = br.readLine()) != null) {
-				sb.append(s);
-			}
-		    
-			log.info("=================sb========="+sb.toString());
-			 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally{
-			if(is!=null){
-				is.close();
-			}
-			if(br!=null){
-				br.close();
-			}
-			
-		}
+    	if(req!= null){
+    		InputStream is  = null;
+        	BufferedReader br = null;
+        	try {
+    			StringBuffer sb = new StringBuffer();
+    			 is = req.getInputStream();
+    			InputStreamReader isr = new InputStreamReader(is);
+    			 br = new BufferedReader(isr);
+    			String s = "";
+    			while ((s = br.readLine()) != null) {
+    				sb.append(s);
+    			}
+    		    
+    			log.info("=================sb========="+sb.toString());
+    			 
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}finally{
+    			if(is!=null){
+    				is.close();
+    			}
+    			if(br!=null){
+    				br.close();
+    			}
+    			
+    		}
+    	}else{
+    		
+    		log.info("=====================================req == null =========" );
+    	}
+    	
+    	
         log.info("消息信息："+Json.toJson(data));
-        return "";
+        return "好呀好";
     }
  
 }
