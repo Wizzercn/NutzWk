@@ -19,7 +19,7 @@ import cn.wizzer.common.base.Model;
  * qq群用户提交的黑名单
  */
 @Table("sys_qun_black_user")
-@TableIndexes({@Index(name = "INDEX_SYS_QUN_BLACK_CONTACT", fields = {"contact"}, unique = true)})
+@TableIndexes({@Index(name = "INDEX_SYS_QUN_BLACK_CONTACT", fields = {"contact"})})
 public class Sys_qun_black_user extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
