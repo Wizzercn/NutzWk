@@ -472,15 +472,17 @@ public class Setup implements org.nutz.mvc.Setup {
             //执行微信菜单SQL脚本
             FileSqlManager fm = new FileSqlManager("db/init_menu_weixin.sql");
             List<Sql> sqlList = fm.createCombo(fm.keys());
-            dao.execute(sqlList.toArray(new Sql[sqlList.size()]));
-//            Sql[] sqls=sqlList.toArray(new Sql[sqlList.size()]);
-//            for(Sql sql:sqls){
-//                dao.execute(sql.setParam("roleId",dbrole.getId()));
-//            }
+            Sql[] sqls=sqlList.toArray(new Sql[sqlList.size()]);
+            for(Sql sql:sqls){
+                dao.execute(sql);
+            }
             //执行CMS菜单SQL脚本
             FileSqlManager fm_cms = new FileSqlManager("db/init_menu_cms.sql");
             List<Sql> sqlList_cms = fm_cms.createCombo(fm_cms.keys());
-            dao.execute(sqlList_cms.toArray(new Sql[sqlList_cms.size()]));
+            Sql[] sqls_cms=sqlList_cms.toArray(new Sql[sqlList_cms.size()]);
+            for(Sql sql:sqls_cms){
+                dao.execute(sql);
+            }
             //微信模块菜单关联到角色
             dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0002%'").setParam("roleId",dbrole.getId()));
             //CMS模块菜单关联到角色

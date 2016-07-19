@@ -15,7 +15,6 @@ public class Cms_site extends Model implements Serializable {
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column
@@ -24,27 +23,27 @@ public class Cms_site extends Model implements Serializable {
     private String shopid;
 
     @Column
-    @Comment("网站名称")
+    @Comment("名称")
     @ColDefine(type = ColType.VARCHAR, width = 120)
     private String site_name;
 
     @Column
-    @Comment("网站域名")
+    @Comment("域名")
     @ColDefine(type = ColType.VARCHAR, width = 120)
     private String site_domain;
 
     @Column
-    @Comment("网站备案")
+    @Comment("ICP")
     @ColDefine(type = ColType.VARCHAR, width = 120)
     private String site_icp;
 
     @Column
-    @Comment("网站LOGO")
+    @Comment("LOGO")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String site_logo;
 
     @Column
-    @Comment("WAP版LOGO")
+    @Comment("WAPLOGO")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String site_wap_logo;
 
@@ -54,17 +53,17 @@ public class Cms_site extends Model implements Serializable {
     private String site_qq;
 
     @Column
-    @Comment("网站邮箱")
+    @Comment("邮箱")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String site_email;
 
     @Column
-    @Comment("客服电话")
+    @Comment("电话")
     @ColDefine(type = ColType.VARCHAR, width = 20)
     private String site_tel;
 
     @Column
-    @Comment("微博名称")
+    @Comment("微博")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String weibo_name;
 
@@ -94,13 +93,13 @@ public class Cms_site extends Model implements Serializable {
     private String wechat_qrcode;
 
     @Column
-    @Comment("网页关键词")
+    @Comment("关键词")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String seo_keywords;
 
 
     @Column
-    @Comment("网页描述")
+    @Comment("描述")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String seo_description;
 
