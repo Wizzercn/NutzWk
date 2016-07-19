@@ -57,12 +57,12 @@ public class QQRobotController  {
     @Filters
     public synchronized String msg(@Param("..") NutMap data)
             throws IOException {
-     
-    	  if(data!=null && "BJ2016888".equals(data.getString("key"))){
+    	  log.info("消息信息："+Json.toJson(data));
+    	  if(data!=null && "BJ2016888".equals(data.getString("Key"))){
     		  String groupId = data.getString("GroupId");
     		  String message = data.getString("Message");
     		 if("469615022".equals(groupId) && StringUtils.isNotBlank(message)){
-    			 log.info("消息信息："+Json.toJson(data));
+    			 
     			 if (StringUtils.startsWith(message,bcmd)) {
     		            String[] qqInfo = message.split(bcmd);
     		            if(qqInfo==null || qqInfo.length<2){
