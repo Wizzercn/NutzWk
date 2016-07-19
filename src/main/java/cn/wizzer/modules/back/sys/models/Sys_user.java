@@ -57,7 +57,7 @@ public class Sys_user extends Model implements Serializable {
 
     @Column
     @Comment("登陆时间")
-    @ColDefine(type = ColType.INT, width = 11)
+    @ColDefine(type = ColType.INT, width = 5)
     private Integer loginAt;
 
     @Column
@@ -67,7 +67,7 @@ public class Sys_user extends Model implements Serializable {
 
     @Column
     @Comment("登陆次数")
-    @ColDefine(type = ColType.INT)
+    @ColDefine(type = ColType.INT, width = 5)
     private Integer loginCount;
 
     @Column
