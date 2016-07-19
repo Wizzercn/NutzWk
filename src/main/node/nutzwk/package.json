@@ -13,7 +13,7 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
-    "vue": "^1.0.21",
+    "vue": "^v2.0.0-beta.2",
     "babel-runtime": "^6.0.0"
   },
   "devDependencies": {
