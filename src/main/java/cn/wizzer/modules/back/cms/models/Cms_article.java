@@ -54,6 +54,11 @@ public class Cms_article extends Model implements Serializable {
     private boolean disabled;
 
     @Column
+    @Comment("发布时间")
+    @ColDefine(type = ColType.INT, width = 5)
+    private Integer publishAt;
+
+    @Column
     @Comment("排序字段")
     @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM cms_article"))
     private Integer location;
@@ -127,6 +132,14 @@ public class Cms_article extends Model implements Serializable {
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
+    }
+
+    public Integer getPublishAt() {
+        return publishAt;
+    }
+
+    public void setPublishAt(Integer publishAt) {
+        this.publishAt = publishAt;
     }
 
     public Integer getLocation() {
