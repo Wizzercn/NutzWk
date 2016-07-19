@@ -467,42 +467,24 @@ public class Setup implements org.nutz.mvc.Setup {
             //不同的插入数据方式(安全)
             dao.insert("sys_user_unit", Chain.make("userId", dbuser.getId()).add("unitId", dbunit.getId()));
             dao.insert("sys_user_role", Chain.make("userId", dbuser.getId()).add("roleId", dbrole.getId()));
-            //执行自定义SQL插入
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m0.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m1.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m2.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m21.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m22.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m23.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m3.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m31.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m32.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m33.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m4.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m41.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m42.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m43.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m44.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m45.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m5.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m51.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m52.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m53.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m6.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m61.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m62.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m63.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m7.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values('" + dbrole.getId() + "','" + m71.getId() + "')"));
-            //另外一种写法(安全)
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`roleId`, `menuId`) values(@a,@b)").setParam("a", dbrole.getId()).setParam("b", m8.getId()));
+            //执行自定义SQL,系统模块菜单关联到角色
+            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0001%'").setParam("roleId",dbrole.getId()));
             //执行微信菜单SQL脚本
             FileSqlManager fm = new FileSqlManager("db/init_menu_weixin.sql");
             List<Sql> sqlList = fm.createCombo(fm.keys());
-            Sql[] sqls=sqlList.toArray(new Sql[sqlList.size()]);
-            for(Sql sql:sqls){
-                dao.execute(sql.setParam("roleId",dbrole.getId()));
-            }
+            dao.execute(sqlList.toArray(new Sql[sqlList.size()]));
+//            Sql[] sqls=sqlList.toArray(new Sql[sqlList.size()]);
+//            for(Sql sql:sqls){
+//                dao.execute(sql.setParam("roleId",dbrole.getId()));
+//            }
+            //执行CMS菜单SQL脚本
+            FileSqlManager fm_cms = new FileSqlManager("db/init_menu_cms.sql");
+            List<Sql> sqlList_cms = fm_cms.createCombo(fm_cms.keys());
+            dao.execute(sqlList_cms.toArray(new Sql[sqlList_cms.size()]));
+            //微信模块菜单关联到角色
+            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0002%'").setParam("roleId",dbrole.getId()));
+            //CMS模块菜单关联到角色
+            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0003%'").setParam("roleId",dbrole.getId()));
         }
     }
 
