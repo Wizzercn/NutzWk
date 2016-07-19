@@ -1,4 +1,4 @@
-package cn.wizzer.modules.back.sys.models;
+package cn.wizzer.modules.back.cms.models;
 
 import cn.wizzer.common.base.Model;
 import org.nutz.dao.entity.annotation.*;
@@ -7,11 +7,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by wizzer on 2016/6/21.
+ * Created by Wizzer on 2016/7/18.
  */
-@Table("sys_menu")
-@TableIndexes({@Index(name = "INDEX_SYS_MENU_PATH", fields = {"path"}, unique = true), @Index(name = "INDEX_SYS_MENU_PREM", fields = {"permission"}, unique = true)})
-public class Sys_menu extends Model implements Serializable {
+@Table("cms_channel")
+public class Cms_channel extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Name
@@ -19,6 +18,11 @@ public class Sys_menu extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Prev(els = {@EL("uuid()")})
     private String id;
+
+    @Column
+    @Comment("预留商城ID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String shopid;
 
     @Column
     @Comment("父级ID")
@@ -31,34 +35,24 @@ public class Sys_menu extends Model implements Serializable {
     private String path;
 
     @Column
-    @Comment("菜单名称")
+    @Comment("栏目名称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String name;
 
     @Column
-    @Comment("菜单别名")
-    @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String aliasName;
-
-    @Column
-    @Comment("资源类型")
-    @ColDefine(type = ColType.VARCHAR, width = 10)
+    @Comment("栏目类型")
+    @ColDefine(type = ColType.VARCHAR, width = 20)
     private String type;
 
     @Column
-    @Comment("菜单链接")
+    @Comment("链接地址")
     @ColDefine(type = ColType.VARCHAR, width = 255)
-    private String href;
+    private String url;
 
     @Column
     @Comment("打开方式")
-    @ColDefine(type = ColType.VARCHAR, width = 50)
+    @ColDefine(type = ColType.VARCHAR, width = 20)
     private String target;
-
-    @Column
-    @Comment("菜单图标")
-    @ColDefine(type = ColType.VARCHAR, width = 50)
-    private String icon;
 
     @Column
     @Comment("是否显示")
@@ -71,25 +65,16 @@ public class Sys_menu extends Model implements Serializable {
     private boolean disabled;
 
     @Column
-    @Comment("权限标识")
-    @ColDefine(type = ColType.VARCHAR, width = 255)
-    private String permission;
-
-    @Column
-    @Comment("菜单介绍")
-    @ColDefine(type = ColType.VARCHAR, width = 255)
-    private String note;
-
-    @Column
     @Comment("排序字段")
-    @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM sys_menu"))
+    @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM cms_channel"))
     private Integer location;
 
     @Column
     @Comment("有子节点")
     private boolean hasChildren;
 
-    private List<Sys_menu> buttons;
+    @ManyMany(from = "channelId", relation = "cms_channel_article", target = Cms_article.class, to = "articleId")
+    private List<Cms_article> articles;
 
     public String getId() {
         return id;
@@ -97,6 +82,14 @@ public class Sys_menu extends Model implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getShopid() {
+        return shopid;
+    }
+
+    public void setShopid(String shopid) {
+        this.shopid = shopid;
     }
 
     public String getParentId() {
@@ -123,14 +116,6 @@ public class Sys_menu extends Model implements Serializable {
         this.name = name;
     }
 
-    public String getAliasName() {
-        return aliasName;
-    }
-
-    public void setAliasName(String aliasName) {
-        this.aliasName = aliasName;
-    }
-
     public String getType() {
         return type;
     }
@@ -139,12 +124,12 @@ public class Sys_menu extends Model implements Serializable {
         this.type = type;
     }
 
-    public String getHref() {
-        return href;
+    public String getUrl() {
+        return url;
     }
 
-    public void setHref(String href) {
-        this.href = href;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getTarget() {
@@ -155,20 +140,12 @@ public class Sys_menu extends Model implements Serializable {
         this.target = target;
     }
 
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
     public boolean isShow() {
         return isShow;
     }
 
-    public void setIsShow(boolean isShow) {
-        this.isShow = isShow;
+    public void setShow(boolean show) {
+        isShow = show;
     }
 
     public boolean isDisabled() {
@@ -177,22 +154,6 @@ public class Sys_menu extends Model implements Serializable {
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
-    }
-
-    public String getPermission() {
-        return permission;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
     }
 
     public Integer getLocation() {
@@ -211,11 +172,11 @@ public class Sys_menu extends Model implements Serializable {
         this.hasChildren = hasChildren;
     }
 
-    public List<Sys_menu> getButtons() {
-        return buttons;
+    public List<Cms_article> getArticles() {
+        return articles;
     }
 
-    public void setButtons(List<Sys_menu> buttons) {
-        this.buttons = buttons;
+    public void setArticles(List<Cms_article> articles) {
+        this.articles = articles;
     }
 }

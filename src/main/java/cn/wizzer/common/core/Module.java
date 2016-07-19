@@ -1,9 +1,12 @@
 package cn.wizzer.common.core;
 
+
 import org.beetl.ext.nutz.BeetlViewMaker;
+
 import org.nutz.integration.shiro.ShiroSessionProvider;
 import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.ioc.provider.ComboIocProvider;
+
 
 /**
  * Created by wizzer on 2016/6/21.

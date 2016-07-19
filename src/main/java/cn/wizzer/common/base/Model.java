@@ -25,12 +25,13 @@ public abstract class Model implements Serializable {
     @Comment("操作时间")
     @Prev(els = @EL("$me.now()"))
     @ColDefine(type = ColType.INT, width = 11)
-    protected Integer opAt;
+    private Integer opAt;
 
     @Column
     @Comment("删除标记")
     @Prev(els = @EL("$me.flag()"))
-    protected Boolean delFlag;
+    @ColDefine(type = ColType.BOOLEAN)
+    private Boolean delFlag;
 
     public String toString() {
         return String.format("/*%s*/%s", super.toString(), Json.toJson(this, JsonFormat.compact()));

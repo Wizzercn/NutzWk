@@ -20,15 +20,19 @@ public class Sys_role extends Model implements Serializable {
     private String id;
 
     @Column
+    @ColDefine(type = ColType.VARCHAR, width = 50)
     private String name;
 
     @Column
+    @ColDefine(type = ColType.VARCHAR, width = 255)
     private String code;
 
     @Column
-    protected String aliasName;
+    @ColDefine(type = ColType.VARCHAR, width = 50)
+    private String aliasName;
 
     @Column
+    @ColDefine(type = ColType.BOOLEAN)
     private boolean disabled;
 
     @Column
@@ -46,7 +50,7 @@ public class Sys_role extends Model implements Serializable {
     protected List<Sys_menu> menus;
 
     @ManyMany(from = "roleId", relation = "sys_user_role", target = Sys_menu.class, to = "userId")
-    protected List<Sys_user> users;
+    private List<Sys_user> users;
 
     public String getId() {
         return id;

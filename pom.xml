@@ -9,6 +9,7 @@
     <url>http://www.wizzer.cn</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jetty-version>9.2.17.v20160517</jetty-version>
     </properties>
 
     <developers>
@@ -32,20 +33,46 @@
         </developer>
     </developers>
     <repositories>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
     </repositories>
     <dependencies>
+        <!-- jetty web server -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>${jetty-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <version>${jetty-version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.glassfish.web</groupId>
+            		<artifactId>javax.servlet.jsp</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -55,7 +82,7 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-daocache</artifactId>
-            <version>1.r.56</version>
+            <version>1.r.57-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -303,6 +330,22 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+    		<groupId>org.glassfish</groupId>
+    		<artifactId>javax.el</artifactId>
+    		<version>3.0.1-b08</version>
+		</dependency>
+    	<dependency>
+      		<groupId>org.glassfish.web</groupId>
+      		<artifactId>javax.servlet.jsp</artifactId>
+      		<version>2.3.2</version>
+      		<exclusions>
+      			<exclusion>
+      				<groupId>org.glassfish</groupId>
+      				<artifactId>javax.el</artifactId>
+      			</exclusion>
+      		</exclusions>
+    	</dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>

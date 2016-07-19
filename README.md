@@ -1,20 +1,22 @@
-NutzWk 3.1 微信+
+NutzWk 基于Nutz的开源企业级开发框架 
 ======
+(当前版本 3.1 微信+)
+
+[![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
+[![GitHub release](https://img.shields.io/github/release/Wizzercn/NutzWk.svg)](https://github.com/Wizzercn/NutzWk/releases)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-NutzWk 3.2.x   CMS+ (beetl / beetl+velocity)
+开发计划:
 
-NutzWk 3.1.x   微信+ (beetl / beetl+velocity)  
-
-NutzWk 3.0.x   纯净版(beetl / beetl+velocity)
-
-NutzWk 2.0.x   试验版(velocity)
-
-NutzWk 1.0.x   传统版(velocity 支持IE6)
+* NutzWk 3.2.x   CMS+ (beetl / beetl+velocity) **未完成**
+* NutzWk 3.1.x   微信+ (beetl / beetl+velocity)   **当前进度**
+* NutzWk 3.0.x   纯净版(beetl / beetl+velocity)
+* NutzWk 2.0.x   试验版(velocity)
+* NutzWk 1.0.x   传统版(velocity 支持IE6)
 
 注:_velocity后缀为同时支持beetl和velocity两种模板引擎版本  
 
-交流群:68428921
+交流群: 68428921
 
 在线演示地址
 ======
@@ -27,7 +29,7 @@ https://github.com/Wizzercn/NodeWk       Node.js版源码
 
 NutzWk 3.x 运行环境：
 *   JDK 8
-*   Maven 3.3.39
+*   Maven 3.3.3
 *   Nutz v1.r.57
 
 NutzWk 3.x 新特性：
@@ -42,7 +44,7 @@ NutzWk 3.x 新特性：
 *   集成Email服务
 *   集成Quartz定时任务
 *   集成Lucene搜索引擎
-*   集成Beetl模板引擎
+*   集成Beetl/Velocity模板引擎
 *   后台管理界面采用Pjax+Bootstrap
 *   自定义路由
 
@@ -93,3 +95,6 @@ NutzWk 1.0 源码是这个链接： https://github.com/Wizzercn/NutzWk/tree/1.0
 
 NutzWk 1.0 含Activiti工作流的源码在这里： https://github.com/wendal/wzflow
 
+NutzWk v3.x 运行截图
+======
+![主界面截图](nutzwk_home.png)
