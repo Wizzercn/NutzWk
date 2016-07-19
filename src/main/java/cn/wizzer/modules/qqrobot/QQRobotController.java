@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -50,7 +49,6 @@ public class QQRobotController  {
        
     }
 
-    // TODO 加上KEY认证
     @At("/msg")
     @Ok("raw")
     @Fail("void")
@@ -85,7 +83,6 @@ public class QQRobotController  {
     			 }
     		 }
     	  }
-         
           return "";
     }
  
