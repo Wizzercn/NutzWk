@@ -68,7 +68,7 @@ public class QQRobotController  {
     	    		                  blackUser.setContact(qqInfo[0]);
     	    		                  blackUser.setContact(qqInfo[1]);
     	    		                  qunService.save(blackUser);
-    	    		            return "已经成功添加【"+qqInfo[0]+"】到狼友圈黑名单，告诉兄弟姐妹们，遇到这个渣渣绕道走，黑名单查看方式回复：#"+qqInfo[0]+"";
+    	    		            return "已经成功添加【"+qqInfo[0]+"】到圈子黑名单，告诉兄弟姐妹们，遇到这个渣渣绕道走，黑名单查看方式回复：#"+qqInfo[0]+"";
     		            }
     		            return "黑名单提交的格式不正确，正确格式为：1234567###这后面是举报的原因";
     		                  
@@ -78,7 +78,7 @@ public class QQRobotController  {
     				 if(blackList!=null && blackList.size()>0){
     					 return "【"+message.substring(1)+"】被举报【"+blackList.size()+"】次\r\n最后一次举报的时间为："+DateUtil.getDate(blackList.get(0).getCreatedAt())+"\r\n举报原因："+blackList.get(0).getText();
     				 }else{
-    					 return "【"+message.substring(1)+"】是个好人，截止"+DateUtil.getDate()+"还未收到任何狼友和妹子的举报。举报格式：1234567###这后面是举报的原因";
+    					 return "【"+message.substring(1)+"】是个好人，截止"+DateUtil.getDate()+"还未收到圈内大拿举报。举报格式：1234567###这后面是举报的原因";
     				 }
     			 }
     		 }
