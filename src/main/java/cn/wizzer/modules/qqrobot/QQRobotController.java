@@ -1,6 +1,9 @@
 package cn.wizzer.modules.qqrobot;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +25,7 @@ import org.nutz.mvc.annotation.Param;
  */
 @IocBean
 @At("/qqrobot")
-public class QQRobotController {
+public class QQRobotController  {
     private static final Log log = Logs.get();
     @Inject
     protected PropertiesProxy conf;
@@ -47,6 +50,21 @@ public class QQRobotController {
     public String msg(@Param("..") NutMap data, HttpServletRequest req)
             throws IOException {
          //String groupId = data.getString("GroupId");
+    	try {
+			StringBuffer sb = new StringBuffer();
+			InputStream is = req.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+			String s = "";
+			while ((s = br.readLine()) != null) {
+				sb.append(s);
+			}
+			log.info("=================sb========="+Json.toJson(sb));
+			log.info("=========req======"+Json.toJson(req));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         log.info("消息信息："+Json.toJson(data));
         return "";
     }
