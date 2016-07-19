@@ -68,6 +68,7 @@ public class QQRobotController  {
     		            if(qqInfo==null || qqInfo.length<2){
     		            	return "黑名单提交的格式不正确，正确格式为：###QQ或者微信或者电话号码###这后面是原因";
     		            }
+    		            log.info(Json.toJson(qqInfo));
     		            Sys_qun_black_user  blackUser= new Sys_qun_black_user();
     		                  blackUser.setContact(qqInfo[0]);
     		                  blackUser.setContact(qqInfo[1]);
