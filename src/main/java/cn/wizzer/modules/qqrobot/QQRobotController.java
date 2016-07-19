@@ -63,7 +63,7 @@ public class QQRobotController  {
     		  String groupId = data.getString("GroupId");
     		  String message = data.getString("Message");
     		 if("469615022".equals(groupId) && StringUtils.isNotBlank(message)){
-    			
+    			 log.info("消息信息："+Json.toJson(data));
     			 if (StringUtils.startsWith(message,bcmd)) {
     		            String[] qqInfo = message.split(bcmd);
     		            if(qqInfo==null || qqInfo.length<2){
@@ -84,7 +84,7 @@ public class QQRobotController  {
     			 }
     		 }
     	  }
-          log.info("消息信息："+Json.toJson(data));
+         
           return "";
     }
  
