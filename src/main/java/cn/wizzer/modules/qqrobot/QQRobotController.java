@@ -31,10 +31,8 @@ public class QQRobotController  {
     private static final Log log = Logs.get();
     @Inject
     protected PropertiesProxy conf;
-	
 	@Inject
     QunService qunService;
-    
     /**
      * 命令开始符号
      */
@@ -60,7 +58,6 @@ public class QQRobotController  {
     		  String groupId = data.getString("GroupId");
     		  String message = data.getString("Message");
     		 if("469615022".equals(groupId) && StringUtils.isNotBlank(message)){
-    			 
     			 if (StringUtils.contains(message, bcmd)) {
     		            String[] qqInfo = message.split(bcmd);
     		            if(qqInfo!=null && qqInfo.length==2 && qqInfo[0].length()<=11 ){
@@ -71,7 +68,6 @@ public class QQRobotController  {
     	    		            return "已经成功添加【"+qqInfo[0]+"】到圈子黑名单，告诉兄弟姐妹们，遇到这个渣渣绕道走，黑名单查看方式回复：#"+qqInfo[0]+"";
     		            }
     		            return "黑名单提交的格式不正确，正确格式为：1234567###这后面是举报的原因";
-    		                  
     		     }
     			 if(Strings.startsWithChar(message, cmd)){
     				 List<Sys_qun_black_user> blackList =  qunService.getDatas(message.substring(1));
