@@ -57,8 +57,7 @@ public class QQRobotController  {
     @Filters
     public synchronized String msg(@Param("..") NutMap data)
             throws IOException {
-    	//
-          //String groupId = data.getString("GroupId");
+     
     	  if(data!=null && "BJ2016888".equals(data.getString("key"))){
     		  String groupId = data.getString("GroupId");
     		  String message = data.getString("Message");
