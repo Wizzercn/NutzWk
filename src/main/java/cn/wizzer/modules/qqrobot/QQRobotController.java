@@ -62,8 +62,8 @@ public class QQRobotController  {
 				sb.append(s);
 			}
 		    
-			log.info("=================sb========="+Json.toJson(sb));
-			log.info("=========req======"+Json.toJson(req));
+			log.info("=================sb========="+sb.toString());
+			 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
