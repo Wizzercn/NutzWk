@@ -81,5 +81,8 @@ public class QQRobotController  {
     	  }
           return "";
     }
+    public void test(){
+    	
+    }
  
 }
