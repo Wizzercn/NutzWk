@@ -80,6 +80,9 @@ public class QQRobotController  {
     				 List<Sys_qun_black_user> blackList =  qunService.getDatas(message.substring(1));
     				 if(blackList!=null && blackList.size()>0){
     					 return "【"+message.substring(1)+"】被举报【"+blackList.size()+"】次\r\n最后一次举报的时间为："+DateUtil.getDate(blackList.get(0).getCreatedAt())+"\r\n举报原因："+blackList.get(0).getText();
+    				 }else{
+    					 
+    					 return "【"+message.substring(1)+"】是个好人。。。截止日期："+DateUtil.getDate();
     				 }
     			 }
     		 }
