@@ -47,23 +47,34 @@ public class QQRobotController  {
     @Ok("raw")
     @Fail("void")
     @Filters
-    public String msg(@Param("..") NutMap data, HttpServletRequest req)
+    public synchronized String msg(@Param("..") NutMap data, HttpServletRequest req)
             throws IOException {
          //String groupId = data.getString("GroupId");
+    	InputStream is  = null;
+    	BufferedReader br = null;
     	try {
 			StringBuffer sb = new StringBuffer();
-			InputStream is = req.getInputStream();
+			 is = req.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
+			 br = new BufferedReader(isr);
 			String s = "";
 			while ((s = br.readLine()) != null) {
 				sb.append(s);
 			}
+		    
 			log.info("=================sb========="+Json.toJson(sb));
 			log.info("=========req======"+Json.toJson(req));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			if(is!=null){
+				is.close();
+			}
+			if(br!=null){
+				br.close();
+			}
+			
 		}
         log.info("消息信息："+Json.toJson(data));
         return "";
