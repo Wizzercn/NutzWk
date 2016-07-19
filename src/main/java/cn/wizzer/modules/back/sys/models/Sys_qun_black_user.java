@@ -14,7 +14,6 @@ import org.nutz.dao.entity.annotation.Table;
 import org.nutz.dao.entity.annotation.TableIndexes;
 
 import cn.wizzer.common.base.Model;
-
 /**
  * qq群用户提交的黑名单
  */
