@@ -77,6 +77,7 @@ public class QQRobotController  {
     	    		                  blackUser.setContact(qqInfo[0]);
     	    		                  blackUser.setText(qqInfo[1]);
     	    		                  blackUser.setCreatedAt(sendTime);
+    	    		                  blackUser.setSender(sender);
     	    		                  qunService.save(blackUser);
     	    		            return "已经成功添加【"+qqInfo[0]+"】到圈子黑名单，告诉兄弟姐妹们，遇到这个渣渣绕道走，黑名单查看方式回复：#"+qqInfo[0]+"";
     		            }
