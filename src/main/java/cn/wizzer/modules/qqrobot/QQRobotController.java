@@ -60,24 +60,28 @@ public class QQRobotController  {
     		  Sys_chat_log  chatlog = new Sys_chat_log();
     		  String groupId = data.getString("GroupId");
     		  String message = data.getString("Message");
+    		  String sender = data.getString("Sender");
     		  Integer sendTime = Integer.valueOf(data.getString("SendTime"));
     		         chatlog.setGroupId(groupId);
     		         chatlog.setGroupName(data.getString("GroupId"));
     		         chatlog.setMessage(message);
-    		         chatlog.setSender(data.getString("Sender"));
+    		         chatlog.setSender(sender);
     		         chatlog.setSenderName(data.getString("SenderName"));
     		         chatlog.setCreatedAt(sendTime);
     		         qunService.saveChatLog(chatlog);
     		 if(StringUtils.isNotBlank(message)){
     			 if (StringUtils.contains(message, bcmd)) {
     		            String[] qqInfo = message.split(bcmd);
-    		            if(qqInfo!=null && qqInfo.length==2 && qqInfo[0].length()<=11 ){
+    		            if(qqInfo!=null && qqInfo.length==2 && qqInfo[0].length()<=11 && !qqInfo[0].equals(sender)){
     	    		           Sys_qun_black_user  blackUser= new Sys_qun_black_user();
     	    		                  blackUser.setContact(qqInfo[0]);
     	    		                  blackUser.setText(qqInfo[1]);
     	    		                  blackUser.setCreatedAt(sendTime);
     	    		                  qunService.save(blackUser);
     	    		            return "已经成功添加【"+qqInfo[0]+"】到圈子黑名单，告诉兄弟姐妹们，遇到这个渣渣绕道走，黑名单查看方式回复：#"+qqInfo[0]+"";
+    		            }
+    		            if(qqInfo[0].equals(sender)){
+    		            	    return "自己举报自己，你是开玩笑的吧，正确格式为：别人的QQ微信电话###这后面是举报的原因";
     		            }
     		            return "黑名单提交的格式不正确，正确格式为：1234567###这后面是举报的原因";
     		     }
