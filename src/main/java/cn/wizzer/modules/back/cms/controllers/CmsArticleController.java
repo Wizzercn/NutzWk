@@ -171,12 +171,11 @@ public class CmsArticleController {
     @Ok("json")
     @RequiresPermissions("cms.content.article.delete")
     @SLog(tag = "删除文章", msg = "ID:${args[2].getAttribute('id')}")
-    public Object delete(String oneId, @Param("ids") String ids, HttpServletRequest req) {
+    public Object delete(String oneId, @Param("ids") String[] ids, HttpServletRequest req) {
         try {
-            if (ids != null) {
-                String[] str = StringUtils.split(ids, ",");
-                cmsArticleService.delete(str);
-                req.setAttribute("id", ids);
+            if (ids != null && ids.length > 0) {
+                cmsArticleService.delete(ids);
+                req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
             } else {
                 cmsArticleService.delete(oneId);
                 req.setAttribute("id", oneId);
