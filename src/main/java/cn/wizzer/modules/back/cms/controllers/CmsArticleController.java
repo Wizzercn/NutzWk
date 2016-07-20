@@ -20,6 +20,7 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.adaptor.WhaleAdaptor;
 import org.nutz.mvc.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,5 +80,13 @@ public class CmsArticleController {
             cnd.and("title", "like", "%" + title + "%");
         }
         return cmsArticleService.data(length, start, draw, order, columns, cnd, null);
+    }
+
+    @At
+    @Ok("beetl:/private/cms/article/add.html")
+    @RequiresAuthentication
+    public void add(@Param("channelId") String channelId,HttpServletRequest req){
+        req.setAttribute("channel",channelId!=null&&!"0".equals(channelId)?cmsChannelService.fetch(channelId):null);
+        req.setAttribute("nickname",channelId!=null&&!"0".equals(channelId)?cmsChannelService.fetch(channelId):null);
     }
 }
