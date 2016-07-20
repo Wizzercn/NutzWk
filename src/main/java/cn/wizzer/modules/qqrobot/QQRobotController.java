@@ -84,7 +84,7 @@ public class QQRobotController  {
     			 if(Strings.startsWithChar(message, cmd)){
     				 List<Sys_qun_black_user> blackList =  qunService.getDatas(message.substring(1));
     				 if(blackList!=null && blackList.size()>0){
-    					 return "【"+message.substring(1)+"】共被举报【"+blackList.size()+"】次,最近一次举报原因："+blackList.get(0).getText();
+    					 return "【"+message.substring(1)+"】共被举报"+blackList.size()+"次,最近一次举报原因："+blackList.get(0).getText();
     				 }else{
     					 return "【"+message.substring(1)+"】是个好人,......,截止"+DateUtil.getDate()+"还未收到圈内大拿举报。举报格式：1234567###这后面是举报的原因";
     				 }
