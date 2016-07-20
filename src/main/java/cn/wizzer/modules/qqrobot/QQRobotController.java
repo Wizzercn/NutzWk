@@ -101,7 +101,7 @@ public class QQRobotController  {
     		 }
     	  }
     	  //群消息end  
-    	  if(data!=null&& "469615022".equals(data.getString("GroupId")) && "BJ2016888".equals(data.getString("Key")) && "ClusterMemberJoin".equals(data.getString("Event"))){
+    	  if(data!=null&& "BJ2016888".equals(data.getString("Key")) && "ClusterMemberJoin".equals(data.getString("Event"))){
     		  String sender = data.getString("Sender");
     		  String operator = data.getString("Operator");
     		  List<Sys_qun_black_user> joinQun =  qunService.getDatas(sender);  
