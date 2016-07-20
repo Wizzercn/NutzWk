@@ -21,10 +21,7 @@ import org.nutz.mvc.annotation.Param;
 import cn.wizzer.common.util.DateUtil;
 import cn.wizzer.modules.back.sys.models.Sys_qun_black_user;
 import cn.wizzer.modules.back.sys.services.QunService;
-
-/**
- * Created by wizzer on 2016/7/3.
- */
+ 
 @IocBean
 @At("/qqrobot")
 public class QQRobotController  {
@@ -63,7 +60,7 @@ public class QQRobotController  {
     		            if(qqInfo!=null && qqInfo.length==2 && qqInfo[0].length()<=11 ){
     	    		           Sys_qun_black_user  blackUser= new Sys_qun_black_user();
     	    		                  blackUser.setContact(qqInfo[0]);
-    	    		                  blackUser.setContact(qqInfo[1]);
+    	    		                  blackUser.setContact(qqInfo[1]);	
     	    		                  qunService.save(blackUser);
     	    		            return "已经成功添加【"+qqInfo[0]+"】到圈子黑名单，告诉兄弟姐妹们，遇到这个渣渣绕道走，黑名单查看方式回复：#"+qqInfo[0]+"";
     		            }
