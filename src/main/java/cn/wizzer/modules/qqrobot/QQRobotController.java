@@ -53,9 +53,7 @@ public class QQRobotController  {
     public synchronized String msg(@Param("..") NutMap data)
             throws IOException {
     	  log.info("消息信息："+Json.toJson(data));
-    	  //Json.to
-    	  
-    	  
+    	  //群消息start
     	  if(data!=null && "BJ2016888".equals(data.getString("Key")) && "ClusterIM".equals(data.getString("Event"))){
     		  Sys_chat_log  chatlog = new Sys_chat_log();
     		  String groupId = data.getString("GroupId");
@@ -69,12 +67,17 @@ public class QQRobotController  {
     		         chatlog.setSenderName(data.getString("SenderName"));
     		         chatlog.setCreatedAt(sendTime);
     		         qunService.saveChatLog(chatlog);
+    		 //验证用户是否是黑名单，如果是黑名单提示：
+    		 List<Sys_qun_black_user> sendSelf =  qunService.getDatas(sender);    
+    		 if(sendSelf!=null && sendSelf.size()>0){
+    			 return "群主，群成员["+sender+"]已经被圈内人士举报了["+sendSelf.size()+"]次,最近一次举报的原因是:"+sendSelf.get(0).getText()+",如有误报请联系小助手删除提示，谢谢！";
+    		 }
     		 if(StringUtils.isNotBlank(message)){
     			 if (StringUtils.contains(message, bcmd)) {
     		            String[] qqInfo = message.split(bcmd);
     		            if(qqInfo!=null && qqInfo.length==2 && qqInfo[0].length()<=11 && !qqInfo[0].equals(sender)){
     	    		           Sys_qun_black_user  blackUser= new Sys_qun_black_user();
-    	    		                  blackUser.setContact(qqInfo[0]);
+    	    		                  blackUser.setContact(qqInfo[0].trim());
     	    		                  blackUser.setText(qqInfo[1]);
     	    		                  blackUser.setCreatedAt(sendTime);
     	    		                  blackUser.setSender(sender);
@@ -94,7 +97,19 @@ public class QQRobotController  {
     					 return "【"+message.substring(1)+"】是个好人,......,截止"+DateUtil.getDate()+"还未收到圈内大拿举报。举报格式：1234567###这后面是举报的原因";
     				 }
     			 }
+    			 
     		 }
+    	  }
+    	  //群消息end  
+    	  if(data!=null&& "469615022".equals(data.getString("GroupId")) && "BJ2016888".equals(data.getString("Key")) && "ClusterMemberJoin".equals(data.getString("Event"))){
+    		  String sender = data.getString("Sender");
+    		  String operator = data.getString("Operator");
+    		  List<Sys_qun_black_user> joinQun =  qunService.getDatas(sender);  
+    		  if(joinQun!=null && joinQun.size()>0){
+     			 return "@"+operator+"群主，群成员["+sender+"]已经被圈内人士举报了["+joinQun.size()+"]次,最近一次举报的原因是:"+joinQun.get(0).getText()+",如有误报请联系小助手删除提示，谢谢！";
+     		  }else{
+     			 return "@"+sender+",欢迎["+data.getString("SenderName")+"],加入本群，进群看公告，服从管理员管理，谢谢合作，如遇坏人请提交到坏人信息到本群，同时只要有小助手的群，在被举报加群或者发言时，都会警示群友。小助手提供的功能，1，提交黑名单(格式：qq或者微信或者电话###说明为嘛是个坏人,注意QQ或者微信或者电话只能一个，如果有多个联系方式，请提交多次),2,黑名单查询(格式:#qq或者微信或者电话),3,黑名单QQ进群，发言危险提示危险提示。4，如需此功能邀请小助手入群即可";
+     		  }
     	  }
           return "";
     }
