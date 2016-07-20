@@ -48,7 +48,7 @@ layout("/layouts/private.html"){
 
                                 <div class="col-sm-8">
                                     <input type="text" id="author" class="form-control" name="author"
-                                           value="<%=user.nickname||''%>" placeholder="作者">
+                                           value="${nickname!}" placeholder="作者">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -62,11 +62,11 @@ layout("/layouts/private.html"){
                                 <label for="publishAt" class="col-sm-2 control-label">发布时间</label>
 
                                 <div class="col-sm-8 input-group date form_datetime " style="padding-left: 16px;padding-right: 16px;" data-date="1979-09-16T05:25:07Z" data-date-format="dd MM yyyy - HH:ii p" data-link-field="publishAt">
-                                    <input type="text" size="16" readonly class="form-control" value="<%=moment().format('YYYY-MM-DD HH:mm:ss')%>" data-parsley-required="true">
+                                    <input type="text" size="16" readonly class="form-control" value="${@date.getDateTime()}" data-parsley-required="true">
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                                 </div>
-                                <input type="hidden" id="publishAt" name="publishAt" value="<%=moment().format('YYYY-MM-DD HH:mm:ss')%>" />
+                                <input type="hidden" id="publishAt" name="publishAt" value="${@date.getDateTime()}" />
                             </div>
                             <div class="form-group">
                                 <label for="publish" class="col-sm-2 control-label">是否发布</label>
@@ -81,12 +81,8 @@ layout("/layouts/private.html"){
 
                                 <div class="col-sm-8">
                                     <div id="queue"></div>
-                                    <div class="input-group">
+                                    <div>
                                         <input id="file_upload" name="file_upload" type="file" multiple="false">
-                  <span class="input-group-btn">
-                  <button class="btn btn-color current-time" type="button"
-                          onclick="$('#file_upload').uploadifive('upload')">上传<i class="ti-upload ml5"></i></button>
-                  </span>
                                     </div>
                                     <div id="img" style="padding: 5px;">
                                     </div>
@@ -94,34 +90,10 @@ layout("/layouts/private.html"){
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="seo_title" class="col-sm-2 control-label">网页标题</label>
+                                <label for="content" class="col-sm-2 control-label">文章内容</label>
 
                                 <div class="col-sm-8">
                                     <textarea id="content" name="content" style="width:100%;height:200px;"></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="seo_title" class="col-sm-2 control-label">网页标题</label>
-
-                                <div class="col-sm-8">
-                                    <input type="text" id="seo_title" class="form-control" name="seo_title"
-                                           placeholder="title"  value="">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="seo_keywords" class="col-sm-2 control-label">网页关键词</label>
-
-                                <div class="col-sm-8">
-                                    <input type="text" id="seo_keywords" class="form-control" name="seo_keywords"
-                                           placeholder="keywords"  value="">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="seo_description" class="col-sm-2 control-label">网页描述</label>
-
-                                <div class="col-sm-8">
-                                    <input type="text" id="seo_description" class="form-control" name="seo_description"
-                                           placeholder="description"  value="">
                                 </div>
                             </div>
                         </div>
@@ -149,6 +121,8 @@ layout("/layouts/private.html"){
         </div>
     </div>
 </div>
+<script src="${base!}/assets/plugins/ueditor/ueditor.config.js"></script>
+<script src="${base!}/assets/plugins/ueditor/ueditor.all.min.js"></script>
 <script language="JavaScript">
     function clearFile() {
         $("#img").html("");
@@ -195,7 +169,7 @@ layout("/layouts/private.html"){
         var ue = new baidu.editor.ui.Editor();
         ue.render('content');
         $('#file_upload').uploadifive({
-            'auto': false,
+            'auto': true,
             'multi': false,
             'width': '100%',
             'height': '35',
@@ -210,8 +184,8 @@ layout("/layouts/private.html"){
                 data = JSON.parse(data);
                 if (data.code == 0) {
                     Toast.success(data.msg);
-                    $("#img").html("<img src='" + data.path + "' style='width:150px;height:95px;'>");
-                    $("#picurl").val(data.path);
+                    $("#img").html("<img src='" + data.data + "' style='width:150px;height:95px;'>");
+                    $("#picurl").val(data.data);
                 } else {
                     clearFile();
                     Toast.error(data.msg);

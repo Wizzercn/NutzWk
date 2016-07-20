@@ -9,8 +9,11 @@ import cn.wizzer.modules.back.cms.models.Cms_channel;
 import cn.wizzer.modules.back.cms.models.Cms_site;
 import cn.wizzer.modules.back.cms.services.CmsArticleService;
 import cn.wizzer.modules.back.cms.services.CmsChannelService;
+import cn.wizzer.modules.back.sys.models.Sys_user;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -87,6 +90,8 @@ public class CmsArticleController {
     @RequiresAuthentication
     public void add(@Param("channelId") String channelId,HttpServletRequest req){
         req.setAttribute("channel",channelId!=null&&!"0".equals(channelId)?cmsChannelService.fetch(channelId):null);
-        req.setAttribute("nickname",channelId!=null&&!"0".equals(channelId)?cmsChannelService.fetch(channelId):null);
+        Subject subject = SecurityUtils.getSubject();
+        Sys_user user = (Sys_user) subject.getPrincipal();
+        req.setAttribute("nickname",user==null?"":user.getNickname());
     }
 }
