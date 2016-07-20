@@ -1,6 +1,8 @@
 <%
 layout("/layouts/private.html"){
 %>
+<script src="${base!}/assets/plugins/ueditor/ueditor.config.js"></script>
+<script src="${base!}/assets/plugins/ueditor/ueditor.all.min.js"></script>
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
         <a class="btn btn-primary navbar-btn" href="${base}/private/cms/article" data-pjax><i class="ti-angle-left"></i> 返回</a>
@@ -55,24 +57,24 @@ layout("/layouts/private.html"){
                                 <label for="info" class="col-sm-2 control-label">文章简介</label>
 
                                 <div class="col-sm-8">
-                                    <textarea id="info" name="info" data-parsley-required="true" class="form-control" style="width:100%;height:150px;"></textarea>
+                                    <textarea id="info" name="info" data-parsley-required="true" class="form-control" style="width:100%;height:80px;"></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="publishAt" class="col-sm-2 control-label">发布时间</label>
+                                <label for="at" class="col-sm-2 control-label">发布时间</label>
 
-                                <div class="col-sm-8 input-group date form_datetime " style="padding-left: 16px;padding-right: 16px;" data-date="1979-09-16T05:25:07Z" data-date-format="dd MM yyyy - HH:ii p" data-link-field="publishAt">
+                                <div class="col-sm-8 input-group date form_datetime " style="padding-left: 16px;padding-right: 16px;" data-date="1979-09-16T05:25:07Z" data-date-format="dd MM yyyy - HH:ii p" data-link-field="at">
                                     <input type="text" size="16" readonly class="form-control" value="${@date.getDateTime()}" data-parsley-required="true">
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
                                 </div>
-                                <input type="hidden" id="publishAt" name="publishAt" value="${@date.getDateTime()}" />
+                                <input type="hidden" id="at" name="at" value="${@date.getDateTime()}" />
                             </div>
                             <div class="form-group">
-                                <label for="publish" class="col-sm-2 control-label">是否发布</label>
+                                <label for="disabled" class="col-sm-2 control-label">取消发布</label>
                                 <div class="col-sm-8 switcha">
                                     <div class="mr15">
-                                        <input type="checkbox" id="publish" name="publish" class="js-switch-blue" value="true" checked>
+                                        <input type="checkbox" id="disabled" name="disabled" class="js-switch-blue" value="true" >
                                     </div>
                                 </div>
                             </div>
@@ -121,8 +123,6 @@ layout("/layouts/private.html"){
         </div>
     </div>
 </div>
-<script src="${base!}/assets/plugins/ueditor/ueditor.config.js"></script>
-<script src="${base!}/assets/plugins/ueditor/ueditor.all.min.js"></script>
 <script language="JavaScript">
     function clearFile() {
         $("#img").html("");
@@ -153,7 +153,13 @@ layout("/layouts/private.html"){
         $("#addForm input[name='channelId']").val(node[0].id);
         $("#dialogSelect").modal("hide");
     }
+    var ue;
     $(document).ready(function () {
+        setTimeout(function () {
+            ue= new baidu.editor.ui.Editor();
+            ue.render('content');
+        },500);
+        myForm.init();
         $('.form_datetime').datetimepicker({
             language:  'zh-CN',
             format:'yyyy-mm-dd hh:ii:ss',
@@ -166,8 +172,6 @@ layout("/layouts/private.html"){
             showMeridian: 1
         });
         initTreeView();
-        var ue = new baidu.editor.ui.Editor();
-        ue.render('content');
         $('#file_upload').uploadifive({
             'auto': true,
             'multi': false,
@@ -219,6 +223,7 @@ layout("/layouts/private.html"){
                 sublime.closeLoadingbar($(".main-content"));
             }
         });
+
     });
 </script>
 

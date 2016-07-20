@@ -124,12 +124,11 @@ layout("/layouts/private.html"){
                     "render": function (data, type, row) {
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                                 ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/private/cms/article/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">预览</a></li>' +
                                 '<li><a href="${base}/private/cms/article/edit/' + row.id + '" data-pjax>修改</a></li>' +
-                                '<li><a href="javascript:;" onclick="del(' + row.id + ')">删除</a></li>' +
+                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
                                 '<li class="divider"></li>' +
-                                '<li><a href="javascript:;" onclick="enable(' + row.id + ')">发布</a></li>' +
-                                '<li><a href="javascript:;" onclick="disable(' + row.id + ')">取消发布</a></li>' +
+                                '<li><a href="javascript:;" onclick="enable(\'' + row.id + '\')">发布</a></li>' +
+                                '<li><a href="javascript:;" onclick="disable(\'' + row.id + '\')">取消发布</a></li>' +
                                 '</ul></div>';
                     },
                     "targets": 4
@@ -218,13 +217,13 @@ layout("/layouts/private.html"){
             $.each(datatable.rows('.selected').data(), function (i, n) {
                 ids.push(n.id);
             });
-            var dialog = $("#dialogDeleteCheck");
+            var dialog = $("#dialogDelete");
             dialog.modal("show");
             dialog.find("#ok").unbind("click");
             dialog.find("#ok").bind("click", function (event) {
                 var btn = $(this);
                 btn.button("loading");
-                $.post("${base}/private/cms/article/delete", {ids: ids}, function (data) {
+                $.post("${base}/private/cms/article/delete", {ids: ids.toString()}, function (data) {
                     if (data.code == 0) {
                         datatable.ajax.reload(null,false);
                     } else {
