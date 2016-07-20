@@ -45,16 +45,19 @@ public class Sys_qun_black_user extends Model implements Serializable {
     
     @Column
     @Comment("创建时间")
-    protected Integer createdAt;
+    protected long createdAt;
      
     @Column
     @Comment("最新活跃时间")
-    protected Integer loginAt;
+    protected long loginAt;
     
     @Column
     @Comment("禁用时间")
-    protected Integer disabledAt;
+    protected long disabledAt;
     
+    @Column
+    @Comment("举报人")
+    protected String sender;
     
     public String getId() {
         return id;
@@ -89,29 +92,36 @@ public class Sys_qun_black_user extends Model implements Serializable {
 		this.text = text;
 	}
 
-	public Integer getCreatedAt() {
+	public long getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(Integer createdAt) {
+	public void setCreatedAt(long createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	public Integer getDisabledAt() {
-		return disabledAt;
-	}
-
-	public void setDisabledAt(Integer disabledAt) {
-		this.disabledAt = disabledAt;
-	}
-
-	public Integer getLoginAt() {
+	public long getLoginAt() {
 		return loginAt;
 	}
 
-	public void setLoginAt(Integer loginAt) {
+	public void setLoginAt(long loginAt) {
 		this.loginAt = loginAt;
 	}
-	
+
+	public long getDisabledAt() {
+		return disabledAt;
+	}
+
+	public void setDisabledAt(long disabledAt) {
+		this.disabledAt = disabledAt;
+	}
+
+	public String getSender() {
+		return sender;
+	}
+
+	public void setSender(String sender) {
+		this.sender = sender;
+	}
 
 }
