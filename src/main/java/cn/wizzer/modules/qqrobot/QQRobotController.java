@@ -62,7 +62,7 @@ public class QQRobotController  {
     		  String message = data.getString("Message");
     		  Integer sendTime = Integer.valueOf(data.getString("SendTime"));
     		         chatlog.setGroupId(groupId);
-    		         chatlog.setGroupName(data.getString("GroupName"));
+    		         chatlog.setGroupName(data.getString("GroupId"));
     		         chatlog.setMessage(message);
     		         chatlog.setSender(data.getString("Sender"));
     		         chatlog.setSenderName(data.getString("SenderName"));
