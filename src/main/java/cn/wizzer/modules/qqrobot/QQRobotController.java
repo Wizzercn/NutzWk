@@ -1,6 +1,7 @@
 package cn.wizzer.modules.qqrobot;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,12 +60,13 @@ public class QQRobotController  {
     		  Sys_chat_log  chatlog = new Sys_chat_log();
     		  String groupId = data.getString("GroupId");
     		  String message = data.getString("Message");
+    		  Integer sendTime = Integer.valueOf(data.getString("SendTime"));
     		         chatlog.setGroupId(groupId);
     		         chatlog.setGroupName(data.getString("GroupName"));
     		         chatlog.setMessage(message);
     		         chatlog.setSender(data.getString("Sender"));
     		         chatlog.setSenderName(data.getString("SenderName"));
-    		         chatlog.setCreatedAt(Integer.valueOf(data.getString("SendTime")));
+    		         chatlog.setCreatedAt(sendTime);
     		         qunService.saveChatLog(chatlog);
     		 if("469615022".equals(groupId) && StringUtils.isNotBlank(message)){
     			 if (StringUtils.contains(message, bcmd)) {
@@ -72,7 +74,8 @@ public class QQRobotController  {
     		            if(qqInfo!=null && qqInfo.length==2 && qqInfo[0].length()<=11 ){
     	    		           Sys_qun_black_user  blackUser= new Sys_qun_black_user();
     	    		                  blackUser.setContact(qqInfo[0]);
-    	    		                  blackUser.setText(qqInfo[1]);	
+    	    		                  blackUser.setText(qqInfo[1]);
+    	    		                  blackUser.setCreatedAt(sendTime);
     	    		                  qunService.save(blackUser);
     	    		            return "已经成功添加【"+qqInfo[0]+"】到圈子黑名单，告诉兄弟姐妹们，遇到这个渣渣绕道走，黑名单查看方式回复：#"+qqInfo[0]+"";
     		            }
@@ -81,7 +84,7 @@ public class QQRobotController  {
     			 if(Strings.startsWithChar(message, cmd)){
     				 List<Sys_qun_black_user> blackList =  qunService.getDatas(message.substring(1));
     				 if(blackList!=null && blackList.size()>0){
-    					 return "【"+message.substring(1)+"】被举报【"+blackList.size()+"】次\r\n最后一次举报的时间为："+DateUtil.getDate(blackList.get(0).getCreatedAt())+"\r\n举报原因："+blackList.get(0).getText();
+    					 return "【"+message.substring(1)+"】被举报【"+blackList.size()+"】次,最后一次举报的时间为："+DateUtil.getDate(blackList.get(0).getCreatedAt())+",举报原因："+blackList.get(0).getText();
     				 }else{
     					 return "【"+message.substring(1)+"】是个好人,......,截止"+DateUtil.getDate()+"还未收到圈内大拿举报。举报格式：1234567###这后面是举报的原因";
     				 }
