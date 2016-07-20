@@ -55,7 +55,7 @@ public class QQRobotController  {
     	  //Json.to
     	  
     	  
-    	  if(data!=null && "BJ2016888".equals(data.getString("Key"))){
+    	  if(data!=null && "BJ2016888".equals(data.getString("Key")) && "ClusterIM".equals(data.getString("Event"))){
     		  Sys_chat_log  chatlog = new Sys_chat_log();
     		  String groupId = data.getString("GroupId");
     		  String message = data.getString("Message");
