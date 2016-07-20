@@ -19,6 +19,7 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import cn.wizzer.common.util.DateUtil;
+import cn.wizzer.modules.back.sys.models.Sys_chat_log;
 import cn.wizzer.modules.back.sys.models.Sys_qun_black_user;
 import cn.wizzer.modules.back.sys.services.QunService;
  
@@ -51,9 +52,20 @@ public class QQRobotController  {
     public synchronized String msg(@Param("..") NutMap data)
             throws IOException {
     	  log.info("消息信息："+Json.toJson(data));
+    	  //Json.to
+    	  
+    	  
     	  if(data!=null && "BJ2016888".equals(data.getString("Key"))){
+    		  Sys_chat_log  chatlog = new Sys_chat_log();
     		  String groupId = data.getString("GroupId");
     		  String message = data.getString("Message");
+    		         chatlog.setGroupId(groupId);
+    		         chatlog.setGroupName(data.getString("GroupName"));
+    		         chatlog.setMessage(message);
+    		         chatlog.setSender(data.getString("Sender"));
+    		         chatlog.setSenderName(data.getString("SenderName"));
+    		         chatlog.setCreatedAt(Integer.valueOf(data.getString("SendTime")));
+    		         qunService.saveChatLog(chatlog);
     		 if("469615022".equals(groupId) && StringUtils.isNotBlank(message)){
     			 if (StringUtils.contains(message, bcmd)) {
     		            String[] qqInfo = message.split(bcmd);

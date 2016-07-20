@@ -13,6 +13,7 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 
 import cn.wizzer.common.base.Service;
+import cn.wizzer.modules.back.sys.models.Sys_chat_log;
 import cn.wizzer.modules.back.sys.models.Sys_qun_black_user;
 
 /**
@@ -36,7 +37,16 @@ public class QunService extends Service<Sys_qun_black_user> {
     public void save(Sys_qun_black_user qq) {
         dao().insert(qq);
     }
-
+    /**
+     * 新增QQ
+     *
+     * @param unit
+     * @param pid
+     */
+    @Aop(TransAop.READ_COMMITTED)
+    public void saveChatLog(Sys_chat_log chat) {
+        dao().insert(chat);
+    }
 
     /**
      * 查询用户按钮权限
