@@ -1,6 +1,5 @@
 NutzWk 基于Nutz的开源企业级开发框架 
 ======
-(当前版本 3.1 微信+)
 
 [![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
 [![GitHub release](https://img.shields.io/github/release/Wizzercn/NutzWk.svg)](https://github.com/Wizzercn/NutzWk/releases)
@@ -8,8 +7,8 @@ NutzWk 基于Nutz的开源企业级开发框架
 
 开发计划:
 
-* NutzWk 3.2.x   CMS+ (beetl / beetl+velocity) **未完成**
-* NutzWk 3.1.x   微信+ (beetl / beetl+velocity)   **当前进度**
+* NutzWk 3.2.x   CMS+ (beetl / beetl+velocity)
+* NutzWk 3.1.x   微信+ (beetl / beetl+velocity)
 * NutzWk 3.0.x   纯净版(beetl / beetl+velocity)
 * NutzWk 2.0.x   试验版(velocity)
 * NutzWk 1.0.x   传统版(velocity 支持IE6)
@@ -20,7 +19,7 @@ NutzWk 基于Nutz的开源企业级开发框架
 
 在线演示地址
 ======
-http://nutzwk.wizzer.cn/                 NutzWk v3.1.x
+http://nutzwk.wizzer.cn/                 NutzWk v3.x
 
 https://github.com/Wizzercn/NodeWk       Node.js版源码
 
