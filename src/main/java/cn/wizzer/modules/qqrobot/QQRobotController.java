@@ -68,7 +68,7 @@ public class QQRobotController  {
     		         chatlog.setSenderName(data.getString("SenderName"));
     		         chatlog.setCreatedAt(sendTime);
     		         qunService.saveChatLog(chatlog);
-    		 if("469615022".equals(groupId) && StringUtils.isNotBlank(message)){
+    		 if(StringUtils.isNotBlank(message)){
     			 if (StringUtils.contains(message, bcmd)) {
     		            String[] qqInfo = message.split(bcmd);
     		            if(qqInfo!=null && qqInfo.length==2 && qqInfo[0].length()<=11 ){
