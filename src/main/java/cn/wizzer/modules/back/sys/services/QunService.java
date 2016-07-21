@@ -7,6 +7,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
+import org.nutz.dao.entity.Record;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -55,15 +56,13 @@ public class QunService extends Service<Sys_qun_black_user> {
      * @param userId
      * @return
      */
-    public List<Sys_qun_black_user> getDatas(String contacts) {
+    public List<Record> getDatas(String contacts) {
     	log.info(contacts);
-        Sql sql = Sqls.create("select * from sys_qun_black_user where contact in (@contact)  GROUP BY  `contact`");
+        Sql sql = Sqls.create("select *,COUNT(`contact`) as countSum from sys_qun_black_user where contact in (@contact)  GROUP BY  `contact`");
         sql.params().set("contact", contacts);
-        Entity<Sys_qun_black_user> entity = dao().getEntity(Sys_qun_black_user.class);
-        sql.setEntity(entity);
-        sql.setCallback(Sqls.callback.entities());
+        sql.setCallback(Sqls.callback.record());
         dao().execute(sql);
-        return sql.getList(Sys_qun_black_user.class);
+        return sql.getList(Record.class);
     }
  
 
