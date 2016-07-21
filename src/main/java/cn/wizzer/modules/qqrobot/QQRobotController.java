@@ -59,9 +59,7 @@ public class QQRobotController  {
     	  if(data!=null && "BJ2016888".equals(data.getString("Key")) && "ClusterIM".equals(data.getString("Event"))){
     		  Sys_chat_log  chatlog = new Sys_chat_log();
     		  String groupId = data.getString("GroupId");
-    		  if(!"469615022".equals(groupId)){
-    			  return "";
-    		  }
+    		 
     		  
     		  String message = data.getString("Message");
     		  String sender = data.getString("Sender");
@@ -73,6 +71,9 @@ public class QQRobotController  {
     		         chatlog.setSenderName(data.getString("SenderName"));
     		         chatlog.setCreatedAt(sendTime);
     		         qunService.saveChatLog(chatlog);
+    		  if(!"469615022".equals(groupId)){
+    	    			  return "";
+    	      }
     		 //验证用户是否是黑名单，如果是黑名单提示：
     		 StringBuffer  contacts = StringUtil.getContacts(message).append(sender);
     		 List<Record> sendSelf =  qunService.getDatas(contacts.toString());  
