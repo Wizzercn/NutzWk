@@ -54,9 +54,10 @@ public class QunService extends Service<Sys_qun_black_user> {
      * @param userId
      * @return
      */
-    public List<Sys_qun_black_user> getDatas(String contact) {
-        Sql sql = Sqls.create("select * from sys_qun_black_user where contact = @contact order by createdAt DESC limit 10");
-        sql.params().set("contact", contact);
+    public List<Sys_qun_black_user> getDatas(String contacts) {
+    	
+        Sql sql = Sqls.create("select *,COUNT(`contact`) as countSum  from sys_qun_black_user where contact in (@contact)  GROUP BY  `contact`");
+        sql.params().set("contact", contacts);
         Entity<Sys_qun_black_user> entity = dao().getEntity(Sys_qun_black_user.class);
         sql.setEntity(entity);
         sql.setCallback(Sqls.callback.entities());

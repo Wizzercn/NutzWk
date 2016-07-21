@@ -59,6 +59,9 @@ public class Sys_qun_black_user extends Model implements Serializable {
     @Comment("举报人")
     protected String sender;
     
+    //记录条数
+    protected Integer countSum;
+    
     public String getId() {
         return id;
     }
@@ -124,4 +127,12 @@ public class Sys_qun_black_user extends Model implements Serializable {
 		this.sender = sender;
 	}
 
+	public Integer getCountSum() {
+		return countSum;
+	}
+
+	public void setCountSum(Integer countSum) {
+		this.countSum = countSum;
+	}
+    
 }

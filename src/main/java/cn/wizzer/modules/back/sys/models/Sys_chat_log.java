@@ -58,29 +58,43 @@ public class Sys_chat_log extends Model implements Serializable {
 		return groupName;
 	}
 
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
+	 
 
 	public String getGroupId() {
 		return groupId;
 	}
 
+
+
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
 	}
+
+
 
 	public String getSender() {
 		return sender;
 	}
 
+
+
 	public void setSender(String sender) {
 		this.sender = sender;
 	}
 
+
+
 	public String getSenderName() {
 		return senderName;
 	}
+
+
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+
 
 	public void setSenderName(String senderName) {
 		this.senderName = senderName;
