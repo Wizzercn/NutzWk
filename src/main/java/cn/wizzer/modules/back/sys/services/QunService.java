@@ -9,8 +9,9 @@ import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.aop.Aop;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 
 import cn.wizzer.common.base.Service;
 import cn.wizzer.modules.back.sys.models.Sys_chat_log;
@@ -21,7 +22,7 @@ import cn.wizzer.modules.back.sys.models.Sys_qun_black_user;
  */
 @IocBean(args = {"refer:dao"})
 public class QunService extends Service<Sys_qun_black_user> {
-
+	 private static final Log log = Logs.get();
 	
     public QunService(Dao dao) {
         super(dao);
@@ -55,7 +56,7 @@ public class QunService extends Service<Sys_qun_black_user> {
      * @return
      */
     public List<Sys_qun_black_user> getDatas(String contacts) {
-    	
+    	log.info(contacts);
         Sql sql = Sqls.create("select *,COUNT(`contact`) as countSum  from sys_qun_black_user where contact in (@contact)  GROUP BY  `contact`");
         sql.params().set("contact", contacts);
         Entity<Sys_qun_black_user> entity = dao().getEntity(Sys_qun_black_user.class);

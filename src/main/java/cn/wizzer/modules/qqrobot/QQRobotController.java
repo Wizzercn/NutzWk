@@ -76,7 +76,7 @@ public class QQRobotController  {
     		 StringBuffer  contacts = StringUtil.getContacts(message).append(sender);
     		 List<Sys_qun_black_user> sendSelf =  qunService.getDatas(contacts.toString());  
     		 //整理数据
-    		 
+    		 log.info("sendSelf List"+Json.toJson(sendSelf));
     		 if(sendSelf!=null && sendSelf.size()>0){
     			 for(int i=0;i<sendSelf.size();i++){
     				 result.append("群成员或者推送的消息["+sendSelf.get(i).getContact()+"]已经被圈内人士标记黑名单["+sendSelf.get(i).getCountSum()+"]次,最近一次举报的原因是:"+sendSelf.get(i).getText());
