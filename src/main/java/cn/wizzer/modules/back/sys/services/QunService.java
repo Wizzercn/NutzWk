@@ -57,7 +57,7 @@ public class QunService extends Service<Sys_qun_black_user> {
      */
     public List<Sys_qun_black_user> getDatas(String contacts) {
     	log.info(contacts);
-        Sql sql = Sqls.create("select *,COUNT(`contact`) as countSum  from sys_qun_black_user where contact in (@contact)  GROUP BY  `contact`");
+        Sql sql = Sqls.create("select * from sys_qun_black_user where contact in (@contact)  GROUP BY  `contact`");
         sql.params().set("contact", contacts);
         Entity<Sys_qun_black_user> entity = dao().getEntity(Sys_qun_black_user.class);
         sql.setEntity(entity);
