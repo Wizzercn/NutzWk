@@ -133,12 +133,12 @@ public class StringUtil {
     }
     
     //提取微信QQ和电话号码
-    public static StringBuffer  getContacts(String smsBody) {  
-    	StringBuffer  sb = new StringBuffer();
+    public static List<String>  getContacts(String smsBody) {  
+    	List<String>   sb = new ArrayList<String>();
         Pattern pattern = Pattern.compile("[1-9][0-9]{4,10}|(13|14|15|17|18)\\d{9}|[a-zA-Z\\d_]{5,}");  
         Matcher matcher = pattern.matcher(smsBody);  
         while (matcher.find()) {  
-        	sb.append(matcher.group()).append(",");
+        	sb.add(matcher.group());
         }  
         return sb;
     }
