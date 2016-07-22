@@ -80,7 +80,7 @@ public class QQRobotController  {
     		 log.info("sendSelf List"+Json.toJson(sendSelf));
     		 if(sendSelf!=null && sendSelf.size()>0){
     			 for(int i=0;i<sendSelf.size();i++){
-    				 result.append("群成员或者推送的消息["+sendSelf.get(i).getContact()+"]已经被圈内人士标记黑名单["+sendSelf.get(i).getCountSum()+"]次,最近一次举报的原因是:"+sendSelf.get(i).getText()==null?"无":sendSelf.get(i).getText());
+    				 result.append("群成员或者推送的消息[").append(sendSelf.get(i).getContact()).append("]已经被圈内人士标记黑名单[").append(sendSelf.get(i).getCountSum()).append("]次,最近一次举报的原因是:").append(sendSelf.get(i).getText()==null?"无":sendSelf.get(i).getText());
         		 }
     			 return result.append("如有误报请联系小助手删除提示，谢谢！").toString();
     		 }else  if(Strings.startsWithChar(message, cmd)){
