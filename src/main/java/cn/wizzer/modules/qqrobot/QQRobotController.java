@@ -1,10 +1,10 @@
 package cn.wizzer.modules.qqrobot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.nutz.dao.entity.Record;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -71,17 +71,16 @@ public class QQRobotController  {
     		         chatlog.setSenderName(data.getString("SenderName"));
     		         chatlog.setCreatedAt(sendTime);
     		         qunService.saveChatLog(chatlog);
-    		  if(!"469615022".equals(groupId)){
-    	    			  return "";
-    	      }
+    		
     		 //验证用户是否是黑名单，如果是黑名单提示：
-    		 StringBuffer  contacts = StringUtil.getContacts(message).append(sender);
-    		 List<Record> sendSelf =  qunService.getDatas(contacts.toString());  
+    		 List<String>  contacts = StringUtil.getContacts(message);
+    		               contacts.add(sender);
+    		 List<Sys_qun_black_user> sendSelf =  qunService.getDatas(contacts);  
     		 //整理数据
     		 log.info("sendSelf List"+Json.toJson(sendSelf));
     		 if(sendSelf!=null && sendSelf.size()>0){
     			 for(int i=0;i<sendSelf.size();i++){
-    				 result.append("群成员或者推送的消息["+sendSelf.get(i).getString("contact")+"]已经被圈内人士标记黑名单["+sendSelf.get(i).getInt("countSum")+"]次,最近一次举报的原因是:"+sendSelf.get(i).getString("text"));
+    				 result.append("群成员或者推送的消息["+sendSelf.get(i).getContact()+"]已经被圈内人士标记黑名单["+sendSelf.get(i).getCountSum()+"]次,最近一次举报的原因是:"+sendSelf.get(i).getText()==null?"无":sendSelf.get(i).getText());
         		 }
     			 return result.append("如有误报请联系小助手删除提示，谢谢！").toString();
     		 }else  if(Strings.startsWithChar(message, cmd)){
@@ -108,12 +107,14 @@ public class QQRobotController  {
     		 }
     	  }
     	  //群消息end  
-    	  if(data!=null&& "BJ2016888".equals(data.getString("Key")) && "ClusterMemberJoin".equals(data.getString("Event"))){
+        if(data!=null&& "BJ2016888".equals(data.getString("Key")) && "ClusterMemberJoin".equals(data.getString("Event"))){
     		  String sender = data.getString("Sender");
     		  String operator = data.getString("Operator");
-    		  List<Record> joinQun =  qunService.getDatas(sender);  
+    		  List<String> queryUser = new ArrayList<String>();
+    		               queryUser.add(sender);
+    		  List<Sys_qun_black_user> joinQun =  qunService.getDatas(queryUser);  
     		  if(joinQun!=null && joinQun.size()>0){
-     			 return "@"+operator+"群主，群成员["+sender+"]已经被圈内人士举报了["+joinQun.size()+"]次,最近一次举报的原因是:"+joinQun.get(0).getString("text")+",如有误报请联系小助手删除提示，谢谢！";
+     			 return "@"+operator+"群主，群成员["+sender+"]已经被圈内人士举报了["+joinQun.get(0).getCountSum()+"]次,最近一次举报的原因是:"+joinQun.get(0).getText()+",如有误报请联系小助手删除提示，谢谢！";
      		  }else{
      			 return "@"+sender+",欢迎["+data.getString("SenderName")+"],来到VIP群，来这里我只悄悄的告诉你，回复:#123456，或者回复:123456###一些文字描述。试试有什么效果，为了你的安全，欢迎拉小助手入群，做一个有情怀的机器人";
      		  }

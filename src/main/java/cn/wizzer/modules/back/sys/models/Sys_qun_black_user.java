@@ -10,14 +10,17 @@ import org.nutz.dao.entity.annotation.EL;
 import org.nutz.dao.entity.annotation.Index;
 import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.Prev;
+import org.nutz.dao.entity.annotation.Readonly;
 import org.nutz.dao.entity.annotation.Table;
 import org.nutz.dao.entity.annotation.TableIndexes;
+import org.nutz.dao.entity.annotation.View;
 
 import cn.wizzer.common.base.Model;
 /**
  * qq群用户提交的黑名单
  */
 @Table("sys_qun_black_user")
+@View("black_user_view")
 @TableIndexes({@Index(name = "INDEX_SYS_QUN_BLACK_CONTACT", fields = {"contact"})})
 public class Sys_qun_black_user extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -60,6 +63,8 @@ public class Sys_qun_black_user extends Model implements Serializable {
     protected String sender;
     
     //记录条数
+    @Column
+    @Readonly
     protected Integer countSum;
     
     public String getId() {

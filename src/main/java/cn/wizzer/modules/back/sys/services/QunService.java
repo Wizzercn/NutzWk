@@ -7,7 +7,6 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
-import org.nutz.dao.entity.Record;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -56,13 +55,19 @@ public class QunService extends Service<Sys_qun_black_user> {
      * @param userId
      * @return
      */
-    public List<Record> getDatas(String contacts) {
+    public List<Sys_qun_black_user> getDatas(List<String> contacts) {
     	log.info(contacts);
-        Sql sql = Sqls.create("select *,COUNT(`contact`) as countSum from sys_qun_black_user where contact in (@contact)  GROUP BY  `contact`");
-        sql.params().set("contact", contacts);
-        sql.setCallback(Sqls.callback.record());
+    	String[] strarr = new String[contacts.size()];
+    	for (int i = 0; i < contacts.size(); i++) {
+			 strarr[i] = contacts.get(i);
+		}
+        Sql sql = Sqls.create("select * from black_user_view where contact in (@contact)");
+        sql.params().set("contact", strarr);
+        Entity<Sys_qun_black_user> entity = dao().getEntity(Sys_qun_black_user.class);
+        sql.setEntity(entity);
+        sql.setCallback(Sqls.callback.entities());
         dao().execute(sql);
-        return sql.getList(Record.class);
+        return sql.getList(Sys_qun_black_user.class);
     }
  
 
@@ -89,4 +94,5 @@ public class QunService extends Service<Sys_qun_black_user> {
         dao().clear("sys_user_role", Cnd.where("userId", "in", userIds));
         dao().clear("sys_user", Cnd.where("id", "in", userIds));
     }
+    
 }
