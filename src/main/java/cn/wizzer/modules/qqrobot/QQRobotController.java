@@ -75,7 +75,7 @@ public class QQRobotController  {
     		   if(StringUtils.isNotBlank(message)){
     	    			 if (StringUtils.contains(message, bcmd)) {
     	    		            String[] qqInfo = message.split(bcmd);
-    	    		            if(qqInfo!=null && qqInfo.length==2 && qqInfo[0].length()<=11 && !qqInfo[0].equals(sender)){
+    	    		            if(qqInfo!=null && qqInfo.length==2 && !qqInfo[0].equals(sender)){
     	    	    		           Sys_qun_black_user  blackUser= new Sys_qun_black_user();
     	    	    		                  blackUser.setContact(qqInfo[0].trim());
     	    	    		                  blackUser.setText(qqInfo[1]);
