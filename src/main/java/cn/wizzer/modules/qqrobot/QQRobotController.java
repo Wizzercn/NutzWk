@@ -72,6 +72,25 @@ public class QQRobotController  {
     		         chatlog.setCreatedAt(sendTime);
     		         qunService.saveChatLog(chatlog);
     		
+    		   if(StringUtils.isNotBlank(message)){
+    	    			 if (StringUtils.contains(message, bcmd)) {
+    	    		            String[] qqInfo = message.split(bcmd);
+    	    		            if(qqInfo!=null && qqInfo.length==2 && qqInfo[0].length()<=11 && !qqInfo[0].equals(sender)){
+    	    	    		           Sys_qun_black_user  blackUser= new Sys_qun_black_user();
+    	    	    		                  blackUser.setContact(qqInfo[0].trim());
+    	    	    		                  blackUser.setText(qqInfo[1]);
+    	    	    		                  blackUser.setCreatedAt(sendTime);
+    	    	    		                  blackUser.setSender(sender);
+    	    	    		                  qunService.save(blackUser);
+    	    	    		            return "已经成功标记【"+qqInfo[0]+"】到圈子黑名单，告诉兄弟姐妹们，遇到这个渣渣绕道走，黑名单查看方式回复：#"+qqInfo[0]+"";
+    	    		            }
+    	    		            if(qqInfo[0].equals(sender)){
+    	    		            	    return "自己举报自己，你是开玩笑的吧，正确格式为：别人的QQ微信电话###这后面是举报的原因";
+    	    		            }
+    	    		            return "黑名单提交的格式不正确，正确格式为：1234567###这后面是举报的原因";
+    	    		     }
+    	    			 
+    	     }
     		 //验证用户是否是黑名单，如果是黑名单提示：
     		 List<String>  contacts = StringUtil.getContacts(message);
     		               contacts.add(sender);
@@ -85,25 +104,6 @@ public class QQRobotController  {
     			 return result.append("如有误报请联系小助手删除提示，谢谢！").toString();
     		 }else  if(Strings.startsWithChar(message, cmd)){
     			 return "【"+message.substring(1)+"】截止"+DateUtil.getDate()+"还没有任何被举报内容，看来是个好同学,还有可能是个新手,你要不去去试试。如有XX,请举报格式：1234567###这后面是举报的原因";
-    		 }
-    		 if(StringUtils.isNotBlank(message)){
-    			 if (StringUtils.contains(message, bcmd)) {
-    		            String[] qqInfo = message.split(bcmd);
-    		            if(qqInfo!=null && qqInfo.length==2 && qqInfo[0].length()<=11 && !qqInfo[0].equals(sender)){
-    	    		           Sys_qun_black_user  blackUser= new Sys_qun_black_user();
-    	    		                  blackUser.setContact(qqInfo[0].trim());
-    	    		                  blackUser.setText(qqInfo[1]);
-    	    		                  blackUser.setCreatedAt(sendTime);
-    	    		                  blackUser.setSender(sender);
-    	    		                  qunService.save(blackUser);
-    	    		            return "已经成功标记【"+qqInfo[0]+"】到圈子黑名单，告诉兄弟姐妹们，遇到这个渣渣绕道走，黑名单查看方式回复：#"+qqInfo[0]+"";
-    		            }
-    		            if(qqInfo[0].equals(sender)){
-    		            	    return "自己举报自己，你是开玩笑的吧，正确格式为：别人的QQ微信电话###这后面是举报的原因";
-    		            }
-    		            return "黑名单提交的格式不正确，正确格式为：1234567###这后面是举报的原因";
-    		     }
-    			 
     		 }
     	  }
     	  //群消息end  
