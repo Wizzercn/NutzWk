@@ -31,6 +31,12 @@
             <email>koukou890@qq.com</email>
             <url>http://www.rekoe.com</url>
         </developer>
+	  <developer>
+            <id>enilu</id>
+            <name>enilu</name>
+            <email>eniluzt@qq.com</email>
+            <url>http://www.enilu.cn</url>
+        </developer>
     </developers>
     <repositories>
 		<repository>
