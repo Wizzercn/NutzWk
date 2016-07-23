@@ -36,7 +36,7 @@ layout("/layouts/private.html"){
             <tr>
                 <th>QQ</th>
                 <th>姓名/昵称</th>
-                <th>总金额</th>
+                <th>全部</th>
                 <th>已付</th>
                 <th>未付</th>
                 <th>操作</th>
@@ -160,19 +160,27 @@ layout("/layouts/private.html"){
             "order": [[0, "asc"]],
             "columns": [
                 {"data": "qq", "bSortable": true},
-                {"data": "nickname", "bSortable": true},
-                {"data": "nickname", "bSortable": true},
-                {"data": "nickname", "bSortable": true},
-                {"data": "disabled", "bSortable": true}
+                {"data": "name", "bSortable": true},
+                {"data": "m", "bSortable": true},
+                {"data": "f", "bSortable": true},
+                {"data": "w", "bSortable": true}
             ],
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
-                        if (!data) {
-                            return '<i id="disable_' + row.qq + '" class="fa fa-circle text-success ml5"></i>';
-                        } else {
-                            return '<i id="disable_' + row.qq + '" class="fa fa-circle text-danger ml5"></i>';
-                        }
+                        return row.c+"份(&yen;"+data+")"
+                    },
+                    "targets": 2
+                },
+                {
+                    "render": function (data, type, row) {
+                        return data+"份(&yen;"+parseInt(row.money)*parseInt(data)+")"
+                    },
+                    "targets": 3
+                },
+                {
+                    "render": function (data, type, row) {
+                        return "<spen style='color: #f38709'>"+data+"份(&yen;"+(row.money*data)+")</span>";
                     },
                     "targets": 4
                 },
@@ -180,10 +188,7 @@ layout("/layouts/private.html"){
                     "render": function (data, type, row) {
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                                 ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/private/robot/order/edit/' + row.qq + '" data-pjax>修改</a></li>' +
-                                '<li class="divider"></li>' +
-                                '<li><a href="javascript:;" onclick="enableUser(\'' + row.qq + '\')">启用</a></li>' +
-                                '<li><a href="javascript:;" onclick="disableUser(\'' + row.qq + '\')">禁用</a></li>' +
+                                '<li><a href="${base}/private/robot/order/edit/' + row.qq + '" data-pjax>收款</a></li>' +
                                 '</ul></div>';
                     },
                     "targets": 5
@@ -196,24 +201,6 @@ layout("/layouts/private.html"){
         $("#searchBtn").on('click', function () {
             datatable.ajax.reload();
         });
-    }
-    function enableUser(id) {
-        $.post("${base}/private/robot/user/enable/" + id, {}, function (data) {
-            if (data.code == 0) {
-                $("#disable_" + id).attr("class", "fa fa-circle text-success ml5");
-            } else {
-                Toast.error(data.msg);
-            }
-        }, "json");
-    }
-    function disableUser(id) {
-        $.post("${base}/private/robot/user/disable/" + id, {}, function (data) {
-            if (data.code == 0) {
-                $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
-            } else {
-                Toast.error(data.msg);
-            }
-        }, "json");
     }
     $(function () {
         initDatatable();

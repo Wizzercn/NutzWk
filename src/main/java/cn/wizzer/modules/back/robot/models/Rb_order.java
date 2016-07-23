@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by wizzer on 2016/6/21.
  */
 @Table("rb_order")
-@TableIndexes({@Index(name = "INDEX_RB_ORDER_DAY", fields = {"day"}, unique = false),@Index(name = "INDEX_RB_ORDER_QQ", fields = {"qq"}, unique = false)})
+@TableIndexes({@Index(name = "INDEX_RB_ORDER_DAY", fields = {"day"}, unique = false),@Index(name = "INDEX_RB_ORDER_QQ", fields = {"qq"}, unique = false),@Index(name = "INDEX_RB_ORDER_AT", fields = {"orderAt"}, unique = false)})
 public class Rb_order extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column

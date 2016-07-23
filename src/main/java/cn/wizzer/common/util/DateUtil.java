@@ -4,6 +4,8 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -13,6 +15,7 @@ import java.util.Locale;
 @IocBean
 public class DateUtil {
     private static final Locale DEFAULT_LOCALE = Locale.CHINA;
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * 获取当前时间(HH:mm:ss)
@@ -66,20 +69,36 @@ public class DateUtil {
 
     /**
      * 时间戳日期
+     *
      * @param time
      * @return
      */
     public static String getDate(long time) {
-        return DateFormatUtils.format(new Date(time*1000), "yyyy-MM-dd HH:mm:ss", DEFAULT_LOCALE);
+        return DateFormatUtils.format(new Date(time * 1000), "yyyy-MM-dd HH:mm:ss", DEFAULT_LOCALE);
     }
 
     /**
      * 时间戳日期
+     *
      * @param time
      * @param f
      * @return
      */
     public static String getDate(long time, String f) {
-        return DateFormatUtils.format(new Date(time*1000), f, DEFAULT_LOCALE);
+        return DateFormatUtils.format(new Date(time * 1000), f, DEFAULT_LOCALE);
+    }
+
+    /**
+     * 通过字符串时间获取时间戳
+     *
+     * @param date
+     * @return
+     */
+    public static int getTime(String date) {
+        try {
+            return (int) (sdf.parse(date).getTime() / 1000);
+        } catch (ParseException e) {
+            return 0;
+        }
     }
 }
