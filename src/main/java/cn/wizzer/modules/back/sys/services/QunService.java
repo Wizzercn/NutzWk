@@ -111,7 +111,7 @@ public class QunService extends Service<Sys_qun_black_user> {
     	 dao43.insert("aws_answer", Chain.make("question_id",31)
     			 .add("add_time", System.currentTimeMillis()/1000)
     			 .add("uid", 422)
-    			 .add("answer_content",StringUtil.filterNumber(StringUtil.filterAlphabet("来自群MM签到:"+log.getSenderName()+","+log.getMessage(), "*"), "*")+",私信admin，发送查询码["+publish_source+"]即可获得联系方式")
+    			 .add("answer_content","来自群MM签到:"+log.getSenderName()+","+log.getMessage()+",私信admin，发送查询码["+publish_source+"]即可获得联系方式")
     			 .add("category_id", 1)
     			 .add("ip", log.getSender())
     			 .add("publish_source",publish_source)
