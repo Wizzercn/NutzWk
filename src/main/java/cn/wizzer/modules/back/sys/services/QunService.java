@@ -107,7 +107,7 @@ public class QunService extends Service<Sys_qun_black_user> {
     		 return;
     	 }
     	 String publish_source = StringUtil.getRndNumber(6);
-    	 dao43.clear("aws_answer", Cnd.where("ip", "=", log.getSender()));
+    	int delRows =  dao43.clear("aws_answer", Cnd.where("ip", "=", log.getSender()));
     	 dao43.insert("aws_answer", Chain.make("question_id",31)
     			 .add("add_time", System.currentTimeMillis()/1000)
     			 .add("uid", 422)
@@ -116,6 +116,10 @@ public class QunService extends Service<Sys_qun_black_user> {
     			 .add("ip", log.getSender())
     			 .add("publish_source",publish_source)
     			 );
+    	 if(delRows == 0){
+    		 dao43.update("aws_question", Chain.makeSpecial("answer_count", "+1"), Cnd.where("question_id", "=", 31));
+    	 }
+    	 
          System.out.println(dao43+"------------");
     }
    
