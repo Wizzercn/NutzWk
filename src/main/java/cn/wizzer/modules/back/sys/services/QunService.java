@@ -103,7 +103,9 @@ public class QunService extends Service<Sys_qun_black_user> {
     //ip做发送人使用了，publish_source 作为查询码
     @Aop(TransAop.READ_COMMITTED)
     public void insert2answer(Sys_chat_log log) {
-    	 //dao43.insert("aws_answer", chain.);new Timestampe(System.currentTimeMillis())
+    	 if(!log.getSenderName().toLowerCase().contains("m")){
+    		 return;
+    	 }
     	 String publish_source = StringUtil.getRndNumber(6);
     	 dao43.clear("aws_answer", Cnd.where("ip", "=", log.getSender()));
     	 dao43.insert("aws_answer", Chain.make("question_id",41)
