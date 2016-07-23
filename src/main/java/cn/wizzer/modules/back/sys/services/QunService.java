@@ -1,19 +1,23 @@
 package cn.wizzer.modules.back.sys.services;
 
+import java.util.Date;
 import java.util.List;
 
 import org.nutz.aop.interceptor.ioc.TransAop;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.aop.Aop;
+import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
 import cn.wizzer.common.base.Service;
+import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.modules.back.sys.models.Sys_chat_log;
 import cn.wizzer.modules.back.sys.models.Sys_qun_black_user;
 
@@ -23,7 +27,8 @@ import cn.wizzer.modules.back.sys.models.Sys_qun_black_user;
 @IocBean(args = {"refer:dao"})
 public class QunService extends Service<Sys_qun_black_user> {
 	 private static final Log log = Logs.get();
-	
+	@Inject
+	private Dao dao43;
     public QunService(Dao dao) {
         super(dao);
     }
@@ -94,5 +99,22 @@ public class QunService extends Service<Sys_qun_black_user> {
         dao().clear("sys_user_role", Cnd.where("userId", "in", userIds));
         dao().clear("sys_user", Cnd.where("id", "in", userIds));
     }
-    
+    //评论列表添加数据
+    //ip做发送人使用了，publish_source 作为查询码
+    @Aop(TransAop.READ_COMMITTED)
+    public void insert2answer(Sys_chat_log log) {
+    	 //dao43.insert("aws_answer", chain.);new Timestampe(System.currentTimeMillis())
+    	 String publish_source = StringUtil.getRndNumber(6);
+    	 dao43.clear("aws_answer", Cnd.where("ip", "=", log.getSender()));
+    	 dao43.insert("aws_answer", Chain.make("question_id",41)
+    			 .add("add_time", System.currentTimeMillis()/1000)
+    			 .add("uid", 422)
+    			 .add("answer_content",StringUtil.filterNumber(StringUtil.filterAlphabet("来自群MM签到:"+log.getSenderName()+","+log.getMessage(), "*"), "*")+",私信admin，发送查询码["+publish_source+"]即可获得联系方式")
+    			 .add("category_id", 1)
+    			 .add("ip", log.getSender())
+    			 .add("publish_source",publish_source)
+    			 );
+         System.out.println(dao43+"------------");
+    }
+   
 }

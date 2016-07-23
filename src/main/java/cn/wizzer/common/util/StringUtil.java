@@ -142,4 +142,25 @@ public class StringUtil {
         }  
         return sb;
     }
+    public static String filterNumber(String number,String newChar )
+    {
+    number = number.replaceAll("[(0-9)]", newChar);
+         return number;
+    }
+     
+    /**
+    * 
+    * @Title : filterAlphabet
+    * @Type : FilterStr
+    * @date : 2014年3月12日 下午7:28:54
+    * @Description : 过滤出字母
+    * @param alph
+    * @return
+    */
+    public static String filterAlphabet(String alph,String newChar)
+    {
+         alph = alph.replaceAll("[^(A-Za-z)]", newChar);
+         return alph;
+    }
+     
 }

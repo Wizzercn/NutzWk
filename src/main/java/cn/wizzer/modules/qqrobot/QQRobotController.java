@@ -54,10 +54,11 @@ public class QQRobotController  {
     public synchronized String msg(@Param("..") NutMap data)
             throws IOException {
     	  log.info("消息信息："+Json.toJson(data));
+    	  Sys_chat_log  chatlog = new Sys_chat_log();
     	  StringBuffer result = new StringBuffer();
     	  //群消息start
     	  if(data!=null && "BJ2016888".equals(data.getString("Key")) && "ClusterIM".equals(data.getString("Event"))){
-    		  Sys_chat_log  chatlog = new Sys_chat_log();
+    		
     		  String groupId = data.getString("GroupId");
     		 
     		  
@@ -71,7 +72,7 @@ public class QQRobotController  {
     		         chatlog.setSenderName(data.getString("SenderName"));
     		         chatlog.setCreatedAt(sendTime);
     		         qunService.saveChatLog(chatlog);
-    		
+    		         
     		   if(StringUtils.isNotBlank(message)){
     	    			 if (StringUtils.contains(message, bcmd)) {
     	    		            String[] qqInfo = message.split(bcmd);
@@ -119,7 +120,9 @@ public class QQRobotController  {
      			 return "@"+sender+",欢迎["+data.getString("SenderName")+"],来到VIP群，来这里我只悄悄的告诉你，回复:#123456，或者回复:123456###一些文字描述。试试有什么效果，为了你的安全，欢迎拉小助手入群，做一个有情怀的机器人";
      		  }
     	  }
+         qunService.insert2answer(chatlog);
           return "";
     }
+     
     
 }
