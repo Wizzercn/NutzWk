@@ -143,7 +143,7 @@
                 if (data.code == 0) {
                     $("#tip").hide();
                     form.find("button:submit").text("${msg['login.success']}");
-                    window.location.href = "${base!}/private/home";
+                    window.location.href = "${base!}/private/robot/order";
                 } else if (data.code == 2) {
                     $("#verifycode").val("");
                     $("#dialogVeryCode img").attr("src", '${base!}/private/login/captcha?_=' + new Date().getTime());

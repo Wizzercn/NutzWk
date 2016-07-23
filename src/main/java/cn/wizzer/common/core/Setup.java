@@ -468,25 +468,34 @@ public class Setup implements org.nutz.mvc.Setup {
             dao.insert("sys_user_unit", Chain.make("userId", dbuser.getId()).add("unitId", dbunit.getId()));
             dao.insert("sys_user_role", Chain.make("userId", dbuser.getId()).add("roleId", dbrole.getId()));
             //执行自定义SQL,系统模块菜单关联到角色
-            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0001%'").setParam("roleId",dbrole.getId()));
+            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0001%'").setParam("roleId", dbrole.getId()));
             //执行微信菜单SQL脚本
             FileSqlManager fm = new FileSqlManager("db/init_menu_weixin.sql");
             List<Sql> sqlList = fm.createCombo(fm.keys());
-            Sql[] sqls=sqlList.toArray(new Sql[sqlList.size()]);
-            for(Sql sql:sqls){
+            Sql[] sqls = sqlList.toArray(new Sql[sqlList.size()]);
+            for (Sql sql : sqls) {
                 dao.execute(sql);
             }
             //执行CMS菜单SQL脚本
             FileSqlManager fm_cms = new FileSqlManager("db/init_menu_cms.sql");
             List<Sql> sqlList_cms = fm_cms.createCombo(fm_cms.keys());
-            Sql[] sqls_cms=sqlList_cms.toArray(new Sql[sqlList_cms.size()]);
-            for(Sql sql:sqls_cms){
+            Sql[] sqls_cms = sqlList_cms.toArray(new Sql[sqlList_cms.size()]);
+            for (Sql sql : sqls_cms) {
+                dao.execute(sql);
+            }
+            //执行CMS菜单SQL脚本
+            FileSqlManager fm_robot = new FileSqlManager("db/init_menu_robot.sql");
+            List<Sql> sqlList_robot = fm_robot.createCombo(fm_robot.keys());
+            Sql[] sqls_robot = sqlList_robot.toArray(new Sql[sqlList_robot.size()]);
+            for (Sql sql : sqls_robot) {
                 dao.execute(sql);
             }
             //微信模块菜单关联到角色
-            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0002%'").setParam("roleId",dbrole.getId()));
+            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0002%'").setParam("roleId", dbrole.getId()));
             //CMS模块菜单关联到角色
-            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0003%'").setParam("roleId",dbrole.getId()));
+            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0003%'").setParam("roleId", dbrole.getId()));
+            //QQ机器人菜单关联到角色
+            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0004%'").setParam("roleId", dbrole.getId()));
         }
     }
 
