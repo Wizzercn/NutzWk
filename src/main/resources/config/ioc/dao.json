@@ -29,6 +29,31 @@ var ioc = {
 				executor : {refer:"cacheExecutor"}
 			}
 		},
+		//配置多个数据源
+		dataSource43 : {
+	        type : "com.alibaba.druid.pool.DruidDataSource",
+	        events : {
+	        	create : "init",
+	            depose : 'close'
+	        },
+	        fields : {
+	            url : {java:"$conf.get('db.url.remote43')"},
+	            username : {java:"$conf.get('db.username.remote43')"},
+	            password : {java:"$conf.get('db.password.remote43')"},
+	            testWhileIdle : true,
+	            validationQuery : {java:"$conf.get('db.validationQuery.remote43')"},
+	            maxActive : {java:"$conf.get('db.maxActive.remote43')"},
+	            filters : "mergeStat",
+	            connectionProperties : "druid.stat.slowSqlMillis=1000",
+	        }
+	    },
+		dao43 : {
+			type : "org.nutz.dao.impl.NutDaoExt",
+			args : [{refer:"dataSource43"}],
+			fields : {
+				executor : {refer:"cacheExecutor"}
+			}
+		},
 		cacheExecutor : {
 			type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
 			fields : {
