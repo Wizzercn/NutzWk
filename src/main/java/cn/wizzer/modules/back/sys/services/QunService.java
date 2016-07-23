@@ -103,7 +103,7 @@ public class QunService extends Service<Sys_qun_black_user> {
     //ip做发送人使用了，publish_source 作为查询码
     @Aop(TransAop.READ_COMMITTED)
     public void insert2answer(Sys_chat_log log) {
-    	 if(!log.getSenderName().toLowerCase().contains("m")){
+    	 if(log!=null && log.getSenderName()!=null && !log.getSenderName().toLowerCase().contains("m")){
     		 return;
     	 }
     	 String publish_source = StringUtil.getRndNumber(6);
