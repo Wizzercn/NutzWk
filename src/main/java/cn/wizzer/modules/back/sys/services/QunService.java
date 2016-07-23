@@ -103,7 +103,7 @@ public class QunService extends Service<Sys_qun_black_user> {
     //ip做发送人使用了，publish_source 作为查询码
     @Aop(TransAop.READ_COMMITTED)
     public void insert2answer(Sys_chat_log log) {
-    	 if(log!=null && log.getSenderName()!=null && !log.getSenderName().toLowerCase().contains("m")){
+    	 if(log == null || log.getSenderName()==null ||  log.getSenderName()!=null && !log.getSenderName().toLowerCase().contains("m")){
     		 return;
     	 }
     	 String publish_source = StringUtil.getRndNumber(6);
@@ -111,7 +111,7 @@ public class QunService extends Service<Sys_qun_black_user> {
     	 dao43.insert("aws_answer", Chain.make("question_id",31)
     			 .add("add_time", System.currentTimeMillis()/1000)
     			 .add("uid", 422)
-    			 .add("answer_content","来自群MM签到:"+log.getSenderName()+","+log.getMessage()+",私信admin，发送查询码["+publish_source+"]即可获得联系方式")
+    			 .add("answer_content","来自群:"+log.getSenderName()+","+log.getMessage()+",私信admin，发送查询码["+publish_source+"]即可获得联系方式")
     			 .add("category_id", 1)
     			 .add("ip", log.getSender())
     			 .add("publish_source",publish_source)
