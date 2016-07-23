@@ -1,0 +1,235 @@
+<%
+layout("/layouts/private.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button" >
+        <div class="input-group date form_datetime " style="width:150px;float:left;padding-left: 5px;padding-right: 5px" data-date="1979-09-16" data-date-format="dd MM yyyy" data-link-field="beginDate">
+            <input type="text" id="beginDayPick" size="16" readonly="" class="form-control" value="${@date.getDate()}" data-parsley-required="true">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+        </div>
+        <input type="hidden" id="beginDate" name="beginDate" value="${@date.getDate()}">
+        <div class="input-group date form_datetime " style="width:150px;float:left;padding-left: 5px;padding-right: 5px" data-date="1979-09-16" data-date-format="dd MM yyyy" data-link-field="endDate">
+            <input type="text" id="endDayPick" size="16" readonly="" class="form-control" value="${@date.getDate()}" data-parsley-required="true">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+        </div>
+        <input type="hidden" id="endDate" name="endDate" value="${@date.getDate()}">
+
+    </div>
+    <div id="btns" class="btn-group tool-button" >
+        <button class="btn btn-default navbar-btn" onclick="select()">查询</button>
+        <button class="btn btn-primary  navbar-btn" onclick="thisDay()">今日</button>
+        <button class="btn btn-default  navbar-btn" onclick="lastDay()">昨日</button>
+        <button class="btn btn-default  navbar-btn" onclick="thisWeek()">本周</button>
+        <button class="btn btn-default  navbar-btn" onclick="lastWeek()">上周</button>
+    </div>
+    <div class="pull-right offscreen-right">
+        <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i
+                class="fa fa-sliders"></i> 筛选
+        </button>
+    </div>
+</header>
+<div class=panel-body style="padding-top: 50px;">
+    <div class="table-responsive no-border">
+        <input id="unitid" type="hidden">
+        <table class="table table-bordered table-striped mg-t datatable">
+            <thead>
+            <tr>
+                <th>QQ</th>
+                <th>姓名/昵称</th>
+                <th>总金额</th>
+                <th>已付</th>
+                <th>未付</th>
+                <th>操作</th>
+        </table>
+    </div>
+</div>
+
+<div class="cd-panel from-right">
+    <header class="cd-panel-header">
+        <h4>筛选</h4>
+    </header>
+    <div class="cd-panel-container">
+        <div class="cd-panel-content shadow">
+            <div class="form-group">
+                <label for="qq">QQ号</label>
+                <input type="text" id="qq" name="qq" onclick="this.value=''" class="form-control" placeholder="QQ" autofocus>
+            </div>
+            <div class="form-group">
+                <label for="name">姓名/昵称</label>
+                <input type="text" id="name" name="name" onclick="this.value=''" class="form-control" placeholder="姓名/昵称">
+            </div>
+            <button id="searchBtn" type="button" class="btn btn-default">查询</button>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    function thisDay() {
+        var day=moment().format("YYYY-MM-DD");
+        $("#beginDayPick").val(day);
+        $("#beginDate").val(day);
+        $("#endDayPick").val(day);
+        $("#endDate").val(day);
+        $("#btns button").each(function () {
+            if($(this).hasClass("btn-primary"))
+                $(this).removeClass("btn-primary").addClass("btn-default");
+        });
+        $("#btns button").eq(1).addClass("btn-primary");
+        datatable.ajax.reload();
+    }
+    function lastDay() {
+        var day=moment().add(-1, 'days').format("YYYY-MM-DD");
+        $("#beginDayPick").val(day);
+        $("#beginDate").val(day);
+        $("#endDayPick").val(day);
+        $("#endDate").val(day);
+        $("#btns button").each(function () {
+            if($(this).hasClass("btn-primary"))
+                $(this).removeClass("btn-primary").addClass("btn-default");
+        });
+        $("#btns button").eq(2).addClass("btn-primary");
+        datatable.ajax.reload();
+    }
+    function thisWeek() {
+        var e=moment().format("E");var start,end;
+        var a=7-parseInt(e);var b=parseInt(e)-1;
+        start=moment().add(-b, 'days').format("YYYY-MM-DD");
+        end=moment().add(a, 'days').format("YYYY-MM-DD");
+        $("#beginDayPick").val(start);
+        $("#beginDate").val(start);
+        $("#endDayPick").val(end);
+        $("#endDate").val(end);
+        $("#btns button").each(function () {
+            if($(this).hasClass("btn-primary"))
+                $(this).removeClass("btn-primary").addClass("btn-default");
+        });
+        $("#btns button").eq(3).addClass("btn-primary");
+        datatable.ajax.reload();
+    }
+    function lastWeek() {
+        var e=moment().format("E");var start,end;
+        var a=6+parseInt(e);
+        start=moment().add(-a, 'days').format("YYYY-MM-DD");
+        end=moment().add(-parseInt(e), 'days').format("YYYY-MM-DD");
+        $("#beginDayPick").val(start);
+        $("#beginDate").val(start);
+        $("#endDayPick").val(end);
+        $("#endDate").val(end);
+        $("#btns button").each(function () {
+            if($(this).hasClass("btn-primary"))
+                $(this).removeClass("btn-primary").addClass("btn-default");
+        });
+        $("#btns button").eq(4).addClass("btn-primary");
+        datatable.ajax.reload();
+    }
+    function select() {
+        $("#btns button").each(function () {
+            if($(this).hasClass("btn-primary"))
+                $(this).removeClass("btn-primary").addClass("btn-default");
+        });
+        $("#btns button").eq(0).addClass("btn-primary");
+        datatable.ajax.reload();
+    }
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/private/robot/order/data",
+                "type": "post",
+                "data": function (d) {
+                    d.qq=$("#qq").val();
+                    d.name=$("#name").val();
+                    d.beginDate=$("#beginDate").val();
+                    d.endDate=$("#endDate").val();
+                }
+            },
+            "order": [[0, "asc"]],
+            "columns": [
+                {"data": "qq", "bSortable": true},
+                {"data": "nickname", "bSortable": true},
+                {"data": "nickname", "bSortable": true},
+                {"data": "nickname", "bSortable": true},
+                {"data": "disabled", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        if (!data) {
+                            return '<i id="disable_' + row.qq + '" class="fa fa-circle text-success ml5"></i>';
+                        } else {
+                            return '<i id="disable_' + row.qq + '" class="fa fa-circle text-danger ml5"></i>';
+                        }
+                    },
+                    "targets": 4
+                },
+                {
+                    "render": function (data, type, row) {
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                                '<li><a href="${base}/private/robot/order/edit/' + row.qq + '" data-pjax>修改</a></li>' +
+                                '<li class="divider"></li>' +
+                                '<li><a href="javascript:;" onclick="enableUser(\'' + row.qq + '\')">启用</a></li>' +
+                                '<li><a href="javascript:;" onclick="disableUser(\'' + row.qq + '\')">禁用</a></li>' +
+                                '</ul></div>';
+                    },
+                    "targets": 5
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    function enableUser(id) {
+        $.post("${base}/private/robot/user/enable/" + id, {}, function (data) {
+            if (data.code == 0) {
+                $("#disable_" + id).attr("class", "fa fa-circle text-success ml5");
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function disableUser(id) {
+        $.post("${base}/private/robot/user/disable/" + id, {}, function (data) {
+            if (data.code == 0) {
+                $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    $(function () {
+        initDatatable();
+        $('.form_datetime').datetimepicker({
+            language:  'zh-CN',
+            minView: 2,
+            format:'yyyy-mm-dd',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            showMeridian: 1
+        });
+    });
+</script>
+
+<%}%>

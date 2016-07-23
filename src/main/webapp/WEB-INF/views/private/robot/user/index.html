@@ -1,0 +1,131 @@
+<%
+layout("/layouts/private.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="pull-right offscreen-right">
+        <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i
+                class="fa fa-sliders"></i> 筛选
+        </button>
+    </div>
+</header>
+<div class=panel-body style="padding-top: 50px;">
+    <div class="table-responsive no-border">
+        <input id="unitid" type="hidden">
+        <table class="table table-bordered table-striped mg-t datatable">
+            <thead>
+            <tr>
+                <th>QQ</th>
+                <th>姓名/昵称</th>
+                <th>状态</th>
+                <th>操作</th>
+        </table>
+    </div>
+</div>
+
+<div class="cd-panel from-right">
+    <header class="cd-panel-header">
+        <h4>筛选</h4>
+    </header>
+    <div class="cd-panel-container">
+        <div class="cd-panel-content shadow">
+            <div class="form-group">
+                <label for="qq">QQ号</label>
+                <input type="text" id="qq" name="qq" onclick="this.value=''" class="form-control" placeholder="QQ" autofocus>
+            </div>
+            <div class="form-group">
+                <label for="name">姓名/昵称</label>
+                <input type="text" id="name" name="name" onclick="this.value=''" class="form-control" placeholder="姓名/昵称">
+            </div>
+            <button id="searchBtn" type="button" class="btn btn-default">查询</button>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/private/robot/user/data",
+                "type": "post",
+                "data": function (d) {
+                    d.qq=$("#qq").val();
+                    d.name=$("#name").val();
+                }
+            },
+            "order": [[0, "asc"]],
+            "columns": [
+                {"data": "qq", "bSortable": true},
+                {"data": "name", "bSortable": true},
+                {"data": "disabled", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        if (!data) {
+                            return '<i id="disable_' + row.qq + '" class="fa fa-circle text-success ml5"></i>';
+                        } else {
+                            return '<i id="disable_' + row.qq + '" class="fa fa-circle text-danger ml5"></i>';
+                        }
+                    },
+                    "targets": 2
+                },
+                {
+                    "render": function (data, type, row) {
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                                '<li><a href="${base}/private/robot/user/edit/' + row.qq + '" data-pjax>修改</a></li>' +
+                                '<li class="divider"></li>' +
+                                '<li><a href="javascript:;" onclick="enableUser(\'' + row.qq + '\')">启用</a></li>' +
+                                '<li><a href="javascript:;" onclick="disableUser(\'' + row.qq + '\')">禁用</a></li>' +
+                                '</ul></div>';
+                    },
+                    "targets": 3
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    function enableUser(id) {
+        $.post("${base}/private/robot/user/enable/" + id, {}, function (data) {
+            if (data.code == 0) {
+                $("#disable_" + id).attr("class", "fa fa-circle text-success ml5");
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function disableUser(id) {
+        $.post("${base}/private/robot/user/disable/" + id, {}, function (data) {
+            if (data.code == 0) {
+                $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    $(function () {
+        initDatatable();
+    });
+</script>
+
+<%}%>

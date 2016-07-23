@@ -167,40 +167,8 @@
                     </li><% } %>
                 </ul><% } %>
             </li><% }%>
-            <li>
-                <a href="https://github.com/Wizzercn/NutzWk" target="_blank">GitHub</a>
-            </li>
-            <li>
-                <a href="http://www.wizzer.cn" target="_blank">Blog</a>
-            </li>
-            <li>
-                <a href="https://github.com/Wizzercn/NodeWk" target="_blank">NodeWk</a>
-            </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-            <!--通知位置-->
-            <li class="language-dropdown dropdown hidden-xs">
-                <a href="javascript:;" data-toggle="dropdown" id="language">
-                    <%if(lang==null||lang=="zh_CN"){%>
-                    <img src="${base!}/assets/img/flags/cn.png" class="flag">
-                    <%}else{%>
-                    <img src="${base!}/assets/img/flags/us.png" class="flag">
-                    <%}%>
-                    <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
-                        <li>
-                            <a href="?lang=en_US">
-                                <img src="${base!}/assets/img/flags/us.png" class="flag">
-                                <span class="language">English</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="?lang=zh_CN">
-                                <img src="${base!}/assets/img/flags/cn.png" class="flag">
-                                <span class="language">中文</span>
-                            </a>
-                        </li>
-                    </ul>
-            </li>
             <li class="off-right">
                 <a href="javascript:;" data-toggle="dropdown">
                     <span class="hidden-xs ml10">${@shiro.getPrincipalProperty('nickname')}</span>

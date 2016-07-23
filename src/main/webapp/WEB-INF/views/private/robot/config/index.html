@@ -1,0 +1,184 @@
+<%
+layout("/layouts/private.html"){
+%>
+
+<form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+      action="${base}/private/robot/config/editDo" method="post">
+    <input name="id" id="id" value="${obj.id!}" type="hidden">
+    <header class="header navbar bg-white shadow">
+        <div class="pull-right">
+            <div class="btn-group tool-button">
+                <button class="btn btn-primary navbar-btn" type="button" id="save"> 保存</button>
+            </div>
+        </div>
+    </header>
+    <div class="content-wrap">
+        <div class="wrapper" style="min-height:500px;height: 100%;">
+
+
+            <div class="box-tab">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#home1" data-toggle="tab">基础设置</a>
+                    </li>
+                    <li><a href="#profile1" data-toggle="tab">提示语设置</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade active in" id="home1">
+                        <div class="form-group">
+                            <label for="timeStart" class="col-sm-2 control-label">订餐时间</label>
+                            <div class="col-sm-8">
+                                <input class="input-medium search-query" name="timeStart"
+                                       value="${obj.timeStart!}" type="text" class="form-control" style="width:120px"
+                                       id="timeStart" data-date-format="hh:ii:ss" readonly/>
+                                ~ <input class="input-medium search-query" name="timeEnd"
+                                         value="${obj.timeEnd!}" type="text" class="form-control" style="width:120px"
+                                         id="timeEnd" data-date-format="hh:ii:ss" readonly/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="money" class="col-sm-2 control-label">每份价格（单位：元）</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="money" class="form-control" name="money"
+                                       data-parsley-required="true" data-parsley-type="integer"
+                                       value="${obj.money!}" placeholder="每份价格">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="disabled" class="col-sm-2 control-label">周末禁用</label>
+                            <div class="col-sm-8 switcha">
+                                <div class="mr15">
+                                    <input type="checkbox" id="disabled" name="disabled" class="js-switch-blue" <%if(obj.disabled){%>checked<%}%>>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmKey" class="col-sm-2 control-label">订餐关键词</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="confirmKey" class="form-control" name="confirmKey"
+                                       data-parsley-required="true"
+                                       value="${obj.confirmKey!}" placeholder="订餐关键词">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cancelKey" class="col-sm-2 control-label">取消订餐关键词</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="cancelKey" class="form-control" name="cancelKey"
+                                       data-parsley-required="true"
+                                       value="${obj.cancelKey!}" placeholder="取消订餐关键词">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="token" class="col-sm-2 control-label">安全密钥</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="token" class="form-control" name="token"
+                                       data-parsley-required="true"
+                                       value="${obj.token!}" placeholder="安全密钥">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="profile1">
+
+                        <div class="form-group">
+                            <label for="confirmTxt" class="col-sm-2 control-label">订餐成功提示</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="confirmTxt" class="form-control" name="confirmTxt"
+                                       data-parsley-required="true"
+                                       value="${obj.confirmTxt!}" placeholder="订餐成功提示">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNoway" class="col-sm-2 control-label">超过订餐时间提示</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="confirmNoway" class="form-control" name="confirmNoway"
+                                       data-parsley-required="true"
+                                       value="${obj.confirmNoway!}" placeholder="超过订餐时间提示">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNo" class="col-sm-2 control-label">没到订餐时间提示</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="confirmNo" class="form-control" name="confirmNo"
+                                       data-parsley-required="true"
+                                       value="${obj.confirmNo!}" placeholder="没到订餐时间提示">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cancelTxt" class="col-sm-2 control-label">取消成功提示</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="cancelTxt" class="form-control" name="cancelTxt"
+                                       data-parsley-required="true"
+                                       value="${obj.cancelTxt!}" placeholder="取消成功提示">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cancelNoway" class="col-sm-2 control-label">超过订餐时间提示</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="cancelNoway" class="form-control" name="cancelNoway"
+                                       data-parsley-required="true"
+                                       value="${obj.cancelNoway!}" placeholder="超过订餐时间提示">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cancelNo" class="col-sm-2 control-label">没订单取消提示</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="cancelNo" class="form-control" name="cancelNo"
+                                       data-parsley-required="true"
+                                       value="${obj.cancelNo!}" placeholder="没订单取消提示">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</form>
+<script language="JavaScript">
+    $(document).ready(function () {
+        myForm.init();
+        $('#timeStart').datetimepicker({
+            format: 'hh:ii:ss',
+            autoclose : 1,
+            startView:1
+        });
+        $('#timeEnd').datetimepicker({
+            format: 'hh:ii:ss',
+            autoclose : 1,
+            startView:1
+        });
+        $("#save").on("click", function () {
+//      $("#footer_content").val(ue.getContent());
+            $('#addForm').submit();
+        });
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                } else {
+                    Toast.error(data.msg);
+                }
+                sublime.closeLoadingbar($(".main-content"));
+            }
+        });
+    });
+</script>
+
+<%}%>

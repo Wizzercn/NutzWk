@@ -500,6 +500,7 @@ public class Setup implements org.nutz.mvc.Setup {
         Globals.AppRoot = Strings.sNull(config.getAppRoot());//项目路径
         Globals.AppBase = Strings.sNull(config.getServletContext().getContextPath());//部署名
         Globals.init(dao);
+        Globals.init_robot(dao);
     }
 
     public void destroy(NutConfig config) {

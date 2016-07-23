@@ -1,5 +1,6 @@
 package cn.wizzer.common.base;
 
+import cn.wizzer.modules.back.robot.models.Rb_config;
 import cn.wizzer.modules.back.sys.models.Sys_config;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -26,6 +27,8 @@ public class Globals {
     public static String AppUploadPath = "/upload";
     //系统自定义参数
     public static Map<String, String> MyConfig;
+    //机器人配置
+    public static Rb_config ROBOT;
 
     public static void init(Dao dao) {
         Globals.MyConfig = new HashMap<>();
@@ -49,5 +52,9 @@ public class Globals {
                     break;
             }
         }
+    }
+
+    public static void init_robot(Dao dao) {
+        ROBOT = dao.fetch(Rb_config.class, Cnd.where("id", "=", "robot"));
     }
 }
