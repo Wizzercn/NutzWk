@@ -15,6 +15,13 @@ layout("/layouts/private.html"){
         <input type="hidden" id="endDate" name="endDate" value="${@date.getDate()}">
 
     </div>
+    <div class="btn-group tool-button" >
+        <select id="payStatus" name="payStatus" class="form-control" style="width: 85px;">
+            <option value="all">全部</option>
+            <option value="w">未付</option>
+            <option value="f">已付</option>
+        </select>
+    </div>
     <div id="btns" class="btn-group tool-button" >
         <button class="btn btn-default navbar-btn" onclick="select()">查询</button>
         <button class="btn btn-primary  navbar-btn" onclick="thisDay()">今日</button>
@@ -23,6 +30,14 @@ layout("/layouts/private.html"){
         <button class="btn btn-default  navbar-btn" onclick="lastWeek()">上周</button>
     </div>
     <div class="pull-right offscreen-right">
+        <div class="btn-group tool-button" >
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                批量操作 <span class="ti-angle-down"></span></button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="javascript:;" onclick="payAll()">批量收款</a></li>
+                <li><a href="javascript:;" onclick="expAll()">导出Excel</a></li>
+            </ul>
+        </div>
         <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i
                 class="fa fa-sliders"></i> 筛选
         </button>
@@ -59,6 +74,34 @@ layout("/layouts/private.html"){
                 <input type="text" id="name" name="name" onclick="this.value=''" class="form-control" placeholder="姓名/昵称">
             </div>
             <button id="searchBtn" type="button" class="btn btn-default">查询</button>
+        </div>
+    </div>
+</div>
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog"  style="width: 800px;">
+        <div class="modal-content"  style="width: 800px;">
+
+        </div>
+    </div>
+</div>
+<div id="dialogCheck" class="modal fade bs-modal-lg" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">确认收款</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 mb10">
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在提交...">确 定</button>
+            </div>
         </div>
     </div>
 </div>
@@ -130,6 +173,13 @@ layout("/layouts/private.html"){
         $("#btns button").eq(0).addClass("btn-primary");
         datatable.ajax.reload();
     }
+
+    function detail(qq) {
+        $("#dialogDetail").modal({
+            remote: "${base}/private/robot/order/detail/"+qq+"?beginDate="+$("#beginDate").val()+"&endDate="+$("#endDate").val()
+        });
+    }
+
     function initDatatable() {
         datatable = $('.datatable').DataTable({
             "dom": '<"toolbar">frtip',
@@ -155,6 +205,7 @@ layout("/layouts/private.html"){
                     d.name=$("#name").val();
                     d.beginDate=$("#beginDate").val();
                     d.endDate=$("#endDate").val();
+                    d.payStatus=$("#payStatus").val();
                 }
             },
             "order": [[0, "asc"]],
@@ -166,6 +217,12 @@ layout("/layouts/private.html"){
                 {"data": "w", "bSortable": true}
             ],
             "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return "<span id='name_"+row.qq+"'>"+data+"</span>"
+                    },
+                    "targets": 1
+                },
                 {
                     "render": function (data, type, row) {
                         return row.c+"份(&yen;"+data+")"
@@ -180,7 +237,7 @@ layout("/layouts/private.html"){
                 },
                 {
                     "render": function (data, type, row) {
-                        return "<spen style='color: #f38709'>"+data+"份(&yen;"+(row.money*data)+")</span>";
+                        return "<spen id='qq_"+row.qq+"' style='color: #f38709'>"+data+"份(&yen;"+(row.money*data)+")</span>";
                     },
                     "targets": 4
                 },
@@ -188,7 +245,8 @@ layout("/layouts/private.html"){
                     "render": function (data, type, row) {
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                                 ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/private/robot/order/edit/' + row.qq + '" data-pjax>收款</a></li>' +
+                                '<li><a href="javascript:detail(\''+ row.qq + '\')">订单详情</a></li>' +
+                                '<li><a href="javascript:pay(\''+ row.qq + '\')">收款</a></li>' +
                                 '</ul></div>';
                     },
                     "targets": 5
@@ -200,6 +258,75 @@ layout("/layouts/private.html"){
         });
         $("#searchBtn").on('click', function () {
             datatable.ajax.reload();
+        });
+    }
+    function pay(qq) {
+        $("#dialogCheck .mb10").html($("#name_"+qq).html()+" <span style='color: #f38709'>"+ $("#qq_"+qq).html()+"</span>");
+        var dialog = $("#dialogCheck");
+        dialog.modal("show");
+        dialog.find("#ok").unbind("click");
+        dialog.find("#ok").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/private/robot/order/payqq/" + qq, {beginDate:$("#beginDate").val(),endDate:$("#endDate").val()}, function (data) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                //重置按钮状态，关闭提示框
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    function payAll() {
+        $.post("${base}/private/robot/order/payinfo",{beginDate:$("#beginDate").val(),endDate:$("#endDate").val()},function (d) {
+            if (d.code == 0) {
+                var str="";
+                var t=0;
+                var m=0;
+                var c=0;
+                console.log(d.data);
+                $.each(d.data,function (i,o) {
+                    if(o.qq){
+                        t++;
+                        m+=parseInt(o.m);
+                        c+=parseInt(o.c);
+                        str+=o.name +"<span style='color: #f38709'>"+o.c+"份(&yen;"+o.m+")</span>   ";
+                    }
+                });
+                str+="<br><br>共"+t+"人,"+c+"份(&yen;"+m+")";
+                if(t==0){
+                    $("#dialogCheck .mb10").html("木有……");
+                    var dialog = $("#dialogCheck");
+                    dialog.modal("show");
+                    dialog.find("#ok").unbind("click");
+                }else {
+                    $("#dialogCheck .mb10").html(str);
+                    var dialog = $("#dialogCheck");
+                    dialog.modal("show");
+                    dialog.find("#ok").unbind("click");
+                    dialog.find("#ok").bind("click", function (event) {
+                        var btn = $(this);
+                        btn.button("loading");
+                        $.post("${base}/private/robot/order/payall" , {beginDate:$("#beginDate").val(),endDate:$("#endDate").val()}, function (data) {
+                            if (data.code == 0) {
+                                Toast.success(data.msg);
+                                datatable.ajax.reload(null,false);
+                            } else {
+                                Toast.error(data.msg);
+                            }
+                            //重置按钮状态，关闭提示框
+                            btn.button("reset");
+                            dialog.modal("hide");
+                        }, "json");
+                    });
+                }
+
+
+            }
         });
     }
     $(function () {
@@ -215,6 +342,12 @@ layout("/layouts/private.html"){
             startView: 2,
             forceParse: 0,
             showMeridian: 1
+        });
+        $("#payStatus").on("change",function () {
+            datatable.ajax.reload();
+        });
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
         });
     });
 </script>

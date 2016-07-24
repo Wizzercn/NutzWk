@@ -83,17 +83,17 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz</artifactId>
-            <version>1.r.57</version>
+            <version>1.r.56.r3</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-daocache</artifactId>
-            <version>1.r.57</version>
+            <version>1.r.57-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-web</artifactId>
-            <version>1.r.57</version>
+            <version>1.r.56</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty.aggregate</groupId>
@@ -108,17 +108,17 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-quartz</artifactId>
-            <version>1.r.57</version>
+            <version>1.r.56</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-shiro</artifactId>
-            <version>1.r.57</version>
+            <version>1.r.56</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzwx</artifactId>
-            <version>1.r.57</version>
+            <version>1.r.57-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.vdurmont</groupId>

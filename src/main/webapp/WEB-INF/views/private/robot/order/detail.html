@@ -1,0 +1,136 @@
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button" style="padding-top: 20px;">
+        ${beginDate!} 至 ${endDate!} 姓名：${name} QQ：${qq!}
+    </div>
+</header>
+<div class=panel-body style="padding-top: 50px;">
+    <div class="table-responsive no-border">
+        <table id="dd" class="table table-bordered table-striped mg-t datatable">
+            <thead>
+            <tr>
+                <th>日期</th>
+                <th>金额</th>
+                <th>订单状态</th>
+                <th>收款状态</th>
+                <th>操作</th>
+        </table>
+    </div>
+</div>
+<script language="JavaScript">
+    var dd;
+    function initDd() {
+        dd = $('#dd').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "preDrawCallback": function () {
+            },
+            "drawCallback": function () {
+            },
+            "ajax": {
+                "url": "${base}/private/robot/order/detai/data/${qq!}",
+                "type": "post",
+                "data": function (d) {
+                    d.beginDate='${beginDate!}';
+                    d.endDate='${endDate!}';
+                }
+            },
+            "order": [[0, "asc"]],
+            "columns": [
+                {"data": "day", "bSortable": true},
+                {"data": "money", "bSortable": true},
+                {"data": "orderStatus", "bSortable": true},
+                {"data": "payStatus", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return "<spen style='color: #f38709'>&yen;"+(data)+"</span>";
+                    },
+                    "targets": 1
+                },
+                {
+                    "render": function (data, type, row) {
+                        if(1==data){
+                            return "取消";
+                        }else return "确认";
+                    },
+                    "targets": 2
+                },
+                {
+                    "render": function (data, type, row) {
+                        if(1==data){
+                            return "已收款";
+                        }else return "<spen style='color: #f38709'>未收款</span>";
+                    },
+                    "targets": 3
+                },
+                {
+                    "render": function (data, type, row) {
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                                '<li><a href="javascript:enableU(\''+ row.id + '\')">确认订单</a></li>' +
+                                '<li><a href="javascript:disableU(\''+ row.id + '\')">取消订单</a></li>' +
+                                '<li class="divider"></li>' +
+                                '<li><a href="javascript:payOne(\''+ row.id + '\')">确认收款</a></li>' +
+                                '<li><a href="javascript:payNo(\''+ row.id + '\')">取消收款</a></li>' +
+                                '</ul></div>';
+                    },
+                    "targets": 4
+                }
+            ]
+        });
+        dd.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+    }
+    function payOne(id) {
+        $.post("${base}/private/robot/order/payone/" + id, {}, function (data) {
+            if (data.code == 0) {
+                dd.ajax.reload(null,false);
+                if(datatable)
+                    datatable.ajax.reload(null,false);
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function payNo(id) {
+        $.post("${base}/private/robot/order/payno/" + id, {}, function (data) {
+            if (data.code == 0) {
+                dd.ajax.reload(null,false);
+                if(datatable)
+                    datatable.ajax.reload(null,false);
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function enableU(id) {
+        $.post("${base}/private/robot/order/enable/" + id, {}, function (data) {
+            if (data.code == 0) {
+                dd.ajax.reload(null,false);
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function disableU(id) {
+        $.post("${base}/private/robot/order/disable/" + id, {}, function (data) {
+            if (data.code == 0) {
+                dd.ajax.reload(null,false);
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    $(function () {
+        initDd();
+    });
+</script>
