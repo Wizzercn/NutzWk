@@ -31,7 +31,7 @@
             <email>koukou890@qq.com</email>
             <url>http://www.rekoe.com</url>
         </developer>
-	    <developer>
+        <developer>
             <id>enilu</id>
             <name>enilu</name>
             <email>eniluzt@qq.com</email>
@@ -39,17 +39,17 @@
         </developer>
     </developers>
     <repositories>
-		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
     </repositories>
     <dependencies>
         <!-- jetty web server -->
@@ -68,10 +68,10 @@
             <artifactId>jetty-jsp</artifactId>
             <version>${jetty-version}</version>
             <exclusions>
-            	<exclusion>
-            		<groupId>org.glassfish.web</groupId>
-            		<artifactId>javax.servlet.jsp</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>org.glassfish.web</groupId>
+                    <artifactId>javax.servlet.jsp</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -83,17 +83,17 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz</artifactId>
-            <version>1.r.56.r3</version>
+            <version>1.r.57</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-daocache</artifactId>
-            <version>1.r.57-SNAPSHOT</version>
+            <version>1.r.57</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-web</artifactId>
-            <version>1.r.56</version>
+            <version>1.r.57</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty.aggregate</groupId>
@@ -108,17 +108,17 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-quartz</artifactId>
-            <version>1.r.56</version>
-        </dependency>		
+            <version>1.r.57</version>
+        </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-shiro</artifactId>
-            <version>1.r.56</version>
+            <version>1.r.57</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzwx</artifactId>
-            <version>1.r.57-SNAPSHOT</version>
+            <version>1.r.57</version>
         </dependency>
         <dependency>
             <groupId>com.vdurmont</groupId>
@@ -337,21 +337,21 @@
             </exclusions>
         </dependency>
         <dependency>
-    		<groupId>org.glassfish</groupId>
-    		<artifactId>javax.el</artifactId>
-    		<version>3.0.1-b08</version>
-		</dependency>
-    	<dependency>
-      		<groupId>org.glassfish.web</groupId>
-      		<artifactId>javax.servlet.jsp</artifactId>
-      		<version>2.3.2</version>
-      		<exclusions>
-      			<exclusion>
-      				<groupId>org.glassfish</groupId>
-      				<artifactId>javax.el</artifactId>
-      			</exclusion>
-      		</exclusions>
-    	</dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>3.0.1-b08</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>javax.servlet.jsp</artifactId>
+            <version>2.3.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>javax.el</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
