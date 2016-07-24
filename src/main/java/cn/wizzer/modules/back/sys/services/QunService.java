@@ -112,7 +112,7 @@ public class QunService extends Service<Sys_qun_black_user> {
     	 if(question!=null && question.size()>0){
     		 for(int q=0;q<question.size();q++){
     			 links.append("帖子详情和照片<a href=\"/?/question/").append(question.get(q).getString("question_id")).append("\">").append(question.get(q).getString("question_content")).append("</a> </br>");
-    			 dao43.update("aws_question", Chain.make("question_detail", question.get(q).getString("question_detail")+"</br>"+log.getMessage().replaceAll("[\\[a-zA-Z:0-9.\\]]", "")), Cnd.where("question_id", "=", question.get(q).getInt("question_id")));
+    			 dao43.update("aws_question", Chain.make("question_detail", question.get(q).getString("question_detail")+log.getMessage().replaceAll("[\\[a-zA-Z:0-9.\\]]", "")), Cnd.where("question_id", "=", question.get(q).getInt("question_id")));
     		 }
     		 
     	 }else{//插入到question 表
