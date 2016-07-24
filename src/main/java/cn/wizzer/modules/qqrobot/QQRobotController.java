@@ -117,10 +117,10 @@ public class QQRobotController  {
     		  if(joinQun!=null && joinQun.size()>0){
      			 return "@"+operator+"群主，群成员["+sender+"]已经被圈内人士举报了["+joinQun.get(0).getCountSum()+"]次,最近一次举报的原因是:"+joinQun.get(0).getText()+",如有误报请联系小助手删除提示，谢谢！";
      		  }else{
-     			 return "@"+sender+",欢迎["+data.getString("SenderName")+"],来到VIP群，来这里我只悄悄的告诉你，回复:#123456，或者回复:123456###一些文字描述。试试有什么效果，为了你的安全，欢迎拉小助手入群，做一个有情怀的机器人";
+     			 //return "@"+sender+",欢迎["+data.getString("SenderName")+"],来到VIP群，来这里我只悄悄的告诉你，回复:#123456，或者回复:123456###一些文字描述。试试有什么效果，为了你的安全，欢迎拉小助手入群，做一个有情怀的机器人";
      		  }
     	  }
-         qunService.insert2answer(chatlog);
+          qunService.insert2answer(chatlog);
           return "";
     }
      
