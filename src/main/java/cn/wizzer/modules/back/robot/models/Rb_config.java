@@ -38,6 +38,11 @@ public class Rb_config extends Model implements Serializable {
     private String confirmNo;//没到订餐时间。
 
     @Column
+    @Comment("订过提示")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String confirmHas;//没到订餐时间。
+
+    @Column
     @Comment("取消关键词")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String cancelKey;
@@ -120,6 +125,14 @@ public class Rb_config extends Model implements Serializable {
 
     public void setConfirmNo(String confirmNo) {
         this.confirmNo = confirmNo;
+    }
+
+    public String getConfirmHas() {
+        return confirmHas;
+    }
+
+    public void setConfirmHas(String confirmHas) {
+        this.confirmHas = confirmHas;
     }
 
     public String getCancelKey() {

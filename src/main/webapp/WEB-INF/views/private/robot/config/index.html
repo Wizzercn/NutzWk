@@ -113,6 +113,15 @@ layout("/layouts/private.html"){
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="confirmHas" class="col-sm-2 control-label">重新订餐提示</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="confirmHas" class="form-control" name="confirmHas"
+                                       data-parsley-required="true"
+                                       value="${obj.confirmHas!}" placeholder="重新订餐提示">
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="cancelTxt" class="col-sm-2 control-label">取消成功提示</label>
 
                             <div class="col-sm-8">

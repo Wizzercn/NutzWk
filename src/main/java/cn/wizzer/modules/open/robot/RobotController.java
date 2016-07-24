@@ -98,7 +98,6 @@ public class RobotController {
         //第二步,根据关键词判断操作类型
         String key = Strings.sBlank(data.getString("Message"));
         String day = DateUtil.getDate();
-        log.debug("key::" + key);
         if (key.length() == 1)
             return "";
         key = key.substring(1).trim();
@@ -157,8 +156,10 @@ public class RobotController {
             } else {
                 if (order.getOrderStatus() == 1) {
                     rbOrderService.update(Chain.make("orderStatus", 0), Cnd.where("id", "=", order.getId()));
+                    return at + " " + Globals.ROBOT.getConfirmTxt();//订餐成功。
+                }else {
+                    return at + " 你已订过啦。";//订餐成功。
                 }
-                return at + " " + Globals.ROBOT.getConfirmTxt();//订餐成功。
             }
         }
         //第四步,如果是取消订餐
