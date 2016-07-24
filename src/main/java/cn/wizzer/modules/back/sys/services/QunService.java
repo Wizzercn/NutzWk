@@ -111,7 +111,7 @@ public class QunService extends Service<Sys_qun_black_user> {
     	 List<Record> question = dao43.query("aws_question", Cnd.where("qq", "=", log.getSender()));
     	 if(question!=null && question.size()>0){
     		 for(int q=0;q<question.size();q++){
-    			 links.append("帖子详情和照片<a href=\"/?/question/").append(question.get(q).getString("question_id")).append("\">").append(question.get(q).getString("question_contents")).append("</a> </br>");
+    			 links.append("帖子详情和照片<a href=\"/?/question/").append(question.get(q).getString("question_id")).append("\">").append(question.get(q).getString("question_content")).append("</a> </br>");
     		 }
     		 
     	 }else{//插入到question 表
@@ -121,7 +121,7 @@ public class QunService extends Service<Sys_qun_black_user> {
     				   .add("published_uid", 1)
     				   .add("category_id", 2)
     				   .add("integral", 30)
-    				   .add("question_contents", log.getSenderName())
+    				   .add("question_content", log.getSenderName())
     				   .add("qq", log.getSender())
     				   .add("question_detail", "来自VIP群:联系方式查看所需积分30，获取方式，分享资源200积分（需提供照片），2邀请用户注册200，需要邮箱验证通过。</br>"+log.getSenderName()+","+log.getMessage()));
     	 }
