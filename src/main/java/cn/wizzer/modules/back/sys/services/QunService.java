@@ -121,6 +121,7 @@ public class QunService extends Service<Sys_qun_black_user> {
     				   .add("published_uid", 1)
     				   .add("category_id", 2)
     				   .add("integral", 30)
+    				   .add("question_contents", log.getSenderName())
     				   .add("qq", log.getSender())
     				   .add("question_detail", "来自VIP群:联系方式查看所需积分30，获取方式，分享资源200积分（需提供照片），2邀请用户注册200，需要邮箱验证通过。</br>"+log.getSenderName()+","+log.getMessage()));
     	 }
