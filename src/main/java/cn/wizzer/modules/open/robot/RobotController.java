@@ -77,7 +77,7 @@ public class RobotController {
         if (!Strings.sBlank(token).equals(Globals.ROBOT.getToken())) {
             return "";
         }
-        log.debug("data:" + Json.toJson(data));
+//        log.debug("data:" + Json.toJson(data));
         if (!Strings.startsWithChar(data.getString("Message"), cmd1) && !Strings.startsWithChar(data.getString("Message"), cmd2)) {
             return "";
         }

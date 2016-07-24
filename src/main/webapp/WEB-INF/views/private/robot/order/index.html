@@ -51,7 +51,7 @@ layout("/layouts/private.html"){
             <tr>
                 <th>QQ</th>
                 <th>姓名/昵称</th>
-                <th>全部</th>
+                <th>总数量</th>
                 <th>已付</th>
                 <th>未付</th>
                 <th>操作</th>
@@ -260,6 +260,9 @@ layout("/layouts/private.html"){
             datatable.ajax.reload();
         });
     }
+    function expAll() {
+        window.open("${base}/private/robot/order/xls?qq="+$("#qq").val()+"&name="+$("#name").val()+"&beginDate="+$("#beginDate").val()+"&endDate="+$("#endDate").val()+"&payStatus="+$("#payStatus").val());
+    }
     function pay(qq) {
         $("#dialogCheck .mb10").html($("#name_"+qq).html()+" <span style='color: #f38709'>"+ $("#qq_"+qq).html()+"</span>");
         var dialog = $("#dialogCheck");
@@ -288,7 +291,6 @@ layout("/layouts/private.html"){
                 var t=0;
                 var m=0;
                 var c=0;
-                console.log(d.data);
                 $.each(d.data,function (i,o) {
                     if(o.qq){
                         t++;

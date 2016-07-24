@@ -8,20 +8,28 @@ import cn.wizzer.common.util.DateUtil;
 import cn.wizzer.modules.back.robot.models.Rb_user;
 import cn.wizzer.modules.back.robot.services.RbOrderService;
 import cn.wizzer.modules.back.robot.services.RbUserService;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
+import org.nutz.dao.entity.Record;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -219,4 +227,85 @@ public class RbOrderController {
         }
         return rbOrderService.data(length, start, draw, countSql, Sqls.create(s));
     }
+
+    @At
+    @RequiresAuthentication
+    @Ok("raw")
+    public File xls(@Param("qq") String qq, @Param("name") String name, @Param("payStatus") String payStatus, @Param("beginDate") String beginDate, @Param("endDate") String endDate, HttpServletRequest req, HttpServletResponse res) throws Exception {
+        String sql = "SELECT ta.qq,ta.money,COUNT(ta.id) AS c,SUM(ta.money) AS m,SUM(CASE WHEN ta.payStatus=0 THEN 1 ELSE 0 END) AS w,SUM(CASE WHEN ta.payStatus=1 THEN 1 ELSE 0 END) AS f,tb.name FROM rb_order ta,rb_user tb WHERE ta.qq=tb.qq AND ta.orderStatus=0 ";
+        if (!Strings.isBlank(qq))
+            sql += " and ta.qq='" + qq + "'";
+        if (!Strings.isBlank(qq))
+            sql += " and tb.name='" + name + "'";
+        if ("w".equals(payStatus)) {
+            sql += " and ta.payStatus=0";
+        } else if ("f".equals(payStatus)) {
+            sql += " and ta.payStatus=1";
+        }
+        int startT = DateUtil.getTime(Strings.sBlank(beginDate) + " 00:00:00");
+        int endT = DateUtil.getTime(Strings.sBlank(endDate) + " 23:59:59");
+        sql += " and ta.orderAt>=" + startT;
+        sql += " and ta.orderAt<=" + endT;
+        sql += " and tb.disabled=0";
+        sql += " GROUP BY ta.qq";
+        List<Record> list = rbOrderService.list(Sqls.create(sql));
+        String[] titles = {"QQ", "姓名", "总数量", "单价", "总金额", "已付数量", "未付数量"};
+        String[] properties = {"qq", "name", "c", "money", "m", "f", "w"};
+        HSSFWorkbook wb = new HSSFWorkbook();
+        // 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+        HSSFSheet sheet = wb.createSheet("订单");
+        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+        HSSFRow row = sheet.createRow((int) 0);
+        // 第四步，创建单元格，并设置值表头 设置表头居中
+        HSSFCellStyle style = wb.createCellStyle();
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+        sheet.setColumnWidth(0, 4000);
+        sheet.setColumnWidth(1, 4000);
+        sheet.setColumnWidth(2, 4000);
+        sheet.setColumnWidth(3, 4000);
+        sheet.setColumnWidth(4, 4000);
+        sheet.setColumnWidth(5, 4000);
+        sheet.setColumnWidth(6, 4000);
+        HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
+        cell.setCellValue(titles[0]);
+        cell.setCellStyle(style);
+        cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
+        cell.setCellValue(titles[1]);
+        cell.setCellStyle(style);
+        cell = row.createCell(2, HSSFCell.CELL_TYPE_STRING);
+        cell.setCellValue(titles[2]);
+        cell.setCellStyle(style);
+        cell = row.createCell(3, HSSFCell.CELL_TYPE_STRING);
+        cell.setCellValue(titles[3]);
+        cell.setCellStyle(style);
+        cell = row.createCell(4, HSSFCell.CELL_TYPE_STRING);
+        cell.setCellValue(titles[4]);
+        cell.setCellStyle(style);
+        cell = row.createCell(5, HSSFCell.CELL_TYPE_STRING);
+        cell.setCellValue(titles[5]);
+        cell.setCellStyle(style);
+        cell = row.createCell(6, HSSFCell.CELL_TYPE_STRING);
+        cell.setCellValue(titles[6]);
+        cell.setCellStyle(style);
+        int i = 0;
+        for (Record record : list) {
+            row = sheet.createRow((int) i + 1);
+            // 第四步，创建单元格，并设置值
+            row.createCell(0, HSSFCell.CELL_TYPE_STRING).setCellValue(Strings.sNull(record.get(properties[0])));
+            row.createCell(1, HSSFCell.CELL_TYPE_STRING).setCellValue(Strings.sNull(record.get(properties[1])));
+            row.createCell(2, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[2]))));
+            row.createCell(3, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[3]))));
+            row.createCell(4, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[4]))));
+            row.createCell(5, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[5]))));
+            row.createCell(6, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[6]))));
+            i++;
+        }
+        res.setContentType("application/vnd.ms-excel");
+        res.setHeader("Content-Disposition","attachment; filename=order.xls");
+        OutputStream out = new FileOutputStream("order.xls");
+        wb.write(out);
+        out.close();
+        return new File("order.xls");
+    }
+
 }

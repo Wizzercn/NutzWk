@@ -229,6 +229,20 @@ public class Service<T> extends EntityService<T> {
     }
 
     /**
+     *
+     * @param sql
+     * @param t
+     * @param <T>
+     * @return
+     */
+    public <T> List<T> list(Sql sql,Class<T> t) {
+        sql.setCallback(Sqls.callback.records());
+        this.dao().execute(sql);
+        return sql.getList(t);
+
+    }
+
+    /**
      * 分页查询
      *
      * @param pageNumber
