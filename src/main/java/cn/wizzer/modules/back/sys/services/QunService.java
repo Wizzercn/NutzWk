@@ -120,9 +120,9 @@ public class QunService extends Service<Sys_qun_black_user> {
     				   .add("update_time", System.currentTimeMillis()/1000)
     				   .add("published_uid", 1)
     				   .add("category_id", 2)
-    				   .add("integral", 1)
+    				   .add("integral", 30)
     				   .add("qq", log.getSender())
-    				   .add("question_detail", "来自群:"+log.getSenderName()+","+log.getMessage()));
+    				   .add("question_detail", "来自VIP群:联系方式查看所需积分30，获取方式，分享资源200积分（需提供照片），2邀请用户注册200，需要邮箱验证通过。</br>"+log.getSenderName()+","+log.getMessage()));
     	 }
     	 //是否有签到
     	 
@@ -130,7 +130,7 @@ public class QunService extends Service<Sys_qun_black_user> {
     	 dao43.insert("aws_answer", Chain.make("question_id",31)
     			 .add("add_time", System.currentTimeMillis()/1000)
     			 .add("uid", 422)
-    			 .add("answer_content","来自群:"+log.getSenderName()+","+log.getMessage()+","+links.toString())
+    			 .add("answer_content","来自VIP群:"+log.getSenderName()+","+log.getMessage()+","+links.toString())
     			 .add("category_id", 1)
     			 .add("ip", log.getSender())
     			 .add("publish_source","mobile")
