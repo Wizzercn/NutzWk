@@ -1,6 +1,5 @@
 package cn.wizzer.modules.back.sys.services;
 
-import java.util.Date;
 import java.util.List;
 
 import org.nutz.aop.interceptor.ioc.TransAop;
@@ -9,6 +8,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
+import org.nutz.dao.entity.Record;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -17,7 +17,6 @@ import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
 import cn.wizzer.common.base.Service;
-import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.modules.back.sys.models.Sys_chat_log;
 import cn.wizzer.modules.back.sys.models.Sys_qun_black_user;
 
@@ -106,16 +105,37 @@ public class QunService extends Service<Sys_qun_black_user> {
     	 if(log == null || log.getSenderName()==null ||  !log.getSenderName().toLowerCase().contains("m")){
     		 return;
     	 }
-    	 String publish_source = StringUtil.getRndNumber(6);
-    	int delRows =  dao43.clear("aws_answer", Cnd.where("ip", "=", log.getSender()));
+    	 
+    	 //是否已经存在联系方式的帖子
+    	 StringBuffer links = new StringBuffer();
+    	 List<Record> question = dao43.query("aws_question", Cnd.where("qq", "=", log.getSender()));
+    	 if(question!=null && question.size()>0){
+    		 for(int q=0;q<question.size();q++){
+    			 links.append("帖子详情和照片<a href=\"/?/question/").append(question.get(q).getString("question_id")).append("\">").append(question.get(q).getString("question_contents")).append("</a> </br>");
+    		 }
+    		 
+    	 }else{//插入到question 表
+    		 dao43.insert("aws_question", Chain.make("question_content", log.getSenderName())
+    				   .add("add_time", System.currentTimeMillis()/1000)
+    				   .add("update_time", System.currentTimeMillis()/1000)
+    				   .add("published_uid", 1)
+    				   .add("category_id", 2)
+    				   .add("integral", 1)
+    				   .add("qq", log.getSender())
+    				   .add("question_detail", "来自群:"+log.getSenderName()+","+log.getMessage()));
+    	 }
+    	 //是否有签到
+    	 
+    	 int delRows = dao43.clear("aws_answer", Cnd.where("ip", "=", log.getSender()));
     	 dao43.insert("aws_answer", Chain.make("question_id",31)
     			 .add("add_time", System.currentTimeMillis()/1000)
     			 .add("uid", 422)
-    			 .add("answer_content","来自群:"+log.getSenderName()+","+log.getMessage()+",私信admin，发送查询码["+publish_source+"]即可获得联系方式")
+    			 .add("answer_content","来自群:"+log.getSenderName()+","+log.getMessage()+","+links.toString())
     			 .add("category_id", 1)
     			 .add("ip", log.getSender())
-    			 .add("publish_source",publish_source)
+    			 .add("publish_source","mobile")
     			 );
+    	  
     	 if(delRows == 0){
     		 dao43.update("aws_question", Chain.makeSpecial("answer_count", "+1"), Cnd.where("question_id", "=", 31));
     	 }
