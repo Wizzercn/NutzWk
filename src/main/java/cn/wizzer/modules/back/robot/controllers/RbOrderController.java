@@ -249,7 +249,7 @@ public class RbOrderController {
         sql += " and tb.disabled=0";
         sql += " GROUP BY ta.qq";
         List<Record> list = rbOrderService.list(Sqls.create(sql));
-        String[] titles = {"QQ", "姓名", "总数量", "单价", "总金额", "已付数量", "未付数量"};
+        String[] titles = {"QQ", "姓名", "总数量", "单价", "总金额", "已付金额", "未付金额"};
         String[] properties = {"qq", "name", "c", "money", "m", "f", "w"};
         HSSFWorkbook wb = new HSSFWorkbook();
         // 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
@@ -296,8 +296,8 @@ public class RbOrderController {
             row.createCell(2, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[2]))));
             row.createCell(3, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[3]))));
             row.createCell(4, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[4]))));
-            row.createCell(5, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[5]))));
-            row.createCell(6, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[6]))));
+            row.createCell(5, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[5])))*NumberUtils.toInt(Strings.sNull(record.get(properties[3]))));
+            row.createCell(6, HSSFCell.CELL_TYPE_NUMERIC).setCellValue(NumberUtils.toInt(Strings.sNull(record.get(properties[6])))*NumberUtils.toInt(Strings.sNull(record.get(properties[3]))));
             i++;
         }
         res.setContentType("application/vnd.ms-excel");

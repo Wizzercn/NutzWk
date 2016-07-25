@@ -73,8 +73,8 @@ public class RobotController {
         if (!Strings.equals(data.getString("Event"), "ClusterIM")) {
             return "";
         }
-        log.debug("data:" + Json.toJson(data));
         String token = data.getString("Key");
+        log.debug("token:" + token);
         if (!Strings.sBlank(token).equals(Globals.ROBOT.getToken())) {
             return "";
         }
