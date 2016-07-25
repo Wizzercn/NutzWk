@@ -495,7 +495,7 @@ public class Setup implements org.nutz.mvc.Setup {
             //CMS模块菜单关联到角色
             dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0003%'").setParam("roleId", dbrole.getId()));
             //QQ机器人菜单关联到角色
-            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0004%'").setParam("roleId", dbrole.getId()));
+            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0005%'").setParam("roleId", dbrole.getId()));
         }
     }
 
