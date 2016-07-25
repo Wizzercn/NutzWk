@@ -24,5 +24,7 @@
 
 3、将设定的QQ拉入群
 
-4、管理员帐号：superadmin  密码：1
+4、服务端管理地址：http://127.0.0.1/private/login
+
+5、管理员帐号：superadmin  密码：1
 
