@@ -69,7 +69,7 @@ public class WxMassController {
         req.setAttribute("wxList", list);
     }
 
-    @At("/massData/?")
+    @At({"/massData/","/massData/?"})
     @Ok("json:full")
     @RequiresAuthentication
     public Object massData(String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {

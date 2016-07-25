@@ -54,7 +54,7 @@ public class WxMsgUserController {
         req.setAttribute("wxList", list);
     }
 
-    @At("/data/?")
+    @At({"/data/","/data/?"})
     @Ok("json:full")
     @RequiresAuthentication
     public Object data(String wxid, @Param("nickname") String nickname, @Param("content") String content, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {

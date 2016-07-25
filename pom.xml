@@ -4,11 +4,12 @@
     <groupId>cn.wizzer</groupId>
     <artifactId>nutzwk</artifactId>
     <packaging>war</packaging>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
     <name>NutzWk</name>
     <url>http://www.wizzer.cn</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jetty-version>9.2.17.v20160517</jetty-version>
     </properties>
 
     <developers>
@@ -30,6 +31,12 @@
             <email>koukou890@qq.com</email>
             <url>http://www.rekoe.com</url>
         </developer>
+        <developer>
+            <id>enilu</id>
+            <name>enilu</name>
+            <email>eniluzt@qq.com</email>
+            <url>http://www.enilu.cn</url>
+        </developer>
     </developers>
     <repositories>
         <repository>
@@ -37,30 +44,56 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
             </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
         </repository>
     </repositories>
     <dependencies>
+        <!-- jetty web server -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>${jetty-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <version>${jetty-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.web</groupId>
+                    <artifactId>javax.servlet.jsp</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz</artifactId>
-            <version>1.r.56.r3</version>
+            <version>1.r.57</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-daocache</artifactId>
-            <version>1.r.56</version>
+            <version>1.r.57</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-web</artifactId>
-            <version>1.r.56</version>
+            <version>1.r.57</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty.aggregate</groupId>
@@ -75,17 +108,17 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-quartz</artifactId>
-            <version>1.r.56</version>
-        </dependency>		
+            <version>1.r.57</version>
+        </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-shiro</artifactId>
-            <version>1.r.56</version>
+            <version>1.r.57</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzwx</artifactId>
-            <version>1.r.57-SNAPSHOT</version>
+            <version>1.r.57</version>
         </dependency>
         <dependency>
             <groupId>com.vdurmont</groupId>
@@ -130,7 +163,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.0.20</version>
+            <version>1.0.22</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba</groupId>
@@ -303,6 +336,22 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>3.0.1-b08</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>javax.servlet.jsp</artifactId>
+            <version>2.3.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>javax.el</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -351,6 +400,9 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
