@@ -153,7 +153,7 @@ public class RbOrderController {
 
     @At("/payinfo")
     @Ok("json")
-    @RequiresPermissions("order.robot.order.edit")
+    @RequiresAuthentication
     public Object payinfo(@Param("beginDate") String beginDate, @Param("endDate") String endDate, HttpServletRequest req) {
         try {
             String sql = "SELECT ta.qq,ta.money,COUNT(ta.id) AS c,SUM(ta.money) AS m,tb.name FROM rb_order ta,rb_user tb WHERE ta.qq=tb.qq AND ta.orderStatus=0 AND ta.payStatus=0 ";
