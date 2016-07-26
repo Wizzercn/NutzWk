@@ -7,6 +7,7 @@ NutzWk 基于Nutz的开源企业级开发框架
 
 开发计划:
 
+* NutzWk 4.0.x   前后端分离版 (vue + nutz) **筹备中..**
 * NutzWk 3.2.x   CMS+ (beetl / beetl+velocity)
 * NutzWk 3.1.x   微信+ (beetl / beetl+velocity)
 * NutzWk 3.0.x   纯净版(beetl / beetl+velocity)
