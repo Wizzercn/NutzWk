@@ -131,19 +131,27 @@
 
             %>
             <li class="dropdown">
+
+                    <% if(!isEmpty(@secondMenus.get(firstMenu.path))){%>
                 <a href="javascript:;" data-toggle="dropdown">
                     <% if(has(firstMenu.icon)){ %>
                     <i class="${firstMenu.icon}"></i>
                     <% } %>
-                    <span><%if(lang=="zh_CN"){%>${firstMenu.name}<%}else{%>${firstMenu.aliasName}<%}%></span>
-                    <b class="caret"></b>
+                    <span>
+                        <%if(lang=="zh_CN"){%>${firstMenu.name}<%}else{%>${firstMenu.aliasName}<%}%></span>
+                    <b class="caret"></b
+                            >
                 </a>
+                <%}else{%>
+                    <a href="<% if(!isEmpty(firstMenu.href)){ %><%if(@string.startWith(firstMenu.href,'/')){%>${base}${firstMenu.href!}<%}else{%>${firstMenu.href!}<%}%> <% }else{ %>javascript:;<% } %>" <%if(@string.startWith(firstMenu.target,'_')){%>target="${firstMenu.target!}"<%}else{%>${firstMenu.target!}<%}%>>
+                   <span>
+                        <%if(lang=="zh_CN"){%>${firstMenu.name}<%}else{%>${firstMenu.aliasName}<%}%></span></a>
+                    <%}%>
+                <% if(!isEmpty(@secondMenus.get(firstMenu.path))){%>
                 <ul class="dropdown-menu topnav">
-                    <% if(!isEmpty(@secondMenus.get(firstMenu.path))){
-
-                    for(secondMenu in @secondMenus.get(firstMenu.path)){ %>
+                    <% for(secondMenu in @secondMenus.get(firstMenu.path)){ %>
                     <li class="dropdown">
-                        <a href="<% if(!isEmpty(secondMenu.href)){ %> <%if(@string.startWith(secondMenu.href,'/')){%>${base}${secondMenu.href!}<%}else{%>${secondMenu.href!}<%}%> <% }else{ %>javascript:;<% } %>" <%if(@string.startWith(secondMenu.target,'_')){%>target="${secondMenu.target!}"<%}else{%>${secondMenu.target!}<%}%>>
+                        <a href="<% if(!isEmpty(secondMenu.href)){ %><%if(@string.startWith(secondMenu.href,'/')){%>${base}${secondMenu.href!}<%}else{%>${secondMenu.href!}<%}%> <% }else{ %>javascript:;<% } %>" <%if(@string.startWith(secondMenu.target,'_')){%>target="${secondMenu.target!}"<%}else{%>${secondMenu.target!}<%}%>>
                             <% if(!isEmpty(@secondMenus.get(secondMenu.path))){ %><i class="toggle-accordion"></i><%}%>
                             <span><%if(lang=="zh_CN"){%>${secondMenu.name}<%}else{%>${secondMenu.aliasName}<%}%></span>
                         </a>
@@ -156,8 +164,8 @@
                                 </a>
                             </li><% }%>
                         </ul><%}%>
-                    </li><% }} %>
-                </ul>
+                    </li><% } %>
+                </ul><% } %>
             </li><% }%>
             <li>
                 <a href="https://github.com/Wizzercn/NutzWk" target="_blank">GitHub</a>

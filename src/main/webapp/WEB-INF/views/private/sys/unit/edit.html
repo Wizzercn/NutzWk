@@ -13,6 +13,7 @@ layout("/layouts/private.html"){
             <form id="unitAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
                   action="${base}/private/sys/unit/editDo" method="post">
                 <input name="id" type="hidden" value="${obj.id!}">
+                <input type="hidden" id="hasChildren" name="hasChildren" value="${obj.hasChildren!}">
                 <div class="row mb10">
                     <div class="col-lg-12">
                         <div class="form-group has-feedback">
