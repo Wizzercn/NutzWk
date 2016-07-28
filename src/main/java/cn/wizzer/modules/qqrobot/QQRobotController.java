@@ -37,7 +37,11 @@ public class QQRobotController  {
      * 命令开始符号
      */
     public static final char cmd = '#';
+   
     public static final String bcmd = "###";
+    public static final String blackKeyWord1 = "骗子";
+    public static final String blackKeyWord2 = "举报";
+    public static final String blackKeyWord3 = "黑名单";
     /**
      * AT模板
      */
@@ -74,6 +78,24 @@ public class QQRobotController  {
     		         qunService.saveChatLog(chatlog);
     		         
     		   if(StringUtils.isNotBlank(message)){
+    			         //黑名单
+    			         if(StringUtils.contains(message, blackKeyWord1) || StringUtils.contains(message, blackKeyWord2) || StringUtils.contains(message, blackKeyWord3)){
+    			        	 List<String>  blackList = StringUtil.getContacts(message);
+    			        	       if(blackList == null || blackList.size()<=0){
+    			        	    	   return "举报内容未包含联系方式，QQ，微信，电话号码";
+    			        	       }
+    			        	       for(int bu=0;bu<blackList.size();bu++){
+    			        	    	   Sys_qun_black_user  blackUser= new Sys_qun_black_user();
+       		                           blackUser.setContact(blackList.get(bu));
+       		                           blackUser.setText(message);
+       		                           blackUser.setCreatedAt(sendTime);
+       		                           blackUser.setSender(sender);
+       		                           qunService.save(blackUser);
+    			        	       }
+    			        	  return Json.toJson(blackList)+"已经被加入黑名单";
+    			         }
+    			         //地区查询
+    			         
     	    			 if (StringUtils.contains(message, bcmd)) {
     	    		            String[] qqInfo = message.split(bcmd);
     	    		            if(qqInfo!=null && qqInfo.length==2 && !qqInfo[0].equals(sender)){
