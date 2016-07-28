@@ -92,7 +92,7 @@ public class QQRobotController  {
        		                           blackUser.setSender(sender);
        		                           qunService.save(blackUser);
     			        	       }
-    			        	  return Json.toJson(blackList)+"已经被加入黑名单";
+    			        	  return Json.toJson(blackList)+"已经被加入黑名单,如有误报，请联系小助手删除";
     			         }
     			         //地区查询
     			         
