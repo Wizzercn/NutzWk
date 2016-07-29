@@ -54,12 +54,19 @@ public class WxHandler extends AbstractWxHandler {
 
     public boolean check(String signature, String timestamp, String nonce, String key) {
         Wx_config appInfo = wxConfigService.fetch(Cnd.where("id", "=", key));
-        return appInfo != null && Wxs.check(appInfo.getToken(), signature, timestamp, nonce);
+        if(appInfo!=null){
+            this.token=appInfo.getToken();
+            this.aeskey=appInfo.getEncodingAESKey();
+            this.appid=appInfo.getAppid();
+            return Wxs.check(appInfo.getToken(), signature, timestamp, nonce);
+        }
+        return false;
     }
 
     public WXBizMsgCrypt getMsgCrypt() {
         if (this.msgCrypt == null) {
             try {
+                // 若抛异常Illegal key size ,需更新JDK的加密库为不限制长度
                 this.msgCrypt = new WXBizMsgCrypt(this.token, this.aeskey, this.appid);
             } catch (AesException var2) {
                 throw new RuntimeException(var2);
