@@ -1,13 +1,17 @@
 package cn.wizzer.common.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.Mvcs;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Random;
-import java.util.regex.Pattern;
 
 /**
  * Created by Wizzer.cn on 2015/7/4.
@@ -127,5 +131,36 @@ public class StringUtil {
     public boolean startWith(String str, String s) {
         return Strings.sNull(str).startsWith(Strings.sNull(s));
     }
-
+    
+    //提取微信QQ和电话号码
+    public static List<String>  getContacts(String smsBody) {  
+    	List<String>   sb = new ArrayList<String>();
+        Pattern pattern = Pattern.compile("[1-9][0-9]{4,10}|(13|14|15|17|18)\\d{9}|[a-zA-Z\\d_]{5,}");  
+        Matcher matcher = pattern.matcher(smsBody);  
+        while (matcher.find()) {  
+        	sb.add(matcher.group());
+        }  
+        return sb;
+    }
+    public static String filterNumber(String number,String newChar )
+    {
+    number = number.replaceAll("[(0-9)]", newChar);
+         return number;
+    }
+     
+    /**
+    * 
+    * @Title : filterAlphabet
+    * @Type : FilterStr
+    * @date : 2014年3月12日 下午7:28:54
+    * @Description : 过滤出字母
+    * @param alph
+    * @return
+    */
+    public static String filterAlphabet(String alph,String newChar)
+    {
+         alph = alph.replaceAll("[^(A-Za-z)]", newChar);
+         return alph;
+    }
+     
 }
