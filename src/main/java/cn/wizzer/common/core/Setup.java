@@ -13,12 +13,14 @@ import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
 import org.nutz.ioc.Ioc;
+import org.nutz.lang.Encoding;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -29,6 +31,10 @@ public class Setup implements org.nutz.mvc.Setup {
 
     public void init(NutConfig config) {
         try {
+            // 环境检查
+            if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
+                log.warn("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
+            }
             Ioc ioc = config.getIoc();
             Dao dao = ioc.get(Dao.class);
             // 初始化数据表
