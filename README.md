@@ -72,6 +72,8 @@ https://github.com/Wizzercn/NutzCodematic/tree/v3.0.0       适用于NutzWk v3.x
 
 https://github.com/enilu/nutzwk-code-generator              适用于NutzWk v3.x（Maven插件,通过实体类生成代码及页面）
 
+**IDEA插件搜 nutzwk-plugin **
+
 ```
   <dependency>
         <groupId>cn.enilu.tools</groupId>
