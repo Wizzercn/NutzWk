@@ -14,13 +14,17 @@ import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
 import org.nutz.ioc.Ioc;
 import org.nutz.lang.Encoding;
+import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
+import org.quartz.Scheduler;
 
 import java.nio.charset.Charset;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.util.*;
 
 /**
@@ -474,25 +478,25 @@ public class Setup implements org.nutz.mvc.Setup {
             dao.insert("sys_user_unit", Chain.make("userId", dbuser.getId()).add("unitId", dbunit.getId()));
             dao.insert("sys_user_role", Chain.make("userId", dbuser.getId()).add("roleId", dbrole.getId()));
             //执行自定义SQL,系统模块菜单关联到角色
-            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0001%'").setParam("roleId",dbrole.getId()));
+            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0001%'").setParam("roleId", dbrole.getId()));
             //执行微信菜单SQL脚本
             FileSqlManager fm = new FileSqlManager("db/init_menu_weixin.sql");
             List<Sql> sqlList = fm.createCombo(fm.keys());
-            Sql[] sqls=sqlList.toArray(new Sql[sqlList.size()]);
-            for(Sql sql:sqls){
+            Sql[] sqls = sqlList.toArray(new Sql[sqlList.size()]);
+            for (Sql sql : sqls) {
                 dao.execute(sql);
             }
             //执行CMS菜单SQL脚本
             FileSqlManager fm_cms = new FileSqlManager("db/init_menu_cms.sql");
             List<Sql> sqlList_cms = fm_cms.createCombo(fm_cms.keys());
-            Sql[] sqls_cms=sqlList_cms.toArray(new Sql[sqlList_cms.size()]);
-            for(Sql sql:sqls_cms){
+            Sql[] sqls_cms = sqlList_cms.toArray(new Sql[sqlList_cms.size()]);
+            for (Sql sql : sqls_cms) {
                 dao.execute(sql);
             }
             //微信模块菜单关联到角色
-            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0002%'").setParam("roleId",dbrole.getId()));
+            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0002%'").setParam("roleId", dbrole.getId()));
             //CMS模块菜单关联到角色
-            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0003%'").setParam("roleId",dbrole.getId()));
+            dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu WHERE path LIKE '0003%'").setParam("roleId", dbrole.getId()));
         }
     }
 
@@ -509,5 +513,10 @@ public class Setup implements org.nutz.mvc.Setup {
     }
 
     public void destroy(NutConfig config) {
+        // 解决quartz有时候无法停止的问题
+        try {
+            config.getIoc().get(Scheduler.class).shutdown(true);
+        } catch (Exception e) {
+        }
     }
 }
