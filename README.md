@@ -74,7 +74,7 @@ https://github.com/enilu/nutzwk-code-generator              适用于NutzWk v3.x
 
 ```
   <dependency>
-        <groupId>cn.enilu</groupId>
+        <groupId>cn.enilu.tools</groupId>
         <artifactId>nutzwk-code-generator</artifactId>
         <version>1.0</version>
     </dependency>
