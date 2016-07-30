@@ -16,22 +16,14 @@ import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
-import org.nutz.ioc.ObjectProxy;
-import org.nutz.ioc.impl.PropertiesProxy;
-import org.nutz.ioc.loader.annotation.Inject;
-import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
-import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
-import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.quartz.Scheduler;
 
 import java.nio.charset.Charset;
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.util.*;
 
 /**
