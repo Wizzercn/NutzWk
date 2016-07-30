@@ -39,28 +39,29 @@ public class BdController {
     @At
     @Ok("json")
     @RequiresAuthentication
+    //AdaptorErrorContext必须是最后一个参数
     public Object uploadimage(@Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
         NutMap nutMap = new NutMap();
-        if (err != null && err.getAdaptorErr() != null) {
-            return nutMap.addv("state", "FAIL");
-        } else if (tf == null) {
-            return nutMap.addv("state", "FAIL");
-        } else {
-            try {
+        try {
+            if (err != null && err.getAdaptorErr() != null) {
+                return nutMap.addv("state", "FAIL");
+            } else if (tf == null) {
+                return nutMap.addv("state", "FAIL");
+            } else {
                 String p = Globals.AppRoot;
-                String f = Globals.AppUploadPath + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getMeta().getFileExtension();
-                Files.copy(tf.getFile(), new File(p + f));
+                String f = Globals.AppUploadPath + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
+                Files.write(new File(p + f), tf.getInputStream());
                 nutMap.addv("state", "SUCCESS");
                 nutMap.addv("url", f);
-                nutMap.addv("original", tf.getMeta().getFileLocalName());
-                nutMap.addv("type", tf.getMeta().getFileExtension());
+                nutMap.addv("original", tf.getSubmittedFileName());
+                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
                 nutMap.addv("size", tf.getSize());
                 return nutMap;
-            } catch (Exception e) {
-                return nutMap.addv("state", "FAIL");
-            } catch (Throwable e) {
-                return nutMap.addv("state", "FAIL");
             }
+        } catch (Exception e) {
+            return nutMap.addv("state", "FAIL");
+        } catch (Throwable e) {
+            return nutMap.addv("state", "FAIL");
         }
     }
 
@@ -71,26 +72,26 @@ public class BdController {
     @RequiresAuthentication
     public Object uploadfile(@Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
         NutMap nutMap = new NutMap();
-        if (err != null && err.getAdaptorErr() != null) {
-            return nutMap.addv("state", "FAIL");
-        } else if (tf == null) {
-            return nutMap.addv("state", "FAIL");
-        } else {
-            try {
+        try {
+            if (err != null && err.getAdaptorErr() != null) {
+                return nutMap.addv("state", "FAIL");
+            } else if (tf == null) {
+                return nutMap.addv("state", "FAIL");
+            } else {
                 String p = Globals.AppRoot;
-                String f = Globals.AppUploadPath + "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getMeta().getFileExtension();
-                Files.copy(tf.getFile(), new File(p + f));
+                String f = Globals.AppUploadPath + "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
+                Files.write(new File(p + f), tf.getInputStream());
                 nutMap.addv("state", "SUCCESS");
                 nutMap.addv("url", f);
-                nutMap.addv("original", tf.getMeta().getFileLocalName());
-                nutMap.addv("type", tf.getMeta().getFileExtension());
+                nutMap.addv("original", tf.getSubmittedFileName());
+                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
                 nutMap.addv("size", tf.getSize());
                 return nutMap;
-            } catch (Exception e) {
-                return nutMap.addv("state", "FAIL");
-            } catch (Throwable e) {
-                return nutMap.addv("state", "FAIL");
             }
+        } catch (Exception e) {
+            return nutMap.addv("state", "FAIL");
+        } catch (Throwable e) {
+            return nutMap.addv("state", "FAIL");
         }
     }
 
@@ -101,26 +102,26 @@ public class BdController {
     @RequiresAuthentication
     public Object uploadvideo(@Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
         NutMap nutMap = new NutMap();
-        if (err != null && err.getAdaptorErr() != null) {
-            return nutMap.addv("state", "FAIL");
-        } else if (tf == null) {
-            return nutMap.addv("state", "FAIL");
-        } else {
-            try {
+        try {
+            if (err != null && err.getAdaptorErr() != null) {
+                return nutMap.addv("state", "FAIL");
+            } else if (tf == null) {
+                return nutMap.addv("state", "FAIL");
+            } else {
                 String p = Globals.AppRoot;
-                String f = Globals.AppUploadPath + "/video/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getMeta().getFileExtension();
-                Files.copy(tf.getFile(), new File(p + f));
+                String f = Globals.AppUploadPath + "/video/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
+                Files.write(new File(p + f), tf.getInputStream());
                 nutMap.addv("state", "SUCCESS");
                 nutMap.addv("url", f);
-                nutMap.addv("original", tf.getMeta().getFileLocalName());
-                nutMap.addv("type", tf.getMeta().getFileExtension());
+                nutMap.addv("original", tf.getSubmittedFileName());
+                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
                 nutMap.addv("size", tf.getSize());
                 return nutMap;
-            } catch (Exception e) {
-                return nutMap.addv("state", "FAIL");
-            } catch (Throwable e) {
-                return nutMap.addv("state", "FAIL");
             }
+        } catch (Exception e) {
+            return nutMap.addv("state", "FAIL");
+        } catch (Throwable e) {
+            return nutMap.addv("state", "FAIL");
         }
     }
 }
