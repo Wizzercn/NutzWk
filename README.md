@@ -20,7 +20,7 @@ NutzWk 基于Nutz的开源企业级开发框架
 
 在线演示地址
 ======
-http://nutzwk.wizzer.cn/                 NutzWk v3.x
+https://nutzwk.wizzer.cn/                 NutzWk v3.x
 
 https://github.com/Wizzercn/NodeWk       Node.js版源码
 

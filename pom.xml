@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-quartz</artifactId>
-            <version>1.r.58-SNAPSHOT</version>
+            <version>1.r.57.r2</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
