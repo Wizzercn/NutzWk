@@ -65,6 +65,10 @@ layout("/layouts/private.html"){
         $('#addForm').ajaxForm({
             dataType: 'json',
             beforeSubmit: function (arr, form, options) {
+                if($("#type").val()=="hide"&&$("#toUrl").val().indexOf("http")>-1){
+                    Toast.error("隐性URL不可为外链");
+                    return false;
+                }
                 form.find("button:submit").button("loading");
             },
             success: function (data, statusText, xhr, form) {
