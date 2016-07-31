@@ -16,6 +16,7 @@ import java.io.IOException;
  */
 public class RouteFilter implements Filter {
     private static final Log log = Logs.get();
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse res,
                          FilterChain chain) throws IOException, ServletException {
@@ -29,13 +30,13 @@ public class RouteFilter implements Filter {
                 res2.setCharacterEncoding("utf-8");
                 req2.getRequestDispatcher(route.getToUrl()).forward(req2, res2);
             }
-        } else {
-            chain.doFilter(req, res);
-        }
+        } else chain.doFilter(req, res);
     }
+
     @Override
     public void init(FilterConfig arg0) throws ServletException {
     }
+
     @Override
     public void destroy() {
     }
