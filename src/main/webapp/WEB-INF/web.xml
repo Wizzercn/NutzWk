@@ -23,6 +23,16 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
+    <!-- Custom Route -->
+    <filter>
+        <filter-name>route</filter-name>
+        <filter-class>cn.wizzer.common.filter.RouteFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>route</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- Nutz Mvc -->
     <filter>
         <filter-name>nutz</filter-name>
@@ -33,7 +43,7 @@
         </init-param>
         <init-param>
             <param-name>ignore</param-name>
-            <param-value>^(.+[.])(jsp|png|gif|jpg|js|css|jspx|jpeg|html|mp3|mp4)$</param-value>
+            <param-value>^(.+[.])(jsp|png|gif|jpg|js|css|jspx|jpeg|html|mp3|mp4|ico)$</param-value>
         </init-param>
         <init-param>
             <param-name>exclusions</param-name>

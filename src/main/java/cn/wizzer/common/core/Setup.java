@@ -62,11 +62,30 @@ public class Setup implements org.nutz.mvc.Setup {
             initSysSetting(config, dao);
             // 初始化定时任务
             initSysTask(config, dao);
+            // 初始化自定义路由
+            initSysRoute(config, dao);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * 初始化自定义路由
+     * @param config
+     * @param dao
+     */
+    private void initSysRoute(NutConfig config, Dao dao) {
+        if (0 == dao.count(Sys_route.class)) {
+            //路由示例
+            Sys_route route = new Sys_route();
+            route.setDisabled(false);
+            route.setUrl("/sysadmin");
+            route.setToUrl("/private/login");
+            route.setType("hide");
+            dao.insert(route);
+        }
+        Globals.initRoute(dao);
+    }
     /**
      * 初始化定时任务
      *
