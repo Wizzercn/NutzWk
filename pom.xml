@@ -83,7 +83,7 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz</artifactId>
-            <version>1.r.57</version>
+            <version>1.r.57.r3</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -123,7 +123,7 @@
         <dependency>
             <groupId>cn.enilu.tools</groupId>
             <artifactId>nutzwk-code-generator</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
         </dependency>
         <dependency>
             <groupId>com.vdurmont</groupId>
