@@ -10,6 +10,7 @@ import cn.wizzer.modules.back.wx.models.Wx_tpl_id;
 import cn.wizzer.modules.back.wx.services.WxConfigService;
 import cn.wizzer.modules.back.wx.services.WxTplIdService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -67,7 +68,8 @@ public class WxTplIdController {
     @At
     @Ok("json")
     @SLog(tag = "添加模板", msg = "")
-    public Object addDo(@Param("..") Wx_tpl_id wxTplId, HttpServletRequest req) {
+	@RequiresPermissions("wx.tpl.id.add")
+	public Object addDo(@Param("..") Wx_tpl_id wxTplId, HttpServletRequest req) {
 		try {
 			WxApi2 wxApi2 = wxConfigService.getWxApi2(wxTplId.getWxid());
 			WxResp wxResp=wxApi2.template_api_add_template(wxTplId.getId());
@@ -86,7 +88,8 @@ public class WxTplIdController {
     @At({"/delete","/delete/?"})
     @Ok("json")
     @SLog(tag = "删除模板", msg = "ID:${args[3].getAttribute('id')}")
-    public Object delete(String id,@Param("wxid")String wxid, @Param("ids") String[] ids ,HttpServletRequest req) {
+	@RequiresPermissions("wx.tpl.id.delete")
+	public Object delete(String id,@Param("wxid")String wxid, @Param("ids") String[] ids ,HttpServletRequest req) {
 		try {
 			WxApi2 wxApi2 = wxConfigService.getWxApi2(wxid);
 			if(ids!=null&&ids.length>0){
@@ -109,7 +112,7 @@ public class WxTplIdController {
 				}
     			req.setAttribute("id", id);
 			}
-			return Result.success("system.success");
+			return Result.success("system.error");
 		} catch (Exception e) {
 			return Result.error("system.error");
 		}

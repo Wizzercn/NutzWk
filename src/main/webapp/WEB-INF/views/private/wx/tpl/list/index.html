@@ -3,41 +3,55 @@ layout("/layouts/private.html"){
 %>
 <section class="content-wrap bg-white">
     <header class="header navbar bg-white shadow">
-        <div class="btn-group tool-button">
-            <a id="add" class="btn btn-primary navbar-btn" href="${base}/private/wx/tpl/list/add" data-pjax><i class="ti-plus"></i> 新建 Wx_tpl_list</a>
-            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
+        <div class="btn-group" style="padding-top: 5px;">
+        <div >
+            <select id="wxid" name="wxid" class="form-control">
+                <% for(o in wxList){
+                %>
+                <option value="${o.id}" <%if(o.id==wxid){%>selected<%}%>>${o.appname}</option>
+                <%
+                } %>
+            </select>
+        </div>
+        </div>
+
+        <div class="pull-right">
+            <div class="btn-group tool-button">
+                <button class="btn btn-info navbar-btn" id="down"><i class="ti-import"></i> 获取模板列表</button>
+            </div>
         </div>
     </header>
     <div class=panel-body style="padding-top: 50px;">
         <div class="table-responsive no-border">
             <table class="table table-bordered table-striped mg-t datatable">
                 <thead>
-                    <tr>
-                            <th>操作</th>
-                    </tr>
+                <tr>
+                    <th>模板编号</th>
+                    <th>标题</th>
+                    <th>模板内容</th>
+                    <th>模板示例</th>
+                </tr>
                 </thead>
             </table>
         </div>
     </div>
 </section>
-<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+<div id="dialog" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">删除Wx_tpl_list</h4>
+                <h4 class="modal-title">提示</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-xs-12">
-                        Wx_tpl_list删除后无法恢复。<br/>
-                        <br/>确定删除吗？
+                        确定获取模板列表吗？ <br/>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取  消</button>
-                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确  定</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在获取...">确 定</button>
             </div>
         </div>
     </div>
@@ -71,25 +85,18 @@ layout("/layouts/private.html"){
                 "url": "${base}/private/wx/tpl/list/data",
                 "type": "post",
                 "data": function (d) {
+                    d.wxid=$("#wxid").val();
                 }
             },
             //默认排序列
             "order": [[0, "desc"]],
             "columns": [
+                {"data": "template_id", "bSortable": true},
+                {"data": "title", "bSortable": true},
+                {"data": "content", "bSortable": true},
+                {"data": "example", "bSortable": true}
             ],
             "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/private/wx/tpl/list/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">查看信息</a></li>' +
-                                '<li><a href="${base}/private/wx/tpl/list/edit/' + row.id + '" data-pjax>修改信息</a></li>' +
-                                '<li class="divider"></li>' +
-                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
-                                '</ul></div>';
-                    },
-                    "targets": 0
-                }
             ]
         });
         datatable.on('click', 'tr', function () {
@@ -99,54 +106,32 @@ layout("/layouts/private.html"){
             datatable.ajax.reload();
         });
     }
-    function del(id) {
-        var dialog = $("#dialogDelete");
-        dialog.modal("show");
-        dialog.find("#okDel").unbind("click");
-        dialog.find("#okDel").bind("click", function (event) {
-            var btn = $(this);
-            btn.button("loading");
-            $.post("${base}/private/wx/tpl/list/delete/" + id, {}, function (data) {
-                if (data.code == 0) {
-                    datatable.ajax.reload(null,false);
-                } else {
-                    Toast.error(data.msg);
-                }
-                //重置按钮状态，关闭提示框
-                btn.button("reset");
-                dialog.modal("hide");
-            }, "json");
+    $(function () {
+        initDatatable();
+        $("#wxid").on("change",function(){
+            datatable.ajax.reload();
         });
-    }
-    function delCheck() {
-        var chks = datatable.rows('.selected').data();
-        if (chks.length > 0) {
-            var ids = [];
-            $.each(datatable.rows('.selected').data(), function (i, n) {
-                ids.push(n.id);
-            });
-            var dialog = $("#dialogDelete");
+        $("#down").on("click",function(){
+            var dialog = $("#dialog");
             dialog.modal("show");
-            dialog.find("#okDel").unbind("click");
-            dialog.find("#okDel").bind("click", function (event) {
+            dialog.find("#ok").unbind("click");
+            dialog.find("#ok").bind("click", function (event) {
                 var btn = $(this);
                 btn.button("loading");
-                $.post("${base}/private/wx/tpl/list/delete", {ids: ids.toString()}, function (data) {
+                $.post("${base}/private/wx/tpl/list/getDo", {wxid:$("#wxid").val()}, function (data) {
+                    //重置按钮状态，关闭提示框
+                    btn.button("reset");
+                    dialog.modal("hide");
                     if (data.code == 0) {
-                        datatable.ajax.reload(null,false);
+                        Toast.success(data.msg);
+                        datatable.ajax.reload();
                     } else {
                         Toast.error(data.msg);
                     }
-                    btn.button("reset");
-                    dialog.modal("hide");
                 }, "json");
             });
-        } else {
-            Toast.warning("请先选择要删除的Wx_tpl_list！");
-        }
-    }
-    $(function () {
-        initDatatable();
+
+        });
     });
 </script>
 
