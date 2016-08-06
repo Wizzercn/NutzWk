@@ -11,6 +11,7 @@ import cn.wizzer.modules.back.wx.models.Wx_config;
 import cn.wizzer.modules.back.wx.models.Wx_menu;
 import cn.wizzer.modules.back.wx.services.WxConfigService;
 import cn.wizzer.modules.back.wx.services.WxMenuService;
+import cn.wizzer.modules.back.wx.services.WxReplyService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -46,6 +47,8 @@ public class WxMenuController {
     WxMenuService wxMenuService;
     @Inject
     WxConfigService wxConfigService;
+    @Inject
+    WxReplyService wxReplyService;
 
     @At({"", "/index/?"})
     @Ok("beetl:/private/wx/menu/index.html")
@@ -245,5 +248,25 @@ public class WxMenuController {
         } catch (Exception e) {
             return Result.error("system.error");
         }
+    }
+
+
+    @At("/keyword/?")
+    @Ok("beetl:/private/wx/menu/keyword.html")
+    @RequiresAuthentication
+    public void keyword(String wxid, HttpServletRequest req) {
+        req.setAttribute("wxid", wxid);
+    }
+
+    @At("/keywordData")
+    @Ok("json:full")
+    @RequiresAuthentication
+    public Object keywordData(@Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+        Cnd cnd = Cnd.NEW();
+        if (!Strings.isBlank(wxid)) {
+            cnd.and("wxid", "=", wxid);
+            cnd.and("type", "=", "keyword");
+        }
+        return wxReplyService.data(length, start, draw, order, columns, cnd, null);
     }
 }
