@@ -106,6 +106,17 @@ layout("/layouts/private.html"){
                         return '';
                     },
                     "targets": 3
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data==1) {
+                            return "发送成功";
+                        }else if(data==2){
+                            return "<span style='color: red'>发送失败</span>";
+                        }
+                        return '';
+                    },
+                    "targets": 4
                 }
             ]
         });

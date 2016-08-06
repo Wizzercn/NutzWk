@@ -29,16 +29,6 @@ public class Wx_tpl_log extends Model implements Serializable {
     private String nickname;
 
     @Column
-    @Comment("业务表名")
-    @ColDefine(type = ColType.VARCHAR, width = 20)
-    private String tableName;
-
-    @Column
-    @Comment("业务表ID")
-    @ColDefine(type = ColType.VARCHAR, width = 32)
-    private String tableId;
-
-    @Column
     @Comment("发送内容")
     @ColDefine(type = ColType.TEXT)
     private String content;
@@ -80,22 +70,6 @@ public class Wx_tpl_log extends Model implements Serializable {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
-    public String getTableId() {
-        return tableId;
-    }
-
-    public void setTableId(String tableId) {
-        this.tableId = tableId;
     }
 
     public String getContent() {
