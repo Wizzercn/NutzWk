@@ -5,7 +5,9 @@ import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
 import cn.wizzer.common.page.DataTableOrder;
+import cn.wizzer.modules.back.wx.models.Wx_config;
 import cn.wizzer.modules.back.wx.models.Wx_tpl_log;
+import cn.wizzer.modules.back.wx.services.WxConfigService;
 import cn.wizzer.modules.back.wx.services.WxTplLogService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.dao.Cnd;
@@ -23,94 +25,40 @@ import java.util.List;
 @At("/private/wx/tpl/log")
 @Filters({@By(type = PrivateFilter.class)})
 public class WxTplLogController {
-	private static final Log log = Logs.get();
-	@Inject
-	private WxTplLogService wxTplLogService;
+    private static final Log log = Logs.get();
+    @Inject
+    private WxTplLogService wxTplLogService;
+    @Inject
+    private WxConfigService wxConfigService;
 
-	@At("")
-	@Ok("beetl:/private/wx/tpl/log/index.html")
-	@RequiresAuthentication
-	public void index() {
-
-	}
-
-	@At
-	@Ok("json:full")
-	@RequiresAuthentication
-	public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-		Cnd cnd = Cnd.NEW();
-    	return wxTplLogService.data(length, start, draw, order, columns, cnd, null);
+    @At({"", "/index/?"})
+    @Ok("beetl:/private/wx/tpl/log/index.html")
+    @RequiresAuthentication
+    public void index(String wxid, HttpServletRequest req) {
+        List<Wx_config> list = wxConfigService.query(Cnd.NEW());
+        if (list.size() > 0 && Strings.isBlank(wxid)) {
+            wxid = list.get(0).getId();
+        }
+        req.setAttribute("wxList", list);
+        req.setAttribute("wxid", Strings.sBlank(wxid));
     }
 
     @At
-    @Ok("beetl:/private/wx/tpl/log/add.html")
+    @Ok("json:full")
     @RequiresAuthentication
-    public void add() {
-
+    public Object data(@Param("wxid") String wxid, @Param("nickname") String nickname, @Param("openid") String openid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+        Cnd cnd = Cnd.NEW();
+        if (!Strings.isBlank(wxid)) {
+            cnd.and("wxid", "=", wxid);
+        }
+        if (!Strings.isBlank(nickname)) {
+            cnd.and("nickname", "like", "%" + nickname + "%");
+        }
+        if (!Strings.isBlank(wxid)) {
+            cnd.and("openid", "=", openid);
+        }
+        return wxTplLogService.data(length, start, draw, order, columns, cnd, null);
     }
 
-    @At
-    @Ok("json")
-    @SLog(tag = "新建Wx_tpl_log", msg = "")
-    public Object addDo(@Param("..") Wx_tpl_log wxTplLog, HttpServletRequest req) {
-		try {
-			wxTplLogService.insert(wxTplLog);
-			return Result.success("system.success");
-		} catch (Exception e) {
-			return Result.error("system.error");
-		}
-    }
-
-    @At("/edit/?")
-    @Ok("beetl:/private/wx/tpl/log/edit.html")
-    @RequiresAuthentication
-    public Object edit(String id) {
-		return wxTplLogService.fetch(id);
-    }
-
-    @At
-    @Ok("json")
-    @SLog(tag = "修改Wx_tpl_log", msg = "ID:${args[0].id}")
-    public Object editDo(@Param("..") Wx_tpl_log wxTplLog, HttpServletRequest req) {
-		try {
-
-			wxTplLog.setOpAt((int) (System.currentTimeMillis() / 1000));
-			wxTplLogService.updateIgnoreNull(wxTplLog);
-			return Result.success("system.success");
-		} catch (Exception e) {
-			return Result.error("system.error");
-		}
-    }
-
-
-    @At({"/delete","/delete/?"})
-    @Ok("json")
-    @SLog(tag = "删除Wx_tpl_log", msg = "ID:${args[2].getAttribute('id')}")
-    public Object delete(String id, @Param("ids") String[] ids ,HttpServletRequest req) {
-		try {
-			if(ids!=null&&ids.length>0){
-				wxTplLogService.delete(ids);
-    			req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
-			}else{
-				wxTplLogService.delete(id);
-    			req.setAttribute("id", id);
-			}
-			return Result.success("system.success");
-		} catch (Exception e) {
-			return Result.error("system.error");
-		}
-    }
-
-
-    @At("/detail/?")
-    @Ok("beetl:/private/wx/tpl/log/detail.html")
-    @RequiresAuthentication
-	public Object detail(String id) {
-		if (!Strings.isBlank(id)) {
-			return wxTplLogService.fetch(id);
-
-		}
-		return null;
-    }
 
 }

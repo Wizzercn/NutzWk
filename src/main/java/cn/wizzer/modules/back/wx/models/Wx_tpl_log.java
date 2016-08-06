@@ -24,6 +24,11 @@ public class Wx_tpl_log extends Model implements Serializable {
     private String openid;
 
     @Column
+    @Comment("微信昵称")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String nickname;
+
+    @Column
     @Comment("业务表名")
     @ColDefine(type = ColType.VARCHAR, width = 20)
     private String tableName;
@@ -67,6 +72,14 @@ public class Wx_tpl_log extends Model implements Serializable {
 
     public void setOpenid(String openid) {
         this.openid = openid;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getTableName() {
