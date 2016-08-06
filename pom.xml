@@ -360,7 +360,7 @@
     </dependencies>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
-        <outputDirectory>classes</outputDirectory>
+        <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -438,6 +438,44 @@
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
+            
+             <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty-version}</version>
+                <configuration>
+                    <httpConnector>
+                        <port>8081</port>
+                    </httpConnector>
+                    <stopKey>shutdown</stopKey>
+                    <stopPort>9966</stopPort>
+                    <!--
+                    <scanIntervalSeconds>2</scanIntervalSeconds>
+                    -->
+                    <reload>manual</reload>
+                    <dumpOnStart>true</dumpOnStart>
+                    <webApp>
+                        <contextPath>/</contextPath>
+                        <!--
+                        <resourceBases>
+                          <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
+                          <resourceBase>${project.basedir}/commons</resourceBase>
+                        </resourceBases>
+                        -->
+                    </webApp>
+                    <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+                        <filename>target/access-yyyy_mm_dd.log</filename>
+                        <filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
+                        <logDateFormat>yyyy-MM-dd HH:mm:ss</logDateFormat>
+                        <logTimeZone>GMT+8:00</logTimeZone>
+                        <append>true</append>
+                        <logServer>true</logServer>
+                        <retainDays>120</retainDays>
+                        <logCookies>true</logCookies>
+                    </requestLog>
+                </configuration>
+            </plugin>
+            
         </plugins>
     </build>
 </project>
