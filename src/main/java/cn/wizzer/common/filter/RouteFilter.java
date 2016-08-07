@@ -22,15 +22,17 @@ public class RouteFilter implements Filter {
                          FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req2 = (HttpServletRequest) req;
         HttpServletResponse res2 = (HttpServletResponse) res;
+        res2.setCharacterEncoding("utf-8");
+        res2.setContentType("text/html;charset=utf-8");
+        req2.setCharacterEncoding("utf-8");
         Sys_route route = Globals.RouteMap.get(req2.getRequestURI());
         if (route != null) {
             if ("show".equals(route.getType())) {
                 res2.sendRedirect(route.getToUrl());
             } else {
-                res2.setCharacterEncoding("utf-8");
                 req2.getRequestDispatcher(route.getToUrl()).forward(req2, res2);
             }
-        } else chain.doFilter(req, res);
+        } else chain.doFilter(req2, res2);
     }
 
     @Override
