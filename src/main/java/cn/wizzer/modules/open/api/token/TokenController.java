@@ -1,4 +1,4 @@
-package cn.wizzer.modules.open.api.test.controllers;
+package cn.wizzer.modules.open.api.token;
 
 import cn.wizzer.common.base.Result;
 import cn.wizzer.modules.back.sys.models.Sys_api;
@@ -25,7 +25,7 @@ import java.util.Date;
  */
 @IocBean
 @At("/open/api/token")
-public class ApiTokenController {
+public class TokenController {
     private static final Log log = Logs.get();
     @Inject
     private ApiService apiService;
