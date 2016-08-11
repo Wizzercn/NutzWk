@@ -51,7 +51,7 @@ public class ApiTestController {
      * @apiErrorExample {json} 示例
      * HTTP/1.1 200 OK
      * {
-     *      "code": 1
+     *      "code": 1,
      *      "msg": "fail"
      * }
      */
