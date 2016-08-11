@@ -36,8 +36,8 @@ public class TokenController {
      * @apiParamExample {json} 示例
      * POST /open/api/token
      * {
-     * "appId": "appId",
-     * "appSecret": "appSecret"
+     *      "appId": "appId",
+     *      "appSecret": "appSecret"
      * }
      * @apiSuccess {number} code 			         code
      * @apiSuccess {String} msg 			         msg
@@ -47,20 +47,20 @@ public class TokenController {
      * @apiSuccessExample {json} 示例
      * HTTP/1.1 200 OK
      * {
-     * "code": 0,
-     * "msg": "ok",
-     * "data": {
-     * "token": ""eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0IiwiZXhwIjoxNDcwOTA5OTc4fQ._T7egDYhCL27jCvEv4J0cyjRj8s_YLj2gZjjTA8mzk81mTdeM-JXnH7VmtfaenW33BpJJzs2Hs2sXiiNHdzU6Q",
-     * "expires": 7200,
-     * }
+     *      "code": 0,
+     *      "msg": "ok",
+     *      "data": {
+     *          "token": ""eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0IiwiZXhwIjoxNDcwOTA5OTc4fQ._T7egDYhCL27jCvEv4J0cyjRj8s_YLj2gZjjTA8mzk81mTdeM-JXnH7VmtfaenW33BpJJzs2Hs2sXiiNHdzU6Q",
+     *          "expires": 7200,
+     *      }
      * }
      * @apiError (失败) {number} code 不等于0
      * @apiError (失败) {string} msg 错误文字描述
      * @apiErrorExample {json} 示例
      * HTTP/1.1 200 OK
      * {
-     * "code": 1
-     * "msg": "token invalid"
+     *      "code": 1
+     *      "msg": "token invalid"
      * }
      */
     @At("/get")

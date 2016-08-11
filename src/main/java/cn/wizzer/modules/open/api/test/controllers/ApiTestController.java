@@ -25,34 +25,34 @@ public class ApiTestController {
 
     /**
      * @api {post} /open/api/test/hi 测试API
-     * @apiGroup Token
+     * @apiGroup Test
      * @apiVersion 1.0.0
-     * @apiPermission anyone
+     * @apiPermission token
      * @apiParam {String}	appId 					appId
      * @apiParam {String}	token 				    token
      * @apiParam {String}	txt 				    测试文本
      * @apiParamExample {json} 示例
      * POST /open/api/test/hi
      * {
-     * "appId": "appId",
-     * "token": "token"
-     * "txt": "你好，大鲨鱼"
+     *      "appId": "appId",
+     *      "token": "token"
+     *      "txt": "你好，大鲨鱼"
      * }
      * @apiSuccess {number} code 			         code
      * @apiSuccess {String} msg 			         msg
      * @apiSuccessExample {json} 示例
      * HTTP/1.1 200 OK
      * {
-     * "code": 0,
-     * "msg": "ok"
+     *      "code": 0,
+     *      "msg": "ok"
      * }
      * @apiError (失败) {number} code 不等于0
      * @apiError (失败) {string} msg 错误文字描述
      * @apiErrorExample {json} 示例
      * HTTP/1.1 200 OK
      * {
-     * "code": 1
-     * "msg": "fail"
+     *      "code": 1
+     *      "msg": "fail"
      * }
      */
     @At
