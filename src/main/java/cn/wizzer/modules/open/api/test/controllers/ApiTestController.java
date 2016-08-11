@@ -1,13 +1,11 @@
 package cn.wizzer.modules.open.api.test.controllers;
 
 import cn.wizzer.common.base.Result;
-import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.filter.TokenFilter;
 import cn.wizzer.modules.open.api.test.models.Api_test;
 import cn.wizzer.modules.open.api.test.services.ApiTestService;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;

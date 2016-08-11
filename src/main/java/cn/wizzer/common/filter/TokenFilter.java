@@ -2,8 +2,6 @@ package cn.wizzer.common.filter;
 
 import cn.wizzer.common.base.Result;
 import cn.wizzer.modules.back.sys.services.ApiService;
-import org.nutz.ioc.loader.annotation.Inject;
-import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.JsonFormat;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;

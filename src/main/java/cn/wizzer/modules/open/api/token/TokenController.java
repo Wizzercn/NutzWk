@@ -3,21 +3,16 @@ package cn.wizzer.modules.open.api.token;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.modules.back.sys.models.Sys_api;
 import cn.wizzer.modules.back.sys.services.ApiService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
-import java.security.Key;
 import java.util.Calendar;
 import java.util.Date;
 
