@@ -71,6 +71,7 @@ public class Setup implements org.nutz.mvc.Setup {
 
     /**
      * 初始化自定义路由
+     *
      * @param config
      * @param dao
      */
@@ -86,6 +87,7 @@ public class Setup implements org.nutz.mvc.Setup {
         }
         Globals.initRoute(dao);
     }
+
     /**
      * 初始化定时任务
      *
@@ -570,6 +572,52 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setParentId(m9.getId());
             menu.setType("data");
             Sys_menu m93 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("000100010009");
+            menu.setName("应用管理");
+            menu.setAliasName("App");
+            menu.setLocation(0);
+            menu.setHref("/private/sys/api");
+            menu.setTarget("data-pjax");
+            menu.setIsShow(true);
+            menu.setPermission("sys.manager.api");
+            menu.setParentId(m1.getId());
+            menu.setType("menu");
+            Sys_menu mm1 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100090001");
+            menu.setName("添加应用");
+            menu.setAliasName("Add");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.api.add");
+            menu.setParentId(mm1.getId());
+            menu.setType("data");
+            Sys_menu mm2 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100090002");
+            menu.setName("修改应用");
+            menu.setAliasName("Edit");
+            menu.setLocation(2);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.api.edit");
+            menu.setParentId(mm1.getId());
+            menu.setType("data");
+            Sys_menu mm3 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100090003");
+            menu.setName("删除应用");
+            menu.setAliasName("Delete");
+            menu.setLocation(3);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.api.delete");
+            menu.setParentId(mm1.getId());
+            menu.setType("data");
+            Sys_menu mm4 = dao.insert(menu);
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
