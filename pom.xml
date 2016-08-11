@@ -408,6 +408,7 @@
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
                 </configuration>
             </plugin>
             <plugin>
@@ -449,10 +450,7 @@
                     </httpConnector>
                     <stopKey>shutdown</stopKey>
                     <stopPort>9966</stopPort>
-                    <!--
-                    <scanIntervalSeconds>2</scanIntervalSeconds>
-                    -->
-                    <reload>manual</reload>
+                    <scanIntervalSeconds>5</scanIntervalSeconds>
                     <dumpOnStart>true</dumpOnStart>
                     <webApp>
                         <contextPath>/</contextPath>
