@@ -661,7 +661,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setLocation(3);
             menu.setIsShow(false);
             menu.setPermission("sys.manager.dict.delete");
-            menu.setParentId(mm1.getId());
+            menu.setParentId(d.getId());
             menu.setType("data");
             Sys_menu d3 = dao.insert(menu);
             //初始化角色
