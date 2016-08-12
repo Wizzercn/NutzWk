@@ -191,7 +191,7 @@ public class Service<T> extends EntityService<T> {
     public <T> String getSubPath(String tableName, String cloName, String value) {
         final String val = Strings.sNull(value);
         Sql sql = Sqls.create("select " + cloName + " from " + tableName
-                + " where " + cloName + " like '" + value + "____' order by "
+                + " where " + cloName + " like '" + val + "____' order by "
                 + cloName + " desc");
         sql.setCallback(new SqlCallback() {
             public Object invoke(Connection conn, ResultSet rs, Sql sql)
