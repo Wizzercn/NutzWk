@@ -214,6 +214,27 @@ public class Service<T> extends EntityService<T> {
     }
 
     /**
+     * 自定义SQL统计
+     *
+     * @param sql
+     * @return
+     */
+    public int count(Sql sql) {
+        sql.setCallback(new SqlCallback() {
+            public Object invoke(Connection conn, ResultSet rs, Sql sql)
+                    throws SQLException {
+                int rsvalue = 0;
+                if (rs != null && rs.next()) {
+                    rsvalue = rs.getInt(1);
+                }
+                return rsvalue;
+            }
+        });
+        this.dao().execute(sql);
+        return sql.getInt();
+    }
+
+    /**
      * 自定义SQL返回Record记录集，Record是个MAP但不区分大小写
      * 别返回Map对象，因为MySql和Oracle中字段名有大小写之分
      *
