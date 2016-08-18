@@ -24,7 +24,7 @@ public class TokenFilter implements ActionFilter {
         String appId = Strings.sNull(context.getRequest().getParameter("appId"));
         String token = Strings.sNull(context.getRequest().getParameter("token"));
         if (!apiService.verifyToken(appId, token)) {
-            return new UTF8JsonView(JsonFormat.compact()).setData(Result.error("token invalid"));
+            return new UTF8JsonView(JsonFormat.compact()).setData(Result.error(-1,"token invalid"));
         }
         return null;
     }
