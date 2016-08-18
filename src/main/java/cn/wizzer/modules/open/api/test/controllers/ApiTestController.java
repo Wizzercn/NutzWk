@@ -4,8 +4,12 @@ import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.TokenFilter;
 import cn.wizzer.modules.open.api.test.models.Api_test;
 import cn.wizzer.modules.open.api.test.services.ApiTestService;
+import org.beetl.core.lab.Test;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
+import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -35,8 +39,8 @@ public class ApiTestController {
      * POST /open/api/test/hi
      * {
      *      "appId": "appId",
-     *      "token": "token"
-     *      "txt": "你好，大鲨鱼"
+     *      "token": "token",
+     *      "data": "\"txt\": \"你好，大鲨鱼\""
      * }
      * @apiSuccess {number} code 			         code
      * @apiSuccess {String} msg 			         msg
@@ -57,8 +61,11 @@ public class ApiTestController {
      */
     @At
     @Ok("json")
-    public Object hi(@Param("..") Api_test test, HttpServletRequest req) {
+    @POST
+    public Object hi(@Param("..") NutMap map, HttpServletRequest req) {
         try {
+            log.debug("map::" + Json.toJson(map));
+            Api_test test = Json.fromJson(Api_test.class, Strings.sNull(map.get("data")));
             apiTestService.testTx(test);
             return Result.success("ok");
         } catch (Exception e) {
