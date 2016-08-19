@@ -92,21 +92,6 @@
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
-            <artifactId>nutz-web</artifactId>
-            <version>1.r.57</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty.aggregate</groupId>
-                    <artifactId>jetty-all-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty.orbit</groupId>
-                    <artifactId>javax.servlet.jsp</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-quartz</artifactId>
             <version>1.r.57.r2</version>
         </dependency>
@@ -353,22 +338,6 @@
                 <exclusion>
                     <groupId>junitperf</groupId>
                     <artifactId>junitperf</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-            <version>3.0.1-b08</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.web</groupId>
-            <artifactId>javax.servlet.jsp</artifactId>
-            <version>2.3.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish</groupId>
-                    <artifactId>javax.el</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
