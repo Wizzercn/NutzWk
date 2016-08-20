@@ -106,6 +106,13 @@ layout("/layouts/private.html"){
         </div>
     </div>
 </div>
+<div id="dialogSelect" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
 <script language="JavaScript">
     var msgtype;
     function clickRadio(type){
@@ -176,6 +183,9 @@ layout("/layouts/private.html"){
             checkDo();
         });
         $("#dialogKeySelect").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+        $("#dialogSelect").on("hidden.bs.modal", function () {
             $(this).removeData("bs.modal");
         });
         $('#addForm').ajaxForm({
