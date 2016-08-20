@@ -73,9 +73,6 @@ public class Cms_channel extends Model implements Serializable {
     @Comment("有子节点")
     private boolean hasChildren;
 
-    @ManyMany(from = "channelId", relation = "cms_channel_article", target = Cms_article.class, to = "articleId")
-    private List<Cms_article> articles;
-
     public String getId() {
         return id;
     }
@@ -172,11 +169,4 @@ public class Cms_channel extends Model implements Serializable {
         this.hasChildren = hasChildren;
     }
 
-    public List<Cms_article> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(List<Cms_article> articles) {
-        this.articles = articles;
-    }
 }
