@@ -48,10 +48,10 @@ public class Setup implements org.nutz.mvc.Setup {
             /* redis测试
             JedisPool jedisPool = ioc.get(JedisPool.class);
             try (Jedis jedis = jedisPool.getResource()) {
-                String re = jedis.set("_big_fish", "Hello Word!!");
-                log.debug("1.redis say : " + re);
-                re = jedis.get("_big_fish");
-                log.debug("2.redis say : " + re);
+                String updateCount = jedis.set("_big_fish", "Hello Word!!");
+                log.debug("1.redis say : " + updateCount);
+                updateCount = jedis.get("_big_fish");
+                log.debug("2.redis say : " + updateCount);
             } finally {}
 
             RedisService redis = ioc.get(RedisService.class);
