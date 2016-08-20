@@ -128,4 +128,14 @@ public class StringUtil {
         return Strings.sNull(str).startsWith(Strings.sNull(s));
     }
 
+    /**
+     * 判断是否包含字符串
+     *
+     * @param str
+     * @param s
+     * @return
+     */
+    public boolean contains(String str, String s) {
+        return Strings.sNull(str).contains(Strings.sNull(s));
+    }
 }

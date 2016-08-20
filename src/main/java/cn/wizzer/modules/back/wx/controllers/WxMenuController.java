@@ -6,6 +6,8 @@ import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
 import cn.wizzer.common.page.DataTableOrder;
 import cn.wizzer.common.util.StringUtil;
+import cn.wizzer.modules.back.cms.services.CmsArticleService;
+import cn.wizzer.modules.back.cms.services.CmsChannelService;
 import cn.wizzer.modules.back.sys.models.Sys_menu;
 import cn.wizzer.modules.back.wx.models.Wx_config;
 import cn.wizzer.modules.back.wx.models.Wx_menu;
@@ -49,6 +51,10 @@ public class WxMenuController {
     WxConfigService wxConfigService;
     @Inject
     WxReplyService wxReplyService;
+    @Inject
+    CmsChannelService cmsChannelService;
+    @Inject
+    CmsArticleService cmsArticleService;
 
     @At({"", "/index/?"})
     @Ok("beetl:/private/wx/menu/index.html")
@@ -268,5 +274,25 @@ public class WxMenuController {
             cnd.and("type", "=", "keyword");
         }
         return wxReplyService.data(length, start, draw, order, columns, cnd, null);
+    }
+
+
+    @At("/cms/?")
+    @Ok("beetl:/private/wx/menu/cms.html")
+    @RequiresAuthentication
+    public void cms(String type, HttpServletRequest req) {
+        req.setAttribute("type", type);
+    }
+
+    @At("/cmsData/?")
+    @Ok("json:full")
+    @RequiresAuthentication
+    public Object cmsData(String type, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+        Cnd cnd = Cnd.NEW();
+        if ("channel".equals(type)) {
+            return cmsChannelService.data(length, start, draw, order, columns, cnd, null);
+        } else {
+            return cmsArticleService.data(length, start, draw, order, columns, cnd, null);
+        }
     }
 }

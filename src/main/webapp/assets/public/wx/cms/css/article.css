@@ -1,0 +1,98 @@
+.rich_media {
+    width: 740px;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.rich_media_inner {
+    padding: 20px;
+    background-color: #fff
+}
+
+.rich_media_meta {
+    max-width: none
+}
+
+a.rich_media_meta_nickname {
+    display: inline-block !important
+}
+
+span.rich_media_meta_nickname {
+    display: none !important
+}
+
+.rich_media_content {
+    position: relative;
+    min-height: 350px
+}
+
+.rich_media_title {
+    padding-bottom: 10px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #e7e7eb
+}
+
+.discuss_container {
+    width: 740px;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.discuss_container.editing .frm_textarea_box {
+    margin: 0
+}
+
+.frm_textarea_box {
+    position: relative
+}
+
+.frm_textarea_box:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    border-left: 1px solid #e7e6e4;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleX(0.5);
+    transform: scaleX(0.5)
+}
+
+.frm_textarea_box:after {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    border-left: 1px solid #e7e6e4;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleX(0.5);
+    transform: scaleX(0.5);
+    left: auto;
+    right: -2px
+}
+
+.rich_media_meta.nickname {
+    max-width: none
+}
+
+.rich_tips.with_line .tips {
+    background-color: #fff
+}
+
+body {
+    background-color: #fff;
+    font-family: "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif
+}
+
+.rich_media {
+    position: relative
+}
+
+.rich_media_inner {
+    padding-bottom: 100px
+}

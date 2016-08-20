@@ -52,8 +52,16 @@ layout("/layouts/private.html"){
                             <label for="url" class="col-sm-2 control-label">URL</label>
 
                             <div class="col-sm-8">
+                                <div class="input-group">
                                 <input id="url" name="url"  value="${obj.url!}" type="text" class="form-control">
-                                <input type="checkbox" id="btnUrl">网页oauth2.0
+                                <span class="input-group-btn">
+                                    <a class="btn btn-primary current-time" href="${base}/private/wx/conf/menu/cms/channel"  data-toggle="modal" data-target="#dialogSelect">选择栏目</a>
+                                    <a class="btn btn-info current-time" href="${base}/private/wx/conf/menu/cms/article"  data-toggle="modal" data-target="#dialogSelect">选择文章</a>
+
+                                </span>
+                                </div>
+                                <input type="checkbox" id="btnUrl" <%if(@string.contains(obj.url,"oauth2")){%>checked<%}%>>网页oauth2.0
+                                <input type="checkbox" id="btnUrl2" <%if(@string.contains(obj.url,"wx/wechat")){%>checked<%}%>>应用oauth2.0
 
                             </div>
                         </div>
@@ -141,12 +149,26 @@ layout("/layouts/private.html"){
         var str=url.substring(url.indexOf("redirect_uri=")+13,url.indexOf("&response_type="));
         return decodeURIComponent(str);
     }
+    function getUrl2(url){
+        var str="http://${AppDomain!}/public/wx/wechat/${obj.wxid!}/oauth?goto_url=$s";
+        return str.replace("$s",url);
+    }
+    function seeUrl2(url){
+        return url.substring(url.indexOf("goto_url=")+9);
+    }
     $(document).ready(function () {
         $("#btnUrl").on("click",function(){
             if($(this).is(':checked')){
                 $("#url").val(getUrl($("#url").val()));
             }else{
                 $("#url").val(seeUrl($("#url").val()));
+            }
+        });
+        $("#btnUrl2").on("click",function(){
+            if($(this).is(':checked')){
+                $("#url").val(getUrl2($("#url").val()));
+            }else{
+                $("#url").val(seeUrl2($("#url").val()));
             }
         });
         checkDo();
