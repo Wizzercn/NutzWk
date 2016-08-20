@@ -41,7 +41,7 @@ public class WechatController {
     @At("/?/oauth")
     @Ok("re")
     @Filters
-    public String oauth(String wxid, @Param(value = "goto_url", df = "/public/wx/channel") String goto_url, HttpServletRequest req, HttpSession session) throws Exception {
+    public String oauth(String wxid, @Param(value = "goto_url", df = "/public/wx/cms/channel") String goto_url, HttpServletRequest req, HttpSession session) throws Exception {
         session.setAttribute("wechat_goto_url", goto_url);
         if (!Strings.isBlank(wxid)) {
             Wx_config config = wxConfigService.fetch(wxid);
