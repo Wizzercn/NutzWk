@@ -180,6 +180,18 @@ public class Service<T> extends EntityService<T> {
     }
 
     /**
+     * 查询获取部分字段
+     *
+     * @param fieldName 支持通配符 ^(a|b)$
+     * @param cnd
+     * @return
+     */
+    public List<T> query(String fieldName, Condition cnd) {
+        return Daos.ext(this.dao(), FieldFilter.create(getEntityClass(), fieldName))
+                .query(getEntityClass(), cnd);
+    }
+
+    /**
      * 计算子节点ID
      *
      * @param tableName
