@@ -15,20 +15,9 @@ layout("/layouts/private.html"){
                 <input id="id" name="id" type="hidden" value="${obj.id!}">
                 <input id="wxid" name="wxid" type="hidden" value="${obj.wxid!}">
                 <input type="hidden" id="hasChildren" name="hasChildren" value="${obj.hasChildren!}">
+                <input type="hidden" id="parentId" name="parentId" value="${obj.parentId!}">
                 <div class="row mb10">
                     <div class="col-lg-12">
-                        <div class="form-group">
-                            <label for="parentId" class="col-sm-2 control-label">上级菜单</label>
-
-                            <div class="col-sm-8">
-                                <select id="parentId" name="parentId" class="form-control" readonly>
-                                    <option value="">无</option>
-                                    <option value="${obj.wxid!}" selected>${obj.wxConfig.appname}</option>
-                                </select>
-                                <input id="errMsg" value="false" type="hidden">
-                                <p class="help-block no-m" style="color: red;" id="_errMsg"></p>
-                            </div>
-                        </div>
                         <div class="form-group">
                             <label for="menuName" class="col-sm-2 control-label">菜单名称</label>
 
@@ -53,7 +42,7 @@ layout("/layouts/private.html"){
 
                             <div class="col-sm-8">
                                 <div class="input-group">
-                                <input id="url" name="url"  value="${obj.url!}" type="text" class="form-control">
+                                    <input id="url" name="url"  value="${obj.url!}" type="text" class="form-control">
                                 <span class="input-group-btn">
                                     <a class="btn btn-primary current-time" href="${base}/private/wx/conf/menu/cms/channel"  data-toggle="modal" data-target="#dialogSelect">选择栏目</a>
                                     <a class="btn btn-info current-time" href="${base}/private/wx/conf/menu/cms/article"  data-toggle="modal" data-target="#dialogSelect">选择文章</a>
@@ -123,11 +112,11 @@ layout("/layouts/private.html"){
         } else if (type == 'view') {
             $("#div_key").hide();
             $("#div_url").show();
-            $("#key").val("");
+            $("#menuKey").val("");
         } else {
             $("#div_key").hide();
             $("#div_url").hide();
-            $("#key").val("");
+            $("#menuKey").val("");
             $("#url").val("");
         }
     }
