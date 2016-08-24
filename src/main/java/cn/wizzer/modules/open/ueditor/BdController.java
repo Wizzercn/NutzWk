@@ -30,7 +30,7 @@ public class BdController {
     @At
     @Ok("json")
     public Object index(@Param("action") String action, HttpServletRequest req) {
-        return Json.fromJson(Files.read(Globals.AppRoot + Globals.AppBase + "/assets/plugins/ueditor/nutz/config.json").replace("$base", Globals.AppBase));
+        return Json.fromJson(Files.read(Globals.AppRoot + "/assets/plugins/ueditor/nutz/config.json").replace("$base", Globals.AppBase));
     }
 
 
