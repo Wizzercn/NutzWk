@@ -52,7 +52,7 @@ public class BdController {
                 String f = Globals.AppUploadPath + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
                 Files.write(new File(p + f), tf.getInputStream());
                 nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", f);
+                nutMap.addv("url", Globals.AppBase + f);
                 nutMap.addv("original", tf.getSubmittedFileName());
                 nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
                 nutMap.addv("size", tf.getSize());
@@ -82,7 +82,7 @@ public class BdController {
                 String f = Globals.AppUploadPath + "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
                 Files.write(new File(p + f), tf.getInputStream());
                 nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", f);
+                nutMap.addv("url", Globals.AppBase + f);
                 nutMap.addv("original", tf.getSubmittedFileName());
                 nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
                 nutMap.addv("size", tf.getSize());
@@ -112,7 +112,7 @@ public class BdController {
                 String f = Globals.AppUploadPath + "/video/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
                 Files.write(new File(p + f), tf.getInputStream());
                 nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", f);
+                nutMap.addv("url", Globals.AppBase + f);
                 nutMap.addv("original", tf.getSubmittedFileName());
                 nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
                 nutMap.addv("size", tf.getSize());

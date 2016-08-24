@@ -44,7 +44,7 @@ public class UploadController {
                 String p = Globals.AppRoot;
                 String f = Globals.AppUploadPath + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
                 Files.write(new File(p + f), tf.getInputStream());
-                return Result.success("上传成功", f);
+                return Result.success("上传成功", Globals.AppBase+f);
             }
         } catch (Exception e) {
             return Result.error("系统错误");
