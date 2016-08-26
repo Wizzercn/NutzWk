@@ -66,7 +66,7 @@ public class DictController {
     @Ok("beetl:/private/sys/dict/child.html")
     @RequiresAuthentication
     public Object child(String id) {
-        return dictService.query(Cnd.where("parentId", "=", id).asc("path"));
+        return dictService.query(Cnd.where("parentId", "=", id).asc("location").asc("path"));
     }
 
     @At("/edit/?")
