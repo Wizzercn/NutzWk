@@ -30,7 +30,7 @@ public class RouteFilter implements Filter {
             if ("show".equals(route.getType())) {
                 res2.sendRedirect(route.getToUrl());
             } else {
-                req2.getRequestDispatcher(Strings.sNull(route.getToUrl()).replace(Globals.AppBase, "")).forward(req2, res2);
+                req2.getRequestDispatcher(route.getToUrl()).forward(req2, res2);
             }
         } else chain.doFilter(req2, res2);
     }
