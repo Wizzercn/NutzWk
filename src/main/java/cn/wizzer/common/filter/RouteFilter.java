@@ -3,6 +3,7 @@ package cn.wizzer.common.filter;
 import cn.wizzer.common.base.Globals;
 import cn.wizzer.modules.back.sys.models.Sys_route;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
@@ -24,12 +25,12 @@ public class RouteFilter implements Filter {
         HttpServletResponse res2 = (HttpServletResponse) res;
         res2.setCharacterEncoding("utf-8");
         req2.setCharacterEncoding("utf-8");
-        Sys_route route = Globals.RouteMap.get(req2.getRequestURI());
+        Sys_route route = Globals.RouteMap.get(req2.getRequestURI().replace(Globals.AppBase, ""));
         if (route != null) {
             if ("show".equals(route.getType())) {
                 res2.sendRedirect(route.getToUrl());
             } else {
-                req2.getRequestDispatcher(route.getToUrl()).forward(req2, res2);
+                req2.getRequestDispatcher(Strings.sNull(route.getToUrl()).replace(Globals.AppBase, "")).forward(req2, res2);
             }
         } else chain.doFilter(req2, res2);
     }
