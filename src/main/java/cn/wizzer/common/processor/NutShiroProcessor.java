@@ -6,6 +6,7 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.nutz.integration.shiro.NutShiro;
 import org.nutz.integration.shiro.NutShiroInterceptor;
 import org.nutz.integration.shiro.NutShiroMethodInterceptor;
+import org.nutz.lang.Strings;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionInfo;
 import org.nutz.mvc.NutConfig;
@@ -68,7 +69,7 @@ public class NutShiroProcessor extends AbstractProcessor {
     }
 
     protected void whenUnauthenticated(ActionContext ac, UnauthenticatedException e) throws Exception {
-        if (NutShiro.isAjax(ac.getRequest())) {
+        if (NutShiro.isAjax(ac.getRequest()) || getContentType(ac).contains("multipart/form-data")) {
             ac.getResponse().addHeader("loginStatus", "accessDenied");
             NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error("登录失效"));
         } else {
@@ -77,7 +78,7 @@ public class NutShiroProcessor extends AbstractProcessor {
     }
 
     protected void whenUnauthorized(ActionContext ac, UnauthorizedException e) throws Exception {
-        if (NutShiro.isAjax(ac.getRequest())) {
+        if (NutShiro.isAjax(ac.getRequest()) || getContentType(ac).contains("multipart/form-data")) {
             ac.getResponse().addHeader("loginStatus", "unauthorized");
             NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error("没有权限"));
         } else {
@@ -86,11 +87,15 @@ public class NutShiroProcessor extends AbstractProcessor {
     }
 
     protected void whenOtherException(ActionContext ac, Exception e) throws Exception {
-        if (NutShiro.isAjax(ac.getRequest())) {
+        if (NutShiro.isAjax(ac.getRequest()) || getContentType(ac).contains("multipart/form-data")) {
             ac.getResponse().addHeader("loginStatus", "accessDenied");
             NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error("登录失效"));
         } else {
             new ServerRedirectView(loginUri).render(ac.getRequest(), ac.getResponse(), null);
         }
+    }
+
+    private String getContentType(ActionContext ac) {
+        return Strings.sNull(ac.getRequest().getHeader("Content-Type")).trim().toLowerCase();
     }
 }
