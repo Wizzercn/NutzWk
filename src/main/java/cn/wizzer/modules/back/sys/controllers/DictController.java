@@ -3,11 +3,14 @@ package cn.wizzer.modules.back.sys.controllers;
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.filter.PrivateFilter;
+import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.modules.back.sys.models.Sys_dict;
 import cn.wizzer.modules.back.sys.services.DictService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
+import org.nutz.dao.Sqls;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
@@ -36,7 +39,7 @@ public class DictController {
     @Ok("beetl:/private/sys/dict/index.html")
     @RequiresAuthentication
     public Object index() {
-        return dictService.query(Cnd.where("parentId", "=", "").asc("path"));
+        return dictService.query(Cnd.where("parentId", "=", "").asc("location").asc("path"));
     }
 
     @At
@@ -121,5 +124,46 @@ public class DictController {
             tree.add(obj);
         }
         return tree;
+    }
+
+    @At
+    @Ok("beetl:/private/sys/dict/sort.html")
+    @RequiresAuthentication
+    public void sort(HttpServletRequest req) {
+        List<Sys_dict> list = dictService.query(Cnd.orderBy().asc("location").asc("path"));
+        List<Sys_dict> firstMenus = new ArrayList<>();
+        Map<String, List<Sys_dict>> secondMenus = new HashMap<>();
+        for (Sys_dict menu : list) {
+            if (menu.getPath().length() > 4) {
+                List<Sys_dict> s = secondMenus.get(StringUtil.getParentId(menu.getPath()));
+                if (s == null) s = new ArrayList<>();
+                s.add(menu);
+                secondMenus.put(StringUtil.getParentId(menu.getPath()), s);
+            } else if (menu.getPath().length() == 4) {
+                firstMenus.add(menu);
+            }
+        }
+        req.setAttribute("firstMenus", firstMenus);
+        req.setAttribute("secondMenus", secondMenus);
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.dict.edit")
+    public Object sortDo(@Param("ids") String ids, HttpServletRequest req) {
+        try {
+            String[] menuIds= StringUtils.split(ids, ",");
+            int i=0;
+            dictService.dao().execute(Sqls.create("update sys_dict set location=0"));
+            for(String s:menuIds){
+                if(!Strings.isBlank(s)){
+                    dictService.update(org.nutz.dao.Chain.make("location",i),Cnd.where("id","=",s));
+                    i++;
+                }
+            }
+            return Result.success("system.success");
+        } catch (Exception e) {
+            return Result.error("system.error");
+        }
     }
 }

@@ -3,7 +3,7 @@ layout("/layouts/private.html"){
 %>
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/private/sys/menu" data-pjax id="goback"><i class="ti-angle-left"></i> 返回</a>
+        <a class="btn btn-primary navbar-btn" href="${base}/private/sys/dict" data-pjax id="goback"><i class="ti-angle-left"></i> 返回</a>
     </div>
     <div class="pull-right">
         <div class="btn-group tool-button">
@@ -66,7 +66,7 @@ layout("/layouts/private.html"){
     function complete(){
         ids=[];
         getId($("#nestable3").nestable('serialize'));
-        $.post("${base}/private/sys/menu/sortDo", {ids: ids.toString()}, function (data) {
+        $.post("${base}/private/sys/dict/sortDo", {ids: ids.toString()}, function (data) {
             if (data.code == 0) {
                 Toast.success(data.msg);
             } else {
