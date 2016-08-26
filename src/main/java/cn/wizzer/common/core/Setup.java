@@ -100,7 +100,7 @@ public class Setup implements org.nutz.mvc.Setup {
         if (0 == dao.count(Sys_task.class)) {
             //定时任务示例
             Sys_task task = new Sys_task();
-            task.setDisabled(false);
+            task.setDisabled(true);
             task.setName("测试任务");
             task.setJobClass("cn.wizzer.common.quartz.job.TestJob");
             task.setCron("*/5 * * * * ?");

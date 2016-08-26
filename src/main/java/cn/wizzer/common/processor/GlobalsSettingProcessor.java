@@ -25,7 +25,7 @@ public class GlobalsSettingProcessor extends AbstractProcessor {
 		ac.getRequest().setAttribute("shiro", Mvcs.ctx().getDefaultIoc().get(Permission.class));
 		ac.getRequest().setAttribute("date", Mvcs.ctx().getDefaultIoc().get(DateUtil.class));
 		ac.getRequest().setAttribute("string", Mvcs.ctx().getDefaultIoc().get(StringUtil.class));
-		// 如果Cookies中有语言属性则设置
+		// 如果url中有语言属性则设置
 		String lang=ac.getRequest().getParameter("lang");
 		if (!Strings.isEmpty(lang)) {
 			Mvcs.setLocalizationKey(lang);
