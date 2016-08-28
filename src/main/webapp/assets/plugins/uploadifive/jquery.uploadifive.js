@@ -415,7 +415,7 @@ Released under the UploadiFive Standard License <http://www.uploadify.com/upload
                                     }
                                 }
                             });
-
+                            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
                             // Send the form data (multipart/form-data)
                             xhr.send(formData);
 
@@ -478,7 +478,7 @@ Released under the UploadiFive Standard License <http://www.uploadify.com/upload
                                 }
                                 xhr.open(settings.method, settings.uploadScript, true);
                                 xhr.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
-
+                                xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
                                 // Trigger the uploadFile event
                                 if (typeof settings.onUploadFile === 'function') {
                                     settings.onUploadFile.call($this, file);

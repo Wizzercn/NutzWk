@@ -260,10 +260,12 @@ public class UserController {
         List<Sys_unit> list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();
         Map<String, Object> obj = new HashMap<>();
-        obj.put("id", "root");
-        obj.put("text", "所有用户");
-        obj.put("children", false);
-        tree.add(obj);
+        if(Strings.isBlank(pid)) {
+            obj.put("id", "root");
+            obj.put("text", "所有用户");
+            obj.put("children", false);
+            tree.add(obj);
+        }
         for (Sys_unit unit : list) {
             obj = new HashMap<>();
             obj.put("id", unit.getId());

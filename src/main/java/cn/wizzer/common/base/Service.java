@@ -180,6 +180,18 @@ public class Service<T> extends EntityService<T> {
     }
 
     /**
+     * 查询获取部分字段
+     *
+     * @param fieldName 支持通配符 ^(a|b)$
+     * @param cnd
+     * @return
+     */
+    public List<T> query(String fieldName, Condition cnd) {
+        return Daos.ext(this.dao(), FieldFilter.create(getEntityClass(), fieldName))
+                .query(getEntityClass(), cnd);
+    }
+
+    /**
      * 计算子节点ID
      *
      * @param tableName
@@ -191,7 +203,7 @@ public class Service<T> extends EntityService<T> {
     public <T> String getSubPath(String tableName, String cloName, String value) {
         final String val = Strings.sNull(value);
         Sql sql = Sqls.create("select " + cloName + " from " + tableName
-                + " where " + cloName + " like '" + value + "____' order by "
+                + " where " + cloName + " like '" + val + "____' order by "
                 + cloName + " desc");
         sql.setCallback(new SqlCallback() {
             public Object invoke(Connection conn, ResultSet rs, Sql sql)
@@ -211,6 +223,27 @@ public class Service<T> extends EntityService<T> {
         this.dao().execute(sql);
         return sql.getString();
 
+    }
+
+    /**
+     * 自定义SQL统计
+     *
+     * @param sql
+     * @return
+     */
+    public int count(Sql sql) {
+        sql.setCallback(new SqlCallback() {
+            public Object invoke(Connection conn, ResultSet rs, Sql sql)
+                    throws SQLException {
+                int rsvalue = 0;
+                if (rs != null && rs.next()) {
+                    rsvalue = rs.getInt(1);
+                }
+                return rsvalue;
+            }
+        });
+        this.dao().execute(sql);
+        return sql.getInt();
     }
 
     /**
@@ -280,6 +313,24 @@ public class Service<T> extends EntityService<T> {
     }
 
     /**
+     * 分页查询,获取部分字段(cnd)
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param cnd
+     * @param fieldName  支持通配符 ^(a|b)$
+     * @return
+     */
+    public Pagination listPage(Integer pageNumber, int pageSize, Condition cnd, String fieldName) {
+        pageNumber = getPageNumber(pageNumber);
+        pageSize = getPageSize(pageSize);
+        Pager pager = this.dao().createPager(pageNumber, pageSize);
+        List<T> list = Daos.ext(this.dao(), FieldFilter.create(getEntityClass(), fieldName)).query(getEntityClass(), cnd);
+        pager.setRecordCount(this.dao().count(getEntityClass(), cnd));
+        return new Pagination(pageNumber, pageSize, pager.getRecordCount(), list);
+    }
+
+    /**
      * 分页查询(tabelName)
      *
      * @param pageNumber
@@ -309,7 +360,7 @@ public class Service<T> extends EntityService<T> {
         pageNumber = getPageNumber(pageNumber);
         pageSize = getPageSize(pageSize);
         Pager pager = this.dao().createPager(pageNumber, pageSize);
-        pager.setRecordCount((int) Daos.queryCount(dao(), sql.toString()));// 记录数需手动设置
+        pager.setRecordCount((int) Daos.queryCount(this.dao(), sql.toString()));// 记录数需手动设置
         sql.setPager(pager);
         sql.setCallback(Sqls.callback.records());
         dao().execute(sql);
@@ -381,7 +432,7 @@ public class Service<T> extends EntityService<T> {
     public NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql) {
         NutMap re = new NutMap();
         Pager pager = new OffsetPager(start, length);
-        pager.setRecordCount((int) Daos.queryCount(dao(), countSql.toString()));// 记录数需手动设置
+        pager.setRecordCount((int) Daos.queryCount(this.dao(), countSql.toString()));// 记录数需手动设置
         orderSql.setPager(pager);
         orderSql.setCallback(Sqls.callback.records());
         this.dao().execute(orderSql);

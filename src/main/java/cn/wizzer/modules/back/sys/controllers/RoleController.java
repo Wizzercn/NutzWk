@@ -294,9 +294,12 @@ public class RoleController {
         List<Sys_unit> list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();
         Map<String, Object> obj = new HashMap<>();
-        obj.put("id", "root");
-        obj.put("text", "系统角色");
-        obj.put("children", false);
+        if(Strings.isBlank(pid)) {
+            obj.put("id", "root");
+            obj.put("text", "系统角色");
+            obj.put("children", false);
+            tree.add(obj);
+        }
         tree.add(obj);
         for (Sys_unit unit : list) {
             obj = new HashMap<>();

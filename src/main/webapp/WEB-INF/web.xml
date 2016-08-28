@@ -23,6 +23,16 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
+    <!-- Custom Route -->
+    <filter>
+        <filter-name>route</filter-name>
+        <filter-class>cn.wizzer.common.filter.RouteFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>route</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- Nutz Mvc -->
     <filter>
         <filter-name>nutz</filter-name>
@@ -33,16 +43,20 @@
         </init-param>
         <init-param>
             <param-name>ignore</param-name>
-            <param-value>^(.+[.])(jsp|png|gif|jpg|js|css|jspx|jpeg|html|mp3|mp4)$</param-value>
+            <param-value>^(.+[.])(jsp|png|gif|jpg|js|css|jspx|jpeg|html|mp3|mp4|ico)$</param-value>
         </init-param>
         <init-param>
             <param-name>exclusions</param-name>
-            <param-value>/assets/*,/druid/*,/upload/*</param-value>
+            <param-value>/assets/*,/druid/*,/upload/*,/apidoc/*</param-value>
         </init-param>
     </filter>
     <filter-mapping>
         <filter-name>nutz</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
     <!-- druid -->
@@ -55,7 +69,7 @@
         </init-param>
         <init-param>
             <param-name>exclusions</param-name>
-            <param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/assets/*,/upload/*</param-value>
+            <param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/assets/*,/upload/*,/apidoc/*</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

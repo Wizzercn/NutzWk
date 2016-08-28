@@ -54,12 +54,19 @@ public class WxHandler extends AbstractWxHandler {
 
     public boolean check(String signature, String timestamp, String nonce, String key) {
         Wx_config appInfo = wxConfigService.fetch(Cnd.where("id", "=", key));
-        return appInfo != null && Wxs.check(appInfo.getToken(), signature, timestamp, nonce);
+        if(appInfo!=null){
+            this.token=appInfo.getToken();
+            this.aeskey=appInfo.getEncodingAESKey();
+            this.appid=appInfo.getAppid();
+            return Wxs.check(appInfo.getToken(), signature, timestamp, nonce);
+        }
+        return false;
     }
 
     public WXBizMsgCrypt getMsgCrypt() {
         if (this.msgCrypt == null) {
             try {
+                // 若抛异常Illegal key size ,需更新JDK的加密库为不限制长度
                 this.msgCrypt = new WXBizMsgCrypt(this.token, this.aeskey, this.appid);
             } catch (AesException var2) {
                 throw new RuntimeException(var2);
@@ -106,7 +113,28 @@ public class WxHandler extends AbstractWxHandler {
 
     public WxOutMsg eventClick(WxInMsg msg) {
         String eventKey = msg.getEventKey();
-        log.info("eventKey: " + eventKey);
+        log.debug("eventKey: " + eventKey);
+        Wx_reply reply=wxReplyService.fetch(Cnd.where("type","=","keyword").and("wxid","=",msg.getExtkey()).and("keyword","=",eventKey));
+        if (reply != null) {
+            if ("txt".equals(reply.getMsgType())) {
+                String txtId = reply.getContent();
+                Wx_reply_txt txt = wxReplyTxtService.fetch(txtId);
+                return Wxs.respText(null, txt == null ? "" : txt.getContent());
+            } else if ("news".equals(reply.getMsgType())) {
+                String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
+                List<WxArticle> list = new ArrayList<>();
+                List<Wx_reply_news> newsList = wxReplyNewsService.query(Cnd.where("id", "in", newsIds).asc("location"));
+                for (Wx_reply_news news : newsList) {
+                    WxArticle wxArticle = new WxArticle();
+                    wxArticle.setDescription(news.getDescription());
+                    wxArticle.setPicUrl(news.getPicUrl());
+                    wxArticle.setTitle(news.getTitle());
+                    wxArticle.setUrl(news.getUrl());
+                    list.add(wxArticle);
+                }
+                return Wxs.respNews(null, list);
+            }
+        }
         return defaultMsg(msg);
     }
 

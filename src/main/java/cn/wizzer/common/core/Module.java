@@ -6,6 +6,7 @@ import org.beetl.ext.nutz.BeetlViewMaker;
 import org.nutz.integration.shiro.ShiroSessionProvider;
 import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.ioc.provider.ComboIocProvider;
+import org.nutz.plugins.view.pdf.PdfViewMaker;
 
 
 /**
@@ -17,7 +18,7 @@ import org.nutz.mvc.ioc.provider.ComboIocProvider;
 @IocBy(type = ComboIocProvider.class, args = {"*json", "config/ioc/", "*anno", "cn.wizzer", "*tx", "*quartz", "*async"})
 @Localization(value = "locales/", defaultLocalizationKey = "zh_CN")
 @Encoding(input = "UTF-8", output = "UTF-8")
-@Views({BeetlViewMaker.class})
+@Views({BeetlViewMaker.class, PdfViewMaker.class})
 @SetupBy(value = Setup.class)
 @ChainBy(args = "config/chain/nutzwk-mvc-chain.json")
 @SessionBy(ShiroSessionProvider.class)

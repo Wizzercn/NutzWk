@@ -43,7 +43,7 @@ public class WxController {
     @At
     @Ok("json")
     public Object index(@Param("action") String action, HttpServletRequest req) {
-        return Json.fromJson(Files.read(Globals.AppRoot + "/assets/plugins/ueditor/nutz/configWx.json").replace("$base",Globals.AppBase));
+        return Json.fromJson(Files.read(Globals.AppRoot + "/assets/plugins/ueditor/nutz/configWx.json").replace("$base", Globals.AppBase));
     }
 
     @AdaptBy(type = UploadAdaptor.class, args = {"ioc:imageUpload"})
@@ -54,14 +54,14 @@ public class WxController {
     public Object uploadimage(@Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
         String wxid = Strings.sBlank(req.getSession().getAttribute("wxid"));
         NutMap nutMap = new NutMap();
-        if (err != null && err.getAdaptorErr() != null) {
-            nutMap.addv("state", "FAIL");
-            return nutMap;
-        } else if (tf == null) {
-            nutMap.addv("state", "FAIL");
-            return nutMap;
-        } else {
-            try {
+        try {
+            if (err != null && err.getAdaptorErr() != null) {
+                nutMap.addv("state", "FAIL");
+                return nutMap;
+            } else if (tf == null) {
+                nutMap.addv("state", "FAIL");
+                return nutMap;
+            } else {
                 WxApi2 wxApi2 = wxConfigService.getWxApi2(wxid);
                 WxResp resp = wxApi2.uploadimg(tf.getFile());
                 if (resp.errcode() != 0) {
@@ -70,17 +70,17 @@ public class WxController {
                 }
                 nutMap.addv("state", "SUCCESS");
                 nutMap.addv("url", resp.get("url"));
-                nutMap.addv("original", tf.getMeta().getFileLocalName());
-                nutMap.addv("type", tf.getMeta().getFileExtension());
+                nutMap.addv("original", tf.getSubmittedFileName());
+                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
                 nutMap.addv("size", tf.getSize());
                 return nutMap;
-            } catch (Exception e) {
-                nutMap.addv("state", "FAIL");
-                return nutMap;
-            } catch (Throwable e) {
-                nutMap.addv("state", "FAIL");
-                return nutMap;
             }
+        } catch (Exception e) {
+            nutMap.addv("state", "FAIL");
+            return nutMap;
+        } catch (Throwable e) {
+            nutMap.addv("state", "FAIL");
+            return nutMap;
         }
     }
 }

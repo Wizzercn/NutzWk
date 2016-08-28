@@ -1,24 +1,26 @@
-NutzWk 3.1 微信+
+NutzWk 基于Nutz的开源企业级开发框架 
 ======
+
+[![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
+[![GitHub release](https://img.shields.io/github/release/Wizzercn/NutzWk.svg)](https://github.com/Wizzercn/NutzWk/releases)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-NutzWk 3.2.x   CMS+ (beetl / beetl+velocity)
+开发计划:
 
-NutzWk 3.1.x   微信+ (beetl / beetl+velocity)  
-
-NutzWk 3.0.x   纯净版(beetl / beetl+velocity)
-
-NutzWk 2.0.x   试验版(velocity)
-
-NutzWk 1.0.x   传统版(velocity 支持IE6)
+* NutzWk 4.0.x   前后端分离版 (vue + nutz + dubbo) **筹备中..**
+* NutzWk 3.2.x   CMS+ (beetl / beetl+velocity)
+* NutzWk 3.1.x   微信+ (beetl / beetl+velocity)
+* NutzWk 3.0.x   纯净版(beetl / beetl+velocity)
+* NutzWk 2.0.x   试验版(velocity)
+* NutzWk 1.0.x   传统版(velocity 支持IE6)
 
 注:_velocity后缀为同时支持beetl和velocity两种模板引擎版本  
 
-交流群:68428921
+交流群: 68428921
 
 在线演示地址
 ======
-http://nutzwk.wizzer.cn/                 NutzWk v3.1.x
+https://nutzwk.wizzer.cn/                 NutzWk v3.x
 
 https://github.com/Wizzercn/NodeWk       Node.js版源码
 
@@ -27,8 +29,9 @@ https://github.com/Wizzercn/NodeWk       Node.js版源码
 
 NutzWk 3.x 运行环境：
 *   JDK 8
-*   Maven 3.3.39
-*   Nutz v1.r.57
+*   Tomcat 8
+*   Maven 3.3.9
+*   Nutz v1.r.58
 
 NutzWk 3.x 新特性：
 *   集成Shiro权限框架
@@ -42,7 +45,7 @@ NutzWk 3.x 新特性：
 *   集成Email服务
 *   集成Quartz定时任务
 *   集成Lucene搜索引擎
-*   集成Beetl模板引擎
+*   集成Beetl/Velocity模板引擎
 *   后台管理界面采用Pjax+Bootstrap
 *   自定义路由
 
@@ -64,23 +67,27 @@ NutzWk 3.x 新特性：
 *   国际化字符串
 *   ……
 
-代码生成器
+代码生成器【IDEA插件】
 ======
-https://github.com/Wizzercn/NutzCodematic/tree/v3.0.0       适用于NutzWk v3.x（可视化界面,通过数据表生成代码及页面）
 
-https://github.com/enilu/nutzwk-code-generator              适用于NutzWk v3.x（Maven插件,通过实体类生成代码及页面）
+**IDEA插件搜 nutzwk-plugin **
 
-```
-  <dependency>
-        <groupId>cn.enilu</groupId>
-        <artifactId>nutzwk-code-generator</artifactId>
-        <version>1.0</version>
-    </dependency>
-```
+![IDEA插件截图](nutzwk_plugin.png)
+IDEA - Code - Generate - nutzwk mvc
+
+https://github.com/enilu/nutzwk-code-generator              适用于NutzWk v3.x
+
+*  nutzwk-plugin 插件是通过 nutzwk-code-generator 实现的，感谢@enilu 的贡献
+*  v3.2.2 以后版本 nutzwk-code-generator 直接集成到框架中
+
+代码生成器【图形界面】
+======
+
+https://github.com/Wizzercn/NutzCodematic/tree/v3.0.0       适用于NutzWk v3.x
 
 https://github.com/Wizzercn/NutzCodematic/tree/v1.0.0       适用于NutzWk 1.0
 
-在线演示地址
+老版本演示地址
 ======
 
 https://nutzwk.nutz.cn/                 NutzWk 2.0
@@ -93,3 +100,6 @@ NutzWk 1.0 源码是这个链接： https://github.com/Wizzercn/NutzWk/tree/1.0
 
 NutzWk 1.0 含Activiti工作流的源码在这里： https://github.com/wendal/wzflow
 
+NutzWk v3.x 运行截图
+======
+![主界面截图](nutzwk_home.png)

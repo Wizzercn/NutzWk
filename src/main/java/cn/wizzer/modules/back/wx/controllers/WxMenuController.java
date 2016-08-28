@@ -6,11 +6,14 @@ import cn.wizzer.common.filter.PrivateFilter;
 import cn.wizzer.common.page.DataTableColumn;
 import cn.wizzer.common.page.DataTableOrder;
 import cn.wizzer.common.util.StringUtil;
+import cn.wizzer.modules.back.cms.services.CmsArticleService;
+import cn.wizzer.modules.back.cms.services.CmsChannelService;
 import cn.wizzer.modules.back.sys.models.Sys_menu;
 import cn.wizzer.modules.back.wx.models.Wx_config;
 import cn.wizzer.modules.back.wx.models.Wx_menu;
 import cn.wizzer.modules.back.wx.services.WxConfigService;
 import cn.wizzer.modules.back.wx.services.WxMenuService;
+import cn.wizzer.modules.back.wx.services.WxReplyService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -46,6 +49,12 @@ public class WxMenuController {
     WxMenuService wxMenuService;
     @Inject
     WxConfigService wxConfigService;
+    @Inject
+    WxReplyService wxReplyService;
+    @Inject
+    CmsChannelService cmsChannelService;
+    @Inject
+    CmsArticleService cmsArticleService;
 
     @At({"", "/index/?"})
     @Ok("beetl:/private/wx/menu/index.html")
@@ -244,6 +253,46 @@ public class WxMenuController {
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
+        }
+    }
+
+
+    @At("/keyword/?")
+    @Ok("beetl:/private/wx/menu/keyword.html")
+    @RequiresAuthentication
+    public void keyword(String wxid, HttpServletRequest req) {
+        req.setAttribute("wxid", wxid);
+    }
+
+    @At("/keywordData")
+    @Ok("json:full")
+    @RequiresAuthentication
+    public Object keywordData(@Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+        Cnd cnd = Cnd.NEW();
+        if (!Strings.isBlank(wxid)) {
+            cnd.and("wxid", "=", wxid);
+            cnd.and("type", "=", "keyword");
+        }
+        return wxReplyService.data(length, start, draw, order, columns, cnd, null);
+    }
+
+
+    @At("/cms/?")
+    @Ok("beetl:/private/wx/menu/cms.html")
+    @RequiresAuthentication
+    public void cms(String type, HttpServletRequest req) {
+        req.setAttribute("type", type);
+    }
+
+    @At("/cmsData/?")
+    @Ok("json:full")
+    @RequiresAuthentication
+    public Object cmsData(String type, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+        Cnd cnd = Cnd.NEW();
+        if ("channel".equals(type)) {
+            return cmsChannelService.data(length, start, draw, order, columns, cnd, null);
+        } else {
+            return cmsArticleService.data(length, start, draw, order, columns, cnd, null);
         }
     }
 }

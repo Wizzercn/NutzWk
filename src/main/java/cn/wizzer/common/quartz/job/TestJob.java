@@ -1,11 +1,15 @@
 package cn.wizzer.common.quartz.job;
 
+import cn.wizzer.modules.back.sys.models.Sys_task;
+import org.nutz.dao.Chain;
+import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.quartz.Job;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -18,8 +22,12 @@ public class TestJob implements Job {
     private static final Log log = Logs.get();
     @Inject
     protected Dao dao;
-    private int i;
+
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        log.info("Test Job ::"+(i++));
+        JobDataMap data = context.getJobDetail().getJobDataMap();
+        String taskId = context.getJobDetail().getKey().getName();
+        String hi = data.getString("hi");
+        log.info("Test Job hi::" + hi);
+        dao.update(Sys_task.class, Chain.make("exeAt", (int) (System.currentTimeMillis() / 1000)).add("exeResult", "执行成功"), Cnd.where("id", "=", taskId));
     }
 }
