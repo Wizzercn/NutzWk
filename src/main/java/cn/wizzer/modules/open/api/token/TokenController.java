@@ -27,7 +27,7 @@ public class TokenController {
     private ApiService apiService;
 
     /**
-     * @api {get} /open/api/token 获取Token
+     * @api {post} /open/api/token 获取Token
      * @apiGroup Token
      * @apiVersion 1.0.0
      * @apiPermission anyone
