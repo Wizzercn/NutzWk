@@ -159,7 +159,7 @@ public class LoginController {
             int count = user.getLoginCount() == null ? 0 : user.getLoginCount();
             sysLogService.async(Sys_log.c("info", "用户登陆", "成功登录系统！", null));
             userService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", (int) (System.currentTimeMillis() / 1000))
-                            .add("loginCount", count + 1).add("online", true)
+                            .add("loginCount", count + 1).add("isOnline", true)
                     , Cnd.where("id", "=", user.getId()));
             return Result.success("login.success");
         } catch (IncorrectCaptchaException e) {
@@ -194,9 +194,9 @@ public class LoginController {
         try {
             Subject currentUser = SecurityUtils.getSubject();
             Sys_user user = (Sys_user) currentUser.getPrincipal();
-            sysLogService.sync(Sys_log.c("info", "用户登出", "退出系统！", null));
-            userService.update(Chain.make("online", false), Cnd.where("id", "=", user.getId()));
             currentUser.logout();
+            sysLogService.sync(Sys_log.c("info", "用户登出", "退出系统！", null));
+            userService.update(Chain.make("isOnline", false), Cnd.where("id", "=", user.getId()));
         } catch (SessionException ise) {
             log.debug("Encountered session exception during logout.  This can generally safely be ignored.", ise);
         } catch (Exception e) {

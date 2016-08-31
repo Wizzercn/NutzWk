@@ -42,7 +42,7 @@ public class CmsChannelController {
     @Ok("beetl:/private/cms/channel/index.html")
     @RequiresAuthentication
     public void index(HttpServletRequest req) {
-        req.setAttribute("list", cmsChannelService.query(Cnd.where("parentId", "=", "").asc("location").asc("path")));
+        req.setAttribute("list", cmsChannelService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("location").asc("path")));
 
     }
 

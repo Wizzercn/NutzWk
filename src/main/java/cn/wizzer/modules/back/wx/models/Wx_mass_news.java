@@ -1,6 +1,7 @@
 package cn.wizzer.modules.back.wx.models;
 
 import cn.wizzer.common.base.Model;
+import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -50,12 +51,15 @@ public class Wx_mass_news extends Model implements Serializable {
 
     @Column
     @Comment("显示封面")
-    @ColDefine(type = ColType.INT,width = 1)
+    @ColDefine(type = ColType.INT)
     protected Integer show_cover_pic;
 
     @Column
     @Comment("排序字段")
-    @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM wx_mass_news"))
+    @Prev({
+            @SQL(db= DB.MYSQL,value = "SELECT IFNULL(MAX(location),0)+1 FROM wx_mass_news"),
+            @SQL(db= DB.ORACLE,value = "SELECT COALESCE(MAX(location),0)+1 FROM wx_mass_news")
+    })
     private Integer location;
 
     @Column

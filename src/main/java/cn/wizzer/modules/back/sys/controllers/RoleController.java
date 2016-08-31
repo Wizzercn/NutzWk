@@ -74,7 +74,7 @@ public class RoleController {
             map.put("id", menu.getId());
             map.put("text", menu.getName());
             map.put("icon", Strings.sBlank(menu.getIcon()));
-            map.put("parent", menu.getParentId().equals("") ? "#" : menu.getParentId());
+            map.put("parent", "".equals(Strings.sNull(menu.getParentId())) ? "#" : menu.getParentId());
             map.put("data", menu.getHref());
             menus.add(map);
         }
@@ -153,7 +153,7 @@ public class RoleController {
             map.put("id", menu.getId());
             map.put("text", menu.getName());
             map.put("icon", Strings.sBlank(menu.getIcon()));
-            map.put("parent", menu.getParentId().equals("") ? "#" : menu.getParentId());
+            map.put("parent", "".equals(Strings.sNull(menu.getParentId())) ? "#" : menu.getParentId());
             map.put("data", menu.getHref());
             menus.add(map);
         }

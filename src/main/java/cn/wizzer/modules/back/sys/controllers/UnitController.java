@@ -36,7 +36,7 @@ public class UnitController {
     @Ok("beetl:/private/sys/unit/index.html")
     @RequiresAuthentication
     public Object index() {
-        return unitService.query(Cnd.where("parentId", "=", "").asc("path"));
+        return unitService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("path"));
     }
 
     @At

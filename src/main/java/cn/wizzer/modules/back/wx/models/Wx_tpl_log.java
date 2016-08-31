@@ -35,7 +35,7 @@ public class Wx_tpl_log extends Model implements Serializable {
 
     @Column
     @Comment("发送状态")
-    @ColDefine(type = ColType.INT, width = 1)
+    @ColDefine(type = ColType.INT)
     private int status;//0 默认 1 成功 2 失败
 
     @Column

@@ -1,6 +1,7 @@
 package cn.wizzer.modules.back.sys.models;
 
 import cn.wizzer.common.base.Model;
+import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -72,7 +73,10 @@ public class Sys_unit extends Model implements Serializable {
 
     @Column
     @Comment("排序字段")
-    @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM sys_unit"))
+    @Prev({
+            @SQL(db= DB.MYSQL,value = "SELECT IFNULL(MAX(location),0)+1 FROM sys_unit"),
+            @SQL(db= DB.ORACLE,value = "SELECT COALESCE(MAX(location),0)+1 FROM sys_unit")
+    })
     private Integer location;
 
     @Column

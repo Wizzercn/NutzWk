@@ -52,7 +52,7 @@ public class DictService extends Service<Sys_dict> {
         if (!Strings.isEmpty(dict.getParentId())) {
             int count = count(Cnd.where("parentId", "=", dict.getParentId()));
             if (count < 1) {
-                dao().execute(Sqls.create("update sys_dict set hasChildren=false where id=@pid").setParam("pid", dict.getParentId()));
+                dao().execute(Sqls.create("update sys_dict set hasChildren=0 where id=@pid").setParam("pid", dict.getParentId()));
             }
         }
     }

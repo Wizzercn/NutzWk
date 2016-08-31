@@ -44,7 +44,7 @@ public class MenuController {
     @Ok("beetl:/private/sys/menu/index.html")
     @RequiresAuthentication
     public void index(HttpServletRequest req) {
-        req.setAttribute("list", menuService.query(Cnd.where("parentId", "=", "").asc("location").asc("path")));
+        req.setAttribute("list", menuService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("location").asc("path")));
     }
 
     @At

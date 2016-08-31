@@ -1,6 +1,7 @@
 package cn.wizzer.modules.back.cms.models;
 
 import cn.wizzer.common.base.Model;
+import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -66,7 +67,10 @@ public class Cms_channel extends Model implements Serializable {
 
     @Column
     @Comment("排序字段")
-    @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM cms_channel"))
+    @Prev({
+            @SQL(db= DB.MYSQL,value = "SELECT IFNULL(MAX(location),0)+1 FROM cms_channel"),
+            @SQL(db= DB.ORACLE,value = "SELECT COALESCE(MAX(location),0)+1 FROM cms_channel")
+    })
     private Integer location;
 
     @Column

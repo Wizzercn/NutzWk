@@ -53,7 +53,7 @@ public class CmsChannelService extends Service<Cms_channel> {
         if (!Strings.isEmpty(channel.getParentId())) {
             int count = count(Cnd.where("parentId", "=", channel.getParentId()));
             if (count < 1) {
-                dao().execute(Sqls.create("update cms_channel set hasChildren=false where id=@pid").setParam("pid", channel.getParentId()));
+                dao().execute(Sqls.create("update cms_channel set hasChildren=0 where id=@pid").setParam("pid", channel.getParentId()));
             }
         }
     }

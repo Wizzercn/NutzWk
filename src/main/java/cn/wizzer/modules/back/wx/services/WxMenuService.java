@@ -49,10 +49,10 @@ public class WxMenuService extends Service<Wx_menu> {
     @Aop(TransAop.READ_COMMITTED)
     public void deleteAndChild(Wx_menu menu) {
         dao().execute(Sqls.create("delete from wx_menu where path like @path").setParam("path", menu.getPath() + "%"));
-        if (!Strings.isEmpty(menu.getParentId())) {
+        if (!Strings.isBlank(menu.getParentId())) {
             int count = count(Cnd.where("parentId", "=", menu.getParentId()));
             if (count < 1) {
-                dao().execute(Sqls.create("update wx_menu set hasChildren=false where id=@pid").setParam("pid", menu.getParentId()));
+                dao().execute(Sqls.create("update wx_menu set hasChildren=0 where id=@pid").setParam("pid", menu.getParentId()));
             }
         }
     }

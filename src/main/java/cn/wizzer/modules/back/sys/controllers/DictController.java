@@ -39,7 +39,7 @@ public class DictController {
     @Ok("beetl:/private/sys/dict/index.html")
     @RequiresAuthentication
     public Object index() {
-        return dictService.query(Cnd.where("parentId", "=", "").asc("location").asc("path"));
+        return dictService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("location").asc("path"));
     }
 
     @At
