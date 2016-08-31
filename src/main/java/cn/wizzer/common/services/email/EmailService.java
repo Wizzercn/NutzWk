@@ -23,7 +23,8 @@ public class EmailService {
             email.setSubject(subject);
             email.setHtmlMsg(html);
             email.addTo(to);
-            email.send();
+            email.buildMimeMessage();
+            email.sendMimeMessage();
             return true;
         } catch (Throwable e) {
             log.info("send email fail", e);
