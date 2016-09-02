@@ -1,0 +1,10 @@
+{
+    "imageActionName": "$base/open/ueditor/wx/uploadimage",
+    "imageFieldName": "Filedata",
+    "imageMaxSize": 2048000,
+    "imageAllowFiles": [".png", ".jpg", ".jpeg", ".gif", ".bmp"],
+    "imageCompressEnable": true,
+    "imageCompressBorder": 1600,
+    "imageInsertAlign": "none",
+    "imageUrlPrefix": ""
+}

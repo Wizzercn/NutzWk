@@ -15,7 +15,7 @@ public @interface SLog {
 
     boolean after() default true;
 
-    boolean error() default true;
+    boolean error() default false;
 
     boolean async() default true;
 }
