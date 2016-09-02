@@ -1,6 +1,6 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 var path = require('path')
-
+var HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
   build: {
     env: require('./prod.env'),
@@ -22,9 +22,9 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/api': {
+      '/vue': {
         target: 'http://127.0.0.1',
-        pathRewrite: {'^/api' : ''}
+        pathRewrite: {'^/vue' : ''}
       }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
