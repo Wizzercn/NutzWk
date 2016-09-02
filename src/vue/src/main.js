@@ -15,34 +15,33 @@ import Menus from './components/modules/weixin/Menus'
 
 Vue.use(VueResource)
 Vue.use(VueRouter)
-const AppBase = "";
-const AppBaseUrl = "/vue" + AppBase;
+
 const router = new VueRouter()
 
 //路由map
 router.map({
-  '/home': {
-    component: Home
-  },
-  //系统管理
-  '/sys/user': {
-    component: User
-  },
-  '/sys/role': {
-    component: Role
-  },
-  //微信管理
-  '/weixin/welcome': {
-    component: Welcome
-  },
-  '/weixin/menus': {
-    component: Menus
-  },
+    '/home': {
+        component: Home
+    },
+    //系统管理
+    '/sys/user': {
+        component: User
+    },
+    '/sys/role': {
+        component: Role
+    },
+    //微信管理
+    '/weixin/welcome': {
+      component: Welcome
+    },
+    '/weixin/menus': {
+      component: Menus
+    },
 })
 
 //
 router.redirect({
-  '*': '/home'
+    '*': '/home'
 })
 
 router.start(App, '#app')
