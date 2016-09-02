@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "babel-runtime": "^6.0.0",
+    "ejs": "^2.5.1",
+    "ejs-compiled-loader": "^2.1.1",
     "jquery": "^1.12.4",
     "vue": "^1.0.21",
     "vue-resource": "^0.9.3",
@@ -25,6 +27,7 @@
     "babel-register": "^6.0.0",
     "connect-history-api-fallback": "^1.1.0",
     "css-loader": "^0.23.0",
+    "ejs-loader": "^0.3.0",
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.13.3",
     "extract-text-webpack-plugin": "^1.0.1",

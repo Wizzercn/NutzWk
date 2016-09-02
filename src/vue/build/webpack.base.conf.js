@@ -2,7 +2,9 @@ var path = require('path')
 var config = require('../config')
 var utils = require('./utils')
 var projectRoot = path.resolve(__dirname, '../')
-
+var template = require('ejs!test.ejs')
+var data={base:'test'}
+template(data)
 module.exports = {
   entry: {
     app: './src/main.js'
@@ -42,7 +44,7 @@ module.exports = {
       },
       {
         test: /\.html$/,
-        loader: 'vue-html'
+        loader: 'ejs-loader?variable=data'
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
