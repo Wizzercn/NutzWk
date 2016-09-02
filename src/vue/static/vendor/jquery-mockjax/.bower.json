@@ -1,0 +1,29 @@
+{
+  "name": "jquery-mockjax",
+  "main": [
+    "dist/jquery.mockjax.js"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3"
+  },
+  "ignore": [
+    ".editorconfig",
+    ".gitignore",
+    ".jshintrc",
+    "*.md",
+    "*.json",
+    "lib",
+    "test"
+  ],
+  "homepage": "https://github.com/jakerella/jquery-mockjax",
+  "version": "2.0.1",
+  "_release": "2.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.0.1",
+    "commit": "4a410cefcec725aa8710a5a2cd4fd09711f330ee"
+  },
+  "_source": "git://github.com/jakerella/jquery-mockjax.git",
+  "_target": "~2.0.1",
+  "_originalSource": "jquery-mockjax"
+}

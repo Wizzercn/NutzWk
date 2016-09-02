@@ -1,0 +1,49 @@
+/*
+ *
+ * Daterange Picker
+ *
+ */
+.daterangepicker {
+    .rounded(@border-radius-base);
+    font-size: @font-size-base;
+    .box-shadow(0 2px 5px rgba(0, 0, 0, .2));
+    margin-top: -1px;
+
+    .ranges .input-mini {
+        background-color: transparent;
+        border: 1px solid @border-color;
+        .rounded(@border-radius-base);
+        color: @text-color;
+    }
+    .calendar-date {
+        .rounded(@border-radius-base);
+        border: 1px solid @border-color;
+    }
+    td.available + td.start-date {
+        border-radius: @border-radius-base 0 0 @border-radius-base;
+    }
+    td.in-range + td.end-date {
+        border-radius: 0@border-radius-base @border-radius-base 0;
+    }
+    td.available:hover,
+    th.available:hover {
+        background: @brand-default;
+    }
+    td.active,
+    td.active:hover {
+        background-color: @brand-primary;
+        border-color: @brand-primary;
+        color: #fff;
+    }
+    td,
+    th {
+        .rounded(@border-radius-base);
+    }
+    .calendar th,
+    .calendar td {
+        font-family: inherit;
+    }
+    td.start-date.end-date {
+        .rounded(@border-radius-base)!important;
+    }
+}

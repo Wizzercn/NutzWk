@@ -1,0 +1,135 @@
+/*
+ *
+ * Medium Editor
+ *
+ */
+
+@-webkit-keyframes pop-upwards {
+  0% {
+    .matrix(0.97, 0, 0, 1, 0, 12);
+    .opacity(0);
+  }
+  20% {
+    .matrix(0.99, 0, 0, 1, 0, 2);
+    .opacity(.7);
+  }
+  40% {
+    .matrix(1, 0, 0, 1, 0, -1);
+    .opacity(1);
+  }
+  70% {
+    .matrix(1, 0, 0, 1, 0, 0);
+    .opacity(1);
+  }
+  100% {
+    .matrix(1, 0, 0, 1, 0, 0);
+    .opacity(1);
+  }
+}
+
+@keyframes pop-upwards {
+  0% {
+    .matrix(0.97, 0, 0, 1, 0, 12);
+    .opacity(0);
+  }
+  20% {
+    .matrix(0.99, 0, 0, 1, 0, 2);
+    .opacity(.7);
+  }
+  40% {
+    .matrix(1, 0, 0, 1, 0, -1);
+    .opacity(1);
+  }
+  70% {
+    .matrix(1, 0, 0, 1, 0, 0);
+    .opacity(1);
+  }
+  100% {
+    .matrix(1, 0, 0, 1, 0, 0);
+    .opacity(1);
+  }
+}
+
+.medium-toolbar-arrow-under:after {
+  top: 50px;
+  border-color: @brand-dark transparent transparent transparent;
+}
+
+.medium-toolbar-arrow-over:before {
+  top: -8px;
+  border-color: transparent transparent @brand-dark transparent;
+}
+
+.medium-editor-toolbar {
+  background-color: @brand-dark;
+  .rounded(@border-radius-base);
+  .transition(top 0.075s ease-out, left 0.075s ease-out;
+  );
+}
+
+.medium-editor-toolbar-form a {
+  color: #fff;
+}
+
+.medium-editor-toolbar li button {
+  min-width: 50px;
+  height: 50px;
+  border: 0;
+  border-right: 1px solid lighten(@brand-dark, 3%);
+  background-color: @brand-dark;
+  color: #fff;
+  .transition(background-color 0.2s ease-in);
+}
+
+.medium-editor-toolbar li button:hover {
+  background-color: darken(@brand-dark, 3%);
+  color: @brand-warning;
+}
+
+.medium-editor-toolbar li .medium-editor-button-first {
+  border-top-left-radius: @border-radius-base;
+  border-bottom-left-radius: @border-radius-base;
+}
+
+.medium-editor-toolbar li .medium-editor-button-last {
+  border-top-right-radius: @border-radius-base;
+  border-bottom-right-radius: @border-radius-base;
+}
+
+.medium-editor-toolbar li .medium-editor-button-active {
+  background-color: lighten(@brand-dark, 4%);
+}
+
+.medium-editor-toolbar-form .medium-editor-toolbar-input,
+.medium-editor-toolbar-form label {
+  font-size: 13px;
+  line-height: 24px;
+  margin: 4px;
+}
+
+.medium-editor-toolbar-form-anchor {
+  background: @brand-dark;
+  color: @text-color;
+  .rounded(@border-radius-base);
+}
+
+.medium-editor-toolbar-form-anchor input {
+  height: 50px;
+  background: @brand-dark;
+  color: #ccc;
+  border-radius: @border-radius-base 0 0 @border-radius-base;
+}
+
+.medium-editor-toolbar-form-anchor a {
+  color: #fff;
+}
+
+.medium-editor-toolbar-anchor-preview {
+  background: @brand-dark;
+  color: #fff;
+  .rounded(@border-radius-base);
+}
+
+.medium-editor-placeholder:after {
+  color: #b3b3b1;
+}

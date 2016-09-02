@@ -1,0 +1,36 @@
+{
+  "name": "Jcrop",
+  "version": "2.0.0",
+  "homepage": "http://jcrop.org/",
+  "authors": [
+    "Tapmodo <khallman@tapmodo.com>"
+  ],
+  "description": "jQuery image cropping plugin",
+  "main": "js/Jcrop.js",
+  "keywords": [
+    "images",
+    "forms",
+    "cropping",
+    "crop",
+    "select",
+    "image",
+    "form"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "2.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.0.0",
+    "commit": "89d1fe4f3bbde57237b6681c34e3a790bab8f340"
+  },
+  "_source": "git://github.com/tapmodo/Jcrop.git",
+  "_target": "~2.0.0",
+  "_originalSource": "Jcrop"
+}

@@ -1,0 +1,47 @@
+/*
+ *
+ * Date Picker
+ *
+ */
+
+.datepicker-dropdown {
+  .rounded(@border-radius-base);
+  font-size: @font-size-base;
+  .box-shadow(0 2px 5px rgba(0, 0, 0, .2));
+  padding: @padding-base-horizontal;
+}
+
+.datepicker {
+  td.active:hover, td.active:hover:hover, td.active:focus, td.active:hover:focus, td.active:active, td.active:hover:active, td.active.active, td.active:hover.active, td.active.disabled, td.active:hover.disabled, td.active[disabled], td.active:hover[disabled] {
+    background-image: none;
+    background-color: @brand-primary;
+    border-color: @brand-primary;
+    color: #fff;
+    text-shadow: none;
+  }
+  td,
+  th {
+    .rounded(@border-radius-base);
+    min-width: 30px;
+    min-height: 30px;
+  }
+}
+
+.datepicker-orient-bottom.datepicker:before {
+  top: initial;
+  bottom: -7px;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 0;
+  border-top: 7px solid #ccc;
+  border-top-color: rgba(0, 0, 0, 0.2);
+}
+
+.datepicker-orient-bottom.datepicker:after {
+  top: initial;
+  bottom: -6px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 0;
+  border-top: 6px solid #ffffff;
+}

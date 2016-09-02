@@ -1,0 +1,14 @@
+{
+  "name": "sparkline",
+  "homepage": "https://github.com/gwatts/jquery.sparkline",
+  "version": "2.1.2",
+  "_release": "2.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.1.2",
+    "commit": "0ab30df52d464f54ea0fb4b8b58c317ecba0fb8d"
+  },
+  "_source": "git://github.com/gwatts/jquery.sparkline.git",
+  "_target": "~2.1.2",
+  "_originalSource": "sparkline"
+}

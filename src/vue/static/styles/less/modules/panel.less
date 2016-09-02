@@ -1,0 +1,86 @@
+/*
+ * Bootstrap $Panels
+ *
+ */
+
+.panel {
+  .box-shadow(none);
+  .rounded(@border-radius-base);
+  margin-bottom: @gutter;
+}
+
+.panel-heading {
+  border-color: @panel-inner-border;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  &.gray {
+    background: #fcfcfc;
+  }
+  &.gradient {
+    background: #fcfcfc;
+    background: -moz-linear-gradient(top, #fcfcfc 0%, #f5f5f5 100%);
+    background: -webkit-linear-gradient(top, #fcfcfc 0%, #f5f5f5 100%);
+    background: linear-gradient(to bottom, #fcfcfc 0%, #f5f5f5 100%);
+  }
+}
+
+.panel-footer {
+  border-top: 1px solid @panel-inner-border;
+  background-color: @panel-footer-bg;
+}
+
+.panel-group .panel {
+  .rounded(@panel-border-radius);
+}
+
+.panel-default {
+  .panel-variant(@panel-default-border;
+  @panel-default-text;
+  @panel-default-heading-bg;
+  @panel-default-border);
+}
+
+.panel-primary {
+  .panel-variant(@panel-primary-border;
+  @panel-primary-text;
+  @panel-primary-heading-bg;
+  @panel-primary-border);
+}
+
+.panel-success {
+  .panel-variant(@panel-success-border;
+  @panel-success-text;
+  @panel-success-heading-bg;
+  @panel-success-border);
+}
+
+.panel-warning {
+  .panel-variant(@panel-warning-border;
+  @panel-warning-text;
+  @panel-warning-heading-bg;
+  @panel-warning-border);
+}
+
+.panel-danger {
+  .panel-variant(@panel-danger-border;
+  @panel-danger-text;
+  @panel-danger-heading-bg;
+  @panel-danger-border);
+}
+
+.panel-info {
+  .panel-variant(@panel-info-border;
+  @panel-info-text;
+  @panel-info-heading-bg;
+  @panel-info-border);
+}
+
+.heading-controls {
+  float: right;
+  display: inline-block;
+  a {
+    .rounded(@border-radius-base);
+    padding: 5px;
+    font-size: 11px;
+  }
+}

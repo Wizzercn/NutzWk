@@ -1,0 +1,19 @@
+{
+  "name": "bootstrap-rating-input",
+  "main": "build/bootstrap-rating-input.min.js",
+  "version": "0.2.5",
+  "homepage": "https://github.com/javiertoledo/bootstrap-rating-input",
+  "authors": [
+    "Javier Toledo <javier@theagilemonkeys.com>"
+  ],
+  "description": "A Lightweight Bootstrap Rating Input",
+  "keywords": [
+    "bootstrap",
+    "rating"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "node_modules",
+    "bower_components"
+  ]
+}

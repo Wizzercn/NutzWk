@@ -1,0 +1,25 @@
+{
+  "name": "jquery_appear",
+  "version": "0.3.4",
+  "main": "jquery.appear.js",
+  "license": "MIT",
+  "ignore": [
+  ],
+  "keywords": [
+    "event",
+    "appear",
+    "disappear"
+  ],
+  "dependencies": {
+    "jquery": ">=1.5"
+  },
+  "homepage": "https://github.com/morr/jquery.appear",
+  "authors": [
+    "Andrey Sidorov <https://github.com/morr>",
+    "Juan Hoyos <https://github.com/elhoyos>",
+    "Boris Nadion <https://github.com/borisnadion>",
+    "fhackenberger <https://github.com/fhackenberger>",
+    "hayesgm <https://github.com/hayesgm>"
+  ],
+  "description": "jQuery plugin for tracking element's appearance in browser viewport"
+}

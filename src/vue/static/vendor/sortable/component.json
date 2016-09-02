@@ -1,0 +1,20 @@
+{
+  "name": "sortable",
+  "repo": "adamschwartz/sortable",
+  "description": "The simplest, most elegant way to sort a table.",
+  "version": "0.6.0",
+  "homepage": "http://adamschwartz.co/sortable",
+  "license": "MIT",
+  "keywords": [
+    "table",
+    "sort",
+    "sortable",
+    "sorting"
+  ],
+  "scripts": [
+    "sortable.js",
+  ],
+  "styles": [
+    "sortable.css"
+  ],
+}

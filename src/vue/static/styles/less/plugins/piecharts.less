@@ -1,0 +1,47 @@
+/* Pie Charts */
+
+.piechart {
+  position: relative;
+  display: inline-block;
+}
+
+.piechart canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.piechart > span {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.piechart > span > span {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.piechart .percent {
+  display: block;
+  font-size: 18px;
+  position: relative;
+}
+
+.piechart .percent:after {
+  content: '%';
+  font-size: .5em;
+  position: absolute;
+  top: 0
+}
+/* Chart dimensions */
+
+.chart {
+  border: 0;
+  width: 100%;
+  height: 200px;
+}
+
+.chart-legend.first {
+  padding-top: 80px;
+}

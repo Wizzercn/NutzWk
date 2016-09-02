@@ -1,0 +1,121 @@
+/*
+ * Bootstrap $Tables
+ *
+ */
+
+.table>thead>tr>th {
+  border-bottom: 1px solid @table-border-color;
+}
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+  border-color: @table-border-color;
+}
+
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+  background-color: @table-bg-hover;
+}
+
+.table-hover > tbody > tr > td.active:hover,
+.table-hover > tbody > tr > th.active:hover,
+.table-hover > tbody > tr.active:hover > td,
+.table-hover > tbody > tr.active:hover > th {
+  background-color: @table-bg-active;
+}
+
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+  background-color: @table-bg;
+}
+
+.table-striped > tbody > tr:nth-child(even) > td,
+.table-striped > tbody > tr:nth-child(even) >th {
+  background-color: @table-bg-accent;
+}
+
+.table-bordered > thead > tr > th,
+.table-bordered > tbody > tr > th,
+.table-bordered > tfoot > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > td {
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 1px solid @table-border-color;
+}
+
+.table-bordered > thead > tr > th:first-child,
+.table-bordered > tbody > tr > th:first-child,
+.table-bordered > tfoot > tr > th:first-child,
+.table-bordered > thead > tr > td:first-child,
+.table-bordered > tbody > tr > td:first-child,
+.table-bordered > tfoot > tr > td:first-child {
+  border-left: 0;
+}
+
+.table-bordered {
+  border: 1px solid @table-border-color;
+  .rounded(@border-radius-base);
+  border-collapse: separate;
+}
+/* No More tables */
+
+@media (max-width: @screen-xs-max) {
+  /* Source:: http://elvery.net/demo/responsive-tables/#no-more-tables */
+  /* Force table to not be like tables anymore */
+
+  .no-more-tables table,
+  .no-more-tables thead,
+  .no-more-tables tbody,
+  .no-more-tables th,
+  .no-more-tables td,
+  .no-more-tables tr {
+    display: block;
+  }
+  /* Hide table headers (but not display: none;, for accessibility) */
+
+  .no-more-tables thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  .no-more-tables tr {
+    border: 1px solid #ccc;
+  }
+  .no-more-tables td {
+    /* Behave  like a "row" */
+
+    border-top: 0!important;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 50%!important;
+    white-space: normal;
+    text-align: left;
+  }
+  .no-more-tables td:before {
+    /* Now like a table header */
+
+    position: absolute;
+    /* Top/left values mimic padding */
+
+    top: 6px;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: bold;
+  }
+  /*
+    Label the data
+    */
+
+  .no-more-tables td:before {
+    content: attr(data-title);
+  }
+}

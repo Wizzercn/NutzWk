@@ -1,0 +1,299 @@
+/*
+ *
+ * $Header layout
+ *
+ * Core theme layout styles
+ */
+/* header element */
+
+.header {
+  height: @header-height;
+  min-height: @header-height;
+  z-index: @zindex-header;
+  .rounded(0);
+  border: 0;
+  margin: 0;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.03);
+  .navbar-text {
+    .header-vertical-align(19px);
+    margin-right: @size-base;
+    margin-left: @size-base;
+  }
+  .navbar-btn {
+    .header-vertical-align(34px);
+  }
+  .btn-lg.navbar-btn {
+    .header-vertical-align(45px);
+  }
+  .btn-sm.navbar-btn {
+    .header-vertical-align(30px);
+  }
+  .btn-xs.navbar-btn {
+    .header-vertical-align(22px);
+  }
+  li:hover,
+  li a:hover,
+  li a:active {
+    background: transparent;
+  }
+  /* Branding */
+
+  .brand {
+    height: @header-height;
+    width: @sidebar-width;
+    float: left;
+    a {
+      .header-vertical-align-padding(19px);
+    }
+    .navbar-brand {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      padding-top: 0;
+      padding-bottom: 0;
+      line-height: @header-height;
+      img {
+        max-height: 25px;
+        margin-right: 5px;
+        margin-top: -5px;
+        display: inline;
+      }
+    }
+  }
+  .navbar-nav {
+    margin: 0;
+    > li > a {
+      .header-vertical-align-padding(19px);
+      max-height: @header-height;
+      &:focus {
+        background-color: transparent;
+      }
+    }
+  }
+  .header-avatar {
+    width: 32px;
+    margin-top: -6px;
+  }
+  > .nav > li > a > .badge {
+    position: absolute;
+    top: 8px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    font-size: 11px;
+    line-height: 1.5;
+    text-align: center;
+    padding: 0;
+  }
+  .header-search {
+    position: relative;
+    .header-vertical-align(50px);
+    .search-container {
+      top: 10px;
+      width: 0;
+      .transition(width 300ms);
+      position: absolute;
+      left: 40px;
+      .search {
+        height: 30px;
+        border: 0;
+        padding: 0;
+        text-indent: 10px;
+        border-top-right-radius: @border-radius-base;
+        border-bottom-right-radius: @border-radius-base;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+    .toggle-search {
+      padding: 5px 9px!important;
+      margin: 10px;
+      width: 30px;
+      height: 30px;
+      .rounded(@border-radius-base);
+    }
+    &.open {
+      > a {
+        z-index: 1001;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: @border-radius-base;
+        border-bottom-left-radius: @border-radius-base;
+      }
+      .search-container {
+        width: 300px;
+        .search {
+          padding-right: 12px;
+        }
+      }
+    }
+  }
+  .notifications {
+    position: relative;
+    .panel {
+      border: 0;
+    }
+    .panel-heading {
+      padding: 5px 15px;
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
+    }
+    ul li a {
+      font-size: @font-size-base;
+    }
+    .panel-footer {
+      padding: 5px 15px;
+      > a {
+        font-size: @font-size-base;
+      }
+    }
+    .m-body {
+      display: block;
+      overflow: hidden;
+    }
+    .time {
+      display: block;
+    }
+    .label {
+      font-size: 10px;
+    }
+    a:hover,
+    a:visited,
+    a:active {
+      color: @text-color;
+    }
+  }
+}
+
+.horizontal-layout .brand {
+  width: auto;
+  background-color: transparent;
+}
+
+@media screen and (min-width: @screen-sm-min) {
+  .header {
+    position: absolute;
+    width: 100%;
+    padding: 0 @padding-base-horizontal;
+    .navbar-form {
+      .header-vertical-align(34px);
+    }
+    /* Branding */
+
+    .brand {
+      margin-left: -15px;
+      .navbar-brand {
+        width: 100%;
+      }
+    }
+    .header-avatar {
+      float: left;
+    }
+    .notifications {
+      .dropdown-menu {
+        min-width: 350px;
+      }
+    }
+  }
+  .app > header .dropdown-menu {
+    border-top: 0;
+    padding: 0;
+    .box-shadow(0px 2px 5px rgba(88, 96, 114, 0.05));
+    -webkit-animation-duration: 300ms;
+    -moz-animation-duration: 300ms;
+    animation-duration: 300ms;
+  }
+}
+
+@media (max-width: @screen-xs-max) {
+  .header {
+    width: 100%;
+    min-height: @header-height;
+    height: auto;
+    &.header-fixed {
+      position: fixed;
+      width: 100%;
+      top: 0;
+    }
+    > .brand {
+      width: 100%;
+      text-align: center;
+    }
+    > .brand .navbar-brand {
+      display: inline-block;
+      float: none;
+      text-align: center;
+    }
+    .notifications {
+      margin-right: 10px;
+    }
+    .navbar-nav .open .dropdown-menu {
+      position: absolute;
+      margin-top: 0;
+      background-color: #fff;
+      .box-shadow(0 0 5px rgba(0, 0, 0, .2));
+    }
+    .navbar-collapse {
+      width: 100%;
+    }
+    .off-right {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    .off-left {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .navbar-toggle,
+    .brand [data-toggle="offscreen"] {
+      z-index: @zindex-header-actions;
+      padding: 0 15px;
+      background-color: transparent;
+      background-image: none;
+      border: 0;
+      .rounded(@border-radius-base);
+      line-height: @header-height;
+    }
+    .navbar-toggle {
+      padding: 0 15px!important;
+      line-height: @header-height;
+      margin: 0;
+    }
+    .search-container {
+      width: 100%;
+      max-width: 220px;
+    }
+  }
+  .app > .header > .nav > li {
+    float: left;
+  }
+  .app > .header > .navbar-nav {
+    float: left;
+  }
+  .app > .header > .navbar-right {
+    float: right;
+  }
+  .app > .header .dropdown-menu {
+    position: fixed!important;
+    top: auto;
+    left: 0;
+    right: 0;
+    .rounded(0)!important;
+  }
+  .app > header .dropdown-menu {
+    padding: 0;
+    border-bottom: 1px solid @border-color!important;
+    .box-shadow(none)!important;
+    -webkit-animation-duration: 0ms;
+    -moz-animation-duration: 0ms;
+    animation-duration: 0ms;
+  }
+}
+
+.header-variant(@header-skin-background,
+@header-skin-color,
+@header-skin-hover,
+@brand-skin-background,
+@brand-skin-color);

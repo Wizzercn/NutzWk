@@ -1,0 +1,57 @@
+/*
+ * $Catalog
+ *
+ */
+
+.switcher {
+  display: initial;
+  .feed {
+    .rounded(@border-radius-base);
+    overflow: hidden;
+  }
+  .thumb img {
+    width: 100%;
+  }
+  .panel {
+    position: relative;
+    display: block;
+    border: 0;
+    overflow: hidden;
+  }
+}
+/* Grid view */
+
+.view-grid .panel {
+  min-height: 200px;
+}
+/* List view */
+
+.view-list {
+  margin: -15px 0 0;
+  .feed {
+    margin: 0;
+  }
+  .switch-item {
+    position: relative;
+    width: 100%;
+    padding: 0;
+  }
+  .switcher-content {
+    padding: 0 @padding-base-horizontal;
+  }
+  .panel {
+    margin-bottom: 1px;
+    .rounded(0);
+    padding: 20px 0;
+  }
+  .panel-body {
+    display: inline-block;
+    vertical-align: top;
+    padding: 0;
+  }
+  .thumb {
+    display: inline-block;
+    margin-left: @size-base;
+    width: 120px;
+  }
+}

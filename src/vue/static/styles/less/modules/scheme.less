@@ -1,0 +1,100 @@
+/*
+ * $Color Scheme
+ *
+ */
+
+.fc-event {
+  border: 1px solid @brand-dark;
+  background-color: @brand-dark;
+  color: #fff;
+}
+/*
+ * Color Variant: Primary;
+ *
+ */
+
+.bg-primary {
+  .bg-variant(lighten(@brand-primary, 55%);
+  @brand-primary);
+}
+/*
+ * Color Variant: Default;
+ *
+ */
+
+.bg-default {
+  .bg-variant(@text-color;
+  @brand-default);
+}
+/*
+ * Color Variant: Warning;
+ *
+ */
+
+.bg-warning {
+  .bg-variant(lighten(@brand-warning, 55%);
+  @brand-warning);
+}
+/*
+ * Color Variant: Success;
+ *
+ */
+
+.bg-success {
+  .bg-variant(lighten(@brand-success, 55%);
+  @brand-success);
+}
+/*
+ * Color Variant: Info;
+ *
+ */
+
+.bg-info {
+  .bg-variant(lighten(@brand-info, 55%);
+  @brand-info);
+}
+/*
+ * Color Variant: Danger;
+ *
+ */
+
+.bg-danger {
+  .bg-variant(lighten(@brand-danger, 55%);
+  @brand-danger);
+}
+/*
+ * Color Variant: White;
+ *
+ */
+
+.bg-white {
+  .bg-variant(@text-color;
+  @brand-white);
+  .nav > li {
+    &:hover > a, &:focus > a, &:active > a, &.active > a, > a:hover, > a:focus {
+      background-color: rgba(0, 0, 0, .1);
+    }
+  }
+}
+/*
+ * Text Color Variant
+ *
+ */
+
+.text-variant(primary;
+@brand-primary);
+.text-variant(default;
+@brand-default);
+.text-variant(warning;
+@brand-warning);
+.text-variant(success;
+@brand-success);
+.text-variant(info;
+@brand-info);
+.text-variant(white;
+@brand-white);
+.text-variant(danger;
+@brand-danger);
+.text-variant(muted;
+darken(#fff,
+30%));

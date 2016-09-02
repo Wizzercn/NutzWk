@@ -1,0 +1,13 @@
+{
+  "name": "bootstrap-colorpalette",
+  "homepage": "https://github.com/extremeFE/bootstrap-colorpalette",
+  "_release": "db6e7489b0",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "db6e7489b0bde51c39b52b5cd85695a8140c792a"
+  },
+  "_source": "git://github.com/extremeFE/bootstrap-colorpalette.git",
+  "_target": "master",
+  "_originalSource": "git://github.com/extremeFE/bootstrap-colorpalette.git"
+}

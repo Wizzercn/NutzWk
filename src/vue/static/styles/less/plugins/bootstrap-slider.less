@@ -1,0 +1,99 @@
+/*
+ *
+ * Bootstrap Slider
+ * http://www.eyecon.ro/bootstrap-slider/
+ *
+ */
+
+.slider {
+  &.slider-horizontal {
+    width: 100%!important;
+  }
+  &.slider-horizontal .slider-track {
+    height: 5px;
+  }
+  &.slider-horizontal .slider-selection {
+    background-image: none;
+  }
+}
+
+.slider-track {
+  background-color: #d0dbec;
+  background-image: none;
+  .rounded(@border-radius-base);
+  .box-shadow(none);
+}
+
+.slider-selection {
+  position: absolute;
+  background-color: darken(@brand-default, 30%);
+  .rounded(@border-radius-base);
+  .box-shadow(none);
+}
+
+.slider-handle {
+  background: #fff;
+  .opacity(1);
+  .box-shadow(rgba(0, 0, 0, 0.2) 0px 2px 5px, darken(@brand-default, 30%) 0px 0px 0px 1px;
+  );
+}
+
+.slider.slider-horizontal .slider-handle {
+  margin-top: -8px;
+}
+/* Slider Color Variants */
+
+.slider-info {
+  .slider-selection {
+    background-color: @brand-info;
+  }
+  .slider-handle {
+    .box-shadow(rgba(0, 0, 0, 0.2) 0px 2px 5px, @brand-info 0px 0px 0px 1px;
+    );
+  }
+}
+
+.slider-primary {
+  .slider-selection {
+    background-color: @brand-primary;
+  }
+  .slider-handle {
+    .box-shadow(rgba(0, 0, 0, 0.2) 0px 2px 5px, @brand-primary 0px 0px 0px 1px;
+    );
+  }
+}
+
+.slider-success {
+  .slider-selection {
+    background-color: @brand-success;
+  }
+  .slider-handle {
+    .box-shadow(rgba(0, 0, 0, 0.2) 0px 2px 5px, @brand-success 0px 0px 0px 1px;
+    );
+  }
+}
+
+.slider-warning {
+  .slider-selection {
+    background-color: @brand-warning;
+  }
+  .slider-handle {
+    .box-shadow(rgba(0, 0, 0, 0.2) 0px 2px 5px, @brand-warning 0px 0px 0px 1px;
+    );
+  }
+}
+
+.slider-danger {
+  .slider-selection {
+    background-color: @brand-danger;
+  }
+  .slider-handle {
+    .box-shadow(rgba(0, 0, 0, 0.2) 0px 2px 5px, @brand-danger 0px 0px 0px 1px;
+    );
+  }
+}
+
+.slider-striped .slider .slider-selection {
+  #gradient > .striped(fade(#fff, 15%));
+  background-size: 40px 40px;
+}

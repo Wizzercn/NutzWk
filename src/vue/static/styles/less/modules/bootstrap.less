@@ -1,0 +1,186 @@
+//Bootstrap code too small to have own file
+/*
+ * Bootstrap $Badge
+ *
+ */
+
+.badge {
+  font-size: 11px;
+  font-weight: 400;
+  padding: 3px 6px;
+}
+
+.badge.badge-top {
+  position: relative;
+  top: -10px;
+}
+/*
+ *  Bootstrap $Breadcrumb
+ *
+ */
+
+.breadcrumb {
+  background-color: @breadcrumb-bg;
+  .rounded(@border-radius-base);
+  > li + li:before {
+    padding: 0 5px;
+    content: "@{breadcrumb-separator}\00a0";
+    font-family: @font-family-icon;
+  }
+}
+/*
+ *  $Presentation styles
+ *
+ */
+
+pre {
+  color: @code-color;
+  background-color: #EFF2F5;
+  border: 1px solid @border-color;
+  .rounded(@border-radius-base);
+  font-size: 11px;
+  font-family: @font-family-monospace;
+}
+/*
+ *  Bootstrap $Pagination
+ *
+ */
+
+.pagination {
+  .rounded(@border-radius-base);
+}
+
+.pagination > li > a,
+.pagination > li > span {
+  border-color: @pagination-border;
+}
+
+.pagination > li > a:hover,
+.pagination > li > span:hover {
+  background-color: @pagination-hover-bg;
+  border-color: darken(@pagination-hover-bg, 10%);
+}
+
+.pagination > li:first-child > a,
+.pagination > li:first-child > span {
+  border-radius: @border-radius-base 0 0 @border-radius-base;
+}
+
+.pagination > li:last-child > a,
+.pagination > li:last-child > span {
+  border-radius: 0 @border-radius-base @border-radius-base 0;
+}
+
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+  border-color: @brand-primary;
+  background-color: @brand-primary;
+  color: white;
+}
+/*
+ * Bootstrap $Popover
+ *
+ */
+
+.popover {
+  .box-shadow(none);
+  .popover-title {
+    font-size: 13px;
+    border-bottom: 1px solid @border-color;
+    background-color: @popover-header;
+  }
+}
+/*
+ * Bootstrap $Tooltip
+ *
+ */
+
+.tooltip-inner {
+  .rounded(@border-radius-base);
+  background-color: @tooltip-radius;
+  background: @tooltip-color;
+  padding: 10px;
+}
+
+.tooltip {
+  &.top {
+    .tooltip-arrow {
+      border-top-color: @tooltip-color;
+    }
+  }
+  &.top-left {
+    .tooltip-arrow {
+      border-top-color: @tooltip-color;
+    }
+  }
+  &.top-right {
+    .tooltip-arrow {
+      border-top-color: @tooltip-color;
+    }
+  }
+  &.right {
+    .tooltip-arrow {
+      border-right-color: @tooltip-color;
+    }
+  }
+  &.left {
+    .tooltip-arrow {
+      border-left-color: @tooltip-color;
+    }
+  }
+  &.bottom {
+    .tooltip-arrow {
+      border-bottom-color: @tooltip-color;
+    }
+  }
+  &.bottom-left {
+    .tooltip-arrow {
+      border-bottom-color: @tooltip-color;
+    }
+  }
+  &.bottom-right {
+    .tooltip-arrow {
+      border-bottom-color: @tooltip-color;
+    }
+  }
+  &.in {
+    .opacity(1);
+  }
+}
+/*
+ *  Modal
+ *
+ */
+
+.modal-content {
+  .rounded(@border-radius-large);
+  .box-shadow(none);
+}
+/*
+ *  Well
+ *
+ */
+
+.well {
+  border: 1px solid @border-color;
+  background-color: @brand-default;
+  .rounded(@border-radius-base);
+  .box-shadow(none);
+}
+/*
+ *  List group
+ *
+ */
+
+.list-group-item {
+  border: 1px solid @border-color;
+}
+
+a.list-group-item:hover,
+a.list-group-item:focus {
+  background-color: lighten(@brand-default, 5%)
+}

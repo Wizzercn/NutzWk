@@ -1,0 +1,344 @@
+.clearfix() {
+  &:before,
+  &:after {
+    content: " "; // 1
+    display: table; // 2
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+.rounded(@radius: 2px) {
+    -webkit-border-radius: @radius;
+        -moz-border-radius: @radius;
+            border-radius: @radius;
+}
+
+.box-shadow(@shadow) {
+    -webkit-box-shadow: @shadow;
+        box-shadow: @shadow;
+}
+
+#gradient {
+  .striped(@color: #555; @angle: 45deg) {
+    background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(.25, rgba(255,255,255,.15)), color-stop(.25, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255,255,255,.15)), color-stop(.75, rgba(255,255,255,.15)), color-stop(.75, transparent), to(transparent));
+    background-image: -webkit-linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+    background-image: -moz-linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+  }
+}
+
+.transition(@transition) {
+    -webkit-transition: @transition;
+        -moz-transition: @transition;
+            -o-transition: @transition;
+                transition: @transition;
+}
+.transition-delay(@transition-delay) {
+    -webkit-transition-delay: @transition-delay;
+        -moz-transition-delay: @transition-delay;
+            -o-transition-delay: @transition-delay;
+                transition-delay: @transition-delay;
+}
+.transition-duration(@transition-duration) {
+    -webkit-transition-duration: @transition-duration;
+        -moz-transition-duration: @transition-duration;
+            -o-transition-duration: @transition-duration;
+                transition-duration: @transition-duration;
+}
+
+.rotate(@degrees) {
+    -webkit-transform: rotate(@degrees);
+        -moz-transform: rotate(@degrees);
+            -ms-transform: rotate(@degrees);
+                -o-transform: rotate(@degrees);
+                    transform: rotate(@degrees);
+}
+.scale(@ratio) {
+    -webkit-transform: scale(@ratio);
+        -moz-transform: scale(@ratio);
+            -ms-transform: scale(@ratio);
+                -o-transform: scale(@ratio);
+                    transform: scale(@ratio);
+}
+.translate(@x, @y) {
+    -webkit-transform: translate(@x, @y);
+        -moz-transform: translate(@x, @y);
+            -ms-transform: translate(@x, @y);
+                -o-transform: translate(@x, @y);
+                    transform: translate(@x, @y);
+}
+
+.translate3d(@x, @y, @z) {
+    -webkit-transform: translate3d(@x, @y, @z);
+        -moz-transform: translate3d(@x, @y, @z);
+            -ms-transform: translate(@x, @y, @z);
+                -o-transform: translate3d(@x, @y, @z);
+                    transform: translate3d(@x, @y, @z);
+}
+
+.matrix(@a, @b, @c, @d, @e, @f) {
+    -webkit-transform: translate3d(@a, @b, @c, @d, @e, @f);
+        -moz-transform: translate3d(@a, @b, @c, @d, @e, @f);
+            -o-transform: translate3d(@a, @b, @c, @d, @e, @f);
+                transform: translate3d(@a, @b, @c, @d, @e, @f);
+}
+
+.user-select(@select) {
+    -webkit-user-select: @select;
+        -moz-user-select: @select;
+            -ms-user-select: @select;
+                -o-user-select: @select;
+                    user-select: @select;
+}
+
+.opacity(@opacity) {
+    opacity: @opacity;
+    @opacity-ie: ( @opacity * 100 );
+    filter: ~"alpha(opacity=@{opacity-ie})";
+}
+
+.placeholder(@color: @input-color-placeholder) {
+    &:-moz-placeholder { color: @color; }
+    &::-moz-placeholder { color: @color; }
+    &:-ms-input-placeholder { color: @color; }
+    &::-webkit-input-placeholder { color: @color; }
+}
+
+.panel-variant(@border; @heading-text-color; @heading-bg-color; @heading-border;) {
+    border-color: @border;
+
+    & > .panel-heading {
+        color: @heading-text-color;
+        background-color: @heading-bg-color;
+        border-color: @heading-border;
+
+        + .panel-collapse .panel-body {
+            border-top-color: @border;
+        }
+        & a {
+            color: @heading-text-color;
+        }
+    }
+    & > .panel-footer {
+        + .panel-collapse .panel-body {
+            border-bottom-color: @border;
+
+        }
+    }
+}
+
+.table-row-variant(@state; @background; @border) {
+  .table > thead > tr,
+  .table > tbody > tr,
+  .table > tfoot > tr {
+    > td.@{state},
+    > th.@{state},
+    &.@{state} > td,
+    &.@{state} > th {
+      background-color: lighten(@background, 25%);
+      border-color: lighten(@border, 20%);
+    }
+  }
+  .table-hover > tbody > tr {
+    > td.@{state}:hover,
+    > th.@{state}:hover,
+    &.@{state}:hover > td {
+      background-color: darken(@background, 28%);
+      border-color: darken(@border, 28%);
+    }
+  }
+}
+
+.label-variant(@color) {
+    background-color: @color;
+    &[href] {
+        &:hover,
+        &:focus {
+            background-color: darken(@color, 10%);
+        }
+    }
+}
+
+.progress-bar-variant(@color) {
+    background-color: @color;
+    .progress-striped & {
+        #gradient > .striped(@color);
+    }
+}
+
+.form-control-validation(@text-color: #555; @border-color: #ccc; @background-color: #f5f5f5) {
+    .help-block,
+    .control-label,
+    .radio,
+    .checkbox,
+    .radio-inline,
+    .checkbox-inline {
+        color: @text-color;
+    }
+
+    .form-control {
+        border-color: @border-color;
+        .box-shadow(inset 0 1px 1px rgba(0, 0, 0, .075));
+        &:focus {
+            border-color: darken(@border-color, 10%);
+            @shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px lighten(@border-color, 20%);
+            .box-shadow(@shadow);
+        }
+    }
+
+    .input-group-addon {
+        color: @text-color;
+        border-color: @border-color;
+        background-color: @background-color;
+    }
+
+    .form-control-feedback {
+        color: @text-color;
+    }
+}
+
+.parsley-validation(@text-color: #555; @border-color: #ccc; @background-color: #f5f5f5) {
+    border-color: @border-color;
+    .box-shadow(inset 0 1px 1px rgba(0, 0, 0, .075));
+    &:focus {
+        border-color: darken(@border-color, 10%);
+        @shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px lighten(@border-color, 20%);
+        .box-shadow(@shadow);
+    }
+}
+
+.text-variant(@color-class; @text-color;) {
+    .text-@{color-class},
+    .text-@{color-class} a  {
+        color: @text-color;
+        &:focus {
+            color: darken(@text-color, 15%);
+        }
+    }
+}
+
+.bg-variant(@text-color; @background-color) {
+    & {
+        background-color: @background-color;
+        color: @text-color;
+    }
+
+    a {
+        color: @text-color;
+        &:active, &:focus, &:hover {
+            color: darken(@text-color, 10%);
+            text-decoration: none;
+            outline: 0;
+        }
+    }
+
+    .nav > li {
+        &:hover > a,
+        &:focus > a,
+        &:active > a,
+        &.active > a,
+        & > a:hover,
+        & > a:focus {
+            background-color: darken(@background-color, 3%);
+        }
+    }
+}
+
+.button-variant(@color; @background; @border) {
+    color: @color;
+    background-color: @background;
+    border-color: @border;
+
+    a& {
+        color: @color;
+    }
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.active,
+    .open .dropdown-toggle& {
+        color: @color;
+        background-color: darken(@background, 5%);
+        background-image: none;
+        border-color: darken(@border, 5%);
+    }
+
+    &.disabled,
+    &[disabled],
+    fieldset[disabled] & {
+        &,
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            background-color: @background;
+            border-color: @border
+        }
+    }
+
+    &.btn-outline {
+        background-color: transparent;
+        color: @background;
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            background-color: @background;
+            color: @color;
+        }
+    }
+}
+
+
+// Navbar vertical align
+//
+// Vertically center elements in the header.
+// Example: an element has a height of 30px, so write out `.header-vertical-align(30px);` to calculate the appropriate top margin.
+.header-vertical-align(@element-height) {
+  margin-top: ((@header-height - @element-height) / 2);
+  margin-bottom: ((@header-height - @element-height) / 2);
+}
+
+.header-vertical-align-padding(@element-height) {
+  padding-top: ((@header-height - @element-height) / 2);
+  padding-bottom: ((@header-height - @element-height) / 2);
+}
+
+
+// Footer vertical align
+//
+// Vertically center elements in the footer.
+// Example: an element has a height of 30px, so write out `.footer-vertical-align(30px);` to calculate the appropriate top margin.
+.footer-vertical-align(@element-height) {
+  margin-top: ((@footer-height - @element-height) / 2);
+  margin-bottom: ((@footer-height - @element-height) / 2);
+}
+
+.footer-vertical-align-padding(@element-height) {
+  padding-top: ((@footer-height - @element-height) / 2);
+  padding-bottom: ((@footer-height - @element-height) / 2);
+}
+
+
+.make-grid-columns() {
+  // Common styles for all sizes of grid columns, widths 1-12
+  .col(@index) { // initial
+    @item: ~".col-xs-@{index}, .col-sm-@{index}, .col-md-@{index}, .col-lg-@{index}";
+    .col((@index + 1), @item);
+  }
+  .col(@index, @list) when (@index =< @grid-columns) { // general; "=<" isn't a typo
+    @item: ~".col-xs-@{index}, .col-sm-@{index}, .col-md-@{index}, .col-lg-@{index}";
+    .col((@index + 1), ~"@{list}, @{item}");
+  }
+  .col(@index, @list) when (@index > @grid-columns) { // terminal
+    @{list} {
+      padding-left:  (@gutter / 2);
+      padding-right: (@gutter / 2);
+    }
+  }
+  .col(1); // kickstart it
+}
+

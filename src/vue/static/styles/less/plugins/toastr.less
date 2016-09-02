@@ -1,0 +1,35 @@
+/*
+ *
+ * toastr
+ * https://github.com/CodeSeven/toastr
+ *
+ */
+
+#toast-container > div {
+  .rounded(@border-radius-base);
+  .box-shadow(none);
+}
+
+.toast {
+  background-color: #030303;
+}
+
+.toast-success {
+  background-color: @brand-success;
+}
+
+.toast-error {
+  background-color: @brand-danger;
+}
+
+.toast-info {
+  background-color: @brand-info;
+}
+
+.toast-warning {
+  background-color: @brand-warning;
+}
+
+#toast-container >:hover {
+  .box-shadow(none);
+}
