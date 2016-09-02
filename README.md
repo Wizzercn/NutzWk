@@ -1,4 +1,4 @@
-NutzWk 4.0 前后端分离开源企业级开发框架(Vue + Nutz)
+NutzWk 4.0 开源企业级开发框架(Vue + Nutz)
 ======
 
 [![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
@@ -28,14 +28,14 @@ https://nutzwk.wizzer.cn/                 NutzWk v3.x
 
 https://vue.wizzer.cn/                 NutzWk v4.x
 
+运行环境
 ======
-基于Nutz的开源企业级开发框架
-
-NutzWk 4.x 运行环境：
 Vue
-*   node 6.x
 
-NutzWk
+*   node v6.x
+
+NutzWk v4.x
+
 *   JDK 8
 *   Tomcat 8
 *   Maven 3.3.9
