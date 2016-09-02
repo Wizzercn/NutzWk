@@ -1,9 +1,11 @@
 package cn.wizzer.common.base;
 
 import cn.wizzer.modules.back.sys.models.Sys_config;
+import cn.wizzer.modules.back.sys.models.Sys_route;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +28,13 @@ public class Globals {
     public static String AppUploadPath = "/upload";
     //系统自定义参数
     public static Map<String, String> MyConfig;
+    //自定义路由
+    public static Map<String, Sys_route> RouteMap;
 
     public static void init(Dao dao) {
-        Globals.MyConfig = new HashMap<>();
+        if (Globals.MyConfig == null) {
+            Globals.MyConfig = new HashMap<>();
+        } else Globals.MyConfig.clear();
         List<Sys_config> configList = dao.query(Sys_config.class, Cnd.NEW());
         for (Sys_config sysConfig : configList) {
             switch (sysConfig.getConfigKey()) {
@@ -48,6 +54,16 @@ public class Globals {
                     Globals.MyConfig.put(sysConfig.getConfigKey(), sysConfig.getConfigValue());
                     break;
             }
+        }
+    }
+
+    public static void initRoute(Dao dao) {
+        if (Globals.RouteMap == null) {
+            Globals.RouteMap = new HashMap<>();
+        } else Globals.RouteMap.clear();
+        List<Sys_route> routeList = dao.query(Sys_route.class, Cnd.where("disabled", "=", 0));
+        for (Sys_route route : routeList) {
+            RouteMap.put(route.getUrl(), route);
         }
     }
 }

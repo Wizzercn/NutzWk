@@ -1,6 +1,7 @@
 package cn.wizzer.modules.back.cms.models;
 
 import cn.wizzer.common.base.Model;
+import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -66,15 +67,15 @@ public class Cms_channel extends Model implements Serializable {
 
     @Column
     @Comment("排序字段")
-    @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM cms_channel"))
+    @Prev({
+            @SQL(db= DB.MYSQL,value = "SELECT IFNULL(MAX(location),0)+1 FROM cms_channel"),
+            @SQL(db= DB.ORACLE,value = "SELECT COALESCE(MAX(location),0)+1 FROM cms_channel")
+    })
     private Integer location;
 
     @Column
     @Comment("有子节点")
     private boolean hasChildren;
-
-    @ManyMany(from = "channelId", relation = "cms_channel_article", target = Cms_article.class, to = "articleId")
-    private List<Cms_article> articles;
 
     public String getId() {
         return id;
@@ -172,11 +173,4 @@ public class Cms_channel extends Model implements Serializable {
         this.hasChildren = hasChildren;
     }
 
-    public List<Cms_article> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(List<Cms_article> articles) {
-        this.articles = articles;
-    }
 }

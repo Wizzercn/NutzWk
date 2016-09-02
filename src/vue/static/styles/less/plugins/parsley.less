@@ -1,0 +1,31 @@
+/*
+ * Parsley Validation States
+ *
+ */
+
+.parsley-errors-list {
+  list-style: none;
+  padding: 0;
+}
+
+.parsley-success {
+  .parsley-validation(@brand-success;
+  @brand-success;
+  @brand-success);
+}
+
+.parsley-warning {
+  .parsley-validation(@brand-warning;
+  @brand-warning;
+  @brand-warning);
+}
+
+.parsley-error {
+  .parsley-validation(@brand-danger;
+  @brand-danger;
+  @brand-danger);
+}
+
+.parsley-error-list {
+  color: #a94442;
+}

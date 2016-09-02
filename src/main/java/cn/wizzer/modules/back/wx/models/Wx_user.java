@@ -40,12 +40,12 @@ public class Wx_user extends Model implements Serializable {
 
     @Column
     @Comment("关注时间")
-    @ColDefine(type = ColType.INT, width = 11)
+    @ColDefine(type = ColType.INT)
     protected Integer subscribeAt;
 
     @Column
     @Comment("性别")
-    @ColDefine(type = ColType.INT, width = 1)
+    @ColDefine(type = ColType.INT)
     protected Integer sex;
 
     @Column

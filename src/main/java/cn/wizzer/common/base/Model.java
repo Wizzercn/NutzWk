@@ -24,7 +24,7 @@ public abstract class Model implements Serializable {
     @Column
     @Comment("操作时间")
     @Prev(els = @EL("$me.now()"))
-    @ColDefine(type = ColType.INT, width = 5)
+    @ColDefine(type = ColType.INT)
     private Integer opAt;
 
     @Column

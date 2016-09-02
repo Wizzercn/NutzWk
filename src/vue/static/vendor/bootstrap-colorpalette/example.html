@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <title>A color palette for Twitter Bootstrap</title>
+  <link rel="stylesheet" type="text/css" media="all" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" media="all" href="css/bootstrap-colorpalette.css" />
+  <link rel="stylesheet" type="text/css" media="all" href="css/example.css" />
+
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" charset="utf-8"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/js/bootstrap.min.js" charset="utf-8"></script>
+  <script type="text/javascript" src="js/bootstrap-colorpalette.js" charset="utf-8"></script>
+</head>
+<body>
+<h4>
+  Basic color palette
+</h4>
+<div class="btn-group">
+  <input id="selected-color1">
+  <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown">Color</a>
+  <ul class="dropdown-menu">
+    <li><div id="colorpalette1"></div></li>
+  </ul>
+</div>
+
+<script>
+  $('#colorpalette1').colorPalette()
+          .on('selectColor', function(e) {
+            $('#selected-color1').val(e.color);
+          });
+</script>
+
+<h4>
+  Gmail style color palette
+</h4>
+<div class="btn-group">
+  <a id="selected-color2" class="btn btn-mini dropdown-toggle" data-toggle="dropdown"><i>A</i></a>
+  <ul class="dropdown-menu" style="width:293px;">
+    <li style="display:inline-block;">
+      <div>&nbsp;font color</div>
+      <div id="colorpalette2"></div>
+    </li>
+    <li style="display:inline-block;">
+      <div>&nbsp;background color</div>
+      <div id="colorpalette3"></div>
+    </li>
+  </ul>
+</div>
+
+<script>
+  $('#colorpalette2').colorPalette()
+          .on('selectColor', function(e) {
+            $('#selected-color2 i').css('color', e.color);
+          });
+  $('#colorpalette3').colorPalette()
+          .on('selectColor', function(e) {
+            $('#selected-color2 i').css('background-color', e.color);
+          });
+</script>
+
+<h4>
+  Custom color option
+</h4>
+<div>
+  <input id="selected-color3">
+  <div id="colorpalette4"></div>
+</div>
+<script>
+  var options = {
+    colors:[['#000000', '#424242', '#636363', '#9C9C94', '#CEC6CE', '#EFEFEF', '#EFF7F7', '#FFFFFF']]
+  }
+  $('#colorpalette4').colorPalette(options)
+          .on('selectColor', function(e) {
+            $('#selected-color3').val(e.color);
+          });
+</script>
+</body>
+</html>

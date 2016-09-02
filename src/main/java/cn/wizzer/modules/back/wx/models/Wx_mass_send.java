@@ -30,7 +30,7 @@ public class Wx_mass_send extends Model implements Serializable {
 
     @Column
     @Comment("发送状态")
-    @ColDefine(type = ColType.INT, width = 1)
+    @ColDefine(type = ColType.INT)
     protected Integer status;
 
     @Column

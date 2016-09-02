@@ -1,0 +1,43 @@
+/*
+ * Bootstrap $Dropdown
+ *
+ */
+
+.dropdown-menu {
+  .rounded(@border-radius-base);
+  border: 1px solid @dropdown-border;
+  z-index: @zindex-dropdown;
+  .box-shadow(none);
+  > li > a {
+    font-size: 13px;
+    color: @dropdown-link-color;
+    &:hover {
+      background: @dropdown-link-hover-bg;
+    }
+  }
+  .divider {
+    margin: 2px 0;
+    height: 1px;
+    background-color: @dropdown-divider-bg;
+  }
+  > .active > a,
+  > .active > a:hover,
+  > .active > a:focus {
+    background-color: @dropdown-link-active-bg;
+    color: @dropdown-link-color;
+  }
+}
+
+.dropdown.open .dropdown-menu {
+  display: block;
+}
+
+@media (max-width: @screen-xs-max) {
+  .collapse-open {
+    display: block;
+  }
+  .dropdown-menu.dropdown-menu {
+    top: 100%;
+    left: 0;
+  }
+}

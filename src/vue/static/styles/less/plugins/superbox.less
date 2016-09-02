@@ -1,0 +1,75 @@
+ /*
+ * Superbox
+ *
+ */
+
+ .superbox {
+   font-size: 0;
+   margin-left: -15px;
+   margin-right: -15px;
+   margin-top: -10px;
+   .title {
+     font-size: @font-size-base;
+   }
+   .sub-title {
+     font-size: 11px;
+   }
+ }
+
+ .superbox-list {
+   display: inline-block;
+   *display: inline;
+   zoom: 1;
+   .rounded(@border-radius-base);
+   padding-right: @padding-base-horizontal;
+   padding-left: @padding-base-horizontal;
+   margin-bottom: 10px;
+   margin-top: 10px;
+   cursor: pointer;
+   & > img {
+     border-radius: @border-radius-base @border-radius-base 0 0;
+   }
+ }
+
+ .superbox-img {
+   max-width: 100%;
+   width: 100%;
+   cursor: pointer;
+ }
+
+ .superbox-show {
+   text-align: center;
+   position: relative;
+   background: darken(@brand-dark, 2%);
+   width: 100%;
+   float: left;
+   padding: 25px;
+   display: none;
+   margin-top: -5px;
+ }
+
+ .superbox-current-img {
+   max-width: 100%;
+ }
+
+ .superbox-img:hover {
+   .opacity(.8);
+ }
+
+ .superbox-float {
+   float: left;
+ }
+
+ .superbox-close {
+   .opacity(7);
+   cursor: pointer;
+   position: absolute;
+   top: 25px;
+   right: 25px;
+   background: url(../images/close.gif) no-repeat center center;
+   width: 35px;
+   height: 35px;
+   &:hover {
+     .opacity(1);
+   }
+ }

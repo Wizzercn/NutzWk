@@ -1,0 +1,21 @@
+{
+  "name": "sortable",
+  "version": "0.6.0",
+  "homepage": "http://adamschwartz.co/sortable",
+  "authors": [
+    "Adam Schwartz <adam.flynn.schwartz@gmail.com>"
+  ],
+  "description": "The simplest, most elegant way to sort a table.",
+  "main": "sortable.coffee",
+  "license": "MIT",
+  "keywords": [
+    "table",
+    "sort",
+    "sortable",
+    "sorting"
+  ],
+  "ignore": [
+    "node_modules",
+    "bower_components"
+  ]
+}

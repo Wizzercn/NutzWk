@@ -15,20 +15,9 @@ layout("/layouts/private.html"){
                 <input id="id" name="id" type="hidden" value="${obj.id!}">
                 <input id="wxid" name="wxid" type="hidden" value="${obj.wxid!}">
                 <input type="hidden" id="hasChildren" name="hasChildren" value="${obj.hasChildren!}">
+                <input type="hidden" id="parentId" name="parentId" value="${obj.parentId!}">
                 <div class="row mb10">
                     <div class="col-lg-12">
-                        <div class="form-group">
-                            <label for="parentId" class="col-sm-2 control-label">上级菜单</label>
-
-                            <div class="col-sm-8">
-                                <select id="parentId" name="parentId" class="form-control" readonly>
-                                    <option value="">无</option>
-                                    <option value="${obj.wxid!}" selected>${obj.wxConfig.appname}</option>
-                                </select>
-                                <input id="errMsg" value="false" type="hidden">
-                                <p class="help-block no-m" style="color: red;" id="_errMsg"></p>
-                            </div>
-                        </div>
                         <div class="form-group">
                             <label for="menuName" class="col-sm-2 control-label">菜单名称</label>
 
@@ -52,8 +41,16 @@ layout("/layouts/private.html"){
                             <label for="url" class="col-sm-2 control-label">URL</label>
 
                             <div class="col-sm-8">
-                                <input id="url" name="url"  value="${obj.url!}" type="text" class="form-control">
-                                <input type="checkbox" id="btnUrl">网页oauth2.0
+                                <div class="input-group">
+                                    <input id="url" name="url"  value="${obj.url!}" type="text" class="form-control">
+                                <span class="input-group-btn">
+                                    <a class="btn btn-primary current-time" href="${base}/private/wx/conf/menu/cms/channel"  data-toggle="modal" data-target="#dialogSelect">选择栏目</a>
+                                    <a class="btn btn-info current-time" href="${base}/private/wx/conf/menu/cms/article"  data-toggle="modal" data-target="#dialogSelect">选择文章</a>
+
+                                </span>
+                                </div>
+                                <input type="checkbox" id="btnUrl" <%if(@string.contains(obj.url,"oauth2")){%>checked<%}%>>网页oauth2.0
+                                <input type="checkbox" id="btnUrl2" <%if(@string.contains(obj.url,"wx/wechat")){%>checked<%}%>>应用oauth2.0
 
                             </div>
                         </div>
@@ -98,6 +95,13 @@ layout("/layouts/private.html"){
         </div>
     </div>
 </div>
+<div id="dialogSelect" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
 <script language="JavaScript">
     var msgtype;
     function clickRadio(type){
@@ -108,11 +112,11 @@ layout("/layouts/private.html"){
         } else if (type == 'view') {
             $("#div_key").hide();
             $("#div_url").show();
-            $("#key").val("");
+            $("#menuKey").val("");
         } else {
             $("#div_key").hide();
             $("#div_url").hide();
-            $("#key").val("");
+            $("#menuKey").val("");
             $("#url").val("");
         }
     }
@@ -141,6 +145,13 @@ layout("/layouts/private.html"){
         var str=url.substring(url.indexOf("redirect_uri=")+13,url.indexOf("&response_type="));
         return decodeURIComponent(str);
     }
+    function getUrl2(url){
+        var str="http://${AppDomain!}/public/wx/wechat/${obj.wxid!}/oauth?goto_url=$s";
+        return str.replace("$s",url);
+    }
+    function seeUrl2(url){
+        return url.substring(url.indexOf("goto_url=")+9);
+    }
     $(document).ready(function () {
         $("#btnUrl").on("click",function(){
             if($(this).is(':checked')){
@@ -149,11 +160,21 @@ layout("/layouts/private.html"){
                 $("#url").val(seeUrl($("#url").val()));
             }
         });
+        $("#btnUrl2").on("click",function(){
+            if($(this).is(':checked')){
+                $("#url").val(getUrl2($("#url").val()));
+            }else{
+                $("#url").val(seeUrl2($("#url").val()));
+            }
+        });
         checkDo();
         $("#parentId").on("change",function(){
             checkDo();
         });
         $("#dialogKeySelect").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+        $("#dialogSelect").on("hidden.bs.modal", function () {
             $(this).removeData("bs.modal");
         });
         $('#addForm').ajaxForm({

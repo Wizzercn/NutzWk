@@ -113,7 +113,28 @@ public class WxHandler extends AbstractWxHandler {
 
     public WxOutMsg eventClick(WxInMsg msg) {
         String eventKey = msg.getEventKey();
-        log.info("eventKey: " + eventKey);
+        log.debug("eventKey: " + eventKey);
+        Wx_reply reply=wxReplyService.fetch(Cnd.where("type","=","keyword").and("wxid","=",msg.getExtkey()).and("keyword","=",eventKey));
+        if (reply != null) {
+            if ("txt".equals(reply.getMsgType())) {
+                String txtId = reply.getContent();
+                Wx_reply_txt txt = wxReplyTxtService.fetch(txtId);
+                return Wxs.respText(null, txt == null ? "" : txt.getContent());
+            } else if ("news".equals(reply.getMsgType())) {
+                String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
+                List<WxArticle> list = new ArrayList<>();
+                List<Wx_reply_news> newsList = wxReplyNewsService.query(Cnd.where("id", "in", newsIds).asc("location"));
+                for (Wx_reply_news news : newsList) {
+                    WxArticle wxArticle = new WxArticle();
+                    wxArticle.setDescription(news.getDescription());
+                    wxArticle.setPicUrl(news.getPicUrl());
+                    wxArticle.setTitle(news.getTitle());
+                    wxArticle.setUrl(news.getUrl());
+                    list.add(wxArticle);
+                }
+                return Wxs.respNews(null, list);
+            }
+        }
         return defaultMsg(msg);
     }
 

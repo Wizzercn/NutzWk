@@ -1,0 +1,86 @@
+/*
+ * $Forms
+ *
+ */
+/* Resize textarea vertically */
+
+textarea {
+  resize: vertical;
+}
+/* Default placeholder text */
+
+.form-control {
+  .placeholder(desaturate(lighten(@input-color-placeholder, 5%), 15%));
+}
+
+.placeholder {
+  color: #aaa;
+}
+
+.form-control {
+  border: 1px solid@input-border;
+  .rounded(@input-border-radius);
+  .box-shadow(none);
+  .transition(~"border .25s linear, color .25s linear, background-color .25s linear");
+  -webkit-appearance: none;
+  font-weight: 400;
+  font-size: @font-size-base;
+  -webkit-font-smoothing: antialiased;
+}
+
+.form-control:focus,
+#focusedInput {
+  outline: 0;
+  border-color: @input-border-focus;
+  background-color: @input-focus-bg;
+  .box-shadow(none);
+}
+
+.no-resize {
+  resize: none;
+}
+
+select.form-control {
+  -webkit-appearance: menulist;
+}
+
+input[type="file"] {
+  line-height: 1;
+}
+
+label {
+  font-weight: 600;
+}
+
+label.radio,
+label.checkbox {
+  padding-left: 20px;
+}
+/*
+ * Validation States
+ *
+ */
+
+.has-success {
+  .form-control-validation(@brand-success;
+  @brand-success;
+  @brand-success);
+}
+
+.has-warning {
+  .form-control-validation(@brand-warning;
+  @brand-warning;
+  @brand-warning);
+}
+
+.has-error {
+  .form-control-validation(@brand-danger;
+  @brand-danger;
+  @brand-danger);
+}
+
+.input-group-addon {
+  background-color: @input-group-addon-bg;
+  border: 1px solid @input-group-addon-border-color;
+  .rounded(@input-border-radius);
+}

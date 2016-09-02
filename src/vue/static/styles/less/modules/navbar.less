@@ -1,0 +1,65 @@
+/*
+ * $Navbar
+ *
+ */
+
+.navbar .navbar-text {
+  float: left;
+  margin-right: 15px;
+  margin-left: 15px;
+}
+
+.navbar-nav {
+  &.nav-tabs {
+    background: transparent;
+    .rounded(0);
+    > li > a {
+      margin: 0;
+      .rounded(0);
+      padding: 16px 15px;
+    }
+  }
+}
+
+.navbar-inverse {
+  border-color: @navbar-inverse-border;
+  background-color: @navbar-inverse-bg;
+  .navbar-brand, .navbar-nav > li > a {
+    color: @navbar-inverse-color;
+  }
+  .navbar-nav > .open > a,
+  .navbar-nav > .open > a:hover,
+  .navbar-nav > .open > a:focus,
+  .navbar-nav > .active > a,
+  .navbar-nav > .active > a:hover,
+  .navbar-nav > .active > a:focus {
+    color: #fff;
+    background-color: darken(@navbar-inverse-bg, 3%);
+  }
+  .navbar-collapse,
+  .navbar-form {
+    border-color: @navbar-inverse-border;
+  }
+  .navbar-nav .open .dropdown-menu .divider {
+    background-color: darken(@navbar-inverse-border, 5%);
+  }
+  .dropdown-menu {
+    border-color: @navbar-inverse-border;
+  }
+}
+
+@media (max-width: @screen-xs-max) {
+  .navbar-collapse {
+    padding: 0;
+  }
+  .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
+    color: #ffffff;
+  }
+}
+
+@media (max-width: @screen-xs-max) {
+  .navbar-form {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}

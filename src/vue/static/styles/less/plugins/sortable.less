@@ -1,0 +1,62 @@
+/*
+ * $Sortable elements (Jquery Sortable)
+ *
+ */
+
+.sortable .list-group-item,
+.handles .list-group-item {
+  padding: 15px;
+}
+
+.connected,
+.sortable,
+.exclude,
+.handles {
+  -webkit-touch-callout: none;
+  .user-select(none);
+}
+
+.connected li,
+.sortable li,
+.exclude li,
+.handles li {
+  border: 1px solid transparent;
+}
+
+.connected li:not(:last-child),
+.sortable li:not(:last-child),
+.exclude li:not(:last-child),
+.handles li:not(:last-child) {
+  margin-bottom: 1px;
+  border: 1px solid transparent;
+  .rounded(@border-radius-base);
+}
+
+.sortable > li,
+.handles span {
+  cursor: move;
+}
+
+.handles span {
+  float: left;
+}
+
+#connected {
+  overflow: hidden;
+  margin: auto;
+}
+
+.connected {
+  float: left;
+}
+
+.connected.no2 {
+  float: right;
+}
+
+.sortable-placeholder {
+  list-style: none;
+  border: 1px dashed #ddd!important;
+  min-height: 50px;
+  width: 100%;
+}

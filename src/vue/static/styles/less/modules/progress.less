@@ -1,0 +1,52 @@
+/*
+ * $Progress-Bar styles
+ *
+ */
+
+.progress {
+  overflow: hidden;
+  margin-bottom: 15px;
+  height: 20px;
+  .rounded(@border-radius-base);
+  background-color: @progress-bg;
+  .box-shadow(none);
+}
+
+.progress-bar {
+  .box-shadow(none);
+  background-color: @progress-bar-bg;
+  .transition(width 800ms ease);
+}
+
+.progress-bar-success {
+  .progress-bar-variant(@progress-bar-success-bg);
+}
+
+.progress-bar-info {
+  .progress-bar-variant(@progress-bar-info-bg);
+}
+
+.progress-bar-warning {
+  .progress-bar-variant(@progress-bar-warning-bg);
+}
+
+.progress-bar-danger {
+  .progress-bar-variant(@progress-bar-danger-bg);
+}
+/* Progress bar sizing */
+
+.progress-xs {
+  height: 5px;
+}
+
+.progress-sm {
+  height: 10px;
+}
+
+.progress-md {
+  height: 15px;
+}
+
+.progress-lg {
+  height: 25px;
+}

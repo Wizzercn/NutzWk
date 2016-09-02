@@ -1,6 +1,7 @@
 package cn.wizzer.modules.back.cms.models;
 
 import cn.wizzer.common.base.Model;
+import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -55,12 +56,15 @@ public class Cms_article extends Model implements Serializable {
 
     @Column
     @Comment("发布时间")
-    @ColDefine(type = ColType.INT, width = 5)
+    @ColDefine(type = ColType.INT)
     private Integer publishAt;
 
     @Column
     @Comment("排序字段")
-    @Prev(@SQL("SELECT IFNULL(MAX(location),0)+1 FROM cms_article"))
+    @Prev({
+            @SQL(db= DB.MYSQL,value = "SELECT IFNULL(MAX(location),0)+1 FROM cms_article"),
+            @SQL(db= DB.ORACLE,value = "SELECT COALESCE(MAX(location),0)+1 FROM cms_article")
+    })
     private Integer location;
 
     @Column

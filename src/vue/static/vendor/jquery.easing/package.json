@@ -1,0 +1,10 @@
+{
+    "name": "jquery.easing",
+    "version": "1.3.1",
+    "description": "A npm-packaged version of GSGD's jQuery Easing plugin",
+    "author": "George McGinley Smith",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/gdsmith/jquery.easing.git"
+    }
+}

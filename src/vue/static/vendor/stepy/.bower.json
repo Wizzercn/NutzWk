@@ -1,0 +1,27 @@
+{
+  "name": "stepy",
+  "main": [
+    "lib/jquery.stepy.min.js",
+    "lib/jquery.stepy.css"
+  ],
+  "ignore": [
+    "demo/",
+    "demo/*",
+    "index.html",
+    "bower.json"
+  ],
+  "keywords": [
+    "jquery",
+    "stepy"
+  ],
+  "homepage": "https://github.com/victorhqc/stepy",
+  "_release": "3c28ef3c64",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "3c28ef3c6498ebe95faf9fab005e4291e85e413f"
+  },
+  "_source": "git://github.com/victorhqc/stepy.git",
+  "_target": "*",
+  "_originalSource": "stepy"
+}

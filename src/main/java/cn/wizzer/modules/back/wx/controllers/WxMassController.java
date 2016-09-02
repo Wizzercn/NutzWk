@@ -69,7 +69,7 @@ public class WxMassController {
         req.setAttribute("wxList", list);
     }
 
-    @At({"/massData/","/massData/?"})
+    @At({"/massData/", "/massData/?"})
     @Ok("json:full")
     @RequiresAuthentication
     public Object massData(String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
@@ -147,23 +147,24 @@ public class WxMassController {
     @RequiresAuthentication
     //AdaptorErrorContext必须是最后一个参数
     public Object uploadThumb(String wxid, @Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
-        if (err != null && err.getAdaptorErr() != null) {
-            return NutMap.NEW().addv("code", 1).addv("msg", "文件不合法");
-        } else if (tf == null) {
-            return Result.error("空文件");
-        } else {
-            try {
+        try {
+            if (err != null && err.getAdaptorErr() != null) {
+                return NutMap.NEW().addv("code", 1).addv("msg", "文件不合法");
+            } else if (tf == null) {
+                return Result.error("空文件");
+            } else {
+
                 WxApi2 wxApi2 = wxConfigService.getWxApi2(wxid);
                 WxResp resp = wxApi2.media_upload("thumb", tf.getFile());
                 if (resp.errcode() != 0) {
                     return Result.error(resp.errmsg());
                 }
                 return Result.success("上传成功", resp.get("thumb_media_id"));
-            } catch (Exception e) {
-                return Result.error("系统错误");
-            } catch (Throwable e) {
-                return Result.error("图片格式错误");
             }
+        } catch (Exception e) {
+            return Result.error("系统错误");
+        } catch (Throwable e) {
+            return Result.error("图片格式错误");
         }
     }
 
@@ -242,12 +243,12 @@ public class WxMassController {
     @Ok("beetl:/private/wx/msg/mass/sendDetail.html")
     @RequiresAuthentication
     public Object sendDetail(String id, HttpServletRequest req) {
-        Wx_mass mass=wxMassService.fetch(id);
-        if("news".equals(mass.getType())){
+        Wx_mass mass = wxMassService.fetch(id);
+        if ("news".equals(mass.getType())) {
             String[] ids = StringUtils.split(mass.getContent(), ",");
-            req.setAttribute("news",wxMassNewsService.query(Cnd.where("id", "in", ids).asc("location")));
+            req.setAttribute("news", wxMassNewsService.query(Cnd.where("id", "in", ids).asc("location")));
         }
-        req.setAttribute("send",wxMassSendService.fetch(Cnd.where("massId","=",mass.getId())));
+        req.setAttribute("send", wxMassSendService.fetch(Cnd.where("massId", "=", mass.getId())));
         return mass;
     }
 }

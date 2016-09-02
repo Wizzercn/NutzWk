@@ -1,0 +1,32 @@
+/*
+*   Jstree
+*
+*/
+
+.jstree-default .jstree-clicked,
+.jstree-default .jstree-hovered {
+  background: lighten(@brand-primary, 46%);
+  .box-shadow(none);
+}
+
+.jstree-default .jstree-wholerow-clicked {
+  background: lighten(@brand-primary, 46%);
+  .rounded(@border-radius-base);
+}
+
+.jstree-default.jstree-checkbox-no-clicked .jstree-clicked.jstree-hovered,
+.jstree-default.jstree-checkbox-no-clicked > .jstree-wholerow-ul .jstree-wholerow-clicked.jstree-wholerow-hovered,
+.jstree-default .jstree-wholerow-hovered,
+.jstree-default-responsive .jstree-wholerow-hovered {
+  background: lighten(@brand-primary, 46%);
+}
+
+.jstree-default .jstree-node,
+.jstree-default .jstree-anchor,
+.jstree-default .jstree-wholerow {
+  .rounded(@border-radius-base);
+}
+
+.jstree-default .jstree-search {
+  color: @brand-danger;
+}

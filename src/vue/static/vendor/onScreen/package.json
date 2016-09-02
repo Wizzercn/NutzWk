@@ -1,0 +1,34 @@
+{
+  "name": "onScreen",
+  "homepage": "http://silvestreh.github.io/onScreen/",
+  "author": "Silvestre Herrera <silvestre.herrera@gmail.com>",
+  "version": "0.0.0",
+  "description": "Checks if matched elements are inside the viewport.",
+  "contributors": [
+    {
+      "name": "Silvestre Herrera",
+      "email": "silvestre.herrera@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/silvestreh/onScreen"
+  },
+  "bugs": {
+    "url": "https://github.com/silvestreh/onScreen/issues"
+  },
+  "keywords": [
+    "on screen",
+    "viewport",
+    "element position",
+    "element in viewport",
+    "element inside viewport"
+  ],
+  "private": true,
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-uglify": "^0.6.0",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}

@@ -1,0 +1,196 @@
+/*
+ * Select2
+ *
+ */
+
+.editable-input .select2-choice {
+  line-height: 29px;
+  height: auto;
+}
+
+.select2-container .select2-choice {
+  background-image: none;
+  .rounded(@border-radius-base);
+  border: 1px solid @border-color;
+  color: @text-color;
+}
+
+.select2-container.select2-drop-above .select2-choice {
+  border-bottom-color: @border-color;
+  border-radius: 0 0 @border-radius-base @border-radius-base;
+  background-image: none;
+}
+
+.select2-drop {
+  color: @text-color;
+  border: 1px solid @border-color;
+  border-top: 0;
+  border-radius: 0 0 @border-radius-base @border-radius-base;
+  .box-shadow(none);
+}
+
+.select2-drop.select2-drop-above {
+  border-top: 1px solid @border-color;
+  border-bottom: 0;
+  border-radius: @border-radius-base @border-radius-base 0 0;
+  .box-shadow(none);
+}
+
+.select2-drop-active {
+  border: 1px solid @brand-primary;
+}
+
+.select2-drop.select2-drop-above.select2-drop-active {
+  border-top: 1px solid @brand-primary;
+}
+
+.select2-drop-auto-width {
+  border-top: 1px solid @border-color;
+}
+
+.select2-container .select2-choice .select2-arrow {
+  border-left: 1px solid @border-color;
+  border-radius: 0 @border-radius-base @border-radius-base 0;
+  background: transparent;
+  background-image: none;
+}
+
+html[dir="rtl"] .select2-container .select2-choice .select2-arrow {
+  border-right: 1px solid @border-color;
+  border-radius: @border-radius-base 0 0 @border-radius-base;
+}
+
+.select2-search input {
+  font-family: inherit;
+  font-size: 13px;
+  border: 1px solid @border-color;
+  background: none;
+  margin-top: 5px;
+  .rounded(@border-radius-base);
+}
+
+.select2-search {
+  &:after {
+    font-family: 'themify';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 28px;
+    content: "\e610";
+    position: absolute;
+    right: 15px;
+    text-align: center;
+    font-size: 12px;
+    color: @text-color;
+    top: 50%;
+    margin-top: -12px;
+  }
+}
+
+.select2-container-active .select2-choice,
+.select2-container-active .select2-choices {
+  border: 1px solid @brand-primary;
+  .box-shadow(none);
+}
+
+.select2-dropdown-open .select2-choice {
+  .box-shadow(none);
+  background-color: @border-color;
+  background-image: none;
+}
+
+.select2-dropdown-open.select2-drop-above .select2-choice,
+.select2-dropdown-open.select2-drop-above .select2-choices {
+  border: 1px solid @brand-primary;
+  .box-shadow(none);
+}
+
+.select2-container-multi .select2-choices {
+  border: 1px solid @brand-primary;
+  background-image: none;
+}
+
+.select2-container-multi.select2-container-active .select2-choices {
+  border: 1px solid @brand-primary;
+  .box-shadow(none);
+}
+
+.select2-container-multi .select2-choices .select2-search-field input {
+  font-family: inherit;
+  color: @text-color;
+}
+
+.select2-default {
+  color: @text-color !important;
+}
+
+.select2-container-multi .select2-choices .select2-search-choice {
+  color: @text-color;
+  border: 1px solid @border-color;
+  border-radius: @border-radius-base;
+  .box-shadow(none);
+  background-color: @brand-default;
+  background-image: none;
+}
+
+.select2-search-choice-close {
+  background: none;
+  text-align: center;
+  &:before {
+    font-family: 'themify';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 24px;
+    content: "\e646";
+    text-align: center;
+    font-size: 10px;
+    color: @text-color;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin-top: -12px;
+    width: 100%;
+  }
+}
+
+.select2-container .select2-choice abbr {
+  background: none;
+  width: 24px;
+  height: 100%;
+  top: 0;
+}
+
+.select2-container .select2-choice .select2-arrow {
+  width: 24px;
+}
+
+.select2-container .select2-choice .select2-arrow b {
+  background: none;
+  text-align: center;
+  &:before {
+    font-family: 'themify';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 24px;
+    content: "\e64b";
+    text-align: center;
+    font-size: 10px;
+    color: @text-color;
+  }
+}
+
+.select2-results li {
+  .rounded(@border-radius-base);
+}
+
+.select2-results .select2-highlighted {
+  background: @brand-primary;
+}

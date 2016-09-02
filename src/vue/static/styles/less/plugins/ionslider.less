@@ -1,0 +1,38 @@
+/*
+*   IonSLider
+*
+*/
+
+.irs-line-mid,
+.irs-line-left,
+.irs-line-right,
+.irs-diapason,
+.irs-slider {
+  background: url(../images/sprite-skin-flat.png) repeat-x;
+}
+
+.irs-slider {
+  background-position: 0 -90px;
+}
+
+.irs-from,
+.irs-to,
+.irs-single {
+  background: @brand-primary;
+}
+
+.irs-from:after,
+.irs-to:after,
+.irs-single:after {
+  border-top-color: @brand-primary;
+}
+
+.irs-min,
+.irs-max {
+  color: @text-color;
+  background: @brand-default;
+}
+
+.irs-line {
+  .rounded(@border-radius-base);
+}

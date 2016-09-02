@@ -1,0 +1,72 @@
+/*
+ * iCheck
+ *
+ */
+
+.icheckbox,
+.iradio {
+  display: inline-block;
+  *display: inline;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  background: url(../images/minimal.png) no-repeat;
+  border: none;
+  cursor: pointer;
+}
+
+.icheckbox {
+  background-position: 0 0;
+}
+
+.icheckbox.hover {
+  background-position: -20px 0;
+}
+
+.icheckbox.checked {
+  background-position: -40px 0;
+}
+
+.icheckbox.disabled {
+  background-position: -60px 0;
+  cursor: default;
+}
+
+.icheckbox.checked.disabled {
+  background-position: -80px 0;
+}
+
+.iradio {
+  background-position: -100px 0;
+}
+
+.iradio.hover {
+  background-position: -120px 0;
+}
+
+.iradio.checked {
+  background-position: -140px 0;
+}
+
+.iradio.disabled {
+  background-position: -160px 0;
+  cursor: default;
+}
+
+.iradio.checked.disabled {
+  background-position: -180px 0;
+}
+/* HiDPI support */
+
+@media (-o-min-device-pixel-ratio: 5/4),
+(-webkit-min-device-pixel-ratio: 1.25),
+(min-resolution: 120dpi) {
+  .icheckbox,
+  .iradio {
+    background-image: url(../images/minimal@2x.png);
+    -webkit-background-size: 200px 20px;
+    background-size: 200px 20px;
+  }
+}

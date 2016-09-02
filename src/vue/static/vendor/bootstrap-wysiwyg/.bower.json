@@ -1,0 +1,13 @@
+{
+  "name": "bootstrap-wysiwyg",
+  "homepage": "https://github.com/mindmup/bootstrap-wysiwyg",
+  "_release": "8ed46f2f51",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "8ed46f2f51ee7dca3c1045dd3895720aa3525b8a"
+  },
+  "_source": "git://github.com/mindmup/bootstrap-wysiwyg.git",
+  "_target": "master",
+  "_originalSource": "git://github.com/mindmup/bootstrap-wysiwyg.git"
+}

@@ -1,17 +1,19 @@
 package cn.wizzer.common.services.log;
 
-import cn.wizzer.common.annotation.SLog;
-import cn.wizzer.modules.back.sys.models.Sys_log;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.nutz.aop.InterceptorChain;
 import org.nutz.aop.MethodInterceptor;
 import org.nutz.el.El;
+import org.nutz.ioc.Ioc;
 import org.nutz.lang.Lang;
 import org.nutz.lang.segment.CharSegment;
 import org.nutz.lang.util.Context;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import cn.wizzer.common.annotation.SLog;
+import cn.wizzer.modules.back.sys.models.Sys_log;
 
 /**
  * Created by wizzer on 2016/6/22.
@@ -29,8 +31,10 @@ public class SysLogAopInterceptor implements MethodInterceptor {
     protected boolean error;
     protected boolean async;
     protected Map<String, El> els;
+    protected Ioc ioc;
 
-    public SysLogAopInterceptor(SysLogService sysLogService, SLog slog, Method method) {
+    public SysLogAopInterceptor(Ioc ioc, SLog slog, Method method) {
+        this.ioc = ioc;
         this.msg = new CharSegment(slog.msg());
         if (msg.hasKey()) {
             els = new HashMap<String, El>();
@@ -38,7 +42,6 @@ public class SysLogAopInterceptor implements MethodInterceptor {
                 els.put(key, new El(key));
             }
         }
-        this.sysLogService = sysLogService;
         this.source = method.getDeclaringClass().getName() + "#" + method.getName();
         this.tag = slog.tag();
         SLog _s = method.getDeclaringClass().getAnnotation(SLog.class);
@@ -80,6 +83,8 @@ public class SysLogAopInterceptor implements MethodInterceptor {
             _msg = msg.getOrginalString();
         }
         Sys_log sysLog = Sys_log.c(t, tag, _msg, source);
+        if (sysLogService == null)
+            sysLogService = ioc.get(SysLogService.class);
         if (async)
             sysLogService.async(sysLog);
         else

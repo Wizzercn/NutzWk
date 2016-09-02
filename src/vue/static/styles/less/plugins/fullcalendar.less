@@ -1,0 +1,80 @@
+/*
+ *
+ * Fullcalendar
+ * http://arshaw.com/fullcalendar
+ *
+ */
+
+.fc-icon {
+  font-size: inherit;
+}
+
+.external-events {
+  border-bottom: 1px solid @border-color;
+  padding: 0 0 20px 0
+}
+
+.fc-event,
+.external-event {
+  border: transparent;
+  /* default BORDER color */
+
+  cursor: default;
+  text-align: center;
+  font-weight: 400;
+  font-size: @font-size-base;
+}
+
+.external-events .external-event {
+  cursor: move;
+  display: inline-block;
+  margin: 0 5px 10px 0
+}
+
+.external-event:hover {
+  cursor: move;
+}
+
+a.fc-event,
+.fc-event-draggable {
+  cursor: pointer;
+}
+
+.fc-toolbar {
+  display: none;
+  visibility: hidden;
+}
+
+.fc-content {
+  margin: 0 -1px;
+}
+
+.fc-event {
+  cursor: default;
+  line-height: inherit;
+  padding: .2em .6em .3em;
+}
+
+.fc-event.bg-primary {
+  color: lighten(@brand-primary, 55%);
+}
+
+.fc-event.bg-default {
+  color: @text-color;
+}
+
+.fc-event.bg-warning {
+  color: lighten(@brand-warning, 55%);
+}
+
+.fc-event.bg-success {
+  color: lighten(@brand-success, 55%);
+}
+
+.fc-event.bg-info {
+  color: lighten(@brand-info, 55%);
+}
+
+.fc-event.bg-danger {
+  color: lighten(@brand-danger, 55%);
+}

@@ -6,7 +6,10 @@ $.ajaxSetup({
     complete: function (XMLHttpRequest, textStatus) {
         var sessionstatus = XMLHttpRequest.getResponseHeader('loginStatus'); //通过XMLHttpRequest取得响应头，sessionstatus，
         if (sessionstatus == 'accessDenied') {
-            top.window.location.href = base+ '/private/login';
+            Toast.error("\u767b\u5f55\u5931\u6548\uff0c\u8bf7\u5237\u65b0\u9875\u9762\u91cd\u65b0\u767b\u5f55");
+        }
+        if (sessionstatus == 'unauthorized') {
+            Toast.error("\u6ca1\u6709\u6743\u9650");
         }
     }
 });

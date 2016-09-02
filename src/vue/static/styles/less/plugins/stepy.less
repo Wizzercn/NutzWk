@@ -1,0 +1,193 @@
+/*
+*   Stepy Wizard
+*
+*/
+
+.stepy-header {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  clear: both;
+  display: inline-block;
+  width: 100%;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.stepy-header li {
+  cursor: pointer;
+  float: left;
+  padding: 10px 15px;
+  background: transparent;
+  border-radius: 4px;
+  margin: 0 15px 0 0;
+}
+
+.stepy-header li div {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.stepy-header li.stepy-active div {
+  color: #2f89c1;
+  cursor: auto
+}
+
+.stepy-header li span {
+  color: #CCC;
+  font-size: 11px
+}
+
+.stepy-header li.stepy-active span {
+  color: #BBB
+}
+
+.stepy-header li.stepy-error div {
+  color: @brand-danger
+}
+
+.stepy-step {
+  background: transparent;
+  padding: @size-base;
+  border: 0;
+}
+
+.stepy-step legend {
+  border: 0;
+  width: auto;
+  margin-bottom: 0
+}
+
+.stepy-navigator > a {
+  outline: 0;
+  .transition(all 300ms linear);
+  .rounded(@border-radius-base);
+  padding: 9px 12px;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+  line-height: 14px;
+  &:focus, &:active, &.active, &:active:focus, &.active:focus {
+    outline: 0;
+  }
+}
+
+.stepy-navigator .button-next {
+  float: right;
+  .button-variant(@btn-primary-color;
+  @btn-primary-bg;
+  @btn-primary-border);
+}
+
+.stepy-navigator .button-back {
+  float: left;
+  .button-variant(@btn-default-color;
+  @btn-default-bg;
+  @btn-default-border);
+}
+
+.stepy-errors label.error {
+  color: @brand-danger;
+  padding-left: @size-base;
+  &::before {
+    font-family: 'themify';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    content: "\e6c5";
+    text-align: center;
+    font-size: 12px;
+    color: @brand-danger;
+    margin-right: 5px;
+  }
+}
+
+.stepy {
+  width: 100%;
+  display: block;
+  background-color: #fff
+}
+
+.stepy-header {
+  background-color: @brand-primary;
+  border-top-left-radius: @border-radius-base;
+  border-top-right-radius: @border-radius-base;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: 1px solid darken(@brand-primary, 10%);
+}
+
+.stepy-header li {
+  background-color: transparent;
+  position: relative;
+  line-height: 1;
+  &:before {
+    position: absolute;
+    top: 1px;
+    right: -14px;
+    z-index: 9;
+    display: block;
+    border: 23px solid transparent;
+    border-right: 0;
+    border-left: 22px solid@brand-primary;
+    content: "";
+  }
+  &:after {
+    position: absolute;
+    top: 0;
+    right: -15px;
+    z-index: 1;
+    display: block;
+    border: 24px solid transparent;
+    border-right: 0;
+    border-left: 23px solid darken(@brand-primary, 10%);
+    content: "";
+  }
+  div {
+    font-weight: 400;
+    font-family: inherit;
+    color: #fff;
+    text-shadow: none;
+    text-transform: uppercase;
+    font-size: 14px
+  }
+  span,
+  &.stepy-active div,
+  &.stepy-active span {
+    color: #fff;
+  }
+  &.stepy-active div {
+    font-weight: 800
+  }
+}
+
+.stepy-step {
+  background: transparent;
+  width: 100%;
+  .clearfix();
+  legend {
+    .rounded(@border-radius-base);
+    background-color: @brand-dark;
+    color: #fff;
+    padding: 0@padding-base-horizontal;
+    font-size: @font-size-base;
+  }
+}
+
+.stepy-step input,
+.stepy-step textarea,
+.stepy-step select {
+  border: 1px solid@input-border;
+  .rounded(@input-border-radius);
+  .box-shadow(none);
+  .transition(~"border .25s linear, color .25s linear, background-color .25s linear");
+  -webkit-appearance: none;
+  font-weight: 400;
+  font-size: @font-size-base;
+  -webkit-font-smoothing: antialiased;
+  width: 100%;
+  height: autot;
+  padding: auto;
+}

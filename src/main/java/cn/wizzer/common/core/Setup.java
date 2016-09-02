@@ -7,24 +7,23 @@ import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.dao.Chain;
+import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
+import org.nutz.integration.quartz.QuartzJob;
+import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
 import org.nutz.lang.Encoding;
-import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
-import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.quartz.Scheduler;
 
 import java.nio.charset.Charset;
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.util.*;
 
 /**
@@ -43,18 +42,16 @@ public class Setup implements org.nutz.mvc.Setup {
             Dao dao = ioc.get(Dao.class);
             // 初始化数据表
             initSysData(config, dao);
-            // 获取NutQuartzCronJobFactory从而触发计划任务的初始化与启动
-            ioc.get(NutQuartzCronJobFactory.class);
             // 检查一下Ehcache CacheManager 是否正常.
             CacheManager cacheManager = ioc.get(CacheManager.class);
             log.debug("Ehcache CacheManager = " + cacheManager);
             /* redis测试
             JedisPool jedisPool = ioc.get(JedisPool.class);
             try (Jedis jedis = jedisPool.getResource()) {
-                String re = jedis.set("_big_fish", "Hello Word!!");
-                log.debug("1.redis say : " + re);
-                re = jedis.get("_big_fish");
-                log.debug("2.redis say : " + re);
+                String updateCount = jedis.set("_big_fish", "Hello Word!!");
+                log.debug("1.redis say : " + updateCount);
+                updateCount = jedis.get("_big_fish");
+                log.debug("2.redis say : " + updateCount);
             } finally {}
 
             RedisService redis = ioc.get(RedisService.class);
@@ -63,8 +60,68 @@ public class Setup implements org.nutz.mvc.Setup {
             */
             // 初始化系统变量
             initSysSetting(config, dao);
+            // 初始化定时任务
+            initSysTask(config, dao);
+            // 初始化自定义路由
+            initSysRoute(config, dao);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 初始化自定义路由
+     *
+     * @param config
+     * @param dao
+     */
+    private void initSysRoute(NutConfig config, Dao dao) {
+        if (0 == dao.count(Sys_route.class)) {
+            //路由示例
+            Sys_route route = new Sys_route();
+            route.setDisabled(false);
+            route.setUrl("/sysadmin");
+            route.setToUrl("/private/login");
+            route.setType("hide");
+            dao.insert(route);
+        }
+        Globals.initRoute(dao);
+    }
+
+    /**
+     * 初始化定时任务
+     *
+     * @param config
+     * @param dao
+     */
+    private void initSysTask(NutConfig config, Dao dao) {
+        QuartzManager quartzManager = config.getIoc().get(QuartzManager.class);
+        quartzManager.clear();
+        if (0 == dao.count(Sys_task.class)) {
+            //定时任务示例
+            Sys_task task = new Sys_task();
+            task.setDisabled(true);
+            task.setName("测试任务");
+            task.setJobClass("cn.wizzer.common.quartz.job.TestJob");
+            task.setCron("*/5 * * * * ?");
+            task.setData("{\"hi\":\"Wechat:wizzer | send red packets of support,thank u\"}");
+            task.setNote("微信号：wizzer | 欢迎发送红包以示支持，多谢。。");
+            dao.insert(task);
+        }
+        List<Sys_task> taskList = dao.query(Sys_task.class, Cnd.where("disabled", "=", 0));
+        for (Sys_task sysTask : taskList) {
+            try {
+                QuartzJob qj = new QuartzJob();
+                qj.setJobName(sysTask.getId());
+                qj.setJobGroup(sysTask.getId());
+                qj.setClassName(sysTask.getJobClass());
+                qj.setCron(sysTask.getCron());
+                qj.setComment(sysTask.getNote());
+                qj.setDataMap(sysTask.getData());
+                quartzManager.add(qj);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
         }
     }
 
@@ -424,18 +481,189 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setType("data");
             Sys_menu m71 = dao.insert(menu);
             menu = new Sys_menu();
-            menu.setDisabled(true);
+            menu.setDisabled(false);
             menu.setPath("000100010007");
             menu.setName("定时任务");
-            menu.setAliasName("Plugin");
+            menu.setAliasName("Task");
             menu.setLocation(0);
-            menu.setHref("/private/sys/job");
+            menu.setHref("/private/sys/task");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
-            menu.setPermission("sys.manager.job");
+            menu.setPermission("sys.manager.task");
             menu.setParentId(m1.getId());
             menu.setType("menu");
             Sys_menu m8 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100070001");
+            menu.setName("添加任务");
+            menu.setAliasName("Add");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.task.add");
+            menu.setParentId(m8.getId());
+            menu.setType("data");
+            Sys_menu m81 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100070002");
+            menu.setName("修改任务");
+            menu.setAliasName("Edit");
+            menu.setLocation(2);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.task.edit");
+            menu.setParentId(m8.getId());
+            menu.setType("data");
+            Sys_menu m82 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100070003");
+            menu.setName("删除任务");
+            menu.setAliasName("Delete");
+            menu.setLocation(3);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.task.delete");
+            menu.setParentId(m8.getId());
+            menu.setType("data");
+            Sys_menu m83 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("000100010008");
+            menu.setName("自定义路由");
+            menu.setAliasName("Route");
+            menu.setLocation(0);
+            menu.setHref("/private/sys/route");
+            menu.setTarget("data-pjax");
+            menu.setIsShow(true);
+            menu.setPermission("sys.manager.route");
+            menu.setParentId(m1.getId());
+            menu.setType("menu");
+            Sys_menu m9 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100080001");
+            menu.setName("添加路由");
+            menu.setAliasName("Add");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.route.add");
+            menu.setParentId(m9.getId());
+            menu.setType("data");
+            Sys_menu m91 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100080002");
+            menu.setName("修改路由");
+            menu.setAliasName("Edit");
+            menu.setLocation(2);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.route.edit");
+            menu.setParentId(m9.getId());
+            menu.setType("data");
+            Sys_menu m92 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100080003");
+            menu.setName("删除路由");
+            menu.setAliasName("Delete");
+            menu.setLocation(3);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.route.delete");
+            menu.setParentId(m9.getId());
+            menu.setType("data");
+            Sys_menu m93 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("000100010009");
+            menu.setName("应用管理");
+            menu.setAliasName("App");
+            menu.setLocation(0);
+            menu.setHref("/private/sys/api");
+            menu.setTarget("data-pjax");
+            menu.setIsShow(true);
+            menu.setPermission("sys.manager.api");
+            menu.setParentId(m1.getId());
+            menu.setType("menu");
+            Sys_menu mm1 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100090001");
+            menu.setName("添加应用");
+            menu.setAliasName("Add");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.api.add");
+            menu.setParentId(mm1.getId());
+            menu.setType("data");
+            Sys_menu mm2 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100090002");
+            menu.setName("修改应用");
+            menu.setAliasName("Edit");
+            menu.setLocation(2);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.api.edit");
+            menu.setParentId(mm1.getId());
+            menu.setType("data");
+            Sys_menu mm3 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100090003");
+            menu.setName("删除应用");
+            menu.setAliasName("Delete");
+            menu.setLocation(3);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.api.delete");
+            menu.setParentId(mm1.getId());
+            menu.setType("data");
+            Sys_menu mm4 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("000100010010");
+            menu.setName("数据字典");
+            menu.setAliasName("Dict");
+            menu.setLocation(0);
+            menu.setHref("/private/sys/dict");
+            menu.setTarget("data-pjax");
+            menu.setIsShow(true);
+            menu.setPermission("sys.manager.dict");
+            menu.setParentId(m1.getId());
+            menu.setType("menu");
+            Sys_menu d = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100100001");
+            menu.setName("添加字典");
+            menu.setAliasName("Add");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.dict.add");
+            menu.setParentId(d.getId());
+            menu.setType("data");
+            Sys_menu d1 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100100002");
+            menu.setName("修改字典");
+            menu.setAliasName("Edit");
+            menu.setLocation(2);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.dict.edit");
+            menu.setParentId(d.getId());
+            menu.setType("data");
+            Sys_menu d2 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100100003");
+            menu.setName("删除字典");
+            menu.setAliasName("Delete");
+            menu.setLocation(3);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.dict.delete");
+            menu.setParentId(d.getId());
+            menu.setType("data");
+            Sys_menu d3 = dao.insert(menu);
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");

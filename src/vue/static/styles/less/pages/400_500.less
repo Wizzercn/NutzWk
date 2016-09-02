@@ -1,0 +1,113 @@
+/*
+ * $404_500, Signin, Signup and lockscreen styles
+ *
+ */
+
+html.lockscreen,
+html.error-page,
+html.error-page,
+html.signin,
+html.signup {
+  &, body {
+    height: 100%;
+  }
+  label {
+    position: inherit;
+  }
+}
+
+.center-wrapper {
+  display: table;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  position: relative;
+  .center-content {
+    display: table-cell;
+    vertical-align: middle;
+    width: 100%;
+    height: 100%;
+    float: none;
+    z-index: 9999
+  }
+}
+
+.error-number {
+  font-size: 150px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.error-nav {
+  padding: 0;
+}
+
+.error-nav li {
+  display: inline;
+  padding: 0 10px;
+}
+
+.error-nav li a {
+  color: #fff;
+}
+
+.lockcode {
+  max-width: 280px;
+  display: block;
+  margin: 0 auto;
+}
+
+.search .search-form {
+  position: relative;
+  margin: 25px auto;
+  max-width: 250px;
+}
+
+.search .search-form .search-button {
+  width: 34px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  overflow: hidden;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: @text-color;
+}
+
+.search .search-form .form-control {
+  width: 100%;
+}
+
+.switcher-dash-action {
+  padding: 0;
+  list-style: none;
+  display: inline-block;
+  width: 100%;
+  li {
+    width: 50%;
+    float: left;
+    text-align: center;
+    &:first-child a {
+      border-radius: @border-radius-base 0 0 0;
+    }
+    &:last-child a {
+      border-radius: 0 @border-radius-base 0 0;
+    }
+    &.active a {
+      background: #FFF;
+    }
+    a {
+      display: block;
+      width: 100%;
+      height: 60px;
+      line-height: 60px;
+      background: @brand-default;
+      color: @text-color;
+    }
+  }
+}
+
+.lock-input {
+  border-color: #fff;
+}
