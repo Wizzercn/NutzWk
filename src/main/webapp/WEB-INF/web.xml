@@ -4,25 +4,11 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
-    <display-name>NutzFw</display-name>
-
-    <!-- XSS -->
-    <filter>
-        <filter-name>xss</filter-name>
-        <filter-class>cn.wizzer.common.mvc.filter.XssFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>xss</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
+    <display-name>NutzWk</display-name>
 
     <!-- Shiro -->
     <listener>
         <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>cn.wizzer.common.mvc.listener.MySessionListener</listener-class>
     </listener>
     <filter>
         <filter-name>ShiroFilter</filter-name>
@@ -37,22 +23,40 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
+    <!-- Custom Route -->
+    <filter>
+        <filter-name>route</filter-name>
+        <filter-class>cn.wizzer.common.filter.RouteFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>route</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- Nutz Mvc -->
     <filter>
         <filter-name>nutz</filter-name>
         <filter-class>org.nutz.mvc.NutFilter</filter-class>
         <init-param>
             <param-name>modules</param-name>
-            <param-value>cn.wizzer.modules.MainModule</param-value>
+            <param-value>cn.wizzer.common.core.Module</param-value>
         </init-param>
         <init-param>
             <param-name>ignore</param-name>
-            <param-value>^(.+[.])(jsp|png|gif|jpg|js|css|jspx|jpeg|html|mp3|mp4)$</param-value>
+            <param-value>^(.+[.])(jsp|png|gif|jpg|js|css|jspx|jpeg|html|mp3|mp4|ico)$</param-value>
+        </init-param>
+        <init-param>
+            <param-name>exclusions</param-name>
+            <param-value>/assets/*,/druid/*,/upload/*,/apidoc/*</param-value>
         </init-param>
     </filter>
     <filter-mapping>
         <filter-name>nutz</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
     <!-- druid -->
@@ -62,6 +66,10 @@
         <init-param>
             <param-name>allow</param-name>
             <param-value>127.0.0.1</param-value>
+        </init-param>
+        <init-param>
+            <param-name>exclusions</param-name>
+            <param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/assets/*,/upload/*,/apidoc/*</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

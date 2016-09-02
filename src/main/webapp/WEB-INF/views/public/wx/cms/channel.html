@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <title><%if(!isEmpty(site.site_name)){%>${site.site_name!}<%}else{%>${AppName!}<%}%></title>
+    <link rel="stylesheet" href="${base}/assets/public/wx/cms/css/channel.css">
+</head>
+<body class="zh_CN">
+<div class="container">
+    <div id="js_plugins_loading" class="loading">
+        加载中
+    </div>
+    <div id="js_plugins" style="display: none">
+        <%if(!isEmpty(site)&&(!isEmpty(site.site_logo)||!isEmpty(site.site_wap_logo))){
+        var logo=site.site_logo;
+        if(!isEmpty(site.site_wap_logo)){
+        logo=site.site_wap_logo;
+        }
+        %>
+        <div class="slider js_plugin" id="namespace_0" data-pid="1">
+            <div class="swiper"
+                 style="height: 180px;width:100%;background-image: url('${logo!}');background-size:100%;">
+
+            </div>
+        </div>
+        <%}%>
+        <div class="tab js_plugin" id="namespace_1" data-pid="2">
+            <%if(!isEmpty(obj)){%>
+            <div class="tab_hd">
+                <div class="tab_hd_inner">
+
+                    <%
+                    var i=0;
+                    for(o in obj){%>
+                    <div type="index" data-id="${o.id}"
+                         class="item <%if(!isEmpty(channelId)&&o.id==channelId){%>active<%}else{if(isEmpty(channelId)&&i==0){%>active<%}}%>">
+                        ${o.name!}
+                    </div>
+                    <%
+                    i++;
+                    }%>
+
+                </div>
+            </div>
+            <%}else{%>
+            <div class="tab_hd" style="display: none;">
+                <div class="tab_hd_inner">
+                    <div type="index" data-id="all"
+                         class="item active">
+                    </div>
+                </div>
+            </div>
+            <%}%>
+
+            <div class="tab_bd">
+                <%if(!isEmpty(obj)){%>
+                <%for(o in obj){%>
+                <div class="article_list article_list_${o.id}" style="display: none;">
+                </div>
+                <%}%>
+                <%}else{%>
+                <div class="article_list article_list_all" style="display: none;">
+                </div>
+                <%}%>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript" src="${base}/assets/public/wx/cms/js/zepto.js"></script>
+<script>
+    function list() {
+        var channelId = $(".tab_hd_inner .active").attr("data-id");
+        var list = $(".article_list_" + channelId);
+        $(".article_list").hide();
+        if (list.find("a").size() > 0) {
+            list.show();
+        } else {
+            $.ajax({
+                type: 'get', url: '${base}/public/wx/cms/list/' + channelId, success: function (data) {
+                    if (data.code == 0) {
+                        $.each(data.data, function (i, o) {
+                            var s = '', img = '', t = '';
+                            if (o.info) {
+                                s = '<p class="desc">' + o.info + '</p>';
+                            }
+                            if (o.picurl) {
+                                img = '<div class="cover">' +
+                                        '<img class="img js_img" src="' + o.picurl + '" /></div>';
+                            }
+                            if (o.title) {
+                                t = '<h2 class="title js_title">' + o.title + '</h2>';
+                            }
+                            list.append('<a class="list_item js_post" href="${base}/public/wx/cms/article/' + o.id + '">' + img +
+                                    '<div class="cont">' + t +
+                                    s + '</div></a>');
+
+                        });
+                        list.show();
+                    }
+                }
+            });
+        }
+    }
+    $(function () {
+        list();
+        $("div[type='index']").on("click", function () {
+            $("div[type='index']").removeClass("active");
+            $(this).addClass("active");
+            list();
+        });
+        $("#js_plugins_loading").hide();
+        $("#js_plugins").show();
+    });
+</script>
+</body>
+</html>
+
