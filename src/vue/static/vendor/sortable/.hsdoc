@@ -1,5 +1,0 @@
-title: "sortable"
-description: "Dialogs for the 21st century"
-source: "coffee/*.coffee"
-examples: "**/*.md"
-assets: "{js/*.js,css/*.css,docs/welcome/index.html}"

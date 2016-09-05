@@ -1,4 +1,0 @@
-# Ignore vim temp files
-.*.sw[a-z]
-*.un~
-Session.vim
