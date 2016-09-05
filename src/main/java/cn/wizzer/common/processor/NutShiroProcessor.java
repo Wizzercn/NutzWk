@@ -22,7 +22,7 @@ public class NutShiroProcessor extends AbstractProcessor {
 
     protected String loginUri = "/private/login";
 
-    protected String noAuthUri = "/private/login";
+    protected String noAuthUri = "/private/login/noPermission";
 
     protected boolean match;
 

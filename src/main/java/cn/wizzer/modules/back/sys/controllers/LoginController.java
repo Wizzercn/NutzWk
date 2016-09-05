@@ -58,14 +58,20 @@ public class LoginController {
     @Ok("re")
     @Filters
     public String login() {
-        //Subject subject = SecurityUtils.getSubject();
-        //if (subject.isAuthenticated()) {
-        //    return "redirect:/private/home";
-        //} else {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()) {
+            return "redirect:/private/home";
+        } else {
             return "beetl:/private/sys/login.html";
-        //}
+        }
     }
 
+    @At("/noPermission")
+    @Ok("beetl:/private/noPermission.html")
+    @Filters
+    public void noPermission() {
+
+    }
     /**
      * 切换样式，对登陆用户有效
      *
