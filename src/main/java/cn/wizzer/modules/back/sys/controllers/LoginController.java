@@ -66,6 +66,12 @@ public class LoginController {
         //}
     }
 
+    @At("/noPermission")
+    @Ok("beetl:/private/noPermission.html")
+    @Filters
+    public void noPermission() {
+
+    }
     /**
      * 切换样式，对登陆用户有效
      *
