@@ -67,7 +67,7 @@ public class LoginController {
     }
 
     @At("/noPermission")
-    @Ok("beetl:/private/noPermission.html")
+    @Ok("beetl:/private/sys/noPermission.html")
     @Filters
     public void noPermission() {
 
