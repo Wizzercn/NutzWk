@@ -1,17 +1,16 @@
 package cn.wizzer.common.services.wx;
 
-import cn.wizzer.modules.back.wx.models.Wx_tpl_id;
-import cn.wizzer.modules.back.wx.models.Wx_tpl_log;
-import cn.wizzer.modules.back.wx.models.Wx_user;
-import cn.wizzer.modules.back.wx.services.WxConfigService;
-import cn.wizzer.modules.back.wx.services.WxTplIdService;
-import cn.wizzer.modules.back.wx.services.WxTplLogService;
-import cn.wizzer.modules.back.wx.services.WxUserService;
+import cn.wizzer.modules.models.wx.Wx_tpl_id;
+import cn.wizzer.modules.models.wx.Wx_tpl_log;
+import cn.wizzer.modules.models.wx.Wx_user;
+import cn.wizzer.modules.services.wx.WxConfigService;
+import cn.wizzer.modules.services.wx.WxTplIdService;
+import cn.wizzer.modules.services.wx.WxTplLogService;
+import cn.wizzer.modules.services.wx.WxUserService;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
-import org.nutz.lang.util.NutMap;
 import org.nutz.weixin.bean.WxTemplateData;
 import org.nutz.weixin.spi.WxApi2;
 import org.nutz.weixin.spi.WxResp;

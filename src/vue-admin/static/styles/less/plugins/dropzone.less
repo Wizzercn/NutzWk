@@ -1,0 +1,55 @@
+.dropzone {
+  background: white;
+  border-width: 1px;
+  border-color: @brand-dark;
+  border-style: dashed;
+  .rounded(@border-radius-base);
+  display: table;
+  width: 100%;
+  padding: 0;
+  .dz-message {
+    display: table-cell;
+    vertical-align: middle;
+  }
+  .dz-preview.dz-file-preview .dz-image {
+    .rounded(@border-radius-base);
+    background: @brand-default;
+  }
+  .dz-preview .dz-error-message {
+    background: @brand-danger;
+    .rounded(@border-radius-base);
+  }
+  .dz-preview .dz-error-message:after {
+    border-bottom-color: @brand-danger;
+  }
+  .dz-preview .dz-progress {
+    border-color: @border-color;
+  }
+  .dz-preview .dz-progress .dz-upload {
+    background: @brand-primary;
+  }
+  .dz-preview .dz-details .dz-filename:hover span {
+    border-color: @border-color;
+  }
+  .dz-preview .dz-details .dz-filename span,
+  .dz-preview .dz-details .dz-size span {
+    .rounded(@border-radius-base);
+  }
+}
+
+.my-drop-zone {
+  border: dashed 1px @text-color;
+  .rounded(@border-radius-base);
+  min-height: 20px;
+  padding: 19px;
+  margin-bottom: @gutter;
+  background-color: white;
+}
+
+.nv-file-over {
+  border-color: @brand-danger;
+}
+
+.another-file-over-class {
+  border-color: @brand-success;
+}

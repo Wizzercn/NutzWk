@@ -1,0 +1,25 @@
+{
+  "name": "jquery-countTo",
+  "version": "1.0.0",
+  "homepage": "https://github.com/mhuggins/jquery-countTo",
+  "authors": [
+    "Matt Huggins <matt.huggins@gmail.com>"
+  ],
+  "description": "A jQuery plugin that will count up (or down) to a target number at a specified speed.",
+  "main": "jquery.countTo.js",
+  "keywords": [
+    "jQuery",
+    "counter",
+    "count",
+    "increment",
+    "decrement"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

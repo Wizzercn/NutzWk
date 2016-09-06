@@ -1,0 +1,186 @@
+/*
+ * FuelUX Pill
+ *
+ */
+
+.pillbox {
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid@input-border;
+  .rounded(@border-radius-base);
+  line-height: 1;
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    display: inline-block;
+    margin: 2px;
+    padding: 2px 4px;
+    vertical-align: middle;
+    cursor: pointer;
+    .rounded(@border-radius-base);
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  li:after {
+    font-family: 'themify';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    position: relative;
+    content: " \e646";
+    font-size: 10px;
+    margin-left: 10px
+  }
+  li.status-important {
+    background-color: @brand-danger;
+  }
+  li.status-warning {
+    background-color: @brand-warning;
+  }
+  li.status-success {
+    background-color: @brand-success;
+  }
+  li.status-info {
+    background-color: @brand-info;
+  }
+}
+/*
+ * FuelUX Spinner
+ *
+ */
+
+.spinner {
+  .btn.disabled {
+    cursor: not-allowed;
+  }
+}
+/*
+ * FuelUX Wizard
+ *
+ */
+
+.wizard {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid @wizard-color;
+  background-color: @wizard-color;
+  border-radius: @border-radius-base @border-radius-base 0;
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    li {
+      position: relative;
+      margin: 0;
+      padding-left: 30px;
+      padding-right: 15px;
+      height: 40px;
+      line-height: 40px;
+      background: transparent;
+      cursor: default;
+      float: left;
+      white-space: nowrap;
+      &:before {
+        position: absolute;
+        top: 0;
+        right: -14px;
+        z-index: 9;
+        display: block;
+        border: 21px solid transparent;
+        border-right: 0;
+        border-left: 14px solid @wizard-color;
+        content: "";
+      }
+      &:after {
+        position: absolute;
+        top: -1px;
+        right: -15px;
+        z-index: 1;
+        display: block;
+        border: 22px solid transparent;
+        border-right: 0;
+        border-left: 15px solid darken(@wizard-color, 8%);
+        content: "";
+      }
+      .badge {
+        margin-right: 8px;
+      }
+    }
+    li.complete {
+      background: @wizard-color;
+      .badge {
+        background: @brand-success;
+      }
+      &:before {
+        border-left: 14px solid @wizard-color;
+      }
+    }
+    li.complete:hover {
+      background: #e7eff8;
+      cursor: pointer;
+      &:before {
+        border-left: 14px solid #e7eff8;
+      }
+    }
+    li.active {
+      background: #fff;
+      color: @brand-primary;
+      &:before {
+        border-left: 14px solid #fff;
+        right: -14px;
+      }
+      &:after {
+        right: -15px;
+      }
+    }
+    li:first-child {
+      padding-left: 20px;
+      border-radius: @border-radius-base 0 0;
+    }
+  }
+  ul.previous-disabled {
+    li.complete {
+      cursor: default;
+    }
+    li.complete:hover {
+      background: #f3f4f5;
+      &:before {
+        border-left-color: #f3f4f5;
+      }
+    }
+  }
+  .actions {
+    position: absolute;
+    right: 0;
+    float: right;
+    padding-top: 6px;
+    padding-right: @padding-base-horizontal;
+    padding-left: @padding-base-horizontal;
+    vertical-align: middle;
+    line-height: 37px;
+    a {
+      margin-right: 8px;
+      font-size: 12px;
+      line-height: 45px;
+    }
+  }
+}
+
+.step-content {
+  padding: @padding-base-horizontal;
+  .step-pane {
+    display: none;
+  }
+  .active {
+    display: block;
+    .btn-group {
+      .active {
+        display: inline-block;
+      }
+    }
+  }
+}

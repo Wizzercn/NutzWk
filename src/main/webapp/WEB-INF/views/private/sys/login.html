@@ -11,13 +11,18 @@
     <link rel="stylesheet" href="${base!}/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="${base!}/assets/css/font-awesome.css">
     <link rel="stylesheet" href="${base!}/assets/css/themify-icons.css">
+    <link rel="stylesheet" href="${base!}/assets/css/animate.min.css">
     <link rel="stylesheet" href="${base!}/assets/css/skins/palette.css">
     <link rel="stylesheet" href="${base!}/assets/css/fonts/font.css">
     <link rel="stylesheet" href="${base!}/assets/css/main.css">
-
-    <script src="${base!}/node/node_modules/vue/dist/vue.min.js"></script>
-    <script src="${base!}/node/node_modules/vue-form/vue-form.min.js"></script>
-    <script src="${base!}/vue/js/private/sys/login.js"></script>
+    <!--[if lt IE 9]>
+    <script src="${base!}/assets/js/html5shiv.js"></script>
+    <script src="${base!}/assets/js/respond.min.js"></script>
+    <script src="${base!}/assets/js/json2.js"></script>
+    <![endif]-->
+    <script src="${base!}/assets/plugins/modernizr.js"></script>
+    <script src="${base!}/assets/plugins/jquery-1.11.1.min.js"></script>
+    <script src="${base!}/assets/js/jquery.pjax.js"></script>
 
 <body>
 <div class="overlay"></div>
@@ -30,44 +35,45 @@
                         ${AppName!}
                     </header>
                     <!-- START Language list-->
-                    <ul class="nav navbar-nav navbar-right">
-                        <li class="language-dropdown dropdown hidden-xs">
-                            <a href="javascript:;" data-toggle="dropdown" id="language">
-                                <%if(lang==null||lang=="zh_CN"){%>
-                                <img src="${base!}/assets/img/flags/cn.png" class="flag">
-                                <span class="language">中文</span>
-                                <%}else{%>
-                                <img src="${base!}/assets/img/flags/us.png" class="flag">
-                                <span class="language">English</span>
-                                <%}%>
-                                <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
-                                    <li>
-                                        <a href="?lang=en_US">
-                                            <img src="${base!}/assets/img/flags/us.png" class="flag">
-                                            <span class="language">English</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="?lang=zh_CN">
-                                            <img src="${base!}/assets/img/flags/cn.png" class="flag">
-                                            <span class="language">中文</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                        </li>
-                    </ul>
+                    <!--<ul class="nav navbar-nav navbar-right">-->
+                    <!--<li class="language-dropdown dropdown hidden-xs">-->
+                    <!--<a href="javascript:;" data-toggle="dropdown" id="language">-->
+                    <!--<%if(lang==null||lang=="zh_CN"){%>-->
+                    <!--<img src="${base!}/assets/img/flags/cn.png" class="flag">-->
+                    <!--<span class="language">中文</span>-->
+                    <!--<%}else{%>-->
+                    <!--<img src="${base!}/assets/img/flags/us.png" class="flag">-->
+                    <!--<span class="language">English</span>-->
+                    <!--<%}%>-->
+                    <!--<ul class="dropdown-menu dropdown-menu-right animated fadeInUp">-->
+                    <!--<li>-->
+                    <!--<a href="?lang=en_US">-->
+                    <!--<img src="${base!}/assets/img/flags/us.png" class="flag">-->
+                    <!--<span class="language">English</span>-->
+                    <!--</a>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                    <!--<a href="?lang=zh_CN">-->
+                    <!--<img src="${base!}/assets/img/flags/cn.png" class="flag">-->
+                    <!--<span class="language">中文</span>-->
+                    <!--</a>-->
+                    <!--</li>-->
+                    <!--</ul>-->
+                    <!--</li>-->
+                    <!--</ul>-->
                     <!-- END Language list    -->
                     <div class="p15">
-                        <form v-form name="myform" @submit.prevent="onSubmit">
+                        <form id="loginForm" action="${base!}/private/login/doLogin" data-parsley-validate="" novalidate=""
+                              role="form"
+                              method="post">
                             <input type="hidden" id="captcha" name="captcha">
+
                             <div class="form-group">
-                                <input v-model="model.username" v-form-ctrl required name="username" class="form-control input-lg mb25"
-                                       placeholder="${msg['login.username']}"/>
+                                <input type="text" id="username" name="username" value="superadmin" required
+                                       class="form-control input-lg mb25"
+                                       placeholder="${msg['login.username']}">
                             </div>
                             <div class="form-group">
-                                <input v-model="model.password" v-form-ctrl required name="password" class="form-control input-lg mb25"
-                                       placeholder="${msg['login.password']}"/>
-
                                 <input type="password" id="password" name="password" value="1" required
                                        class="form-control input-lg mb25"
                                        placeholder="${msg['login.password']}">
@@ -123,5 +129,58 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#year").html(new Date().getFullYear());
+        $("#loginForm").ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                form.find("button:submit").text("${msg['login.load']}");
+                form.find("button:submit").attr("disabled", "disabled");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    $("#tip").hide();
+                    form.find("button:submit").text("${msg['login.success']}");
+                    window.location.href = "${base!}/private/home";
+                } else if (data.code == 2) {
+                    $("#verifycode").val("");
+                    $("#dialogVeryCode img").attr("src", '${base!}/private/login/captcha?_=' + new Date().getTime());
+                    return $("#dialogVeryCode").modal({show: true, backdrop: 'static', keyboard: false});
+                } else {
+                    $("#captcha").val("");
+                    $('#captcha_img').attr('src', '${base!}/private/login/captcha?_=' + new Date().getTime());
+                    $("#tip").html(data.msg);
+                    $("#tip").fadeIn();
+                    form.find("button:submit").text("${msg['login.submit']}");
+                    form.find("button:submit").removeAttr("disabled")
+                }
+            }
+        });
+        $("#ok").on("click", function () {
+            if ($("#verifycode").val() == "") {
+                $("#f2").submit();
+                return false;
+            }
+            $("#captcha").val($("#verifycode").val());
+            $("#loginForm").submit();
+        });
+        $("#dialogVeryCode").on("keypress", function (event) {
+            var key = event.which;
+            if (key == 13) {
+                $("#ok").trigger("click");
+            }
+        });
+        $("#username").focus();
+    });
+</script>
+
+
+<script src="${base!}/assets/bootstrap/js/bootstrap.js"></script>
+<script src="${base!}/assets/plugins/jquery.form.js"></script>
+<script src="${base!}/assets/plugins/parsley.min.js"></script>
+<script src="${base!}/assets/plugins/parsley.zh_cn.js"></script>
+
 </body>
 </html>

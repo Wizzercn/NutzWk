@@ -1,0 +1,33 @@
+/*
+ *  Various $Charts plugin styles
+ *
+ */
+/* Morris Tooltip */
+
+.morris-hover {
+  position: absolute;
+  z-index: @zindex-chart-tooltip;
+}
+
+.morris-hover.morris-default-style {
+  .rounded(@border-radius-base);
+  padding: 6px;
+  color: #ffffff;
+  font-size: 12px;
+  text-align: center;
+  border-color: @brand-primary;
+  background-color: @brand-primary;
+  a {
+    color: @brand-primary;
+  }
+}
+
+.morris-hover.morris-default-style .morris-hover-row-label {
+  font-weight: bold;
+  margin: 0.25em 0
+}
+
+.morris-hover.morris-default-style .morris-hover-point {
+  white-space: nowrap;
+  margin: 0.1em 0
+}

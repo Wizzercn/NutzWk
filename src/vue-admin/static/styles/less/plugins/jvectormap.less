@@ -1,0 +1,50 @@
+/*
+ *
+ * JVectorMap
+ *
+ */
+
+.jvectormap-label {
+  position: absolute;
+  .rounded(@border-radius-base);
+  color: white;
+  font-family: inherit;
+  font-size: smaller;
+  padding: 3px;
+  font-size: inherit;
+}
+
+.jvectormap-zoomin,
+.jvectormap-zoomout {
+  position: absolute;
+  left: @size-base;
+  color: white;
+  cursor: pointer;
+  font-size: @font-size-base;
+  text-align: center;
+  padding: 5px 7px;
+  .rounded(@border-radius-base);
+  width: auto;
+  height: auto;
+  line-height: 1
+}
+
+.jvectormap-zoomin {
+  top: @size-base;
+}
+
+.jvectormap-zoomout {
+  top: 50px;
+}
+
+.jvectormap-label {
+  border: solid 1px @brand-primary;
+  background-color: @brand-primary;
+  color: white;
+}
+
+.jvectormap-zoomin,
+.jvectormap-zoomout {
+  background-color: @brand-primary;
+  color: white;
+}

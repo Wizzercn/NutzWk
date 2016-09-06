@@ -1,0 +1,129 @@
+/*
+ * $Timeline styles
+ *
+ */
+
+.timeline {
+  position: relative;
+  display: table;
+  width: 100%;
+  margin-bottom: -@padding-base-horizontal;
+  &:before {
+    position: absolute;
+    top: 35px;
+    bottom: 15px;
+    left: 50%;
+    width: 4px;
+    background: @brand-primary;
+    content: '';
+    margin-left: -2px;
+    .rounded(@border-radius-base);
+  }
+  .panel {
+    position: relative;
+  }
+}
+
+.timeline-heading {
+  display: table;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  padding: 5px 15px;
+  min-width: 80px;
+  .rounded(@border-radius-base);
+  background: @brand-primary;
+  color: #fff;
+  text-align: center;
+  position: relative;
+  clear: both;
+}
+
+.timeline-panel {
+  width: 50%;
+  position: relative;
+  clear: both;
+  &:before {
+    position: absolute;
+    top: 10px;
+    margin: 2px 0 0 -6px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid @content-background;
+    .rounded(50%);
+    background: @brand-primary;
+    content: "";
+  }
+  > .panel {
+    border: 1px solid @timeline-border-color;
+    .box-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
+  }
+  > .panel:after {
+    position: absolute;
+    top: 11px;
+    right: 100%;
+    width: 0;
+    height: 0;
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent #fff transparent transparent;
+    content: " ";
+    pointer-events: none;
+  }
+  > .panel:before {
+    position: absolute;
+    top: 10px;
+    right: 100%;
+    width: 0;
+    height: 0;
+    border-width: 7px;
+    border-style: solid;
+    border-color: transparent @timeline-border-color transparent transparent;
+    content: " ";
+    pointer-events: none;
+  }
+}
+
+.timeline-panel:nth-child(even) {
+  float: right;
+  padding-left: 20px;
+  padding-right: 0;
+  &:before {
+    left: 0;
+  }
+  .timeline-date {
+    left: -190px;
+    position: absolute;
+    text-align: right;
+    margin-top: 6px;
+    width: 150px;
+  }
+}
+
+.timeline-panel:nth-child(odd) {
+  float: left;
+  padding-right: 20px;
+  padding-left: 0;
+  &:before {
+    right: 0;
+    margin: 2px -6px 0 0;
+  }
+  .timeline-content {
+    float: left;
+    padding: 0 20px 0 0;
+  }
+  .timeline-date {
+    right: -190px;
+    text-align: left;
+    position: absolute;
+    margin-top: 8px;
+    width: 150px;
+  }
+  .panel:after {
+    left: 100%;
+    border-color: transparent transparent transparent #ffffff;
+  }
+  .panel:before {
+    left: 100%;
+    border-color: transparent transparent transparent @timeline-border-color;
+  }
+}

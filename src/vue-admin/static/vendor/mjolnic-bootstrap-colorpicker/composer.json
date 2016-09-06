@@ -1,0 +1,15 @@
+{
+    "name": "mjolnic/bootstrap-colorpicker",
+    "description": "A nice and customizable colorpicker plugin for Twitter Bootstrap 2 and 3",
+    "license": "Licensed under the Apache License, Version 2.0",
+    "authors": [
+        {
+            "name": "Javier Aguilar",
+            "email": "mjolnic@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+
+    }
+}

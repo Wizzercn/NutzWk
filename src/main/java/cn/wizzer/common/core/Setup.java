@@ -1,7 +1,7 @@
 package cn.wizzer.common.core;
 
 import cn.wizzer.common.base.Globals;
-import cn.wizzer.modules.back.sys.models.*;
+import cn.wizzer.modules.models.sys.*;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;

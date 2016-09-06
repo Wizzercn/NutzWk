@@ -1,0 +1,126 @@
+/*
+ *  $Chat Box
+ *
+ */
+
+.chat-box {
+  .panel {
+    margin-bottom: 5px;
+  }
+  .chatbox-user {
+    margin-bottom: 35px;
+    .chat-time {
+      display: block;
+      text-align: right;
+    }
+  }
+  .chatbox-user.right .chat-avatar img {
+    float: right;
+  }
+  .chat-avatar {
+    width: 48px;
+    display: block;
+  }
+  .message {
+    position: relative;
+    margin-left: 60px;
+  }
+  .message:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    border-right: 6px solid #fff;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    top: 10px;
+    margin-left: -6px;
+  }
+  .panel-body {
+    display: table;
+    width: 100%;
+  }
+  .chatbox-user.right .message {
+    position: relative;
+    margin-left: 0;
+    margin-right: 60px;
+    .panel {
+      background-color: @brand-success;
+      color: #fff;
+    }
+    .chat-time {
+      text-align: left;
+    }
+  }
+  .chatbox-user.right .message:before {
+    left: 100%;
+    margin-right: 6px;
+    margin-left: 0;
+    border-right: 6px solid transparent;
+    border-left: 6px solid @brand-success;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+  }
+  p {
+    margin: 0;
+  }
+  @-webkit-keyframes opacity {
+    0% {
+      .opacity(1);
+    }
+    100% {
+      .opacity(.4);
+    }
+  }
+  @-moz-keyframes opacity {
+    0% {
+      .opacity(1);
+    }
+    100% {
+      .opacity(.4);
+    }
+  }
+  .typing {
+    display: block;
+    &:before, &:after {
+      content: '';
+    }
+    > div,
+    &:before,
+    &:after {
+      border-radius: 50%;
+      width: 8px;
+      height: 8px;
+      background-color: fade(#000, 50%);
+      display: inline-block;
+      margin-right: 5px;
+    }
+    > div,
+    &:before,
+    &:after {
+      -webkit-animation-name: opacity;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-iteration-count: infinite;
+      -moz-animation-name: opacity;
+      -moz-animation-duration: 1s;
+      -moz-animation-iteration-count: infinite;
+    }
+    > div {
+      -webkit-animation-delay: 100ms;
+      -moz-animation-delay: 100ms;
+    }
+    &:after {
+      -webkit-animation-delay: 300ms;
+      -moz-animation-delay: 300ms;
+    }
+  }
+}
+
+.mail-list {
+  margin: 0 -1px;
+  .list-group-item {
+    .rounded(0);
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}

@@ -1,11 +1,10 @@
 package cn.wizzer.common.base;
 
-import cn.wizzer.modules.back.sys.models.Sys_config;
-import cn.wizzer.modules.back.sys.models.Sys_route;
+import cn.wizzer.modules.models.sys.Sys_config;
+import cn.wizzer.modules.models.sys.Sys_route;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

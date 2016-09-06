@@ -1,0 +1,466 @@
+/*
+ * $Content Layout
+ *
+ * Core theme layout styles
+ */
+/* main app area */
+
+.main-content {
+  background: @content-background;
+  .content-wrap {
+    .wrapper {
+      .clearfix();
+      padding: @gutter;
+      .row {
+        margin-right: (@gutter / -2);
+        margin-left: (@gutter / -2);
+      }
+      .make-grid-columns();
+    }
+  }
+  .header .nav > li:active > a,
+  .header .nav > li.active > a {
+    background-color: @content-background;
+    color: @text-color;
+  }
+}
+
+section.main-content > footer,
+section.main-content > .fffix > footer,
+aside > footer,
+aside > .fffix > footer {
+  height: @footer-height;
+  padding: 0 @padding-base-horizontal;
+  .footer-text, p {
+    .header-vertical-align(19px);
+    margin-right: @size-base;
+    margin-left: @size-base;
+  }
+  .navbar-btn {
+    .header-vertical-align(34px);
+  }
+  .btn-lg.navbar-btn {
+    .header-vertical-align(45px);
+  }
+  .btn-sm.navbar-btn {
+    .header-vertical-align(30px);
+  }
+  .btn-xs.navbar-btn {
+    .header-vertical-align(22px);
+  }
+}
+
+.layout .header {
+  z-index: @zindex-content-header;
+}
+
+.equal-blocks {
+  display: table;
+  width: 100%;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+.equal-blocks > .block {
+  height: 100%;
+  position: relative;
+  display: table-cell;
+  vertical-align: middle;
+  float: none;
+}
+
+@media screen and (min-width: @screen-sm-min) {
+  .container,
+  .app {
+    position: relative;
+    height: 100%;
+  }
+  section .wrapper,
+  aside .wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  section.main-content > footer,
+  section.main-content > .fffix > footer,
+  aside > footer,
+  aside > .fffix > footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+  .app > .layout {
+    height: 100%;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    overflow: hidden;
+  }
+  .app > .layout > section,
+  .app > .layout > aside {
+    height: 100%;
+    position: relative;
+    display: table-cell;
+    vertical-align: top;
+    float: none;
+  }
+  .app .header-fixed + .layout {
+    padding-top: @header-height;
+  }
+  .content-wrap {
+    position: relative;
+    height: 100%;
+  }
+  .opera .content-wrap {
+    //position: static;
+    //height: auto;
+  }
+  .header + .content-wrap .wrapper {
+    top: @header-height
+  }
+  .slimscroll {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+}
+
+@media (max-width: @screen-xs-max) {
+  .app .layout {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+  .app .header-fixed + .layout {
+    padding-top: (@header-height * 2);
+  }
+  .main-content {
+    overflow: hidden;
+  }
+  .main-content .header {
+    padding: 0 @size-base;
+  }
+  .main-content .header > ul > li {
+    display: block;
+    float: left;
+  }
+  .main-content .header.header-fixed + .content-wrap {
+    padding-top: (@header-height + @size-base)
+  }
+  .main-content .header.header-fixed + .content-wrap.no-padding {
+    padding-top: @header-height
+  }
+}
+/* Chat panel */
+
+.chat-sidebar .user {
+  position: relative;
+  i {
+    position: absolute;
+    right: 0;
+    top: 10px;
+  }
+}
+
+@media screen and (min-width: @screen-sm-min) {
+  .app aside.chat-sidebar {
+    width: 300px;
+    display: none;
+    .wrapper {
+      -webkit-animation-duration: 500ms;
+      -moz-animation-duration: 500ms;
+      animation-duration: 500ms;
+    }
+  }
+  .app.move-right .chat-sidebar {
+    display: table-cell;
+    .slimScrollDiv, .slimscroll {
+      height: 100%!important;
+    }
+  }
+}
+
+.chat-user {
+  display: block;
+  clear: both;
+  position: relative;
+  cursor: pointer;
+  margin: 5px;
+  padding: 10px;
+  .rounded(@border-radius-base);
+  &:hover {
+    background-color: fade(#000, 5%)
+  }
+  p {
+    margin: 0;
+  }
+  .user-avatar {
+    float: left;
+    margin-right: 10px;
+    position: relative;
+    img {
+      width: 35px;
+    }
+    .status {
+      position: absolute;
+      right: 0;
+      top: 0;
+      border: 2px solid #fff;
+      .rounded(50%);
+      width: 12px;
+      height: 12px;
+      margin-top: -2px
+    }
+  }
+  .user-details {
+    overflow: hidden;
+    .user-department {
+      display: block;
+      color: lighten(@text-color, 10%)
+    }
+    .status {
+      height: 14px;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      margin-top: -7px;
+    }
+  }
+}
+/* Loading wrapper */
+
+.loader {
+  position: relative;
+  top: 50%;
+  .translate(0, -50%);
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.loader:after {
+  border: solid 1px transparent;
+  border-top-color: @brand-primary;
+  border-left-color: @brand-primary;
+}
+
+.ti-caret:before {
+  font-size: 10px!important;
+}
+
+.cover {
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  .opacity(.95);
+  z-index: 0
+}
+/* Layout options */
+
+.fixed-scroll {
+  &.boxed > .header {
+    width: inherit;
+  }
+  > .header {
+    position: fixed;
+  }
+  .wrapper {
+    position: relative;
+  }
+  .main-navigation {
+    position: relative;
+    overflow: visible;
+  }
+}
+
+.boxed {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 768px) {
+  .boxed {
+    width: 750px;
+  }
+}
+
+@media (min-width: 992px) {
+  .boxed {
+    width: 970px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .boxed {
+    width: 1170px;
+  }
+}
+
+.app.horizontal-layout > .header .brand {
+  background-color: transparent;
+}
+
+@media (max-width: @screen-xs-max) {
+  .app.horizontal-layout {
+    > .header .navbar-collapse .dropdown-menu {
+      position: relative!important;
+      top: auto;
+      .box-shadow(none);
+    }
+    .nav li {
+      .clearfix();
+    }
+  }
+}
+
+.language-dropdown {
+  .flag {
+    width: 16px;
+    margin-top: -2px;
+  }
+}
+
+.right-menu {
+  .header-search {
+    .search-container {
+      left: auto;
+      right: 40px;
+      .search {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: @border-radius-base;
+        border-bottom-left-radius: @border-radius-base;
+      }
+    }
+    &.open {
+      > a {
+        border-top-right-radius: @border-radius-base;
+        border-bottom-right-radius: @border-radius-base;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: @screen-sm-min) {
+  .right-menu {
+    .brand {
+      float: right;
+      margin-left: 0;
+      margin-right: -15px;
+    }
+  }
+}
+
+.right-menu.small-menu {
+  .header {
+    //padding-right: 0;
+  }
+  .brand {
+    float: right;
+  }
+  .main-navigation > ul > li .sub-menu {
+    border-left: 1px solid @border-color!important;
+    border-right: 0!important;
+  }
+}
+
+@media screen and (min-width: @screen-sm-min) {
+  .right-menu.small-menu {
+    .main-navigation > ul > li > .sub-menu {
+      left: auto!important;
+      right: 100%!important;
+    }
+  }
+  .right-menu .header .navbar-nav.navbar-right:last-child {
+    margin-right: 0;
+    margin-left: -15px;
+  }
+}
+
+[data-animation] {
+  visibility: hidden;
+}
+
+.animated {
+  visibility: visible!important;
+}
+
+.visible {
+  visibility: visible;
+}
+
+.arrow {
+  position: absolute;
+  height: 0;
+  width: 0;
+}
+
+.arrow:after {
+  border-width: 10px;
+  content: "";
+  border-color: rgba(0, 0, 0, 0);
+  border-style: solid;
+  display: block;
+}
+
+.arrow.left:after {
+  border-left-color: #fff;
+  border-right-width: 0;
+  content: " ";
+}
+
+.arrow.left,
+.arrow.right {
+  top: 50%;
+  margin-top: -10px;
+}
+
+.arrow.left {
+  left: 0;
+}
+
+.arrow.right:after {
+  border-right-color: #fff;
+  border-left-width: 0;
+  content: " ";
+}
+
+.arrow.right {
+  right: 10px;
+}
+
+.fffix {
+  position: relative;
+  display: block;
+  height: 100%;
+  width: 100%;
+}

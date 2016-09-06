@@ -1,0 +1,271 @@
+/*
+ * $Sidebar layout
+ *
+ * Core theme layout styles
+ */
+/* main sidebar */
+
+.sidebar {
+  width: @sidebar-width;
+  .nav-title {
+    font-size: 11px;
+    padding: 25px @padding-base-horizontal 0;
+  }
+  > footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+}
+/* Menu links */
+
+.main-navigation {
+  ul {
+    > li > a {
+      display: block;
+      padding: 10px 15px;
+      text-align: left;
+      width: 100%;
+    }
+    > li i {
+      padding-right: 10px;
+      min-width: 25px;
+      text-align: center;
+      font-size: 11px
+    }
+  }
+  .nav > li > a:hover,
+  .nav > li > a:focus,
+  .nav .open > a,
+  .nav .open > a:hover,
+  .nav .open > a:focus {
+    border-color: transparent;
+    background-color: transparent;
+  }
+}
+
+.main-navigation {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+/* Disable background highlighting on touch devices */
+
+.touch {
+  li:hover, li:focus, a:hover, a:focus, {
+    background-color: transparent!important;
+  }
+}
+/* collapsible menu */
+
+.app .sidebar {
+  ul > li {
+    position: relative;
+    display: block;
+    .clearfix();
+    a {
+      position: relative;
+    }
+    &.open {
+      > .dropdown-menu {
+        display: block;
+      }
+      > a {
+        .toggle-accordion:before {
+          content: "\e64b";
+        }
+      }
+    }
+    > ul {
+      position: relative;
+      display: none;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      .transition(background-color 400ms ease);
+    }
+  }
+  .nav > li {
+    > .sub-menu > li > a {
+      padding: 8px 15px 8px 44px!important;
+      + .sub-menu > li > a {
+        padding: 8px 15px 8px 60px!important;
+        + .sub-menu > li > a {
+          padding: 8px 15px 8px 80px!important;
+          + .sub-menu > li > a {
+            padding: 8px 15px 8px 100px!important;
+          }
+        }
+      }
+    }
+  }
+  li {
+    a {
+      .toggle-accordion {
+        float: right;
+        padding: 0;
+        font-size: 8px;
+        line-height: 20px;
+        min-width: 25px!important;
+      }
+      .toggle-accordion:before {
+        font-family: "themify";
+        font-style: normal;
+        font-weight: normal;
+        content: "\e649";
+      }
+    }
+  }
+}
+
+@media screen and (min-width: @screen-sm-min) {
+  .app.small-menu {
+    /* Uncomment this if you want the layout to be scrollable with small menu
+        &.boxed > .header {
+            width: inherit;
+        }
+        > .header {
+            position: fixed;
+        }
+        .wrapper {
+            position: relative;
+        }
+        .main-navigation {
+            position: relative;
+            overflow: visible;
+        }*/
+
+    .brand {
+      width: @sidebar-small-menu-width;
+    }
+    .navbar-brand {
+      width: 100%;
+      text-align: center;
+      span {
+        display: none;
+        visibility: hidden;
+      }
+      i {
+        margin: 0;
+      }
+    }
+  }
+  .slimScrollDiv {
+    overflow: visible!important;
+  }
+  .app.small-menu .sidebar {
+    width: @sidebar-small-menu-width;
+    .nav-title {
+      text-align: center;
+    }
+    .main-navigation {
+      overflow: visible;
+      > ul > li.open > .sub-menu {
+        display: none!important;
+      }
+      > ul > li {
+        position: relative;
+        text-align: center;
+        > a {
+          padding: 15px;
+        }
+        > a > span {
+          display: none;
+          visibility: hidden;
+        }
+        i {
+          display: block;
+          padding: 0;
+          min-width: 100%;
+        }
+        &:hover > .sub-menu {
+          display: block!important;
+        }
+      }
+      .nav > li > a >.toggle-accordion {
+        display: none;
+      }
+    }
+    .main-navigation .nav > li > .sub-menu {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      border: 1px solid @border-color;
+      border-left: 0;
+      background: #fff;
+      z-index: 1000;
+      display: none!important;
+      padding: 0;
+      list-style: none;
+      min-width: 180px;
+      > li.active, > li > a:hover {
+        background-color: lighten(@brand-default, 2%)
+      }
+      > li > a {
+        margin: 0;
+        padding: 3px 20px!important;
+        width: 100%;
+        font-size: 13px;
+        color: @text-color;
+        text-align: left;
+        + .sub-menu > li > a {
+          padding: 8px 15px 8px 30px!important;
+          + .sub-menu > li > a {
+            padding: 8px 15px 8px 44px!important;
+            + .sub-menu > li > a {
+              padding: 8px 15px 8px 50px!important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+/* Sidebar sizes */
+
+@media screen and (min-width: @screen-sm-min) {
+  .sidebar-300 {
+    width: 300px
+  }
+  .sidebar-250 {
+    width: 250px
+  }
+  .sidebar-400 {
+    width: 400px
+  }
+}
+
+@media (max-width: @screen-xs-max) {
+  .main-navigation {
+    position: relative;
+  }
+  .app aside.offscreen-right {
+    .content-wrap {
+      position: relative;
+      height: 100%;
+    }
+    .wrapper {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+  }
+  .sidebar-300,
+  .sidebar-250,
+  .sidebar-400 {
+    width: 100%
+  }
+}
+
+.sidebar-variant(@sidebar-skin-background,
+@sidebar-skin-color,
+@sidebar-skin-hover,
+@sidebar-skin-hover-open);

@@ -1,0 +1,13 @@
+{
+  "name": "superbox",
+  "homepage": "https://github.com/toddmotto/superbox",
+  "_release": "5e13bd88c1",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "5e13bd88c1a81d6f744119be947d86fb8609aece"
+  },
+  "_source": "git://github.com/toddmotto/superbox.git",
+  "_target": "master",
+  "_originalSource": "git://github.com/toddmotto/superbox.git"
+}

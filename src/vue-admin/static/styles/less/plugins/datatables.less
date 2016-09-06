@@ -1,0 +1,61 @@
+/*
+*   Data tables
+*
+*/
+
+.sorting:after,
+.sorting_asc:after,
+.sorting_desc:after,
+.sorting_asc_disabled:after,
+.sorting_desc_disabled:after {
+  font-family: FontAwesome;
+  float: right;
+  color: #ddd;
+}
+
+.sorting:after {
+  content: "\f0dc";
+}
+
+.sorting_asc:after,
+.sorting_asc_disabled:after {
+  content: "\f0de";
+  color: @text-color;
+}
+
+.sorting_desc:after,
+.sorting_desc_disabled:after {
+  content: "\f0dd";
+  color: @text-color;
+}
+
+table.dataTable.no-footer {
+  border-bottom-color: @border-color;
+}
+
+table.dataTable,
+.editable-datatable,
+table.dataTable .form-control {
+  width: 100%!important
+}
+
+.datatable-top,
+table.dataTable {
+  margin-bottom: @size-base
+}
+
+.datatable-top,
+.datatable-bottom {
+  display: table;
+  width: 100%;
+}
+
+.datatable-bottom .pagination {
+  margin: 0;
+}
+
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting {
+  background-image: none;
+}

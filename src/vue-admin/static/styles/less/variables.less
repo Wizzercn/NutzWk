@@ -1,0 +1,241 @@
+@size-base: @gutter;
+
+@grid-columns:              12;
+
+@font-family-monospace:   Monaco, Menlo, Consolas, "Courier New", monospace;
+@font-family-icon:        FontAwesome;
+
+@line-height-base:        1.5;
+
+@font-size-large:         @font-size-base * 1.38; // ~18px
+@font-size-small:         @font-size-base * 0.92; // ~12px
+@font-size-mini:          @font-size-base * 0.77; // ~10px
+
+@line-height-computed:    floor((@font-size-base * @line-height-base));
+
+@padding-base-vertical:     6.5px;
+@padding-base-horizontal:   15px;
+
+@padding-large-vertical:    10px;
+@padding-large-horizontal:  16px;
+
+@padding-small-vertical:    5px;
+@padding-small-horizontal:  10px;
+
+@padding-xs-vertical:       1px;
+@padding-xs-horizontal:     5px;
+
+@line-height-large:         1.33;
+@line-height-small:         1.5;
+
+// Tables
+@table-cell-padding:             6px;
+@table-condensed-cell-padding:   5px;
+
+@table-bg:                       transparent; // overall background-color
+@table-bg-accent:                #fafafc; // for striping
+@table-bg-hover:                 darken(@table-bg-accent, 5%);
+@table-bg-active:                @table-bg-hover;
+
+@table-border-color:             @border-color; // table and cell border
+
+// Buttons
+@btn-default-color:              @text-color;
+@btn-default-bg:                 @brand-default;
+@btn-default-border:             darken(@brand-default, 6%);
+
+@btn-primary-color:              #fff;
+@btn-primary-bg:                 @brand-primary;
+@btn-primary-border:             @btn-primary-bg;
+
+@btn-success-color:              #fff;
+@btn-success-bg:                 @brand-success;
+@btn-success-border:             @btn-success-bg;
+
+@btn-warning-color:              #fff;
+@btn-warning-bg:                 @brand-warning;
+@btn-warning-border:             @btn-warning-bg;
+
+@btn-danger-color:               #fff;
+@btn-danger-bg:                  @brand-danger;
+@btn-danger-border:              @btn-danger-bg;
+
+@btn-info-color:                 #fff;
+@btn-info-bg:                    @brand-info;
+@btn-info-border:                @btn-info-bg;
+
+@btn-dark-color:                 #fff;
+@btn-dark-bg:                    @brand-dark;
+@btn-dark-border:                @btn-dark-bg;
+
+@btn-white-color:                @text-color;
+@btn-white-bg:                   @brand-white;
+@btn-white-border:               @border-color;
+
+@btn-link-disabled-color:        darken(#fff, 50%);;
+
+// Forms
+@input-color-placeholder:        lighten(@text-color, 25%);
+@input-border:                   @border-color;
+@input-border-radius:            @border-radius-base;
+@input-border-focus:             lighten(@border-color, 2%);
+@input-focus-bg:                 lighten(@brand-default, 2%);
+@input-group-addon-bg:           @brand-default;
+@input-group-addon-border-color: @input-border;
+
+// Dropdowns
+@dropdown-border:                darken(@border-color, 2%);
+@dropdown-divider-bg:            darken(@dropdown-border, 5%);
+
+@dropdown-link-active-bg:        @dropdown-border;
+
+@dropdown-link-color:            @text-color;
+@dropdown-link-hover-color:      #fff;
+@dropdown-link-hover-bg:         @dropdown-link-active-bg;
+
+// Navbar
+@navbar-inverse-color:           #ffffff;
+@navbar-inverse-bg:              @brand-dark;
+@navbar-inverse-border:          @brand-dark;
+
+// Pagination
+@pagination-border:              @border-color;
+@pagination-hover-bg:            lighten(@border-color, 5%);
+@pagination-active-bg:           @brand-primary;
+@pagination-active-border:       @pagination-active-bg;
+@pagination-active-color:        #fff;
+
+// Breadcrumbs
+@breadcrumb-bg:                  @brand-white;
+@breadcrumb-separator:           '\f105';
+
+// Bootstrap Tooltip
+@tooltip-color:                  @brand-dark;
+@tooltip-radius:                 @border-radius-base;
+
+// Code
+@code-color:                     @text-color;
+
+//Popover
+@popover-header:                 @brand-default;
+@popover-border-color:           @border-color;
+
+// FuelUX
+@radio-tick:                     '\f111';
+@radio-tick-fontfamily:          @font-family-icon;
+@check-tick:                     '\f00c';
+@checkbox-tick-fontfamily:       @radio-tick-fontfamily;
+@wizard-color:                   @brand-default;
+
+// Timeline
+@timeline-border-color:          #C4D1DF;
+@timeline-shade-color:           #D4DBE7;
+
+// Panels
+@panel-bg:                       #fff;
+@panel-inner-border:             lighten(@border-color, 3%);
+@panel-border-radius:            @border-radius-base;
+@panel-footer-bg:                #fcfcfc;
+
+@panel-default-text:             @text-color;
+@panel-default-border:           darken(@brand-default, 4%);
+@panel-default-heading-bg:       @brand-default;
+
+@panel-primary-text:             #fff;
+@panel-primary-border:           @brand-primary;
+@panel-primary-heading-bg:       @brand-primary;
+
+@panel-success-text:             @brand-white;
+@panel-success-border:           @brand-success;
+@panel-success-heading-bg:       @brand-success;
+
+@panel-warning-text:             @brand-white;
+@panel-warning-border:           @brand-warning;
+@panel-warning-heading-bg:       @brand-warning;
+
+@panel-danger-text:              @brand-white;
+@panel-danger-border:            @brand-danger;
+@panel-danger-heading-bg:        @brand-danger;
+
+@panel-info-text:                @brand-white;
+@panel-info-border:              @brand-info;
+@panel-info-heading-bg:          @brand-info;
+
+// Alerts
+@alert-padding:                  @padding-base-horizontal;
+@alert-border-radius:            @border-radius-base;
+@alert-link-font-weight:         bold;
+
+@alert-success-bg:               lighten(@brand-success, 15%);
+@alert-success-text:             darken(@brand-success, 20%);
+@alert-success-border:           @brand-success;
+
+@alert-info-bg:                  lighten(@brand-info, 15%);
+@alert-info-text:                darken(@brand-info, 20%);
+@alert-info-border:              @brand-info;
+
+@alert-warning-bg:               lighten(@brand-warning, 15%);
+@alert-warning-text:             darken(@brand-warning, 20%);
+@alert-warning-border:           @brand-warning;
+
+@alert-danger-bg:                lighten(@brand-danger, 15%);
+@alert-danger-text:              darken(@brand-danger, 20%);
+@alert-danger-border:            @brand-danger;
+
+// Labels
+@label-default-bg:               @brand-default;
+@label-primary-bg:               @brand-primary;
+@label-success-bg:               @brand-success;
+@label-info-bg:                  @brand-info;
+@label-warning-bg:               @brand-warning;
+@label-danger-bg:                @brand-danger;
+@label-white-bg:                 @brand-white;
+
+@label-color:                    #fff;
+@label-link-hover-color:         #fff;
+
+// Progress bars
+@progress-bg:                    #D0DBEC;
+@progress-bar-color:             #fff;
+
+@progress-bar-bg:                @brand-primary;
+@progress-bar-success-bg:        @brand-success;
+@progress-bar-warning-bg:        @brand-warning;
+@progress-bar-danger-bg:         @brand-danger;
+@progress-bar-info-bg:           @brand-info;
+
+// Hr border color
+@hr-border:                      @border-color;
+
+// Z-index master list
+// -------------------------
+// Used for a bird's eye view of components dependent on the z-axis
+// Try to avoid customizing these :)
+
+@zindex-header:                  1000;
+@zindex-header-actions:          999;
+@zindex-content-header:          997;
+@zindex-chart-tooltip:           1000;
+@zindex-dropdown:                9999;
+@zindex-spinner:          	     999;
+
+// Media queries breakpoints
+// --------------------------------------------------
+
+// Extra small screen / phone
+@screen-xs-min:                 480px;
+
+// Small screen / tablet
+@screen-sm-min:                 768px;
+
+// Medium screen / desktop
+@screen-md-min:                 992px;
+
+// Large screen / wide desktop
+@screen-lg-min:                 1200px;
+
+// So media queries don't overlap when required, provide a maximum
+@screen-xs-max:                 (@screen-sm-min - 1);
+@screen-sm-max:                 (@screen-md-min - 1);
+@screen-md-max:                 (@screen-lg-min - 1);
+

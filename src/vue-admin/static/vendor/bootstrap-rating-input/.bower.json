@@ -1,0 +1,28 @@
+{
+  "name": "bootstrap-rating-input",
+  "main": "build/bootstrap-rating-input.min.js",
+  "version": "0.3.0",
+  "homepage": "https://github.com/javiertoledo/bootstrap-rating-input",
+  "authors": [
+    "Javier Toledo <javier@theagilemonkeys.com>"
+  ],
+  "description": "A Lightweight Bootstrap Rating Input",
+  "keywords": [
+    "bootstrap",
+    "rating"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "node_modules",
+    "bower_components"
+  ],
+  "_release": "0.3.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.3.0",
+    "commit": "b6c6dd197077e98b65652fce18605c56a34eb893"
+  },
+  "_source": "git://github.com/javiertoledo/bootstrap-rating-input.git",
+  "_target": "~0.3.0",
+  "_originalSource": "bootstrap-rating-input"
+}

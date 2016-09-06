@@ -1,0 +1,38 @@
+@import compass/css3
+@import sortable
+
++sortable
+
+table[data-sortable].sortable-theme-slick
+    color: #333
+    background: #fff
+    border: 1px solid #e0e0e0
+
+    thead th
+        +background-image(linear-gradient(#fff, #eee))
+        background-color: #f0f0f0
+        border-bottom: 1px solid #e0e0e0
+
+    tbody td
+        border-top: 1px solid #e0e0e0
+
+    tbody > tr:nth-child(odd) > td
+        background-color: #f9f9f9
+
+    th[data-sorted="true"]
+        +box-shadow(inset 1px 0 #bce8f1, inset -1px 0 #bce8f1)
+        color: #3a87ad
+        background: #d9edf7
+        border-bottom-color: #bce8f1
+
+        &:first-child
+            +box-shadow(inset -1px 0 #bce8f1)
+
+        &:last-child
+            +box-shadow(inset 1px 0 #bce8f1)
+
+        &[data-sorted-direction="descending"]:after
+            border-top-color: #3a87ad
+
+        &[data-sorted-direction="ascending"]:after
+            border-bottom-color: #3a87ad

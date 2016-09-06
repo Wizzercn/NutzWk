@@ -1,0 +1,52 @@
+/*
+ *  Bootstrap $Carousel
+ *
+ */
+
+.carousel-control {
+  color: @text-color;
+  text-shadow: none;
+  &.left, &.right {
+    background: transparent;
+    background-image: none;
+    //filter: progid: DXImageTransform.Microsoft.gradient(enabled=false);
+  }
+  .icon-prev,
+  .icon-next {
+    font-family: FontAwesome;
+  }
+  .icon-prev,
+  .glyphicon-chevron-left {
+    left: 50%;
+  }
+  span,
+  i {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+    display: inline-block;
+    margin-top: -10px;
+    margin-left: -10px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.carousel-indicators {
+  bottom: 5px;
+  li {
+    background-color: @brand-default;
+  }
+  .active {
+    background-color: @brand-success;
+  }
+}
+
+#quote-carousel {
+  width: 100%;
+  position: relative;
+  padding: 5px 60px;
+  .carousel-control:hover {
+    color: @text-color;
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "sortable",
+  "version": "0.6.0",
+  "description": "The simplest, most elegant way to sort a table.",
+  "author": "Adam Schwartz <adam.flynn.schwartz@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt-contrib-coffee": "~0.7.0",
+    "coffee-script": "~1.6.3",
+    "grunt-contrib-uglify": "~0.2.4",
+    "grunt-cli": "~0.1.9",
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-compass": "~0.5.0"
+  }
+}

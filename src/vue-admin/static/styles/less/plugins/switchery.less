@@ -1,0 +1,28 @@
+/*
+ *
+ * Switchery
+ * http://abpetkov.github.io/switchery/
+ *
+ */
+
+.switchery {
+  background-color: lighten(@brand-default, 3%)!important;
+  border: 1px solid @border-color;
+  .rounded(20px);
+  cursor: pointer;
+  display: inline-block;
+  height: 30px;
+  position: relative;
+  vertical-align: middle;
+  width: 50px;
+}
+
+.switchery > small {
+  background: #fff;
+  .rounded(100%);
+  .box-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+  height: 28px;
+  position: absolute;
+  top: 0;
+  width: 28px;
+}
