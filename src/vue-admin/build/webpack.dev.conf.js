@@ -9,9 +9,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin')
 Object.keys(baseWebpackConfig.entry).forEach(function (name) {
   baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(baseWebpackConfig.entry[name])
 })
-// var template = require('ejs!../index.html');
-// var data = {base: ''};
-// template(data);
+
 module.exports = merge(baseWebpackConfig, {
   module: {
     loaders: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap })
@@ -28,8 +26,8 @@ module.exports = merge(baseWebpackConfig, {
     new webpack.NoErrorsPlugin(),
     // https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      filename: 'index.ejs',
-      template: 'ejs!index.ejs',
+      filename: 'index.html',
+      template: 'index.html',
       inject: false
     })
   ]

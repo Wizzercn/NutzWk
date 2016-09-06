@@ -1,6 +1,7 @@
 var path = require('path')
 var express = require('express')
 var webpack = require('webpack')
+var ejs = require('ejs');
 var config = require('../config')
 var proxyMiddleware = require('http-proxy-middleware')
 var webpackConfig = process.env.NODE_ENV === 'testing'
@@ -51,7 +52,10 @@ app.use(devMiddleware)
 // enable hot-reload and state-preserving
 // compilation error display
 app.use(hotMiddleware)
-
+// 设置views路径和模板
+app.set('views', './');
+app.set('view engine', 'html');
+app.engine('html', ejs.renderFile);
 // serve pure static assets
 var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
 app.use(staticPath, express.static('./static'))

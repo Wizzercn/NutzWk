@@ -16,7 +16,12 @@ import Menus from './components/modules/wx/Menus'
 Vue.use(VueResource)
 Vue.use(VueRouter)
 
-const router = new VueRouter()
+const router = new VueRouter({
+  hashbang: true,
+  history: true,//为了路径和后台统一
+  saveScrollPosition: true,
+  transitionOnLoad: true
+})
 
 //路由map
 router.map({

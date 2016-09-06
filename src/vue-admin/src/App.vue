@@ -57,12 +57,12 @@
             text: '欢迎语',
             name: 'welcome',
             icon: 'fa-msg',
-            url: '/weixin/welcome'
+            url: '/wx/welcome'
           }, {
             text: '自定义菜单',
             name: 'menus',
             icon: 'fa-list',
-            url: '/weixin/menus'
+            url: '/wx/menus'
           }]
         }, {
           text: '系统管理',

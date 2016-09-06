@@ -40,7 +40,7 @@ module.exports = {
         loader: 'json'
       },
       {
-        test: /\.ejs$/,
+        test: /\.html$/,
         loader: 'ejs-loader?variable=data'
       },
       {
