@@ -1,0 +1,73 @@
+<header class="header navbar bg-white shadow">
+
+    <div class="pull-right offscreen-right btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" onclick="_selectOn()">确定</a>
+    </div>
+</header>
+<section class="content-wrap bg-white">
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border">
+            <table id="datatable_select" class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                <tr>
+                    <th>标题</th>
+                    <th>作者</th>
+            </table>
+        </div>
+    </div>
+</section>
+<script language="JavaScript">
+    var datatable_select;
+    function initdatatable_select() {
+        datatable_select = $('#datatable_select').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "ajax": {
+                "url": "${base}/platform/wx/msg/mass/newsData/${wxid!}",
+                "type": "post",
+                "data": function (d) {
+                }
+            },
+            "order": [[0, "desc"]],
+            "columns": [
+                {"data": "title", "bSortable": true},
+                {"data": "author", "bSortable": true}
+            ]
+        });
+        datatable_select.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+    }
+    function delContent(id){
+        $("li[data-id="+id+"]").remove();
+    }
+    function _selectOn() {
+        var chks = datatable_select.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            var str='';
+            $.each(chks, function (i, n) {
+                str+='<li class="dd-item dd3-item" data-id="'+ n.id+'">';
+                str+='<div class="dd-handle dd3-handle">Drag</div>';
+                str+='<div class="dd3-content">'+ n.title+'<i class="fa fa-close pull-right" onclick="delContent(\''+ n.id+'\')"></i> </div>';
+                str+='</li>';
+            });
+            $("#dialogSelect").modal("hide");
+            $("#nestable3 .dd-list").append(str);
+            $("#nestable3").nestable();
+        }else{
+            Toast.warning("请先选择内容！");
+        }
+    }
+    $(document).ready(function () {
+        initdatatable_select();
+    });
+
+</script>

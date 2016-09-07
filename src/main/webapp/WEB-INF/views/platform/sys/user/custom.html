@@ -1,0 +1,71 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h4 class="modal-title">${msg['index.custommenu']}</h4>
+</div>
+<div class="modal-body">
+    <div class="list-group" style="text-align: center;">
+        <table width="88%" id="menuTable">
+            <%
+            var firstMenus=@shiro.getPrincipalProperty('firstMenus');
+            var secondMenus=@shiro.getPrincipalProperty('secondMenus');
+            var customMenu=@shiro.getPrincipalProperty('customMenu');
+            %>
+            <%for(firstMenu in firstMenus){%>
+            <tr>
+                <td width="20%" align="left"><strong><%if(lang=="zh_CN"){%>${firstMenu.name}<%}else{%>${firstMenu.aliasName}<%}%></strong></td>
+                <td width="80%" align="left">
+
+                </td>
+            </tr>
+            <% if(!isEmpty(@secondMenus.get(firstMenu.path))){
+            for(secondMenu in @secondMenus.get(firstMenu.path)){
+            %>
+            <tr>
+                <td width="20%" align="left" style="padding-left: 20px;"><%if(lang=="zh_CN"){%>${secondMenu.name}<%}else{%>${secondMenu.aliasName}<%}%></td>
+                <td width="80%" align="left">
+                    <% if(!isEmpty(@secondMenus.get(secondMenu.path))){
+                    for(thMenu in @secondMenus.get(secondMenu.path)){ %>
+                    <input type="checkbox" value="${thMenu.id}" onclick="chk()" <%if(customMenu!=null&&@customMenu.indexOf(thMenu.id)>-1){%>checked<%}%>>
+                    <%if(lang=="zh_CN"){%>${thMenu.name}<%}else{%>${thMenu.aliasName}<%}%>
+                    <%}}%>
+                </td>
+            </tr>
+            <%}}%>
+            <%}%>
+        </table>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+    <button type="button" id="okCustom" class="btn btn-primary">确 认</button>
+</div>
+<script type="text/javascript">
+    function chk(){
+        var ids=[];
+        $("#menuTable").find("input[type=checkbox]").each(function(){
+            if($(this).prop("checked")){
+                ids.push($(this).val());
+            }
+        });
+        if(ids.length>5){
+            Toast.error("最多可选择5个菜单");
+            return ids;
+        }
+        return ids;
+    }
+    $(function () {
+        $("#okCustom").on("click",function(){
+            var ids =chk();
+            if (ids.length<6) {
+                $('#homeDetail').modal('hide');
+                $.post("${base}/platform/sys/user/customDo", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                }, "json");
+            }
+        });
+    });
+</script>
