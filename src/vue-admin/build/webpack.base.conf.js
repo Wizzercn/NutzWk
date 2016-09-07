@@ -2,6 +2,7 @@ var path = require('path')
 var config = require('../config')
 var utils = require('./utils')
 var projectRoot = path.resolve(__dirname, '../')
+
 module.exports = {
   entry: {
     app: './src/main.js'
@@ -38,10 +39,6 @@ module.exports = {
       {
         test: /\.json$/,
         loader: 'json'
-      },
-      {
-        test: /\.html$/,
-        loader: 'ejs-loader?variable=data'
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,

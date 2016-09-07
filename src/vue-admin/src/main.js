@@ -10,18 +10,13 @@ import User from './components/modules/sys/User'
 import Role from './components/modules/sys/Role'
 
 //微信管理
-import Welcome from './components/modules/wx/Welcome'
-import Menus from './components/modules/wx/Menus'
+import Welcome from './components/modules/weixin/Welcome'
+import Menus from './components/modules/weixin/Menus'
 
 Vue.use(VueResource)
 Vue.use(VueRouter)
 
-const router = new VueRouter({
-  hashbang: true,
-  history: true,//为了路径和后台统一
-  saveScrollPosition: true,
-  transitionOnLoad: true
-})
+const router = new VueRouter()
 
 //路由map
 router.map({
@@ -36,10 +31,10 @@ router.map({
         component: Role
     },
     //微信管理
-    '/wx/welcome': {
+    '/weixin/welcome': {
       component: Welcome
     },
-    '/wx/menus': {
+    '/weixin/menus': {
       component: Menus
     },
 })

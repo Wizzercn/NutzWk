@@ -50,19 +50,19 @@
       initMenus: function () {
         this.allMenus = [{
           text: '微信管理',
-          name: 'wx',
-          url: '/wx',
+          name: 'weixin',
+          url: '/weixin',
           icon: 'fa-wechat',
           submenus: [{
             text: '欢迎语',
             name: 'welcome',
             icon: 'fa-msg',
-            url: '/wx/welcome'
+            url: '/weixin/welcome'
           }, {
             text: '自定义菜单',
             name: 'menus',
             icon: 'fa-list',
-            url: '/wx/menus'
+            url: '/weixin/menus'
           }]
         }, {
           text: '系统管理',

@@ -30,7 +30,7 @@ NutzWk v4.x
 部署说明
 ======
 1、编译Vue前端：
-*   >cd src/vue
+*   >cd src/vue-admin
 *   >npm i
 *   >npm run build
 
@@ -41,3 +41,8 @@ NutzWk v4.x
 *   启动时自动建表
 *   用户名：superadmin  密码：1
 *   http://127.0.0.1/sysadmin
+
+开发工具
+======
+WebStorm : Node.js
+IntelliJ IDEA : Java
