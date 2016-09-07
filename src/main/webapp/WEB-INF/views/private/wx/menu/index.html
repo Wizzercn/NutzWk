@@ -31,9 +31,10 @@ layout("/layouts/private.html"){
         <div class="panel-heading no-b">
         </div>
         <div class="panel-body" style="padding-top: 30px;">
-            <% if(!isEmpty(firstMenus)){ %>
+            
             <div class="cf nestable-lists">
                 <div class="dd" id="nestable3">
+                    <% if(!isEmpty(firstMenus)){ %>
                     <ol class="dd-list">
                         <% for(firstMenu in firstMenus){ %>
                         <li class="dd-item dd3-item" data-id="${firstMenu.id}">
@@ -65,10 +66,10 @@ layout("/layouts/private.html"){
                         <% } %>
 
                     </ol>
+                    <%}else{%>
+                    <ol class="dd-list" style="padding-top: 10px;">未配置</ol>
+                    <%}%>
                 </div>
-                <%}else{%>
-                <div style="padding-top: 20px;padding-bottom: 50px;">暂未配置</div>
-                <%}%>
             </div>
 
         </div>
