@@ -26,8 +26,8 @@ module.exports = merge(baseWebpackConfig, {
     new webpack.NoErrorsPlugin(),
     // https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      title:'aaaaaaaa',
-      base:'bbbb',
+      title:'NutzWk',// 自定义变量,开发值
+      base:'',// 自定义变量,开发值
       filename: 'index.html',
       template: 'index.html',
       inject: true

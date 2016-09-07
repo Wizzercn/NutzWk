@@ -51,34 +51,34 @@
         this.allMenus = [{
           text: '微信管理',
           name: 'weixin',
-          url: '/weixin',
+          url: '/platform/wx',
           icon: 'fa-wechat',
           submenus: [{
             text: '欢迎语',
             name: 'welcome',
             icon: 'fa-msg',
-            url: '/weixin/welcome'
+            url: '/platform/wx/welcome'
           }, {
             text: '自定义菜单',
             name: 'menus',
             icon: 'fa-list',
-            url: '/weixin/menus'
+            url: '/platform/wx/menus'
           }]
         }, {
           text: '系统管理',
           name: 'sys',
-          url: '/sys',
+          url: '/platform/sys',
           icon: 'fa-cog',
           submenus: [{
             text: '用户管理',
             name: 'user',
             icon: 'fa-user',
-            url: '/sys/user'
+            url: '/platform/sys/user'
           }, {
             text: '角色管理',
             name: 'role',
             icon: 'fa-users',
-            url: '/sys/role'
+            url: '/platform/sys/role'
           }]
         }];
         this.currMenu = this.selectMenu(this.$route.path, this.allMenus);

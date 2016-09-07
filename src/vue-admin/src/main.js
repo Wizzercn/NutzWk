@@ -6,17 +6,20 @@ import VueResource from 'vue-resource'
 import Home from './components/modules/Home'
 
 //系统管理
-import User from './components/modules/sys/User'
-import Role from './components/modules/sys/Role'
+import User from './components/modules/platform/sys/User'
+import Role from './components/modules/platform/sys/Role'
 
 //微信管理
-import Welcome from './components/modules/weixin/Welcome'
-import Menus from './components/modules/weixin/Menus'
+import Welcome from './components/modules/platform/wx/Welcome'
+import Menus from './components/modules/platform/wx/Menus'
 
 Vue.use(VueResource)
 Vue.use(VueRouter)
 
-const router = new VueRouter()
+const router = new VueRouter({
+  history:true,
+  saveScrollPosition:true
+})
 
 //路由map
 router.map({
@@ -24,17 +27,17 @@ router.map({
         component: Home
     },
     //系统管理
-    '/sys/user': {
+    '/platform/sys/user': {
         component: User
     },
-    '/sys/role': {
+    '/platform/sys/role': {
         component: Role
     },
     //微信管理
-    '/weixin/welcome': {
+    '/platform/wx/welcome': {
       component: Welcome
     },
-    '/weixin/menus': {
+    '/platform/wx/menus': {
       component: Menus
     },
 })

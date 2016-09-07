@@ -40,6 +40,11 @@ module.exports = {
         test: /\.json$/,
         loader: 'json'
       },
+      // 删除 vue-html 否则自定义变量不能打印
+      // {
+      //   test: /\.html$/,
+      //   loader: 'vue-html'
+      // },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url',

@@ -43,6 +43,8 @@ var webpackConfig = merge(baseWebpackConfig, {
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
+      title:'${AppName!}',// 自定义变量,运行值,nutzwk变量
+      base:'${base!}',// 自定义变量,运行值,nutzwk变量
       filename: process.env.NODE_ENV === 'testing'
         ? 'index.html'
         : config.build.index,
