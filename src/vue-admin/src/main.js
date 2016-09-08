@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import App from './App'
+import Login from './Login'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
 
-import Home from './components/modules/Home'
+import Home from './components/modules/platform/sys/Home'
 
 //系统管理
+import MLogin from './components/modules/platform/sys/Login'
 import User from './components/modules/platform/sys/User'
 import Role from './components/modules/platform/sys/Role'
 
@@ -21,10 +23,14 @@ const router = new VueRouter({
   saveScrollPosition:true
 })
 
+router.beforeEach((res) => {
+  console.log(res)
+})
+
 //路由map
 router.map({
-    '/home': {
-        component: Home
+    '/platform/home': {
+      component: User
     },
     //系统管理
     '/platform/sys/user': {
@@ -42,9 +48,5 @@ router.map({
     },
 })
 
-//
-router.redirect({
-    '*': '/home'
-})
-
 router.start(App, '#app')
+

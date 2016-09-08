@@ -62,16 +62,10 @@ public class SysLoginController {
         if (subject.isAuthenticated()) {
             return "redirect:/platform/home";
         } else {
-            return "beetl:/platform/sys/login.html";
+            return "beetl:/platform/login.html";
         }
     }
 
-    @At("/noPermission")
-    @Ok("beetl:/platform/sys/noPermission.html")
-    @Filters
-    public void noPermission() {
-
-    }
     /**
      * 切换样式，对登陆用户有效
      *

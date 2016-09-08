@@ -35,32 +35,32 @@
                         ${AppName!}
                     </header>
                     <!-- START Language list-->
-                    <!--<ul class="nav navbar-nav navbar-right">-->
-                    <!--<li class="language-dropdown dropdown hidden-xs">-->
-                    <!--<a href="javascript:;" data-toggle="dropdown" id="language">-->
-                    <!--<%if(lang==null||lang=="zh_CN"){%>-->
-                    <!--<img src="${base!}/assets/img/flags/cn.png" class="flag">-->
-                    <!--<span class="language">中文</span>-->
-                    <!--<%}else{%>-->
-                    <!--<img src="${base!}/assets/img/flags/us.png" class="flag">-->
-                    <!--<span class="language">English</span>-->
-                    <!--<%}%>-->
-                    <!--<ul class="dropdown-menu dropdown-menu-right animated fadeInUp">-->
-                    <!--<li>-->
-                    <!--<a href="?lang=en_US">-->
-                    <!--<img src="${base!}/assets/img/flags/us.png" class="flag">-->
-                    <!--<span class="language">English</span>-->
-                    <!--</a>-->
-                    <!--</li>-->
-                    <!--<li>-->
-                    <!--<a href="?lang=zh_CN">-->
-                    <!--<img src="${base!}/assets/img/flags/cn.png" class="flag">-->
-                    <!--<span class="language">中文</span>-->
-                    <!--</a>-->
-                    <!--</li>-->
-                    <!--</ul>-->
-                    <!--</li>-->
-                    <!--</ul>-->
+                    <ul class="nav navbar-nav navbar-right">
+                    <li class="language-dropdown dropdown hidden-xs">
+                    <a href="javascript:;" data-toggle="dropdown" id="language">
+                    <%if(lang==null||lang=="zh_CN"){%>
+                    <img src="${base!}/assets/img/flags/cn.png" class="flag">
+                    <span class="language">中文</span>
+                    <%}else{%>
+                    <img src="${base!}/assets/img/flags/us.png" class="flag">
+                    <span class="language">English</span>
+                    <%}%>
+                    <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
+                    <li>
+                    <a href="?lang=en_US">
+                    <img src="${base!}/assets/img/flags/us.png" class="flag">
+                    <span class="language">English</span>
+                    </a>
+                    </li>
+                    <li>
+                    <a href="?lang=zh_CN">
+                    <img src="${base!}/assets/img/flags/cn.png" class="flag">
+                    <span class="language">中文</span>
+                    </a>
+                    </li>
+                    </ul>
+                    </li>
+                    </ul>
                     <!-- END Language list    -->
                     <div class="p15">
                         <form id="loginForm" action="${base!}/platform/login/doLogin" data-parsley-validate="" novalidate=""
