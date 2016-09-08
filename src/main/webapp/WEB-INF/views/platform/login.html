@@ -8,22 +8,17 @@
     <meta name="description" content="${AppName!}">
     <meta name="keywords" content="nutz,nutzwk">
     <title>${AppName!}</title>
-    <link rel="stylesheet" href="${base!}/assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${base!}/assets/css/font-awesome.css">
-    <link rel="stylesheet" href="${base!}/assets/css/themify-icons.css">
-    <link rel="stylesheet" href="${base!}/assets/css/animate.min.css">
-    <link rel="stylesheet" href="${base!}/assets/css/skins/palette.css">
-    <link rel="stylesheet" href="${base!}/assets/css/fonts/font.css">
-    <link rel="stylesheet" href="${base!}/assets/css/main.css">
+    <link rel="stylesheet" href="${base!}/static/vendor/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${base!}/static/styles/font-awesome.css">
+    <link rel="stylesheet" href="${base!}/static/styles/themify-icons.css">
+    <link rel="stylesheet" href="${base!}/static/styles/animate.css">
+    <link rel="stylesheet" href="${base!}/static/styles/sublime.css">
     <!--[if lt IE 9]>
-    <script src="${base!}/assets/js/html5shiv.js"></script>
-    <script src="${base!}/assets/js/respond.min.js"></script>
-    <script src="${base!}/assets/js/json2.js"></script>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <script src="${base!}/assets/plugins/modernizr.js"></script>
-    <script src="${base!}/assets/plugins/jquery-1.11.1.min.js"></script>
-    <script src="${base!}/assets/js/jquery.pjax.js"></script>
-
+    <script src="${base!}/static/vendor/modernizr.js"></script>
+    <script src=${base!}/static/vendor/jquery/dist/jquery.js></script>
 <body>
 <div class="overlay"></div>
 <div class="center-wrapper">
@@ -35,9 +30,9 @@
                         ${AppName!}
                     </header>
                     <!-- START Language list-->
-                    <ul class="nav navbar-nav navbar-right">
+                    <ul class="nav navbar-nav navbar-right" style="padding-right: 20px;">
                     <li class="language-dropdown dropdown hidden-xs">
-                    <a href="javascript:;" data-toggle="dropdown" id="language">
+                    <a href="javascript:;" data-toggle="dropdown" id="language" >
                     <%if(lang==null||lang=="zh_CN"){%>
                     <img src="${base!}/assets/img/flags/cn.png" class="flag">
                     <span class="language">中文</span>
@@ -176,8 +171,8 @@
     });
 </script>
 
+<script src=${base!}/static/vendor/bootstrap/dist/js/bootstrap.js></script>
 
-<script src="${base!}/assets/bootstrap/js/bootstrap.js"></script>
 <script src="${base!}/assets/plugins/jquery.form.js"></script>
 <script src="${base!}/assets/plugins/parsley.min.js"></script>
 <script src="${base!}/assets/plugins/parsley.zh_cn.js"></script>
