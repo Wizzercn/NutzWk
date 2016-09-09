@@ -1,49 +1,4 @@
 <template>
-  <div class="gallery-loader" style="background-color:transparent;">
-    <div class="loader"></div>
-  </div>
-  <div class="playground hidden-xs">
-    <div class="options">
-      <div class="pg-close ti-close"></div>
-      <div class="options-container color-options">
-        <h6>样式</h6>
-        <a onclick="sublimeApp.changeTheme('palette.css')" href="/static/styles/skins/palette.css"
-           class="css_orange cs_color cs_1 ">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </a>
-        <a onclick="sublimeApp.changeTheme('palette.2.css')" href="/static/styles/skins/palette.2.css"
-           class="css_orange cs_color cs_2 ">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </a>
-        <a onclick="sublimeApp.changeTheme('palette.3.css')" href="/static/styles/skins/palette.3.css"
-           class="css_orange cs_color cs_3 ">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </a>
-      </div>
-      <div class="options-container">
-        <h6>布局</h6>
-        <a class="pg-val toggle-sidebar toggle-active" href="javascript:;">
-          <img src="/static/images/panel/small.png" alt="">
-        </a>
-        <a class="pg-val toggle-scroll toggle-active" href="javascript:;">
-          <img src="/static/images/panel/scroll.png" alt="">
-        </a>
-        <a class="pg-val toggle-boxed toggle-active" href="javascript:;">
-          <img src="/static/images/panel/boxed.png" alt="">
-        </a>
-      </div>
-      <small class="pg-footer"><i class="ti-info-alt mr5"></i></small>
-    </div>
-  </div>
     <!-- top header -->
     <header class="header header-fixed navbar">
 
@@ -53,7 +8,7 @@
             <!-- /toggle offscreen menu -->
 
             <!-- logo -->
-            <a v-link="'/home'" class="navbar-brand">
+            <a v-link="'/platform/home'" class="navbar-brand">
                 <img src="/static/images/logo.png" alt="logo">
                 <span class="heading-font">NutzWk</span>
             </a>

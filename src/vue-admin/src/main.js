@@ -26,7 +26,7 @@ router.beforeEach((res) => {
 //路由map
 router.map({
     '/platform/home': {
-      component: SysHome
+        component: SysHome
     },
     //系统管理
     '/platform/sys/user': {
@@ -37,8 +37,12 @@ router.map({
     },
     //微信管理
     '/platform/wx/menu': {
-      component: WxMenu
+        component: WxMenu
     },
+})
+
+router.redirect({
+  '*': '/platform/home'
 })
 
 router.start(App, '#app')

@@ -1,6 +1,6 @@
 <template>
     <div class="hello">
-        <h1>{{ menu.title }}</h1>
+        <h1>{{ menu.title }} aaa</h1>
     </div>
 </template>
 
