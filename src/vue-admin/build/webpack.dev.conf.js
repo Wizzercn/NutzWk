@@ -27,6 +27,7 @@ module.exports = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       title:'NutzWk',// 自定义变量,开发值
       base:'',// 自定义变量,开发值
+      vue:'/vue',// 自定义变量,开发值
       filename: 'index.html',
       template: 'index.html',
       inject: true

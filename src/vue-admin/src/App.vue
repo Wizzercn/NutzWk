@@ -86,9 +86,10 @@
       //根据url切换菜单
       selectMenu: function (path, menus) {
         var tempMenu = {};
-
+        console.log(path)
         //父菜单判断
         $.each(menus, function (index, menu) {
+
           if (menu.url == path) {
             tempMenu = menu;
           }
@@ -108,8 +109,10 @@
       },
       //切换菜单
       switchMenu: function (menu) {
+        $(".gallery-loader").fadeIn();
         this.currMenu = menu;
         this.$router.go(menu.submenus ? menu.submenus[0].url : menu.url);
+        $(".gallery-loader").fadeOut();
       }
     },
     created: function () {
@@ -120,6 +123,7 @@
       //初始化sublime前端框架
       window.sublimeApp = SublimeApp();
       window.sublimeApp.init();
+      $(".gallery-loader").fadeOut();
     }
   }
 </script>

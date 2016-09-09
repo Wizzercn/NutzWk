@@ -3,18 +3,7 @@
       <aside class="sidebar offscreen-left">
         <!-- main navigation -->
         <nav class="main-navigation" data-height="auto" data-size="6px" data-distance="0" data-rail-visible="true" data-wheel-step="10">
-          <p class="nav-title">菜单</p>
-
           <ul class="nav">
-            <!-- dashboard -->
-            <li class="active" v-if="currMenu.submenus==null">
-              <a v-link="currMenu.url">
-                <i class="fa" :class="currMenu.icon"></i>
-                <span>首页</span>
-              </a>
-            </li>
-            <!-- /dashboard -->
-
             <!-- ui -->
             <li :class="open" v-if="currMenu.submenus!=null">
               <a href="javascript:;">

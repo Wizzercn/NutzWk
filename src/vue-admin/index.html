@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.base %>/static/styles/themify-icons.css">
     <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.base %>/static/styles/animate.css">
     <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.base %>/static/styles/sublime.css">
+    <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.base %>/static/styles/panel.css">
+    <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.base %>/static/styles/skins/palette.css" id="skin">
     <!-- endbuild -->
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -29,6 +31,9 @@
 
     <!-- load modernizer -->
     <script src="<%= htmlWebpackPlugin.options.base %>/static/vendor/modernizr.js"></script>
+    <script>
+      var base="<%= htmlWebpackPlugin.options.vue %>";
+    </script>
 </head>
 
 <body>

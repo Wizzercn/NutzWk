@@ -2,7 +2,7 @@
   "name": "vue-admin",
   "version": "0.0.1",
   "description": "loyalove vue admin!",
-  "author": "loyalove <598733638@qq.com>",
+  "author": "loyalove <598733638@qq.com>,wizzer <wizzer@qq.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",

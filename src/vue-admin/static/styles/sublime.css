@@ -411,7 +411,7 @@ h6,
 }
 .header .brand {
   height: 50px;
-  width: 200px;
+  width: 180px;
   float: left;
 }
 .header .brand a {
@@ -704,7 +704,7 @@ h6,
  */
 /* main sidebar */
 .sidebar {
-  width: 200px;
+  width: 180px;
 }
 .sidebar .nav-title {
   font-size: 11px;
