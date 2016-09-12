@@ -27,10 +27,10 @@
 
         <ul id="topnav" class="nav navbar-nav hidden-xs">
 
-            <li v-for="menu in allMenus">
+            <li v-for="menu in firstMenus">
                 <a href="javascript:;" @click="switchMenu(menu)">
                     <i class="fa" :class="menu.icon"></i>
-                    <span>{{menu.text}}</span>
+                    <span>{{menu.name}}</span>
                 </a>
             </li>
 
@@ -40,7 +40,6 @@
             <!--通知位置-->
             <li class="language-dropdown dropdown hidden-xs">
                 <a href="javascript:;" data-toggle="dropdown" id="language">
-                    <img src="/static/images/avatar.jpg"  class="flag">
                     <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
                         <li>
                             <a href="?lang=en_US">
@@ -97,7 +96,7 @@
 
             }
         },
-        props: ['currUser','allMenus'],
+        props: ['currUser','firstMenus'],
         methods: {
             switchMenu: function(menu) {
                 this.$emit('switch-menu', menu);

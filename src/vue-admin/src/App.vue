@@ -45,7 +45,7 @@
         <small class="pg-footer"><i class="ti-info-alt mr5"></i></small>
       </div>
     </div>
-    <navbar :curr-user="currUser" :all-menus="allMenus" @switch-menu="switchMenu"></navbar>
+    <navbar :curr-user="currUser" :first-menus="firstMenus" @switch-menu="switchMenu"></navbar>
 
     <section class="layout">
       <sidebar :curr-menu="currMenu" :sub-menu="subMenu"></sidebar>
@@ -82,68 +82,39 @@
     },
     data: function () {
       return {
-        allMenus: [],
+        firstMenus: [],
+        secondMenus: {},
+        pathMenus:{},
         currMenu: {},
         subMenu: {},
         currUser: {
-          username: 'superadmin',
-          avatar: 'static/images/avatar.jpg'
+          username: ''
         }
       }
     },
     methods: {
       initMenus: function () {
-        this.allMenus = [{
-          text: '微信管理',
-          name: 'weixin',
-          url: '/platform/wx',
-          icon: 'fa-wechat',
-          submenus: [{
-            text: '自定义菜单',
-            name: 'menus',
-            icon: 'fa-list',
-            url: '/platform/wx/menu'
-          }]
-        }, {
-          text: '系统管理',
-          name: 'sys',
-          url: '/platform/sys',
-          icon: 'fa-cog',
-          submenus: [{
-            text: '用户管理',
-            name: 'user',
-            icon: 'fa-user',
-            url: '/platform/sys/user'
-          }, {
-            text: '角色管理',
-            name: 'role',
-            icon: 'fa-users',
-            url: '/platform/sys/role'
-          }]
-        }];
-        this.currMenu = this.selectMenu(this.$route.path, this.allMenus);
+        this.$http.get(base+'/platform/login/userinfo').then(({data}) => {
+          var d=JSON.parse(data);
+          if(d.code==0){
+            this.currUser.username=d.data.loginname
+            this.firstMenus=d.data.firstMenus
+            this.secondMenus=d.data.secondMenus
+            this.pathMenus=d.data.pathMenus
+            //this.currMenu = this.selectMenu(this.$route.path, this.secondMenus, this.pathMenus);
+          }else {
+            toastr.error(d.msg)
+          }
+        })
       },
       //根据url切换菜单
-      selectMenu: function (path, menus) {
+      selectMenu: function (path, secondMenus,pathMenus) {
         var tempMenu = {};
         console.log(path)
+        var treeid=pathMenus[path];
         //父菜单判断
-        $.each(menus, function (index, menu) {
-
-          if (menu.url == path) {
+        $.each(secondMenus[treeid], function (index, menu) {
             tempMenu = menu;
-          }
-
-          //子菜单判断
-          var submenus = menu.submenus;
-          if (path.lastIndexOf('/') > 0 && submenus != null) {
-            $.each(submenus, function (index, sub) {
-              if (sub.url == path) {
-                tempMenu = menu;
-              }
-            });
-          }
-
         });
         return tempMenu;
       },

@@ -108,6 +108,8 @@ public class Sys_user extends Model implements Serializable {
 
     protected Map<String, List<Sys_menu>> secondMenus;
 
+    protected Map<String, String> pathMenus;
+
     private List<Sys_menu> customMenus;
 
     public String getId() {
@@ -300,5 +302,13 @@ public class Sys_user extends Model implements Serializable {
 
     public void setCustomMenus(List<Sys_menu> customMenus) {
         this.customMenus = customMenus;
+    }
+
+    public Map<String, String> getPathMenus() {
+        return pathMenus;
+    }
+
+    public void setPathMenus(Map<String, String> pathMenus) {
+        this.pathMenus = pathMenus;
     }
 }

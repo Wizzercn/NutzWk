@@ -54,6 +54,17 @@ public class SysLoginController {
     @Inject
     SLogService sLogService;
 
+
+    @At(value = {"/", "/index"}, top = true)
+    @Ok(">>:/sysadmin")
+    public void index() {
+    }
+
+    @At(value = {"/platform/home"}, top = true)
+    @Ok("beetl:/platform/index.html")
+    public void home() {
+    }
+
     @At("")
     @Ok("re")
     @Filters
@@ -141,6 +152,7 @@ public class SysLoginController {
             //计算左侧菜单
             List<Sys_menu> firstMenus = new ArrayList<>();
             Map<String, List<Sys_menu>> secondMenus = new HashMap<>();
+            Map<String,String> pathMenus=new HashMap<>();
             for (Sys_menu menu : user.getMenus()) {
                 if (menu.getPath().length() > 4) {
                     List<Sys_menu> s = secondMenus.get(StringUtil.getParentId(menu.getPath()));
@@ -150,16 +162,20 @@ public class SysLoginController {
                 } else if (menu.getPath().length() == 4) {
                     firstMenus.add(menu);
                 }
+                if(!Strings.isBlank(menu.getHref())){
+                    pathMenus.put(menu.getHref(),menu.getPath());
+                }
             }
             user.setFirstMenus(firstMenus);
             user.setSecondMenus(secondMenus);
+            user.setPathMenus(pathMenus);
             if (!Strings.isBlank(user.getCustomMenu())) {
                 user.setCustomMenus(menuService.query(Cnd.where("id", "in", user.getCustomMenu().split(","))));
             }
             int count = user.getLoginCount() == null ? 0 : user.getLoginCount();
             sLogService.async(Sys_log.c("info", "用户登陆", "成功登录系统！", null));
             userService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", (int) (System.currentTimeMillis() / 1000))
-                            .add("loginCount", count + 1).add("isOnline", true)
+                    .add("loginCount", count + 1).add("isOnline", true)
                     , Cnd.where("id", "=", user.getId()));
             return Result.success("login.success");
         } catch (IncorrectCaptchaException e) {
@@ -182,6 +198,20 @@ public class SysLoginController {
             errCount++;
             SecurityUtils.getSubject().getSession(true).setAttribute("errCount", errCount);
             return Result.error(6, "login.error.system");
+        }
+    }
+
+    @At("/userinfo")
+    @Ok("json:{locked:'password|salt',ignoreNull:false}")
+    @Filters
+    @RequiresAuthentication
+    public Object userinfo() {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject != null) {
+            Sys_user user = (Sys_user) subject.getPrincipal();
+            return Result.success("获取用户信息成功", user);
+        } else {
+            return Result.error("获取用户信息失败");
         }
     }
 
