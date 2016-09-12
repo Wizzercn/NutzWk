@@ -94,8 +94,9 @@
     },
     methods: {
       initMenus: function () {
-        this.$http.get(base+'/platform/login/userinfo').then(({data}) => {
-          var d=JSON.parse(data);
+        this.$http.get(base+'/platform/login/userinfo').then((resp) => {
+          return resp.json()
+        }).then((d)=>{
           if(d.code==0){
             this.currUser.username=d.data.loginname
             this.firstMenus=d.data.firstMenus
