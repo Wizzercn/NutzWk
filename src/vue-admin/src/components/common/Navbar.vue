@@ -33,6 +33,7 @@
                     <span>{{menu.text}}</span>
                 </a>
             </li>
+
         </ul>
 
         <ul class="nav navbar-nav navbar-right">

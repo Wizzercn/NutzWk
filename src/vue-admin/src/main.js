@@ -19,8 +19,8 @@ const router = new VueRouter({
   saveScrollPosition:true
 })
 
-router.beforeEach((res) => {
-
+router.beforeEach((transition) => {
+  transition.next()
 })
 
 //路由map

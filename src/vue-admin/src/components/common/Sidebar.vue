@@ -29,7 +29,10 @@
 
 <script>
 export default {
-  props:['currMenu','subMenu']
+  props:['currMenu','subMenu'],
+  methods: {
+
+  }
 }
 </script>
 

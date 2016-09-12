@@ -99,15 +99,10 @@
           url: '/platform/wx',
           icon: 'fa-wechat',
           submenus: [{
-            text: '欢迎语',
-            name: 'welcome',
-            icon: 'fa-msg',
-            url: '/platform/wx/welcome'
-          }, {
             text: '自定义菜单',
             name: 'menus',
             icon: 'fa-list',
-            url: '/platform/wx/menus'
+            url: '/platform/wx/menu'
           }]
         }, {
           text: '系统管理',
@@ -154,10 +149,13 @@
       },
       //切换菜单
       switchMenu: function (menu) {
-        $(".gallery-loader").fadeIn();
+        console.log(menu.url)
+        //显示loading
+        $(".gallery-loader").fadeIn(200);
         this.currMenu = menu;
         this.$router.go(menu.submenus ? menu.submenus[0].url : menu.url);
-        $(".gallery-loader").fadeOut();
+        //隐藏loading
+        $(".gallery-loader").fadeOut(500);
       }
     },
     created: function () {
@@ -168,7 +166,8 @@
       //初始化sublime前端框架
       window.sublimeApp = SublimeApp();
       window.sublimeApp.init();
-      $(".gallery-loader").fadeOut();
+      //隐藏loading
+      $(".gallery-loader").fadeOut(500);
     }
   }
 </script>
