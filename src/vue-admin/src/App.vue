@@ -149,7 +149,6 @@
       },
       //切换菜单
       switchMenu: function (menu) {
-        console.log(menu.url)
         //显示loading
         $(".gallery-loader").fadeIn(200);
         this.currMenu = menu;

@@ -13,7 +13,7 @@
               </a>
               <ul class="sub-menu" style="display:block;">
                 <li v-for="sub in currMenu.submenus" :class="{'active' : sub.url==$route.path}">
-                  <a v-link="sub.url">
+                  <a @click="goMenu(sub)">
                     <span>{{sub.text}}</span>
                   </a>
                 </li>
@@ -31,7 +31,11 @@
 export default {
   props:['currMenu','subMenu'],
   methods: {
-
+      goMenu:function (menu) {
+        $(".gallery-loader").fadeIn(200);
+        this.$router.go(menu.url);
+        $(".gallery-loader").fadeOut(500);
+      }
   }
 }
 </script>
