@@ -399,6 +399,7 @@ var SublimeApp = function () {
     $(document).on("click", ".toggle-sidebar", function (e) {
       e.preventDefault();
       e.stopPropagation();
+      $(".logo-img").toggleClass("logo-hide");
       if (app.hasClass("small-menu")) {
         app.removeClass("small-menu");
         if (!$.browser.mobile && !checkBreakout() && $.fn.slimScroll) {

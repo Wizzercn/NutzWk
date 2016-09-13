@@ -9,8 +9,10 @@
 
             <!-- logo -->
             <a v-link="'/platform/home'" class="navbar-brand">
-                <img src="/static/images/logo.png" alt="logo">
-                <span class="heading-font">NutzWk</span>
+               <img src="/static/images/logo.png" alt="logo" class="logo-img logo-hide">
+               <span class="heading-font logo-img ">
+                 <img src="/static/images/logoa.png">
+               </span>
             </a>
             <!-- /logo -->
         </div>
