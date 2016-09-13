@@ -1,5 +1,5 @@
 <template>
-  <div class="app">
+  <div class="app" v-bind:class="currClass">
     <div class="gallery-loader" style="background-color:transparent;">
       <div class="loader"></div>
     </div>
@@ -9,21 +9,21 @@
         <div class="options-container color-options">
           <h6>样式</h6>
           <a onclick="sublimeApp.changeTheme('palette.css')" href="/static/styles/skins/palette.css"
-             class="css_orange cs_color cs_1 ">
+             class="css_orange cs_color cs_1 "  v-bind:class="[currUser.theme=='palette.css'? 'active' : '']">
             <div></div>
             <div></div>
             <div></div>
             <div></div>
           </a>
           <a onclick="sublimeApp.changeTheme('palette.2.css')" href="/static/styles/skins/palette.2.css"
-             class="css_orange cs_color cs_2 ">
+             class="css_orange cs_color cs_2 " v-bind:class="[currUser.theme=='palette.2.css'? 'active' : '']">
             <div></div>
             <div></div>
             <div></div>
             <div></div>
           </a>
           <a onclick="sublimeApp.changeTheme('palette.3.css')" href="/static/styles/skins/palette.3.css"
-             class="css_orange cs_color cs_3 ">
+             class="css_orange cs_color cs_3 " v-bind:class="[currUser.theme=='palette.3.css'? 'active' : '']">
             <div></div>
             <div></div>
             <div></div>
@@ -32,13 +32,13 @@
         </div>
         <div class="options-container">
           <h6>布局</h6>
-          <a class="pg-val toggle-sidebar toggle-active" href="javascript:;">
+          <a class="pg-val toggle-sidebar toggle-active" v-bind:class="[currClass['small-menu'] ? 'active' : '']" href="javascript:;">
             <img src="/static/images/panel/small.png" alt="">
           </a>
-          <a class="pg-val toggle-scroll toggle-active" href="javascript:;">
+          <a class="pg-val toggle-scroll toggle-active" v-bind:class="[currClass['fixed-scroll'] ? 'active' : '']" href="javascript:;">
             <img src="/static/images/panel/scroll.png" alt="">
           </a>
-          <a class="pg-val toggle-boxed toggle-active" href="javascript:;">
+          <a class="pg-val toggle-boxed toggle-active" v-bind:class="[currClass['boxed'] ? 'active' : '']" href="javascript:;">
             <img src="/static/images/panel/boxed.png" alt="">
           </a>
         </div>
@@ -87,8 +87,15 @@
         pathMenus:{},
         currMenu: {},
         subMenu: {},
+        currClass:{
+          'small-menu':false,
+          'fixed-scroll':false,
+          'boxed':false
+        },
         currUser: {
-          username: ''
+          username: '',
+          theme:'palette.css',
+          sidebar:false
         }
       }
     },
@@ -99,9 +106,17 @@
         }).then((d)=>{
           if(d.code==0){
             this.currUser.username=d.data.loginname
+            this.currUser.theme=d.data.loginTheme
+            this.currClass['small-menu']=d.data.loginSidebar
+            this.currUser.sidebar=d.data.loginSidebar
+            this.currClass['fixed-scroll']=d.data.loginScroll
+            this.currClass['boxed']=d.data.loginBoxed
             this.firstMenus=d.data.firstMenus
             this.secondMenus=d.data.secondMenus
             this.pathMenus=d.data.pathMenus
+            if(this.currUser.theme){
+               $("#skin").attr('href',base+'/static/styles/skins/'+this.currUser.theme)
+            }
             //this.currMenu = this.selectMenu(this.$route.path, this.secondMenus, this.pathMenus);
           }else {
             toastr.error(d.msg)

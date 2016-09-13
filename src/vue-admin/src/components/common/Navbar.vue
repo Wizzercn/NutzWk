@@ -9,8 +9,8 @@
 
             <!-- logo -->
             <a v-link="'/platform/home'" class="navbar-brand">
-               <img src="/static/images/logo.png" alt="logo" class="logo-img logo-hide">
-               <span class="heading-font logo-img ">
+               <img src="/static/images/logo.png" alt="logo" class="logo-img"  v-bind:class="[currUser.sidebar? '' : 'logo-hide']">
+               <span class="heading-font logo-img "   v-bind:class="[currUser.sidebar ? 'logo-hide' : '']">
                  <img src="/static/images/logoa.png">
                </span>
             </a>
@@ -95,7 +95,8 @@
     export default {
         data: function() {
             return {
-
+              logo:false,
+              logoa:true
             }
         },
         props: ['currUser','firstMenus'],

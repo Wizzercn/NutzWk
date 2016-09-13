@@ -1,6 +1,7 @@
 <template>
     <div class="hello">
-        <h1>{{ menu.title }} aaa</h1>
+      <h1>NutzWk 4.0</h1>
+      <h2>Vue + Nutz</h2>
     </div>
 </template>
 
