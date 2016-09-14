@@ -1,11 +1,13 @@
 <template>
     <div class="hello">
         <h1>用户管理</h1>
+        <div>
+        </div>
     </div>
 </template>
 
 <script>
-    export default {
+  export default {
         data: function() {
             return {
 

@@ -5,7 +5,8 @@ import VueResource from 'vue-resource'
 
 //系统管理
 import SysHome from './components/modules/platform/sys/SysHome'
-import SysUser from './components/modules/platform/sys/SysUser'
+import SysUser from './components/modules/platform/sys/user/SysUser'
+import SysUserAdd from './components/modules/platform/sys/user/SysUserAdd'
 import SysRole from './components/modules/platform/sys/SysRole'
 
 //微信管理
@@ -30,7 +31,10 @@ router.map({
     },
     //系统管理
     '/platform/sys/user': {
-        component: SysUser
+      component: SysUser
+    },
+    '/platform/sys/user/add': {
+      component: SysUserAdd
     },
     '/platform/sys/role': {
         component: SysRole

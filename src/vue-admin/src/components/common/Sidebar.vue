@@ -5,16 +5,30 @@
         <nav class="main-navigation" data-height="auto" data-size="6px" data-distance="0" data-rail-visible="true" data-wheel-step="10">
           <ul class="nav">
             <!-- ui -->
-            <li :class="open" v-if="currMenu.submenus!=null">
+            <li class="open">
               <a href="javascript:;">
                 <i class="toggle-accordion"></i>
-                <i class="fa" :class="currMenu.icon"></i>
-                <span>{{currMenu.text}}</span>
+                <i class="ti-heart"></i>
+                <span>常用菜单</span>
               </a>
               <ul class="sub-menu" style="display:block;">
-                <li v-for="sub in currMenu.submenus" :class="{'active' : sub.url==$route.path}">
-                  <a @click="goMenu(sub)">
-                    <span>{{sub.text}}</span>
+                <li v-for="cust in customMenus">
+                  <a @click="goMenu(cust)" style="cursor:pointer;">
+                    <span>{{cust.name}}</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li v-for="menu in currMenu" :class="{'open' : menu.path==getPerPath($route.path)}" v-if="currMenu!=null&&currMenu.length>0">
+              <a href="javascript:;">
+                <i class="toggle-accordion"></i>
+                <i class="fa" :class="menu.icon"></i>
+                <span>{{menu.name}}</span>
+              </a>
+              <ul class="sub-menu" :style="{'display' : menu.path==getPerPath($route.path)?'block':'none'}">
+                <li v-for="sub in menu[menu.path]" :class="{'active' : sub.path==getPath($route.path)}">
+                  <a @click="goMenu(sub)" style="cursor:pointer;">
+                    <span>{{sub.name}}</span>
                   </a>
                 </li>
               </ul>
@@ -29,13 +43,42 @@
 
 <script>
 export default {
-  props:['currMenu','subMenu'],
+  props:['currMenu','customMenus','pathMenus'],
   methods: {
       goMenu:function (menu) {
         $(".gallery-loader").fadeIn(200);
-        this.$router.go(menu.url);
+        this.$router.go(menu.href);
         $(".gallery-loader").fadeOut(500);
+      },
+      getPath:function (path) {
+        var p=this.pathMenus[path]
+        if(p){
+          return p
+        }else {
+          if(path&&path.lastIndexOf('/')>0){
+            var s=path.substring(0,path.lastIndexOf('/'))
+            return this.getPath(s)
+          }else{
+            return ''
+          }
+        }
+      },
+      getPerPath:function (path) {
+        var p=this.pathMenus[path]
+        if(p&&p.length>=8){
+          return p.substring(0,8)
+        }else {
+          if(path&&path.lastIndexOf('/')>0){
+            var s=path.substring(0,path.lastIndexOf('/'))
+            return this.getPath(s)
+          }else{
+            return ''
+          }
+        }
       }
+  },
+  ready: function () {
+
   }
 }
 </script>

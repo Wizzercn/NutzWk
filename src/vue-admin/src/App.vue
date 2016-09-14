@@ -48,7 +48,7 @@
     <navbar :curr-user="currUser" :first-menus="firstMenus" @switch-menu="switchMenu"></navbar>
 
     <section class="layout">
-      <sidebar :curr-menu="currMenu" :sub-menu="subMenu"></sidebar>
+      <sidebar :curr-menu="currMenu" :custom-menus="customMenus" :path-menus="pathMenus"></sidebar>
 
       <!-- main content -->
       <section class="main-content">
@@ -83,6 +83,7 @@
     data: function () {
       return {
         firstMenus: [],
+        customMenus:[],
         secondMenus: {},
         pathMenus:{},
         currMenu: {},
@@ -114,10 +115,11 @@
             this.firstMenus=d.data.firstMenus
             this.secondMenus=d.data.secondMenus
             this.pathMenus=d.data.pathMenus
+            this.customMenus=d.data.customMenu
             if(this.currUser.theme){
                $("#skin").attr('href',base+'/static/styles/skins/'+this.currUser.theme)
             }
-            //this.currMenu = this.selectMenu(this.$route.path, this.secondMenus, this.pathMenus);
+            this.currMenu=this.selectMenu(this.$route.path, this.secondMenus, this.pathMenus);
           }else {
             toastr.error(d.msg)
           }
@@ -125,21 +127,26 @@
       },
       //根据url切换菜单
       selectMenu: function (path, secondMenus,pathMenus) {
-        var tempMenu = {};
-        console.log(path)
-        var treeid=pathMenus[path];
-        //父菜单判断
-        $.each(secondMenus[treeid], function (index, menu) {
-            tempMenu = menu;
-        });
-        return tempMenu;
+        var treeid=pathMenus[path]
+        if(treeid){
+          var menus=secondMenus[pathMenus[path].substring(0,4)];
+          $.each(menus,function (i,o) {
+            o[o.path]=secondMenus[o.path]
+          })
+          return menus
+        }else return []
       },
       //切换菜单
       switchMenu: function (menu) {
         //显示loading
         $(".gallery-loader").fadeIn(200);
-        this.currMenu = menu;
-        this.$router.go(menu.submenus ? menu.submenus[0].url : menu.url);
+        var self=this;
+        var menus=this.secondMenus[menu.path]
+        $.each(menus,function (i,o) {
+          o[o.path]=self.secondMenus[o.path]
+        })
+        this.currMenu=menus
+        //this.$router.go(menu.submenus ? menu.submenus[0].url : menu.url);
         //隐藏loading
         $(".gallery-loader").fadeOut(500);
       }
