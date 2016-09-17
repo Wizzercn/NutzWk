@@ -251,7 +251,7 @@
                             <%for(o in @shiro.getPrincipalProperty('customMenus')){%>
 
                             <li>
-                                <a <%if(!isEmpty(o.href)){%>href="${o.href}" <%if('data-pjax'==o.target){%>data-pjax<%}}else{ %>href="javascript:;"<%}%>>
+                                <a <%if(!isEmpty(o.href)){%>href="${base}${o.href}" <%if('data-pjax'==o.target){%>data-pjax<%}}else{ %>href="javascript:;"<%}%>>
                                 <span><%if(lang=="zh_CN"){%>${o.name}<%}else{%>${o.aliasName}<%}%></span>
                                 </a>
                             </li>
