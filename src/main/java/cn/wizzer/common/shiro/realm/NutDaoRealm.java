@@ -6,6 +6,7 @@ import cn.wizzer.modules.back.sys.models.Sys_user;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.util.ByteSource;
 import org.nutz.dao.Cnd;
 import org.nutz.lang.Lang;
@@ -45,6 +46,8 @@ public class NutDaoRealm extends AbstractNutRealm {
         if (user.isDisabled()) {
             throw Lang.makeThrow(LockedAccountException.class, "Account [ %s ] is locked.", loginname);
         }
+        getUserService().fetchLinks(user, null);
+        getUserService().fillMenu(user);
         SecurityUtils.getSubject().getSession(true).setAttribute("errCount", 0);
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), getName());
         info.setCredentialsSalt(ByteSource.Util.bytes(user.getSalt()));
