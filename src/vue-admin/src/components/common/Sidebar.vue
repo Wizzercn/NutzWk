@@ -51,6 +51,7 @@ export default {
         $(".gallery-loader").fadeOut(500);
       },
       getPath:function (path) {
+        console.log('1:::'+path)
         var p=this.pathMenus[path]
         if(p){
           return p
@@ -64,6 +65,7 @@ export default {
         }
       },
       getPerPath:function (path) {
+        console.log('2:::'+path)
         var p=this.pathMenus[path]
         if(p&&p.length>=8){
           return p.substring(0,8)

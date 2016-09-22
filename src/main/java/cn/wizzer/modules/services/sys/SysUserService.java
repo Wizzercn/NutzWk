@@ -131,6 +131,7 @@ public class SysUserService extends Service<Sys_user> {
         //计算左侧菜单
         List<Sys_menu> firstMenus = new ArrayList<>();
         Map<String, List<Sys_menu>> secondMenus = new HashMap<>();
+        Map<String,String> pathMenus=new HashMap<>();
         for (Sys_menu menu : user.getMenus()) {
             if (menu.getPath().length() > 4) {
                 List<Sys_menu> s = secondMenus.get(StringUtil.getParentId(menu.getPath()));
@@ -140,9 +141,13 @@ public class SysUserService extends Service<Sys_user> {
             } else if (menu.getPath().length() == 4) {
                 firstMenus.add(menu);
             }
+            if(!Strings.isBlank(menu.getHref())){
+                pathMenus.put(menu.getHref(),menu.getPath());
+            }
         }
         user.setFirstMenus(firstMenus);
         user.setSecondMenus(secondMenus);
+        user.setPathMenus(pathMenus);
         if (!Strings.isBlank(user.getCustomMenu())) {
             user.setCustomMenus(menuService.query(Cnd.where("id", "in", user.getCustomMenu().split(","))));
         }
