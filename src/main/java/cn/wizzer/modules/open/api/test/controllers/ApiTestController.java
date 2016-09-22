@@ -33,7 +33,8 @@ public class ApiTestController {
      * @apiPermission token
      * @apiParam {String}	appId 					appId
      * @apiParam {String}	token 				    token
-     * @apiParam {String}	txt 				    测试文本
+     * @apiParam {Object}	data 				    数据对象 
+     * @apiParam {String}	data.txt			    测试文本
      * @apiParamExample {json} 示例
      * POST /open/api/test/hi
      * {
