@@ -158,6 +158,10 @@ public class SysLoginController {
         }
     }
 
+    /**
+     * 获取用户登录信息
+     * @return
+     */
     @At("/userinfo")
     @Ok("json:{locked:'password|salt',ignoreNull:false}")
     @Filters

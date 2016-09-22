@@ -32,10 +32,11 @@ public class SysUnitController {
     @Inject
     SysUnitService unitService;
 
-    @At("")
-    @Ok("beetl:/platform/sys/unit/index.html")
+    @At
+    @Ok("json")
+    @GET
     @RequiresAuthentication
-    public Object index() {
+    public Object list() {
         return unitService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("path"));
     }
 
