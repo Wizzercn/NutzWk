@@ -45,6 +45,8 @@ public class NutDaoRealm extends AbstractNutRealm {
         if (user.isDisabled()) {
             throw Lang.makeThrow(LockedAccountException.class, "Account [ %s ] is locked.", loginname);
         }
+        getUserService().fetchLinks(user, null);
+        getUserService().fillMenu(user);
         SecurityUtils.getSubject().getSession(true).setAttribute("errCount", 0);
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), getName());
         info.setCredentialsSalt(ByteSource.Util.bytes(user.getSalt()));

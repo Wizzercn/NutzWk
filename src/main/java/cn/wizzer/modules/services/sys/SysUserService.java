@@ -1,5 +1,6 @@
 package cn.wizzer.modules.services.sys;
 
+import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.modules.models.sys.Sys_menu;
 import cn.wizzer.modules.models.sys.Sys_role;
 import cn.wizzer.modules.models.sys.Sys_user;
@@ -11,16 +12,23 @@ import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.aop.Aop;
+import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wizzer on 2016/6/22.
  */
 @IocBean(args = {"refer:dao"})
 public class SysUserService extends Service<Sys_user> {
+
+    @Inject
+    SysMenuService menuService;
     public SysUserService(Dao dao) {
         super(dao);
     }
@@ -114,5 +122,29 @@ public class SysUserService extends Service<Sys_user> {
         dao().clear("sys_user_unit", Cnd.where("userId", "in", userIds));
         dao().clear("sys_user_role", Cnd.where("userId", "in", userIds));
         dao().clear("sys_user", Cnd.where("id", "in", userIds));
+    }
+
+    public void fillMenu(Sys_user user) {
+        //获取用户菜单
+        user.setMenus(getMenus(user.getId()));
+        user.setLoginIp(StringUtil.getRemoteAddr());
+        //计算左侧菜单
+        List<Sys_menu> firstMenus = new ArrayList<>();
+        Map<String, List<Sys_menu>> secondMenus = new HashMap<>();
+        for (Sys_menu menu : user.getMenus()) {
+            if (menu.getPath().length() > 4) {
+                List<Sys_menu> s = secondMenus.get(StringUtil.getParentId(menu.getPath()));
+                if (s == null) s = new ArrayList<>();
+                s.add(menu);
+                secondMenus.put(StringUtil.getParentId(menu.getPath()), s);
+            } else if (menu.getPath().length() == 4) {
+                firstMenus.add(menu);
+            }
+        }
+        user.setFirstMenus(firstMenus);
+        user.setSecondMenus(secondMenus);
+        if (!Strings.isBlank(user.getCustomMenu())) {
+            user.setCustomMenus(menuService.query(Cnd.where("id", "in", user.getCustomMenu().split(","))));
+        }
     }
 }

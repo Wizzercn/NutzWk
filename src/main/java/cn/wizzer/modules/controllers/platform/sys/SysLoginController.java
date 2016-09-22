@@ -6,9 +6,7 @@ import cn.wizzer.common.services.log.SLogService;
 import cn.wizzer.common.shiro.exception.EmptyCaptchaException;
 import cn.wizzer.common.shiro.exception.IncorrectCaptchaException;
 import cn.wizzer.common.shiro.filter.AuthenticationFilter;
-import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.modules.models.sys.Sys_log;
-import cn.wizzer.modules.models.sys.Sys_menu;
 import cn.wizzer.modules.models.sys.Sys_user;
 import cn.wizzer.modules.services.sys.SysMenuService;
 import cn.wizzer.modules.services.sys.SysUserService;
@@ -34,10 +32,6 @@ import org.nutz.mvc.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by wizzer on 2016/6/22.
@@ -53,17 +47,6 @@ public class SysLoginController {
     SysMenuService menuService;
     @Inject
     SLogService sLogService;
-
-
-    @At(value = {"/", "/index"}, top = true)
-    @Ok(">>:/sysadmin")
-    public void index() {
-    }
-
-    @At(value = {"/platform/home"}, top = true)
-    @Ok("beetl:/platform/index.html")
-    public void home() {
-    }
 
     @At("")
     @Ok("re")
@@ -146,32 +129,6 @@ public class SysLoginController {
             ThreadContext.bind(subject);
             subject.login(token);
             Sys_user user = (Sys_user) subject.getPrincipal();
-            //获取用户菜单
-            user.setMenus(userService.getMenus(user.getId()));
-            user.setLoginIp(StringUtil.getRemoteAddr());
-            //计算左侧菜单
-            List<Sys_menu> firstMenus = new ArrayList<>();
-            Map<String, List<Sys_menu>> secondMenus = new HashMap<>();
-            Map<String,String> pathMenus=new HashMap<>();
-            for (Sys_menu menu : user.getMenus()) {
-                if (menu.getPath().length() > 4) {
-                    List<Sys_menu> s = secondMenus.get(StringUtil.getParentId(menu.getPath()));
-                    if (s == null) s = new ArrayList<>();
-                    s.add(menu);
-                    secondMenus.put(StringUtil.getParentId(menu.getPath()), s);
-                } else if (menu.getPath().length() == 4) {
-                    firstMenus.add(menu);
-                }
-                if(!Strings.isBlank(menu.getHref())){
-                    pathMenus.put(menu.getHref(),menu.getPath());
-                }
-            }
-            user.setFirstMenus(firstMenus);
-            user.setSecondMenus(secondMenus);
-            user.setPathMenus(pathMenus);
-            if (!Strings.isBlank(user.getCustomMenu())) {
-                user.setCustomMenus(menuService.query(Cnd.where("id", "in", user.getCustomMenu().split(","))));
-            }
             int count = user.getLoginCount() == null ? 0 : user.getLoginCount();
             sLogService.async(Sys_log.c("info", "用户登陆", "成功登录系统！", null));
             userService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", (int) (System.currentTimeMillis() / 1000))

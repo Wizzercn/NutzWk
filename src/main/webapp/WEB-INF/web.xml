@@ -79,10 +79,10 @@
 
     <error-page>
         <error-code>403</error-code>
-        <location>/WEB-INF/error/403.html</location>
+        <location>/error/403</location>
     </error-page>
     <error-page>
         <error-code>404</error-code>
-        <location>/WEB-INF/error/404.html</location>
+        <location>/error/404</location>
     </error-page>
 </web-app>

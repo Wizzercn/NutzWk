@@ -49,20 +49,6 @@ public class SysUserController {
     @Inject
     SysUnitService unitService;
 
-    @At("")
-    @Ok("beetl:/platform/sys/user/index.html")
-    @RequiresAuthentication
-    public void index() {
-
-    }
-
-    @At
-    @Ok("beetl:/platform/sys/user/add.html")
-    @RequiresAuthentication
-    public Object add(@Param("unitid") String unitid) {
-        return Strings.isBlank(unitid) ? null : unitService.fetch(unitid);
-    }
-
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.user.add")
