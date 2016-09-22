@@ -14,7 +14,6 @@ import WxMenu from './components/modules/platform/wx/WxMenu'
 
 Vue.use(VueResource)
 Vue.use(VueRouter)
-
 const router = new VueRouter({
   history:true,
   saveScrollPosition:true

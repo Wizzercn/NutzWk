@@ -48,7 +48,7 @@
     <navbar :curr-user="currUser" :first-menus="firstMenus" @switch-menu="switchMenu"></navbar>
 
     <section class="layout">
-      <sidebar :curr-menu="currMenu" :custom-menus="customMenus" :path-menus="pathMenus"></sidebar>
+      <sidebar :curr-menu="currMenu" :custom-menus="customMenus" :path-menus="pathMenus" ></sidebar>
 
       <!-- main content -->
       <section class="main-content">
@@ -127,19 +127,44 @@
       },
       //根据url切换菜单
       selectMenu: function (path, secondMenus,pathMenus) {
-        var treeid=pathMenus[path]
+        var treeid=this.getPerPath(path)
         if(treeid){
-          var menus=secondMenus[pathMenus[path].substring(0,4)];
+          var menus=secondMenus[treeid.substring(0,4)]
           $.each(menus,function (i,o) {
             o[o.path]=secondMenus[o.path]
           })
           return menus
         }else return []
       },
+      getPath:function (path) {
+        var p=this.pathMenus[path]
+        if(p){
+          return p
+        }else {
+          if(path&&path.lastIndexOf('/')>0){
+            var s=path.substring(0,path.lastIndexOf('/'))
+            return this.getPath(s)
+          }else{
+            return ''
+          }
+        }
+      },
+      getPerPath:function (path) {
+        var p=this.pathMenus[path]
+        if(p&&p.length>=8){
+          return p.substring(0,8)
+        }else {
+          var pp=this.getPath(path)
+          if(pp){
+            return pp.substring(0,8)
+          }
+          return ''
+        }
+      },
       //切换菜单
       switchMenu: function (menu) {
         //显示loading
-        $(".gallery-loader").fadeIn(200);
+        $(".gallery-loader").fadeIn(200)
         var self=this;
         var menus=this.secondMenus[menu.path]
         $.each(menus,function (i,o) {
@@ -148,19 +173,19 @@
         this.currMenu=menus
         //this.$router.go(menu.submenus ? menu.submenus[0].url : menu.url);
         //隐藏loading
-        $(".gallery-loader").fadeOut(500);
+        $(".gallery-loader").fadeOut(500)
       }
     },
     created: function () {
       //初始化菜单
-      this.initMenus();
+      this.initMenus()
     },
     ready: function () {
       //初始化sublime前端框架
-      window.sublimeApp = SublimeApp();
+      window.sublimeApp = SublimeApp()
       window.sublimeApp.init();
       //隐藏loading
-      $(".gallery-loader").fadeOut(500);
+      $(".gallery-loader").fadeOut(500)
     }
   }
 </script>

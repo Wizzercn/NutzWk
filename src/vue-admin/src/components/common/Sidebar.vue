@@ -46,41 +46,16 @@ export default {
   props:['currMenu','customMenus','pathMenus'],
   methods: {
       goMenu:function (menu) {
-        $(".gallery-loader").fadeIn(200);
+        $(".gallery-loader").fadeIn(200)
         this.$router.go(menu.href);
-        $(".gallery-loader").fadeOut(500);
+        $(".gallery-loader").fadeOut(500)
       },
       getPath:function (path) {
-        console.log('1:::'+path)
-        var p=this.pathMenus[path]
-        if(p){
-          return p
-        }else {
-          if(path&&path.lastIndexOf('/')>0){
-            var s=path.substring(0,path.lastIndexOf('/'))
-            return this.getPath(s)
-          }else{
-            return ''
-          }
-        }
+        return this.$parent.getPath(path)
       },
       getPerPath:function (path) {
-        console.log('2:::'+path)
-        var p=this.pathMenus[path]
-        if(p&&p.length>=8){
-          return p.substring(0,8)
-        }else {
-          if(path&&path.lastIndexOf('/')>0){
-            var s=path.substring(0,path.lastIndexOf('/'))
-            return this.getPath(s)
-          }else{
-            return ''
-          }
-        }
+        return this.$parent.getPerPath(path)
       }
-  },
-  ready: function () {
-
   }
 }
 </script>

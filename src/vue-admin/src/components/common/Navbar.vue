@@ -102,7 +102,7 @@
         props: ['currUser','firstMenus'],
         methods: {
             switchMenu: function(menu) {
-                this.$emit('switch-menu', menu);
+                this.$emit('switch-menu', menu)
             }
         }
     }
