@@ -37,14 +37,7 @@ public class SysUnitController {
     @GET
     @RequiresAuthentication
     public Object list() {
-        return unitService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("path"));
-    }
-
-    @At
-    @Ok("beetl:/platform/sys/unit/add.html")
-    @RequiresAuthentication
-    public Object add(@Param("pid") String pid) {
-        return Strings.isBlank(pid) ? null : unitService.fetch(pid);
+        return Result.success("",unitService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("path")));
     }
 
     @At

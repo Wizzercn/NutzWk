@@ -43,12 +43,17 @@
 
 <script>
 export default {
+  data:function(){
+    return {
+      base:base
+    }
+  },
   props:['currMenu','customMenus','pathMenus'],
   methods: {
       goMenu:function (menu) {
         $(".gallery-loader").fadeIn(200)
-        this.$router.go(menu.href);
-        $(".gallery-loader").fadeOut(500)
+        this.$router.go(base+menu.href);
+        $(".gallery-loader").fadeOut(300)
       },
       getPath:function (path) {
         return this.$parent.getPath(path)

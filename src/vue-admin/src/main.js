@@ -9,18 +9,17 @@ const router = new VueRouter({
   history:true,
   saveScrollPosition:true
 })
-
 router.beforeEach((transition) => {
   transition.next()
 })
 //路由map
 let map=Object.assign(require('./route/platform/sys').map())
-map['/platform/home']={component: require('./components/modules/platform/sys/Home')}
+map[base+'/platform/home']={component: require('./components/modules/platform/sys/Home')}
 
 router.map(map)
 
 router.redirect({
-  '*': '/platform/home'
+  '*': base+'/platform/home'
 })
 
 router.start(App, '#app')

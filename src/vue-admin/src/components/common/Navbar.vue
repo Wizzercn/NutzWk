@@ -8,10 +8,10 @@
             <!-- /toggle offscreen menu -->
 
             <!-- logo -->
-            <a v-link="'/platform/home'" class="navbar-brand">
-               <img src="/static/images/logo.png" alt="logo" class="logo-img"  v-bind:class="[currUser.sidebar? '' : 'logo-hide']">
+            <a v-link="base+'/platform/home'" class="navbar-brand">
+               <img :src="base+'/static/images/logo.png'" alt="logo" class="logo-img"  v-bind:class="[currUser.sidebar? '' : 'logo-hide']">
                <span class="heading-font logo-img "   v-bind:class="[currUser.sidebar ? 'logo-hide' : '']">
-                 <img src="/static/images/logoa.png">
+                 <img :src="base+'/static/images/logoa.png'">
                </span>
             </a>
             <!-- /logo -->
@@ -45,7 +45,7 @@
                     <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
                         <li>
                             <a href="?lang=en_US">
-                                <img src="/static/images/avatar.jpg" class="flag">
+                                <img :src="base+'/static/images/avatar.jpg'" class="flag">
                                 <span class="language">English</span>
                             </a>
                         </li>
@@ -81,7 +81,7 @@
                 </ul>
             </li>
             <li class="off-right">
-                <a href="/platform/login/logout">
+                <a :href="base+'/platform/login/logout'">
                     <i class="ti-power-off"></i>
                 </a>
             </li>
@@ -95,6 +95,7 @@
     export default {
         data: function() {
             return {
+              base:base,
               logo:false,
               logoa:true
             }
