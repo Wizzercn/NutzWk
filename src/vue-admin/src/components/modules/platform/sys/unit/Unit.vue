@@ -22,7 +22,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr v-for="unit in units" data-tt-id="{{unit.id}}" data-tt-parent-id="{{unit.parentId}}" data-tt-branch="{{unit.hasChildren}}">
+              <tr v-for="unit in units" :data-tt-id="unit.id" :data-tt-parent-id="unit.parentId" :data-tt-branch="unit.hasChildren">
                 <td>
                   <span class="pd-l-sm"></span>{{unit.name}}
                 </td>
@@ -36,10 +36,10 @@
                       <span class="ti-angle-down"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                      <li><a v-link="{path:'/platform/sys/unit/add'}" href="${base}/private/sys/unit/detail/${o.id}" data-toggle="modal"
-                             data-target="#dialogUnitDetail">查看</a></li>
+                      <li><a v-link="{path:base+'/platform/sys/detail/'+unit.id}" data-toggle="modal"
+                             data-target="#dialogDetail">查看</a></li>
                       <li><a href="${base}/private/sys/unit/edit/${o.id}" data-pjax>修改</a></li>
-                      <li><a href="javascript:;" onclick="del('${o.id}')">删除</a></li>
+                      <li><a href="javascript:;" @click="del(unit.id)">删除</a></li>
                       <li class="divider"></li>
                       <li><a href="${base}/private/sys/unit/add?pid=${o.id}" data-pjax>添加子单位</a></li>
 
@@ -87,7 +87,7 @@
       </div>
     </div>
     <!-- 详情 -->
-    <div id="dialogUnitDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
 
@@ -96,9 +96,6 @@
     </div>
   </div>
 </template>
-<style>
-
-</style>
 <script>
   export default{
     data(){
@@ -108,8 +105,13 @@
       }
     },
     methods: {
+      del:function (id) {
+
+      },
       load:function () {
+        sublimeApp.showLoadingbar()
         this.$http.get(vue+'/platform/sys/unit/list').then((resp) => {
+          sublimeApp.closeLoadingbar()
           return resp.json()
         }).then((d)=> {
           if (d.code == 0) {

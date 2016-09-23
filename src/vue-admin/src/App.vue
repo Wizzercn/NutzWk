@@ -137,7 +137,13 @@
           return menus
         }else return []
       },
+      /**
+       * 递归获取最后一级菜单树PATH
+       * @param path
+       * @returns {*}
+       */
       getPath:function (path) {
+        //如果是部署在虚拟目录,替换掉路径
         if(path.startsWith(base)){
            path=path.substring(base.length)
         }
@@ -153,7 +159,13 @@
           }
         }
       },
+      /**
+       * 获取当前路径二级菜单树PATH
+       * @param path
+       * @returns {*}
+       */
       getPerPath:function (path) {
+        //如果是部署在虚拟目录,替换掉路径
         if(path.startsWith(base)){
           path=path.substring(base.length)
         }
@@ -168,7 +180,10 @@
           return ''
         }
       },
-      //切换菜单
+      /**
+       * 切换顶部菜单
+       * @param menu
+       */
       switchMenu: function (menu) {
         //显示loading
         $(".gallery-loader").fadeIn(200)

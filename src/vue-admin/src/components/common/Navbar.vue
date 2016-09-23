@@ -1,112 +1,117 @@
 <template>
-    <!-- top header -->
-    <header class="header header-fixed navbar">
+  <!-- top header -->
+  <header class="header header-fixed navbar">
 
-        <div class="brand">
-            <!-- toggle offscreen menu -->
-            <a href="javascript:;" class="ti-menu off-left visible-xs" data-toggle="offscreen" data-move="ltr"></a>
-            <!-- /toggle offscreen menu -->
+    <div class="brand">
+      <!-- toggle offscreen menu -->
+      <a href="javascript:;" class="ti-menu off-left visible-xs" data-toggle="offscreen" data-move="ltr"></a>
+      <!-- /toggle offscreen menu -->
 
-            <!-- logo -->
-            <a v-link="base+'/platform/home'" class="navbar-brand">
-               <img :src="base+'/static/images/logo.png'" alt="logo" class="logo-img"  v-bind:class="[currUser.sidebar? '' : 'logo-hide']">
-               <span class="heading-font logo-img "   v-bind:class="[currUser.sidebar ? 'logo-hide' : '']">
+      <!-- logo -->
+      <a v-link="base+'/platform/home'" class="navbar-brand">
+        <img :src="base+'/static/images/logo.png'" alt="logo" class="logo-img"
+             v-bind:class="[currUser.sidebar? '' : 'logo-hide']">
+        <span class="heading-font logo-img " v-bind:class="[currUser.sidebar ? 'logo-hide' : '']">
                  <img :src="base+'/static/images/logoa.png'">
                </span>
+      </a>
+      <!-- /logo -->
+    </div>
+
+    <ul class="nav navbar-nav">
+      <li class="hidden-xs">
+        <!-- toggle small menu -->
+        <a href="javascript:;" class="toggle-sidebar">
+          <i class="ti-menu"></i>
+        </a>
+        <!-- /toggle small menu -->
+      </li>
+    </ul>
+
+    <ul id="topnav" class="nav navbar-nav hidden-xs">
+
+      <li v-for="menu in firstMenus">
+        <a href="javascript:;" @click="switchMenu(menu)">
+          <i class="fa" :class="menu.icon"></i>
+          <span>{{menu.name}}</span>
+        </a>
+      </li>
+
+    </ul>
+
+    <ul class="nav navbar-nav navbar-right">
+      <!--通知位置-->
+      <li class="language-dropdown dropdown hidden-xs">
+        <a href="javascript:;" data-toggle="dropdown" id="language">
+          <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
+            <li>
+              <a href="?lang=en_US">
+                <img :src="base+'/static/images/avatar.jpg'" class="flag">
+                <span class="language">English</span>
+              </a>
+            </li>
+            <li>
+              <a href="?lang=zh_CN">
+                <img class="flag">
+                <span class="language">中文</span>
+              </a>
+            </li>
+          </ul>
+        </a>
+      </li>
+      <li class="off-right">
+        <a href="javascript:;" data-toggle="dropdown">
+          <span class="hidden-xs ml10">{{currUser.username}}</span>
+          <i class="ti-angle-down ti-caret hidden-xs"></i>
+        </a>
+        <ul class="dropdown-menu animated fadeInLeft">
+          <li>
+            <a href="" data-toggle="modal"
+               data-target="#homeDetail">常用菜单</a>
+          </li>
+
+          <li class="dropdown hidden-xs">
+            <a href="javascript:;" class="pg-toggle">
+              页面布局
             </a>
-            <!-- /logo -->
-        </div>
-
-        <ul class="nav navbar-nav">
-            <li class="hidden-xs">
-                <!-- toggle small menu -->
-                <a href="javascript:;" class="toggle-sidebar">
-                    <i class="ti-menu"></i>
-                </a>
-                <!-- /toggle small menu -->
-            </li>
+          </li>
+          <li>
+            <a href="" data-toggle="modal"
+               data-target="#homeDetail">修改密码</a>
+          </li>
         </ul>
+      </li>
+      <li class="off-right">
+        <a :href="base+'/platform/login/logout'">
+          <i class="ti-power-off"></i>
+        </a>
+      </li>
+    </ul>
 
-        <ul id="topnav" class="nav navbar-nav hidden-xs">
-
-            <li v-for="menu in firstMenus">
-                <a href="javascript:;" @click="switchMenu(menu)">
-                    <i class="fa" :class="menu.icon"></i>
-                    <span>{{menu.name}}</span>
-                </a>
-            </li>
-
-        </ul>
-
-        <ul class="nav navbar-nav navbar-right">
-            <!--通知位置-->
-            <li class="language-dropdown dropdown hidden-xs">
-                <a href="javascript:;" data-toggle="dropdown" id="language">
-                    <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
-                        <li>
-                            <a href="?lang=en_US">
-                                <img :src="base+'/static/images/avatar.jpg'" class="flag">
-                                <span class="language">English</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="?lang=zh_CN">
-                                <img class="flag">
-                                <span class="language">中文</span>
-                            </a>
-                        </li>
-                    </ul>
-                </a>
-            </li>
-            <li class="off-right">
-                <a href="javascript:;" data-toggle="dropdown">
-                    <span class="hidden-xs ml10">{{currUser.username}}</span>
-                    <i class="ti-angle-down ti-caret hidden-xs"></i>
-                </a>
-                <ul class="dropdown-menu animated fadeInLeft">
-                    <li>
-                        <a href="" data-toggle="modal"
-                           data-target="#homeDetail">常用菜单</a>
-                    </li>
-
-                    <li class="dropdown hidden-xs">
-                        <a href="javascript:;" class="pg-toggle">
-                            页面布局
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" data-toggle="modal"
-                           data-target="#homeDetail">修改密码</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="off-right">
-                <a :href="base+'/platform/login/logout'">
-                    <i class="ti-power-off"></i>
-                </a>
-            </li>
-        </ul>
-
-    </header>
-    <!-- /top header -->
+  </header>
+  <!-- /top header -->
 </template>
 
 <script>
-    export default {
-        data: function() {
-            return {
-              base:base,
-              logo:false,
-              logoa:true
-            }
-        },
-        props: ['currUser','firstMenus'],
-        methods: {
-            switchMenu: function(menu) {
-                this.$emit('switch-menu', menu)
-            }
-        }
+  export default {
+    data: function () {
+      return {
+        base: base,
+        logo: false,
+        logoa: true
+      }
+    },
+    props: ['currUser', 'firstMenus'],
+    methods: {
+      /**
+       * 触发父组件事件切换菜单
+       * @param menu
+       */
+      switchMenu: function (menu) {
+        this.$emit('switch-menu', menu)
+      }
     }
+  }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

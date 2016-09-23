@@ -13,7 +13,9 @@ router.beforeEach((transition) => {
   transition.next()
 })
 //路由map
-let map=Object.assign(require('./route/platform/sys').map())
+let map=Object.assign(
+  require('./route/platform/sys').map()
+)
 map[base+'/platform/home']={component: require('./components/modules/platform/sys/Home')}
 
 router.map(map)
