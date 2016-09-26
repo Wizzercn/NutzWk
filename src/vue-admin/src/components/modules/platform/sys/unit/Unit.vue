@@ -112,6 +112,7 @@
         sublimeApp.showLoadingbar()
         this.$http.get(vue+'/platform/sys/unit/list').then((resp) => {
           sublimeApp.closeLoadingbar()
+          sublimeApp.tree
           return resp.json()
         }).then((d)=> {
           if (d.code == 0) {
