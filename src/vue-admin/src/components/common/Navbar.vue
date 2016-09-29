@@ -18,7 +18,7 @@
       <!-- /logo -->
     </div>
 
-    <ul class="nav navbar-nav">
+    <ul class="nav navbar-nav navbar-left">
       <li class="hidden-xs">
         <!-- toggle small menu -->
         <a href="javascript:;" class="toggle-sidebar">

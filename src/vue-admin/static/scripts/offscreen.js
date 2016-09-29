@@ -1,7 +1,7 @@
 'use strict';
 /*jshint -W079 */
 
-var offscreen = function () {
+function OffScreen() {
 
   var container = $('.app'),
     canvasDirection,
@@ -84,14 +84,16 @@ var offscreen = function () {
     });
   }
 
-  return {
+  window.offScreen = {
     hide: hide,
     init: function () {
       events();
     }
   };
-}();
 
-$(function () {
-  offscreen.init();
-});
+  return offScreen;
+}
+
+// $(function () {
+//   offScreen.init();
+// });

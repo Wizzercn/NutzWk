@@ -206,6 +206,8 @@
       //初始化sublime前端框架
       window.sublimeApp = SublimeApp()
       window.sublimeApp.init();
+      window.offScreen = OffScreen()
+      window.offScreen.init();
       //隐藏loading
       $(".gallery-loader").fadeOut(500)
     }
