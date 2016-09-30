@@ -129,7 +129,7 @@ public class Service<T> extends EntityService<T> {
     public void delete(String[] ids) {
         this.dao().clear(getEntityClass(), Cnd.where("id", "in", ids));
     }
-    
+
     public int vDelete(int id) {
         return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "=", id));
     }
