@@ -74,6 +74,7 @@ public class SysUserController {
             String hashedPasswordBase64 = new Sha256Hash(user.getPassword(), salt, 1024).toBase64();
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
+            user.setLoginPjax(true);
             user.setLoginCount(0);
             user.setLoginAt(0);
             userService.insert(user);
@@ -260,7 +261,7 @@ public class SysUserController {
         List<Sys_unit> list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();
         Map<String, Object> obj = new HashMap<>();
-        if(Strings.isBlank(pid)) {
+        if (Strings.isBlank(pid)) {
             obj.put("id", "root");
             obj.put("text", "所有用户");
             obj.put("children", false);
@@ -291,6 +292,33 @@ public class SysUserController {
     }
 
     @At
+    @Ok("beetl:/platform/sys/user/mode.html")
+    @RequiresAuthentication
+    public void mode() {
+
+    }
+
+    @At
+    @Ok("json")
+    @RequiresAuthentication
+    public Object modeDo(@Param("mode") String mode, HttpServletRequest req) {
+        try {
+            userService.update(Chain.make("loginPjax", "true".equals(mode)), Cnd.where("id", "=", req.getAttribute("uid")));
+            Subject subject = SecurityUtils.getSubject();
+            Sys_user user = (Sys_user) subject.getPrincipal();
+            if ("true".equals(mode)) {
+                user.setLoginPjax(true);
+            } else {
+                user.setLoginPjax(false);
+            }
+            return Result.success("system.success");
+        } catch (Exception e) {
+            return Result.error("system.error");
+        }
+    }
+
+
+    @At
     @Ok("json")
     @RequiresAuthentication
     public Object customDo(@Param("ids") String ids, HttpServletRequest req) {
@@ -301,7 +329,7 @@ public class SysUserController {
             if (!Strings.isBlank(ids)) {
                 user.setCustomMenu(ids);
                 user.setCustomMenus(menuService.query(Cnd.where("id", "in", ids.split(","))));
-            }else {
+            } else {
                 user.setCustomMenu("");
                 user.setCustomMenus(new ArrayList<>());
             }

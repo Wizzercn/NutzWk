@@ -208,10 +208,15 @@
                         <a href="${base!}/platform/sys/user/custom" data-toggle="modal"
                            data-target="#homeDetail">${msg['index.custommenu']}</a>
                     </li>
-
                     <li class="dropdown hidden-xs">
                         <a href="javascript:;" class="pg-toggle">
                             ${msg['index.user.layout']}
+                        </a>
+                    </li>
+                    <li class="dropdown hidden-xs">
+                        <a href="${base!}/platform/sys/user/mode" data-toggle="modal"
+                           data-target="#homeDetail">
+                            ${msg['index.user.mode']}
                         </a>
                     </li>
                     <li>
@@ -329,8 +334,11 @@
         });
     }
     $(document).ready(function () {
+
         if($.support.pjax) {
+              <%if(@shiro.getPrincipalProperty('loginPjax')){%>
             $(document).pjax('a[data-pjax]', '#container', {maxCacheLength:0,push:false, replace:true,fragment: '#container', timeout: 8000});
+            <%}%>
             bindLeft();
             $('#topnav a[data-pjax]').on('click',function(){
                 $.get("${base!}/platform/home/left?url="+$(this).attr("href"),function (data) {
@@ -342,13 +350,16 @@
                 $("#leftnav").html(data);
                 bindLeft();
             }, "html");
+            <%if(@shiro.getPrincipalProperty('loginPjax')){%>
             $(document).on('pjax:send', function () { //pjax链接点击后显示加载动画；
                 $(".gallery-loader").fadeIn();
             });
             $(document).on('pjax:complete', function () { //pjax链接加载完成后隐藏加载动画；
                 setTimeout(function(){$(".gallery-loader").fadeOut()},250);
             });
+            <%}%>
         }
+
         try {
             $(".gallery-loader").fadeOut();
         } catch (e) {

@@ -90,6 +90,9 @@ public class Sys_user extends Model implements Serializable {
     private boolean loginScroll;
 
     @Column
+    private boolean loginPjax;
+
+    @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String unitid;
 
@@ -236,6 +239,14 @@ public class Sys_user extends Model implements Serializable {
 
     public void setLoginScroll(boolean loginScroll) {
         this.loginScroll = loginScroll;
+    }
+
+    public boolean isLoginPjax() {
+        return loginPjax;
+    }
+
+    public void setLoginPjax(boolean loginPjax) {
+        this.loginPjax = loginPjax;
     }
 
     public String getUnitid() {

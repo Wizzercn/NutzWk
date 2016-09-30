@@ -138,12 +138,12 @@ public class Setup implements org.nutz.mvc.Setup {
             //初始化配置表
             Sys_config conf = new Sys_config();
             conf.setConfigKey("AppName");
-            conf.setConfigValue("NutzShop商城系统");
+            conf.setConfigValue("NutzWk 开发框架");
             conf.setNote("系统名称");
             dao.insert(conf);
             conf = new Sys_config();
             conf.setConfigKey("AppShrotName");
-            conf.setConfigValue("NutzShop商城系统");
+            conf.setConfigValue("NutzWk");
             conf.setNote("系统短名称");
             dao.insert(conf);
             conf = new Sys_config();
@@ -700,6 +700,7 @@ public class Setup implements org.nutz.mvc.Setup {
             user.setLoginBoxed(false);
             user.setLoginScroll(false);
             user.setLoginSidebar(false);
+            user.setLoginPjax(true);
             user.setUnitid(dbunit.getId());
             Sys_user dbuser = dao.insert(user);
             //不同的插入数据方式(安全)
