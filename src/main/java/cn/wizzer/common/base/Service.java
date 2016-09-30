@@ -130,22 +130,6 @@ public class Service<T> extends EntityService<T> {
         this.dao().clear(getEntityClass(), Cnd.where("id", "in", ids));
     }
 
-    public int vDelete(int id) {
-        return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "=", id));
-    }
-
-    public int vDelete(Integer[] ids) {
-        return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "in", ids));
-    }
-
-    public int vDelete(long id) {
-        return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "=", id));
-    }
-
-    public int vDelete(Long[] ids) {
-        return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "in", ids));
-    }
-
     public int vDelete(String id) {
         return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "=", id));
     }
@@ -153,7 +137,7 @@ public class Service<T> extends EntityService<T> {
     public int vDelete(String[] ids) {
         return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "in", ids));
     }
-    
+
     /**
      * 通过LONG主键获取部分字段值
      *
