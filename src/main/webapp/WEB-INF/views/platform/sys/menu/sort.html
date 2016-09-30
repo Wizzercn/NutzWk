@@ -1,0 +1,85 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/sys/menu" data-pjax id="goback"><i class="ti-angle-left"></i> 返回</a>
+    </div>
+    <div class="pull-right">
+        <div class="btn-group tool-button">
+            <button class="btn btn-primary navbar-btn" onclick="complete()"> 保存</button>
+        </div>
+    </div>
+</header>
+<div class="modal-body no-p">
+    <div class="panel">
+        <div class="panel-heading no-b">
+        </div>
+        <div class="panel-body" style="padding-top: 50px;">
+            <div class="cf nestable-lists">
+                <div class="dd" id="nestable3">
+                    <ol class="dd-list">
+                        <% for(obj in firstMenus){ %>
+                        <li class="dd-item dd3-item" data-id="${obj.id!}">
+                            <div class="dd-handle dd3-handle">Drag</div>
+                            <div class="dd3-content">${obj.name!}</div>
+                            <% if(!isEmpty(@secondMenus.get(obj.path))){ %>
+                            <ol class="dd-list">
+                                <% for(secondMenu in @secondMenus.get(obj.path)){ %>
+                                <li class="dd-item dd3-item" data-id="${secondMenu.id!}">
+                                    <div class="dd-handle dd3-handle">Drag</div>
+                                    <div class="dd3-content">${secondMenu.name!}</div>
+                                    <% if(!isEmpty(@secondMenus.get(secondMenu.path))){ %>
+                                    <ol class="dd-list">
+                                        <% for(thMenu in @secondMenus.get(secondMenu.path)){ %>
+                                        <li class="dd-item dd3-item" data-id="${thMenu.id!}">
+                                            <div class="dd-handle dd3-handle">Drag</div>
+                                            <div class="dd3-content">${thMenu.name!}</div>
+                                        </li>
+                                        <% } %>
+                                    </ol>
+                                    <% } %>
+                                </li>
+                                <% } %>
+                            </ol>
+                            <% } %>
+                        </li>
+                        <% }%>
+
+                    </ol>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var ids=[];
+    function getId(ob){
+        $.each(ob,function(i,o){
+            ids.push(o.id);
+            if(o.children){
+                getId(o.children);
+            }
+        });
+    }
+    function complete(){
+        ids=[];
+        getId($("#nestable3").nestable('serialize'));
+        $.post("${base}/platform/sys/menu/sortDo", {ids: ids.toString()}, function (data) {
+            if (data.code == 0) {
+                Toast.success(data.msg);
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    $(function () {
+        $("#nestable3").nestable();
+        $('#nestable3').nestable('collapseAll');
+    });
+
+</script>
+
+
+<%}%>

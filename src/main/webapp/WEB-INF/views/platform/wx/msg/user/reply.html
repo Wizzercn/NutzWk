@@ -1,0 +1,100 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">会员消息</a>
+                    </div>
+                </header>
+                <div  style="width: 400px;padding:5px;margin-left: 40px;margin-top:5px;margin-bottom:5px;" class="alert alert-warning">
+                    提示:24内互动的微信才能回复
+                </div>
+                <div class="list-group" style="text-align: center;padding-top: 10px;">
+                    <%if(type==1){%>
+                    <table width="80%" style="padding: 10px;">
+                        <tr style="height: 30px;">
+                            <td width="30%" align="right">回复内容：</td>
+                            <td width="70%" align="left">
+                                <textarea id="replyContent" class="control-group" cols="50" rows="5"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                    <%}%>
+                </div>
+
+                <div id="list">
+                </div>
+                <div class="s_page cf clear tcdPageCode"></div>
+
+            </section>
+
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">${type==0?'关 闭':'取 消'}</button>
+    <%if(type==1){%>
+    <button onclick="save()" id="save" type="button" class="btn btn-primary" data-loading-text="正在提交...">确 定</button>
+    <%}%>
+</div>
+<script type="text/javascript">
+    var is_page=true;
+    function save(){
+        if($("#replyContent").val()==""){
+            Toast.error("内容不可为空");
+            $("#replyContent").focus();
+            return false;
+        }
+        var btn = $("#save");
+        var dialog = $("#dialogDetail");
+        btn.button("loading");
+        $.post("${base}/platform/wx/msg/user/replyDo", {id: "${obj.id!}",nickname: "${obj.nickname!}",wxid: "${obj.wxid}",openid: '${obj.openid}',content:$("#replyContent").val()}, function (data) {
+            if (data.code == 0) {
+                Toast.success("发送成功");
+                dialog.modal("hide");
+                datatable.ajax.reload();
+            } else {
+                Toast.error(data.msg);
+            }
+            btn.button("reset");
+
+        }, "json");
+    }
+    function pagelist(start,pageSize){
+        $.get("${base}/platform/wx/msg/user/replyData/${obj.wxid}", {openid: '${obj.openid}',start:start,length:pageSize}, function (data) {
+            var str='';
+            if(data.recordsFiltered>0){
+                $.each(data.data,function(i,o){
+                    str+='<div  style="width: 400px;padding:5px;margin-left: 40px;margin-bottom:5px;" class="alert alert-info">';
+                    str+= o.nickname+":"+ o.content;
+                    str+='</div>';
+                    if(o.reply){
+                        str+='<div  style="width: 400px;padding:5px;margin-left: 140px;margin-bottom:5px;" class="alert alert-warning alert-dismissable">';
+                        str+= o.reply.content;
+                        str+='</div>';
+                    }
+                });
+                $("#list").html(str);
+                if(is_page){
+                    is_page=false;
+                    var totalPage = Math.floor(data.recordsFiltered / pageSize);
+                    if (totalPage == 0 || data.recordsFiltered % pageSize != 0) {
+                        totalPage++;
+                    }
+                    $(".tcdPageCode").createPage({
+                        pageCount:totalPage,
+                        current:(start/pageSize)+1,
+                        backFn:function(p){
+                            var start=(p-1)*pageSize;
+                            pagelist(start,pageSize);
+                        }
+                    });
+                }
+            }
+        }, "json");
+    }
+    $(function(){
+        pagelist(0,5);
+    });
+</script>

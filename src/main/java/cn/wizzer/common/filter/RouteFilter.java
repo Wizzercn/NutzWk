@@ -1,9 +1,7 @@
 package cn.wizzer.common.filter;
 
 import cn.wizzer.common.base.Globals;
-import cn.wizzer.modules.back.sys.models.Sys_route;
-import org.nutz.lang.Lang;
-import org.nutz.lang.Strings;
+import cn.wizzer.modules.models.sys.Sys_route;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 

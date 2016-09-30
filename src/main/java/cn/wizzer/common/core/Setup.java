@@ -1,7 +1,7 @@
 package cn.wizzer.common.core;
 
 import cn.wizzer.common.base.Globals;
-import cn.wizzer.modules.back.sys.models.*;
+import cn.wizzer.modules.models.sys.*;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -81,7 +81,7 @@ public class Setup implements org.nutz.mvc.Setup {
             Sys_route route = new Sys_route();
             route.setDisabled(false);
             route.setUrl("/sysadmin");
-            route.setToUrl("/private/login");
+            route.setToUrl("/platform/login");
             route.setType("hide");
             dao.insert(route);
         }
@@ -138,12 +138,12 @@ public class Setup implements org.nutz.mvc.Setup {
             //初始化配置表
             Sys_config conf = new Sys_config();
             conf.setConfigKey("AppName");
-            conf.setConfigValue("NutzWk 开发框架");
+            conf.setConfigValue("NutzShop商城系统");
             conf.setNote("系统名称");
             dao.insert(conf);
             conf = new Sys_config();
             conf.setConfigKey("AppShrotName");
-            conf.setConfigValue("NutzWk架");
+            conf.setConfigValue("NutzShop商城系统");
             conf.setNote("系统短名称");
             dao.insert(conf);
             conf = new Sys_config();
@@ -209,7 +209,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setName("单位管理");
             menu.setAliasName("Unit");
             menu.setLocation(0);
-            menu.setHref("/private/sys/unit");
+            menu.setHref("/platform/sys/unit");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.manager.unit");
@@ -255,7 +255,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setName("用户管理");
             menu.setAliasName("User");
             menu.setLocation(0);
-            menu.setHref("/private/sys/user");
+            menu.setHref("/platform/sys/user");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.manager.user");
@@ -302,7 +302,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setName("角色管理");
             menu.setAliasName("Role");
             menu.setLocation(0);
-            menu.setHref("/private/sys/role");
+            menu.setHref("/platform/sys/role");
             menu.setIsShow(true);
             menu.setPermission("sys.manager.role");
             menu.setTarget("data-pjax");
@@ -370,7 +370,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setName("菜单管理");
             menu.setAliasName("Menu");
             menu.setLocation(0);
-            menu.setHref("/private/sys/menu");
+            menu.setHref("/platform/sys/menu");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.manager.menu");
@@ -416,7 +416,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setName("系统参数");
             menu.setAliasName("Param");
             menu.setLocation(0);
-            menu.setHref("/private/sys/conf");
+            menu.setHref("/platform/sys/conf");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.manager.conf");
@@ -462,7 +462,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setName("日志管理");
             menu.setAliasName("Log");
             menu.setLocation(0);
-            menu.setHref("/private/sys/log");
+            menu.setHref("/platform/sys/log");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.manager.log");
@@ -486,7 +486,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setName("定时任务");
             menu.setAliasName("Task");
             menu.setLocation(0);
-            menu.setHref("/private/sys/task");
+            menu.setHref("/platform/sys/task");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.manager.task");
@@ -532,7 +532,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setName("自定义路由");
             menu.setAliasName("Route");
             menu.setLocation(0);
-            menu.setHref("/private/sys/route");
+            menu.setHref("/platform/sys/route");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.manager.route");
@@ -578,7 +578,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setName("应用管理");
             menu.setAliasName("App");
             menu.setLocation(0);
-            menu.setHref("/private/sys/api");
+            menu.setHref("/platform/sys/api");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.manager.api");
@@ -624,7 +624,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setName("数据字典");
             menu.setAliasName("Dict");
             menu.setLocation(0);
-            menu.setHref("/private/sys/dict");
+            menu.setHref("/platform/sys/dict");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.manager.dict");

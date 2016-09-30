@@ -1,0 +1,34 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">${obj.name!}</a>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <a href="javascript:;" class="list-group-item" title="机构代码">
+                        <i class="ti-comment mr10 text-muted"></i>${obj.unitcode!}
+                    </a>
+                    <a href="javascript:;" class="list-group-item" title="单位介绍">
+                        <i class="ti-comment mr10 text-muted"></i>${obj.note!,escape}
+                    </a>
+                    <a href="javascript:;" class="list-group-item" title="单位地址">
+                        <i class="ti-home mr10 text-muted"></i>${obj.address!}
+                    </a>
+                    <a href="javascript:;" class="list-group-item" title="联系电话">
+                        <i class="ti-tablet mr10 text-muted"></i>${obj.telephone!}
+                    </a>
+                    <a href="javascript:;" class="list-group-item" title="录入时间">
+                        <i class="ti-time mr10 text-muted"></i>
+                        ${@date.getDate(obj.createAt)}
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+</div>

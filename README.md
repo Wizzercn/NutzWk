@@ -7,11 +7,9 @@ NutzWk 基于Nutz的开源企业级开发框架
 
 开发计划:
 
-* NutzWk 4.0.x   前后端分离版 (vue + nutz + dubbo) **筹备中..**
-* NutzWk 3.2.x   CMS+ (beetl / beetl+velocity)
-* NutzWk 3.1.x   微信+ (beetl / beetl+velocity)
-* NutzWk 3.0.x   纯净版(beetl / beetl+velocity)
-* NutzWk 2.0.x   试验版(velocity)
+* NutzWk 4.0.x   前后端分离版 (vue + nutz + dubbo) **开发中..**
+* NutzWk 3.3.x   CMS+微信+系统+权限+常用功能封装 (beetl / beetl+velocity)
+* NutzWk 2.0.x   试验版(不建议使用)
 * NutzWk 1.0.x   传统版(velocity 支持IE6)
 
 注:_velocity后缀为同时支持beetl和velocity两种模板引擎版本  
@@ -48,6 +46,7 @@ NutzWk 3.x 新特性：
 *   集成Beetl/Velocity模板引擎
 *   后台管理界面采用Pjax+Bootstrap
 *   自定义路由
+*   API Token 及应用管理
 
 
 使用说明：
@@ -55,17 +54,9 @@ NutzWk 3.x 新特性：
 *   修改数据库连接 /resources/config/custom/db.properties
 *   项目使用Maven构建，IDEA/Eclipse直接打开，等待包下载完毕
 *   启动时自动建表
+*   http://127.0.0.1/sysadmin
 *   用户名：superadmin  密码：1
 
-======
-和 NutzWk 1.0 的主要区别：
-*   集成Shiro，更加完善的权限体系
-*   界面使用Bootstrap，PJAX加载
-*   MVC结构，事务支持更佳
-*   注解式日志，企业级业务操作记录更方便
-*   DataTables等JS插件的使用
-*   国际化字符串
-*   ……
 
 代码生成器【IDEA插件】
 ======
@@ -87,13 +78,7 @@ https://github.com/Wizzercn/NutzCodematic/tree/v3.0.0       适用于NutzWk v3.x
 
 https://github.com/Wizzercn/NutzCodematic/tree/v1.0.0       适用于NutzWk 1.0
 
-老版本演示地址
-======
-
-https://nutzwk.nutz.cn/                 NutzWk 2.0
-
-https://wzflow.nutz.cn/          NutzWk 1.0 (含Activiti工作流)
-
+老版本说明
 ======
 
 NutzWk 1.0 源码是这个链接： https://github.com/Wizzercn/NutzWk/tree/1.0

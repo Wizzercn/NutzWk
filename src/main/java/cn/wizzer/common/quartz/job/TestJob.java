@@ -1,6 +1,6 @@
 package cn.wizzer.common.quartz.job;
 
-import cn.wizzer.modules.back.sys.models.Sys_task;
+import cn.wizzer.modules.models.sys.Sys_task;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;

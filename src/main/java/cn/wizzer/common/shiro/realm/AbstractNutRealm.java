@@ -1,9 +1,9 @@
 package cn.wizzer.common.shiro.realm;
 
-import cn.wizzer.modules.back.sys.models.Sys_role;
-import cn.wizzer.modules.back.sys.models.Sys_user;
-import cn.wizzer.modules.back.sys.services.RoleService;
-import cn.wizzer.modules.back.sys.services.UserService;
+import cn.wizzer.modules.models.sys.Sys_role;
+import cn.wizzer.modules.models.sys.Sys_user;
+import cn.wizzer.modules.services.sys.SysRoleService;
+import cn.wizzer.modules.services.sys.SysUserService;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.Cache;
@@ -16,21 +16,21 @@ import org.nutz.mvc.Mvcs;
 
 public abstract class AbstractNutRealm extends AuthorizingRealm {
 
-    private UserService userService;
-    private RoleService roleService;
+    private SysUserService userService;
+    private SysRoleService roleService;
 
-    protected UserService getUserService() {
+    protected SysUserService getUserService() {
         if (Lang.isEmpty(userService)) {
             Ioc ioc = Mvcs.getIoc();
-            userService = ioc.get(UserService.class);
+            userService = ioc.get(SysUserService.class);
         }
         return userService;
     }
 
-    protected RoleService getRoleService() {
+    protected SysRoleService getRoleService() {
         if (Lang.isEmpty(roleService)) {
             Ioc ioc = Mvcs.getIoc();
-            roleService = ioc.get(RoleService.class);
+            roleService = ioc.get(SysRoleService.class);
         }
         return roleService;
     }
