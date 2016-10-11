@@ -1,5 +1,6 @@
 package cn.wizzer.modules.back.sys.services;
 
+import cn.wizzer.common.base.Globals;
 import cn.wizzer.common.base.Service;
 import cn.wizzer.modules.back.sys.models.Sys_api;
 import io.jsonwebtoken.Jwts;
@@ -7,9 +8,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Files;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
+import java.io.*;
 import java.security.Key;
 import java.util.Date;
 
@@ -30,13 +33,23 @@ public class ApiService extends Service<Sys_api> {
      * 生成token
      *
      * @param date  失效时间
-     * @param appId AppId
+     * @param appId appId
      * @return
      */
-    public String generateToken(Date date, String appId) {
-
-        if (key == null)
+    public String generateToken(Date date, String appId) throws IOException, ClassNotFoundException {
+        File f = new File(Globals.AppRoot + "/WEB-INF/apikey/" + appId + ".txt");
+        if (Files.isFile(f)) {
+            ObjectInputStream keyIn = new ObjectInputStream(new FileInputStream(f));
+            key = (Key) keyIn.readObject();
+            keyIn.close();
+        } else {
             key = MacProvider.generateKey();
+            Files.createNewFile(f);
+            ObjectOutputStream keyOut = new ObjectOutputStream(new FileOutputStream(f));
+            keyOut.writeObject(key);
+            keyOut.close();
+        }
+
         return Jwts.builder()
                 .setSubject(appId)
                 .signWith(SignatureAlgorithm.HS512, key)
@@ -46,12 +59,18 @@ public class ApiService extends Service<Sys_api> {
 
     /**
      * 验证token
+     *
      * @param appId AppId
      * @param token token
      * @return
      */
     public boolean verifyToken(String appId, String token) {
         try {
+            if (key == null) {
+                ObjectInputStream keyIn = new ObjectInputStream(new FileInputStream(Globals.AppRoot + "/WEB-INF/apikey/" + appId + ".txt"));
+                key = (Key) keyIn.readObject();
+                keyIn.close();
+            }
             Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getSubject().equals(appId);
             return true;
         } catch (Exception e) {
