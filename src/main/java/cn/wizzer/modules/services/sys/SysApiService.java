@@ -42,7 +42,7 @@ public class SysApiService extends Service<Sys_api> {
      * @return
      */
     public String generateToken(Date date, String appId) throws IOException, ClassNotFoundException {
-        File f = new File(Globals.AppRoot + "/WEB-INF/apikey/" + appId + ".txt");
+        File f = new File(Globals.AppRoot + "/WEB-INF/apikey/" + appId + ".key");
         if (Files.isFile(f)) {
             ObjectInputStream keyIn = new ObjectInputStream(new FileInputStream(f));
             key = (Key) keyIn.readObject();
@@ -72,7 +72,7 @@ public class SysApiService extends Service<Sys_api> {
     public boolean verifyToken(String appId, String token) {
         try {
             if (key == null) {
-                ObjectInputStream keyIn = new ObjectInputStream(new FileInputStream(Globals.AppRoot + "/WEB-INF/apikey/" + appId + ".txt"));
+                ObjectInputStream keyIn = new ObjectInputStream(new FileInputStream(Globals.AppRoot + "/WEB-INF/apikey/" + appId + ".key"));
                 key = (Key) keyIn.readObject();
                 keyIn.close();
             }
