@@ -77,7 +77,7 @@ public class TokenController {
             c.add(Calendar.HOUR, +2);
             date = c.getTime();
             map.addv("expires", 7200);
-            map.addv("token", apiService.generateToken(date, appId));
+            map.addv("token", apiService.generateToken(date, api.getAppId()));
             return Result.success("ok", map);
         } catch (Exception e) {
             log.debug(e.getMessage());
