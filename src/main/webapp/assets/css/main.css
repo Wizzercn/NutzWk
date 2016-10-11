@@ -59,7 +59,7 @@ body{background:#515e72;color:#59595a;line-height:1.5;direction:ltr;-webkit-font
   background: transparent;
 }
 .header .brand {
-  width: 150px;
+  width: 180px;
   float: left;
 }
 .header .brand .navbar-brand {
@@ -310,7 +310,7 @@ body{background:#515e72;color:#59595a;line-height:1.5;direction:ltr;-webkit-font
  */
 /* main sidebar */
 .sidebar {
-  width: 150px;
+  width: 180px;
 }
 .sidebar .nav-title {
   font-size: 11px;
@@ -1054,7 +1054,7 @@ aside > .fffix > footer p {
   }
   .offscreen-left {
     -webkit-backface-visibility: hidden;
-    width: 150px;
+    width: 180px;
     height: 100%;
     overflow: auto;
     -moz-box-sizing: content-box;
@@ -1077,7 +1077,7 @@ aside > .fffix > footer p {
   }
   .offscreen-right {
     -webkit-backface-visibility: hidden;
-    width: 150px;
+    width: 180px;
     height: 100%;
     overflow: auto;
     -moz-box-sizing: content-box;
@@ -1099,23 +1099,23 @@ aside > .fffix > footer p {
   }
   .move-left > .layout,
   .move-left > .header {
-    -webkit-transform: translate(150px, 0);
-    -ms-transform: translate(150px, 0);
-    transform: translate(150px, 0);
-    -webkit-transform: translate3d(150px, 0, 0);
-    -ms-transform: translate(150px, 0, 0);
-    transform: translate3d(150px, 0, 0);
+    -webkit-transform: translate(180px, 0);
+    -ms-transform: translate(180px, 0);
+    transform: translate(180px, 0);
+    -webkit-transform: translate3d(180px, 0, 0);
+    -ms-transform: translate(180px, 0, 0);
+    transform: translate3d(180px, 0, 0);
     -webkit-transition: -webkit-transform 300ms ease;
     transition: transform 300ms ease;
   }
   .move-right > .layout,
   .move-right > .header {
-    -webkit-transform: translate(-150px, 0);
-    -ms-transform: translate(-150px, 0);
-    transform: translate(-150px, 0);
-    -webkit-transform: translate3d(-150px, 0, 0);
-    -ms-transform: translate(-150px, 0, 0);
-    transform: translate3d(-150px, 0, 0);
+    -webkit-transform: translate(-180px, 0);
+    -ms-transform: translate(-180px, 0);
+    transform: translate(-180px, 0);
+    -webkit-transform: translate3d(-180px, 0, 0);
+    -ms-transform: translate(-180px, 0, 0);
+    transform: translate3d(-180px, 0, 0);
     -webkit-transition: -webkit-transform 300ms ease;
     transition: transform 300ms ease;
   }
@@ -1126,18 +1126,18 @@ aside > .fffix > footer p {
     overflow: visible;
   }
   .no-csstransforms .offscreen-left {
-    left: -150px;
+    left: -180px;
   }
   .no-csstransforms .offscreen-right {
-    right: -150px;
+    right: -180px;
   }
   .no-csstransforms .move-right > .layout,
   .no-csstransforms .move-right > .header {
-    right: 150px;
+    right: 180px;
   }
   .no-csstransforms .move-left > .layout,
   .no-csstransforms .move-left > .header {
-    left: 150px;
+    left: 180px;
   }
   .move-left .exit-offscreen,
   .move-right .exit-offscreen {
