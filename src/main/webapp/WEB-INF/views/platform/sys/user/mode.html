@@ -28,11 +28,11 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">${msg['system.cancel']}</button>
-    <button type="button" id="ok" class="btn btn-primary">${msg['system.confirm']}</button>
+    <button type="button" id="okMode" class="btn btn-primary">${msg['system.confirm']}</button>
 </div>
 <script type="text/javascript">
     $(function () {
-        $("#ok").on("click",function(){
+        $("#okMode").on("click",function(){
             $("#modeForm").submit();
         });
         $("#modeForm").ajaxForm({
