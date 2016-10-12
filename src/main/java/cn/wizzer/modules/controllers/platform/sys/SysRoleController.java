@@ -164,7 +164,7 @@ public class SysRoleController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.role.menu")
-    @SLog(tag = "修改角色菜单", msg = "角色名称:${args[2].getAttribute('name')},菜单ID:${args[0]}")
+    @SLog(tag = "修改角色菜单", msg = "角色名称:${args[2].getAttribute('name')}")
     public Object editMenuDo(@Param("menuIds") String menuIds, @Param("roleid") String roleid, HttpServletRequest req) {
         try {
             String[] ids = StringUtils.split(menuIds, ",");
