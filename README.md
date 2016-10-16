@@ -80,7 +80,9 @@ https://github.com/enilu/nutzwk-code-generator              适用于NutzWk v3.x
 代码生成器【图形界面】
 ======
 
-https://github.com/Wizzercn/NutzCodematic/tree/v3.0.0       适用于NutzWk v3.x
+https://github.com/Wizzercn/NutzCodematic/tree/v3.3.0       适用于NutzWk v3.3.0
+
+https://github.com/Wizzercn/NutzCodematic/tree/v3.0.0       适用于NutzWk v3.0.0 ~ v3.2.7
 
 https://github.com/Wizzercn/NutzCodematic/tree/v1.0.0       适用于NutzWk 1.0
 
