@@ -26,6 +26,8 @@ QQ: 11624317
 ======
 https://nutzwk.wizzer.cn/                 NutzWk v3.x
 
+https://vue.wizzer.cn                     NutzWk v4.x
+
 https://github.com/Wizzercn/NodeWk       Node.js版源码
 
 ======
