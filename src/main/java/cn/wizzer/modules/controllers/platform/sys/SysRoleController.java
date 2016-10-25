@@ -300,7 +300,6 @@ public class SysRoleController {
             obj.put("children", false);
             tree.add(obj);
         }
-        tree.add(obj);
         for (Sys_unit unit : list) {
             obj = new HashMap<>();
             obj.put("id", unit.getId());
