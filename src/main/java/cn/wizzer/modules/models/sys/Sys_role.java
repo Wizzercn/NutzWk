@@ -49,7 +49,7 @@ public class Sys_role extends Model implements Serializable {
     @ManyMany(from = "roleId", relation = "sys_role_menu", target = Sys_menu.class, to = "menuId")
     protected List<Sys_menu> menus;
 
-    @ManyMany(from = "roleId", relation = "sys_user_role", target = Sys_menu.class, to = "userId")
+    @ManyMany(from = "roleId", relation = "sys_user_role", target = Sys_user.class, to = "userId")
     private List<Sys_user> users;
 
     public String getId() {
