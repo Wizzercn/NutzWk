@@ -102,7 +102,7 @@ public class Sys_user extends Model implements Serializable {
     @ManyMany(from = "userId", relation = "sys_user_role", target = Sys_role.class, to = "roleId")
     private List<Sys_role> roles;
 
-    @ManyMany(from = "userId", relation = "sys_user_unit", target = Sys_role.class, to = "unitId")
+    @ManyMany(from = "userId", relation = "sys_user_unit", target = Sys_unit.class, to = "unitId")
     protected List<Sys_unit> units;
 
     protected List<Sys_menu> menus;
