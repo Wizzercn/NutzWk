@@ -139,8 +139,15 @@ public class SysRoleController {
     @Ok("beetl:/platform/sys/role/editMenu.html")
     @RequiresAuthentication
     public Object editMenu(String roleId, HttpServletRequest req) {
+        StringBuilder roleMenuIds = new StringBuilder();
         List<Sys_menu> list = menuService.query(Cnd.orderBy().asc("location").asc("path"));
         List<Sys_menu> datas = roleService.getDatas();
+        List<Sys_menu> roleMenu = roleService.getMenusAndButtons(roleId);
+        for (Sys_menu m : roleMenu) {
+            roleMenuIds.append(m.getId() + "#");
+        }
+        String roleMenuId = roleMenuIds.toString();
+        log.debug(roleMenuId);
         List<NutMap> menus = new ArrayList<>();
         for (Sys_menu menu : list) {
             NutMap map = new NutMap();
@@ -155,6 +162,11 @@ public class SysRoleController {
             map.put("icon", Strings.sBlank(menu.getIcon()));
             map.put("parent", "".equals(Strings.sNull(menu.getParentId())) ? "#" : menu.getParentId());
             map.put("data", menu.getHref());
+            if ((menu.getPath().length() >=16 || !menu.isHasChildren()) && roleMenuId.contains(menu.getId() + "#")) {
+                map.put("state", NutMap.NEW().addv("selected", true));
+            } else {
+                map.put("state", NutMap.NEW().addv("selected", false));
+            }
             menus.add(map);
         }
         req.setAttribute("menus", Json.toJson(menus));
@@ -294,7 +306,7 @@ public class SysRoleController {
         List<Sys_unit> list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();
         Map<String, Object> obj = new HashMap<>();
-        if(Strings.isBlank(pid)) {
+        if (Strings.isBlank(pid)) {
             obj.put("id", "root");
             obj.put("text", "系统角色");
             obj.put("children", false);
