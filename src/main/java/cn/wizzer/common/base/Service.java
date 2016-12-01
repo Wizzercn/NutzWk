@@ -11,7 +11,6 @@ import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.sql.SqlCallback;
 import org.nutz.dao.util.Daos;
-import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
@@ -21,7 +20,6 @@ import org.nutz.service.EntityService;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,6 +130,7 @@ public class Service<T> extends EntityService<T> {
 
     /**
      * 伪删除
+     *
      * @param id
      * @return
      */
@@ -141,6 +140,7 @@ public class Service<T> extends EntityService<T> {
 
     /**
      * 批量伪删除
+     *
      * @param ids
      * @return
      */
@@ -277,6 +277,30 @@ public class Service<T> extends EntityService<T> {
         this.dao().execute(sql);
         return sql.getList(Record.class);
 
+    }
+
+    /**
+     * 自定义sql获取map key-value
+     *
+     * @param dao
+     * @param sql
+     * @param <T>
+     * @return
+     */
+    public <T> Map<String, String> getMap(Dao dao, Sql sql) {
+        final Map<String, String> map = new HashMap<String, String>();
+        sql.setCallback(new SqlCallback() {
+            @Override
+            public Object invoke(Connection conn, ResultSet rs, Sql sql)
+                    throws SQLException {
+                while (rs.next()) {
+                    map.put(Strings.sNull(rs.getString(1)), Strings.sNull(rs.getString(2)));
+                }
+                return null;
+            }
+        });
+        dao.execute(sql);
+        return map;
     }
 
     /**
