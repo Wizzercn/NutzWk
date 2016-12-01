@@ -24,7 +24,7 @@ public class Cms_link_class extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 120)
     private String name;
 
-    @ManyMany(from = "classId", relation = "cms_class_link", target = Cms_link.class, to = "linkId")
+    @ManyMany(from = "classId", relation = "cms_class_link", to = "linkId")
     private List<Cms_link> links;
 
     public String getId() {

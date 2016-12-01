@@ -4,7 +4,7 @@
     <groupId>cn.wizzer</groupId>
     <artifactId>nutzwk</artifactId>
     <packaging>war</packaging>
-    <version>3.3.1</version>
+    <version>3.3.2</version>
     <name>NutzWk</name>
     <url>http://www.wizzer.cn</url>
     <properties>
@@ -60,22 +60,22 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz</artifactId>
-            <version>1.r.58</version>
+            <version>1.r.59</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-daocache</artifactId>
-            <version>1.r.58</version>
+            <version>1.r.59</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-quartz</artifactId>
-            <version>1.r.58</version>
+            <version>1.r.59</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-shiro</artifactId>
-            <version>1.r.58</version>
+            <version>1.r.59</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -85,7 +85,7 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-views</artifactId>
-            <version>1.r.58</version>
+            <version>1.r.59</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.nutz</groupId>
@@ -332,7 +332,7 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-mock</artifactId>
-            <version>1.r.58</version>
+            <version>1.r.59</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

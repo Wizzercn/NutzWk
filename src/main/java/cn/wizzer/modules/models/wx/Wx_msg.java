@@ -48,10 +48,10 @@ public class Wx_msg extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String wxid;
 
-    @One(target = Wx_msg_reply.class, field = "replyId")
+    @One(field = "replyId")
     private Wx_msg_reply reply;
 
-    @One(target = Wx_config.class, field = "wxid")
+    @One(field = "wxid")
     private Wx_config wxConfig;
 
     public String getId() {

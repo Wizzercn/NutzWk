@@ -47,7 +47,7 @@ public class Cms_link extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String classId;
 
-    @One(target = Cms_link_class.class, field = "classId")
+    @One(field = "classId")
     private Cms_link_class linkClass;
 
     public String getId() {
