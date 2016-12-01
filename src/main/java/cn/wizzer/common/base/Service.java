@@ -282,12 +282,11 @@ public class Service<T> extends EntityService<T> {
     /**
      * 自定义sql获取map key-value
      *
-     * @param dao
      * @param sql
      * @param <T>
      * @return
      */
-    public <T> Map<String, String> getMap(Dao dao, Sql sql) {
+    public <T> Map<String, String> getMap(Sql sql) {
         final Map<String, String> map = new HashMap<String, String>();
         sql.setCallback(new SqlCallback() {
             @Override
@@ -299,7 +298,7 @@ public class Service<T> extends EntityService<T> {
                 return null;
             }
         });
-        dao.execute(sql);
+        this.dao().execute(sql);
         return map;
     }
 
