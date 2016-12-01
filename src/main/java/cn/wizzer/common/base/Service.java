@@ -286,20 +286,20 @@ public class Service<T> extends EntityService<T> {
      * @param <T>
      * @return
      */
-    public <T> Map<String, String> getMap(Sql sql) {
-        final Map<String, String> map = new HashMap<String, String>();
+    public <T> Map getMap(Sql sql) {
         sql.setCallback(new SqlCallback() {
             @Override
             public Object invoke(Connection conn, ResultSet rs, Sql sql)
                     throws SQLException {
+                Map<String, String> map = new HashMap<>();
                 while (rs.next()) {
                     map.put(Strings.sNull(rs.getString(1)), Strings.sNull(rs.getString(2)));
                 }
-                return null;
+                return map;
             }
         });
         this.dao().execute(sql);
-        return map;
+        return sql.getObject(Map.class);
     }
 
     /**
