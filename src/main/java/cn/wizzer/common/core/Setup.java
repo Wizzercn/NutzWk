@@ -1,8 +1,11 @@
 package cn.wizzer.common.core;
 
 import cn.wizzer.common.base.Globals;
+import cn.wizzer.common.plugin.IPlugin;
+import cn.wizzer.common.plugin.PluginMaster;
 import cn.wizzer.modules.models.sys.*;
 import net.sf.ehcache.CacheManager;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -17,6 +20,7 @@ import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
 import org.nutz.lang.Encoding;
+import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -64,8 +68,34 @@ public class Setup implements org.nutz.mvc.Setup {
             initSysTask(config, dao);
             // 初始化自定义路由
             initSysRoute(config, dao);
+            // 初始化热插拔插件
+            initSysPlugin(config, dao);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 初始化热插拔插件
+     *
+     * @param config
+     * @param dao
+     */
+    private void initSysPlugin(NutConfig config, Dao dao) {
+        try {
+            PluginMaster pluginMaster = config.getIoc().get(PluginMaster.class);
+            List<Sys_plugin> list = dao.query(Sys_plugin.class, Cnd.where("disabled", "=", false));
+            for (Sys_plugin sysPlugin : list) {
+                byte[] buf = Files.readBytes(Globals.AppRoot + sysPlugin.getPath());
+                IPlugin plugin = pluginMaster.build(sysPlugin.getClassName(), buf);
+                String[] p = new String[]{};
+                if (!Strings.isBlank(sysPlugin.getArgs())) {
+                    p = StringUtils.split(sysPlugin.getArgs(), ",");
+                }
+                pluginMaster.register(sysPlugin.getCode(), plugin, p);
+            }
+        } catch (Exception e) {
+            log.debug("plugin load error", e);
         }
     }
 
@@ -664,6 +694,41 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setParentId(d.getId());
             menu.setType("data");
             Sys_menu d3 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("000100010011");
+            menu.setName("插件管理");
+            menu.setAliasName("Plugin");
+            menu.setLocation(0);
+            menu.setHref("/platform/sys/plugin");
+            menu.setTarget("data-pjax");
+            menu.setIsShow(true);
+            menu.setPermission("sys.manager.plugin");
+            menu.setParentId(m1.getId());
+            menu.setType("menu");
+            Sys_menu p = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100110001");
+            menu.setName("添加插件");
+            menu.setAliasName("Add");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.plugin.add");
+            menu.setParentId(p.getId());
+            menu.setType("data");
+            Sys_menu p1 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100110002");
+            menu.setName("删除插件");
+            menu.setAliasName("Delete");
+            menu.setLocation(3);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.plugin.delete");
+            menu.setParentId(p.getId());
+            menu.setType("data");
+            Sys_menu p2 = dao.insert(menu);
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
