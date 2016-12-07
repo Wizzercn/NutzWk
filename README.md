@@ -29,9 +29,8 @@ https://github.com/Wizzercn/NodeWk       Node.js版源码
 
 NutzWk 3.x 运行环境：
 *   JDK 8
-*   Tomcat 8
-*   Maven 3.3.9
-*   Nutz v1.r.58
+*   Tomcat 8.x +
+*   Maven 3.3.x +
 
 NutzWk 3.x 新特性：
 *   集成Shiro权限框架
