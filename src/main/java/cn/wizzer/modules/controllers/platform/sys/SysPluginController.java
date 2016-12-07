@@ -59,11 +59,12 @@ public class SysPluginController {
             throws IOException {
         try {
             String name = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".")).toLowerCase();
-            byte[] buf = Streams.readBytesAndClose(tf.getInputStream());
             String p = Globals.AppRoot;
             String f = Globals.AppUploadPath + "/plugin/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + name;
             File file = new File(p + f);
+            Files.createFileIfNoExists(file);
             Files.write(f, tf.getInputStream());
+            byte[] buf = Files.readBytes(file);
             IPlugin plugin;
             if (".jar".equals(name)) {
                 plugin = pluginMaster.buildFromJar(file, className, buf);
