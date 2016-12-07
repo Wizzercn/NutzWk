@@ -1,5 +1,6 @@
 package cn.wizzer.common.plugin;
 
+import cn.wizzer.common.base.Globals;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -7,15 +8,18 @@ import org.nutz.lang.Lang;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 
 /**
  * 实验性插件管理器
- * @author wendal
  *
+ * @author wendal
  */
-@IocBean(depose="depose")
+@IocBean(depose = "depose")
 public class PluginMaster {
 
     private static final Log log = Logs.get();
@@ -30,9 +34,10 @@ public class PluginMaster {
 
     /**
      * 注入一个新插件
-     * @param key 插件的唯一key
+     *
+     * @param key    插件的唯一key
      * @param plugin 插件对象
-     * @param args 需要传递给插件的初始化参数
+     * @param args   需要传递给插件的初始化参数
      * @return true, 如果成功的话
      */
     public boolean register(String key, IPlugin plugin, String[] args) {
@@ -42,8 +47,7 @@ public class PluginMaster {
             log.infof("load plugin key=%s class=%s", key, plugin.getClass().getName());
             plugins.put(key, plugin); // 放入插件池
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.infof("load plugin fail key=%s class=%s", key, plugin.getClass().getName(), e);
             return false;
         }
@@ -51,8 +55,9 @@ public class PluginMaster {
 
     /**
      * 通过类数据(byte数组)和类名,构建一个插件实例
+     *
      * @param className 类名
-     * @param buf 类数据
+     * @param buf       类数据
      * @return 类实例
      */
     public IPlugin build(final String className, byte[] buf) {
@@ -60,9 +65,19 @@ public class PluginMaster {
             ByteArrayClassLoader c = new ByteArrayClassLoader();
             c._defineClass(className, buf, 0, buf.length);
             return (IPlugin) c.loadClass(className).newInstance();
+        } catch (Exception e) {
+            log.info("load plugin fail name=" + className, e);
+            throw Lang.wrapThrow(e);
         }
-        catch (Exception e) {
-            log.info("load plugin fail name="+className, e);
+    }
+
+    @SuppressWarnings("resource")
+    public IPlugin buildFromJar(final File file, final String className, byte[] buf) {
+        try {
+            log.debug(file.getAbsolutePath());
+            return (IPlugin) new URLClassLoader(new URL[]{file.toURI().toURL()}, getClass().getClassLoader(), null).loadClass(className).newInstance();
+        } catch (Exception e) {
+            log.info("load plugin fail name=" + className, e);
             throw Lang.wrapThrow(e);
         }
     }
@@ -80,6 +95,7 @@ public class PluginMaster {
 
     /**
      * 移除特定的插件
+     *
      * @param key 插件唯一识别
      */
     public void remove(String key) {
@@ -92,6 +108,7 @@ public class PluginMaster {
 
     /**
      * 获取当前插件列表
+     *
      * @return
      */
     public Map<String, IPlugin> getPlugins() {
@@ -100,6 +117,7 @@ public class PluginMaster {
 
     /**
      * 根据一个方法动态获取所需要的插件列表
+     *
      * @param method 正准备被拦截的方法
      * @return 插件列表
      */

@@ -58,12 +58,19 @@ public class SysPluginController {
                         @Param("Filedata") TempFile tf, @Param("args") String[] args)
             throws IOException {
         try {
+            String name = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".")).toLowerCase();
             byte[] buf = Streams.readBytesAndClose(tf.getInputStream());
-            IPlugin plugin = pluginMaster.build(className, buf);
-            pluginMaster.register(code, plugin, args);
             String p = Globals.AppRoot;
-            String f = Globals.AppUploadPath + "/plugin/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
-            Files.write(new File(p + f), tf.getInputStream());
+            String f = Globals.AppUploadPath + "/plugin/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + name;
+            File file = new File(p + f);
+            Files.write(f, tf.getInputStream());
+            IPlugin plugin;
+            if (".jar".equals(name)) {
+                plugin = pluginMaster.buildFromJar(file, className, buf);
+            } else {
+                plugin = pluginMaster.build(className, buf);
+            }
+            pluginMaster.register(code, plugin, args);
             Sys_plugin sysPlugin = new Sys_plugin();
             sysPlugin.setCode(code);
             sysPlugin.setClassName(className);
@@ -98,9 +105,16 @@ public class SysPluginController {
     public Object enable(String id) {
         try {
             Sys_plugin sysPlugin = sysPluginService.fetch(id);
-            byte[] buf = Files.readBytes(Globals.AppRoot + sysPlugin.getPath());
-            IPlugin plugin = pluginMaster.build(sysPlugin.getClassName(), buf);
+            String name = sysPlugin.getPath().substring(sysPlugin.getPath().indexOf(".")).toLowerCase();
+            File file = new File(Globals.AppRoot + sysPlugin.getPath());
+            byte[] buf = Files.readBytes(file);
             String[] p = new String[]{};
+            IPlugin plugin;
+            if (".jar".equals(name)) {
+                plugin = pluginMaster.buildFromJar(file, sysPlugin.getClassName(), buf);
+            } else {
+                plugin = pluginMaster.build(sysPlugin.getClassName(), buf);
+            }
             if (!Strings.isBlank(sysPlugin.getArgs())) {
                 p = org.apache.commons.lang3.StringUtils.split(sysPlugin.getArgs(), ",");
             }

@@ -27,6 +27,7 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
 import org.quartz.Scheduler;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -86,11 +87,18 @@ public class Setup implements org.nutz.mvc.Setup {
             PluginMaster pluginMaster = config.getIoc().get(PluginMaster.class);
             List<Sys_plugin> list = dao.query(Sys_plugin.class, Cnd.where("disabled", "=", 0));
             for (Sys_plugin sysPlugin : list) {
-                byte[] buf = Files.readBytes(Globals.AppRoot + sysPlugin.getPath());
-                IPlugin plugin = pluginMaster.build(sysPlugin.getClassName(), buf);
+                String name = sysPlugin.getPath().substring(sysPlugin.getPath().indexOf(".")).toLowerCase();
+                File file = new File(Globals.AppRoot + sysPlugin.getPath());
+                byte[] buf = Files.readBytes(file);
                 String[] p = new String[]{};
+                IPlugin plugin;
+                if (".jar".equals(name)) {
+                    plugin = pluginMaster.buildFromJar(file, sysPlugin.getClassName(), buf);
+                } else {
+                    plugin = pluginMaster.build(sysPlugin.getClassName(), buf);
+                }
                 if (!Strings.isBlank(sysPlugin.getArgs())) {
-                    p = StringUtils.split(sysPlugin.getArgs(), ",");
+                    p = org.apache.commons.lang3.StringUtils.split(sysPlugin.getArgs(), ",");
                 }
                 pluginMaster.register(sysPlugin.getCode(), plugin, p);
             }

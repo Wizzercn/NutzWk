@@ -32,7 +32,7 @@ var ioc={
             // 单个文件最大尺寸(大约的值，单位为字节，即 20971520 为 20M)
             maxFileSize : 20971520,
             // 正则表达式匹配可以支持的文件名
-            nameFilter : '^(.+[.])(gif|jpg|png|doc|docx|xls|xlsx|rar|zip|7z|flv|swf|mkv|avi|txt|xml|pdf|md|pptx|ppt|flv|swf|mkv|avi|rm|rmvb|wmv|mp4|mov|mpg|mpeg|class)$'
+            nameFilter : '^(.+[.])(gif|jpg|png|doc|docx|xls|xlsx|rar|zip|7z|flv|swf|mkv|avi|txt|xml|pdf|md|pptx|ppt|flv|swf|mkv|avi|rm|rmvb|wmv|mp4|mov|mpg|mpeg|class|jar)$'
         }
     },
     fileUpload : {
