@@ -72,7 +72,7 @@ public class PluginMaster {
     }
 
     @SuppressWarnings("resource")
-    public IPlugin buildFromJar(final File file, final String className, byte[] buf) {
+    public IPlugin buildFromJar(final File file, final String className) {
         try {
             log.debug(file.getAbsolutePath());
             return (IPlugin) new URLClassLoader(new URL[]{file.toURI().toURL()}, getClass().getClassLoader(), null).loadClass(className).newInstance();

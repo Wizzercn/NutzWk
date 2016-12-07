@@ -89,12 +89,12 @@ public class Setup implements org.nutz.mvc.Setup {
             for (Sys_plugin sysPlugin : list) {
                 String name = sysPlugin.getPath().substring(sysPlugin.getPath().indexOf(".")).toLowerCase();
                 File file = new File(Globals.AppRoot + sysPlugin.getPath());
-                byte[] buf = Files.readBytes(file);
                 String[] p = new String[]{};
                 IPlugin plugin;
                 if (".jar".equals(name)) {
-                    plugin = pluginMaster.buildFromJar(file, sysPlugin.getClassName(), buf);
+                    plugin = pluginMaster.buildFromJar(file, sysPlugin.getClassName());
                 } else {
+                    byte[] buf = Files.readBytes(file);
                     plugin = pluginMaster.build(sysPlugin.getClassName(), buf);
                 }
                 if (!Strings.isBlank(sysPlugin.getArgs())) {

@@ -60,15 +60,15 @@ public class SysPluginController {
         try {
             String name = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".")).toLowerCase();
             String p = Globals.AppRoot;
-            String f = Globals.AppUploadPath + "/plugin/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + name;
+            String f = Globals.AppUploadPath + "/plugin/" + R.UU32() + name;
             File file = new File(p + f);
             Files.createFileIfNoExists(file);
-            Files.write(f, tf.getInputStream());
-            byte[] buf = Files.readBytes(file);
+            Files.write(file, tf.getInputStream());
             IPlugin plugin;
             if (".jar".equals(name)) {
-                plugin = pluginMaster.buildFromJar(file, className, buf);
+                plugin = pluginMaster.buildFromJar(file, className);
             } else {
+                byte[] buf = Files.readBytes(file);
                 plugin = pluginMaster.build(className, buf);
             }
             pluginMaster.register(code, plugin, args);
@@ -92,7 +92,7 @@ public class SysPluginController {
         try {
             Sys_plugin sysPlugin = sysPluginService.fetch(id);
             pluginMaster.remove(sysPlugin.getCode());
-            Files.deleteFile(new File(Globals.AppRoot + sysPlugin.getPath()));
+            //被占用删不掉文件啊 Files.deleteFile(new File(Globals.AppRoot + sysPlugin.getPath()));
             sysPluginService.delete(id);
             return Result.success("system.success");
         } catch (Exception e) {
@@ -108,12 +108,12 @@ public class SysPluginController {
             Sys_plugin sysPlugin = sysPluginService.fetch(id);
             String name = sysPlugin.getPath().substring(sysPlugin.getPath().indexOf(".")).toLowerCase();
             File file = new File(Globals.AppRoot + sysPlugin.getPath());
-            byte[] buf = Files.readBytes(file);
             String[] p = new String[]{};
             IPlugin plugin;
             if (".jar".equals(name)) {
-                plugin = pluginMaster.buildFromJar(file, sysPlugin.getClassName(), buf);
+                plugin = pluginMaster.buildFromJar(file, sysPlugin.getClassName());
             } else {
+                byte[] buf = Files.readBytes(file);
                 plugin = pluginMaster.build(sysPlugin.getClassName(), buf);
             }
             if (!Strings.isBlank(sysPlugin.getArgs())) {
