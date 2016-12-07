@@ -41,14 +41,14 @@ NutzWk 3.x 新特性：
 *   支持注解式事务
 *   支持动作链
 *   支持注解式日志
-*   支持插件式加载
+*   支持自定义路由
+*   支持插件热插拔
+*   支持API Token及应用管理
 *   集成Email服务
 *   集成Quartz定时任务
 *   集成Lucene搜索引擎
 *   集成Beetl/Velocity模板引擎
 *   后台管理界面采用Pjax+Bootstrap
-*   自定义路由
-*   API Token 及应用管理
 
 
 使用说明：
