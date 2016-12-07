@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by Wizzer on 2016/12/6.
  */
 @Table("sys_plugin")
-@TableIndexes({@Index(name = "INDEX_SYS_PLUGIN", fields = {"code"}, unique = true)})
+@TableIndexes({@Index(name = "INDEX_SYS_PLUGIN", fields = {"code"}, unique = true),@Index(name = "INDEX_SYS_CLASSNAME", fields = {"className"}, unique = true)})
 public class Sys_plugin extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column

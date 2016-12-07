@@ -9,9 +9,10 @@ import cn.wizzer.common.util.DateUtil;
 import cn.wizzer.modules.models.sys.Sys_plugin;
 import cn.wizzer.modules.services.sys.SysPluginService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.util.StringUtils;
-import org.nutz.dao.Cnd;
+import org.nutz.dao.*;
+import org.nutz.dao.Chain;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
@@ -48,10 +49,10 @@ public class SysPluginController {
         return sysPluginService.query(Cnd.where("disabled", "=", false).asc("code"));
     }
 
-    @RequiresRoles("sysadmin")
     @At
-    @AdaptBy(type = UploadAdaptor.class, args = {"ioc:fileUpload"})
     @Ok("json")
+    @AdaptBy(type = UploadAdaptor.class, args = {"ioc:fileUpload"})
+    @RequiresPermissions("sys.manager.plugin.add")
     public Object addDo(@Param("code") String code,
                         @Param("className") String className,
                         @Param("Filedata") TempFile tf, @Param("args") String[] args)
@@ -72,15 +73,59 @@ public class SysPluginController {
             sysPluginService.insert(sysPlugin);
             return Result.success("system.success");
         } catch (Exception e) {
-            log.debug("plugin load error", e);
+            log.debug("plugin install error", e);
             return Result.error("system.error");
         }
     }
 
-    @RequiresRoles("sysadmin")
-    @At
-    @POST
-    public void delete(String key) {
-        pluginMaster.remove(key);
+    @At("/delete/?")
+    @RequiresPermissions("sys.manager.plugin.delete")
+    public Object delete(String id) {
+        try {
+            Sys_plugin sysPlugin = sysPluginService.fetch(id);
+            pluginMaster.remove(sysPlugin.getCode());
+            Files.deleteFile(new File(Globals.AppRoot + sysPlugin.getPath()));
+            sysPluginService.delete(id);
+            return Result.success("system.success");
+        } catch (Exception e) {
+            log.debug("plugin uninstall error", e);
+            return Result.error("system.error");
+        }
+    }
+
+    @At("/enable/?")
+    @RequiresPermissions("sys.manager.plugin.update")
+    public Object enable(String id) {
+        try {
+            Sys_plugin sysPlugin = sysPluginService.fetch(id);
+            byte[] buf = Files.readBytes(Globals.AppRoot + sysPlugin.getPath());
+            IPlugin plugin = pluginMaster.build(sysPlugin.getClassName(), buf);
+            String[] p = new String[]{};
+            if (!Strings.isBlank(sysPlugin.getArgs())) {
+                p = org.apache.commons.lang3.StringUtils.split(sysPlugin.getArgs(), ",");
+            }
+            pluginMaster.register(sysPlugin.getCode(), plugin, p);
+            sysPlugin.setDisabled(false);
+            sysPluginService.update(sysPlugin);
+            return Result.success("system.success");
+        } catch (Exception e) {
+            log.debug("plugin uninstall error", e);
+            return Result.error("system.error");
+        }
+    }
+
+    @At("/disable/?")
+    @RequiresPermissions("sys.manager.plugin.update")
+    public Object disable(String id) {
+        try {
+            Sys_plugin sysPlugin = sysPluginService.fetch(id);
+            pluginMaster.remove(sysPlugin.getCode());
+            sysPlugin.setDisabled(true);
+            sysPluginService.update(sysPlugin);
+            return Result.success("system.success");
+        } catch (Exception e) {
+            log.debug("plugin uninstall error", e);
+            return Result.error("system.error");
+        }
     }
 }

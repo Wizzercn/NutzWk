@@ -84,7 +84,7 @@ public class Setup implements org.nutz.mvc.Setup {
     private void initSysPlugin(NutConfig config, Dao dao) {
         try {
             PluginMaster pluginMaster = config.getIoc().get(PluginMaster.class);
-            List<Sys_plugin> list = dao.query(Sys_plugin.class, Cnd.where("disabled", "=", false));
+            List<Sys_plugin> list = dao.query(Sys_plugin.class, Cnd.where("disabled", "=", 0));
             for (Sys_plugin sysPlugin : list) {
                 byte[] buf = Files.readBytes(Globals.AppRoot + sysPlugin.getPath());
                 IPlugin plugin = pluginMaster.build(sysPlugin.getClassName(), buf);
@@ -721,6 +721,17 @@ public class Setup implements org.nutz.mvc.Setup {
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("0001000100110002");
+            menu.setName("启用禁用");
+            menu.setAliasName("Update");
+            menu.setLocation(2);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.plugin.update");
+            menu.setParentId(p.getId());
+            menu.setType("data");
+            Sys_menu p2 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100110003");
             menu.setName("删除插件");
             menu.setAliasName("Delete");
             menu.setLocation(3);
@@ -728,7 +739,7 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setPermission("sys.manager.plugin.delete");
             menu.setParentId(p.getId());
             menu.setType("data");
-            Sys_menu p2 = dao.insert(menu);
+            Sys_menu p3 = dao.insert(menu);
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
