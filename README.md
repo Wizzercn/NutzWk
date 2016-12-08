@@ -91,3 +91,13 @@ NutzWk 1.0 含Activiti工作流的源码在这里： https://github.com/wendal/w
 NutzWk v3.x 运行截图
 ======
 ![主界面截图](nutzwk_home.png)
+
+捐助开发者
+======
+如果你是企业经营者，那么赞助 NutzWk 有商业上的益处：可以让你的产品保持健康并得到积极的维护。 
+
+如果你是个人开发者并且享受 NutzWk 带来的高开发效率，可以赠送一杯咖啡以资鼓励~~
+
+[支付宝收款二维码](alipay.jpg)
+
+捐赠清单：https://nutzwk.wizzer.cn/private/pm/info
