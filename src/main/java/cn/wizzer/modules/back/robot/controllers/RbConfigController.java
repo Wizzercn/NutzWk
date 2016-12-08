@@ -33,7 +33,7 @@ public class RbConfigController {
         Rb_config config = rbConfigService.fetch("robot");
         if (config == null) {
             config = new Rb_config();
-            config.setId("site");
+            config.setId("robot");
             rbConfigService.insert(config);
         }
         return config;
