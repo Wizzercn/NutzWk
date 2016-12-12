@@ -15,7 +15,7 @@ import org.nutz.plugins.view.pdf.PdfViewMaker;
 @Modules(scanPackage = true, packages = "cn.wizzer.modules")
 @Ok("json:full")
 @Fail("http:500")
-@IocBy(type = ComboIocProvider.class, args = {"*json", "config/ioc/", "*anno", "cn.wizzer", "*tx", "*quartz", "*async"})
+@IocBy(type = ComboIocProvider.class, args = {"*json", "config/ioc/", "*anno", "cn.wizzer", "*tx", "*quartz", "*async", "*activiti"})
 @Localization(value = "locales/", defaultLocalizationKey = "zh_CN")
 @Encoding(input = "UTF-8", output = "UTF-8")
 @Views({BeetlViewMaker.class, PdfViewMaker.class})

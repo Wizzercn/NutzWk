@@ -98,6 +98,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutz-integration-activiti</artifactId>
+            <version>1.r.60-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>cn.enilu.tools</groupId>
             <artifactId>nutzwk-code-generator</artifactId>
             <version>1.2</version>
