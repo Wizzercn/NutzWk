@@ -1,0 +1,216 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" data-toggle="modal" data-target="#dialogImp"><i class="ti-plus"></i>安装插件</a>
+        <a id="load" href="${base!}/platform/sys/plugin" target="_self" data-pjax></a>
+    </div>
+</header>
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <div class="row mb15">
+            <div class="col-lg-12">
+                <table id="unitTreeTable" class="table no-m">
+                    <thead>
+                    <tr>
+                        <th class="col-md-2 pd-l-lg">
+                            <span class="pd-l-sm ml20"></span>唯一标识
+                        </th>
+                        <th class="col-md-2">类名</th>
+                        <th class="col-md-2">参数</th>
+                        <th class="col-md-2">状态</th>
+                        <th class="col-md-2">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% for(o in obj){
+                    %>
+                    <tr>
+                        <td>
+                            <span class="pd-l-sm">${o.code!}</span>
+                        </td>
+                        <td>${o.className!}</td>
+                        <td>${o.args!}</td>
+                        <td><%if(o.disabled){%>
+                            <i id="disable_${o.id!}" class="fa fa-circle text-danger ml5"></i>
+                            <%}else{%>
+                            <i id="disable_${o.id!}" class="fa fa-circle text-success ml5"></i>
+                            <%}%></td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default btn-xs dropdown-toggle"
+                                        data-toggle="dropdown">
+                                    <i class="ti-settings"></i>
+                                    <span class="ti-angle-down"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="javascript:;" onclick="enable('${o.id!}')">启用</a></li>
+                                    <li><a href="javascript:;" onclick="disable('${o.id!}')">禁用</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="javascript:;" onclick="del('${o.id!}')">卸载</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <%
+                    }%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<a class="exit-offscreen"></a>
+<!-- 删除 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">卸载插件</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        确定要卸载吗？
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogImp" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">上传插件</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="padding-left: 20px;">
+                    <input type="text" id="code" class="form-control" name="code" data-parsley-required="true"
+                           placeholder="唯一标识 key">
+                </div>
+                <div class="row" style="padding-left: 20px;padding-top: 20px;">
+                    <input type="text" id="className" class="form-control" name="className"
+                           data-parsley-required="true"
+                           placeholder="全路径类名 className: cn.wizzer.modules.plugins.TestPlugin">
+                </div>
+                <div class="row" style="padding-left: 20px;padding-top: 20px;">
+                    <input type="text" id="args" class="form-control" name="args" data-parsley-required="true"
+                           placeholder="执行参数 String[]">
+                </div>
+                <div class="row" style="padding: 20px;">
+                    <div id="queue"></div>
+                    <div class="input-group">
+                        <input id="file_upload" name="file_upload" type="file" multiple="false">
+                        <span class="input-group-btn">
+                  <button class="btn btn-color current-time" type="button" id="upload">上传<i
+                          class="ti-upload ml5"></i></button>
+                  </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function del(id) {
+            var dialog = $("#dialogDelete");
+            dialog.modal("show");
+            dialog.find("#ok").unbind("click");
+            dialog.find("#ok").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/platform/sys/plugin/delete/" + id, {}, function (data) {
+                    //重置按钮状态，关闭提示框
+                    dialog.modal("hide");
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        window.location.reload();
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                }, "json");
+            });
+        }
+        function enable(id) {
+            $.post("${base}/platform/sys/plugin/enable/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    $("#disable_" + id).attr("class", "fa fa-circle text-success ml5");
+                } else {
+                    Toast.error(data.msg);
+                }
+            }, "json");
+        }
+        function disable(id) {
+            $.post("${base}/platform/sys/plugin/disable/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
+                } else {
+                    Toast.error(data.msg);
+                }
+            }, "json");
+        }
+        $(function () {
+            $("#upload").on("click", function () {
+                if($("#code").val()==""){
+                    Toast.error("唯一标识不能为空");
+                    $("#code").focus();
+                    return false;
+                }
+                if($("#className").val()==""){
+                    Toast.error("类名称不能为空");
+                    $("#className").focus();
+                    return false;
+                }
+                if($("#queue").html()==""){
+                    Toast.error("请选择类文件");
+                    return false;
+                }
+                $('#file_upload').data('uploadifive').settings.uploadScript = "${base!}/platform/sys/plugin/addDo?code=" + $("#code").val() + "&className=" + $("#className").val() + "&args=" + $("#args").val();
+                $('#file_upload').uploadifive('upload');
+            });
+            $('#file_upload').uploadifive({
+                'auto': false,
+                'multi': false,
+                'width': '100%',
+                'height': '35',
+                'buttonText': '请选择class或jar文件',
+                'fileType': '*.class;*.jar;',
+                'fileSizeLimit': 1024,
+                'queueSizeLimit': 1,
+                'removeCompleted': true,
+                'formData': {},
+                'queueID': 'queue',
+                'onUploadComplete': function (file, data) {
+                    data = JSON.parse(data);
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        $("#dialogImp").modal("hide");
+                        $("#queue").html("");
+                        window.location.reload();
+                        search();
+                    } else {
+                        $("#queue").html("");
+                        Toast.error(data.msg);
+                    }
+                },
+                'onDrop': function (file, fileDropCount) {
+                    $("#queue").html("");
+                },
+                'onClearQueue': function (queue) {
+                    $("#queue").html("");
+                },
+                'onCancel': function () {
+                    $("#queue").html("");
+                }
+            });
+        });
+    </script>
+    <%}%>

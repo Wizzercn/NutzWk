@@ -43,13 +43,13 @@ public class Sys_role extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String note;
 
-    @One(target = Sys_unit.class, field = "unitid")
+    @One(field = "unitid")
     public Sys_unit unit;
 
-    @ManyMany(from = "roleId", relation = "sys_role_menu", target = Sys_menu.class, to = "menuId")
+    @ManyMany(from = "roleId", relation = "sys_role_menu", to = "menuId")
     protected List<Sys_menu> menus;
 
-    @ManyMany(from = "roleId", relation = "sys_user_role", target = Sys_user.class, to = "userId")
+    @ManyMany(from = "roleId", relation = "sys_user_role", to = "userId")
     private List<Sys_user> users;
 
     public String getId() {

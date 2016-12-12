@@ -29,9 +29,8 @@ https://github.com/Wizzercn/NodeWk       Node.js版源码
 
 NutzWk 3.x 运行环境：
 *   JDK 8
-*   Tomcat 8
-*   Maven 3.3.9
-*   Nutz v1.r.58
+*   Tomcat 8.x +
+*   Maven 3.3.x +
 
 NutzWk 3.x 新特性：
 *   集成Shiro权限框架
@@ -41,14 +40,14 @@ NutzWk 3.x 新特性：
 *   支持注解式事务
 *   支持动作链
 *   支持注解式日志
-*   支持插件式加载
+*   支持自定义路由
+*   支持插件热插拔
+*   支持API Token及应用管理
 *   集成Email服务
 *   集成Quartz定时任务
 *   集成Lucene搜索引擎
 *   集成Beetl/Velocity模板引擎
 *   后台管理界面采用Pjax+Bootstrap
-*   自定义路由
-*   API Token 及应用管理
 
 
 使用说明：
@@ -92,3 +91,13 @@ NutzWk 1.0 含Activiti工作流的源码在这里： https://github.com/wendal/w
 NutzWk v3.x 运行截图
 ======
 ![主界面截图](nutzwk_home.png)
+
+捐助开发者
+======
+如果你是企业经营者，那么赞助 NutzWk 有商业上的益处：可以让你的产品保持健康并得到积极的维护。 
+
+如果你是个人开发者并且享受 NutzWk 带来的高开发效率，可以赠送一杯咖啡以资鼓励~~
+
+[支付宝收款二维码](alipay.jpg)
+
+捐赠清单：https://nutzwk.wizzer.cn/private/pm/info
