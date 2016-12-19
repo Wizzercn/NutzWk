@@ -361,7 +361,7 @@ public class SysRoleController {
     public Object delete(String roleId, HttpServletRequest req) {
         try {
             Sys_role role = roleService.fetch(roleId);
-            if (!"sysadmin".equals(role.getCode()) || !"public".equals(role.getCode())) {
+            if ("sysadmin".equals(role.getCode()) || "public".equals(role.getCode())) {
                 return Result.error("system.not.allow");
             }
             roleService.delete(roleId);
