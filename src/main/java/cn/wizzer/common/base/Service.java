@@ -51,11 +51,11 @@ public class Service<T> extends EntityService<T> {
         return this.dao().fetch(this.getEntityClass(), name);
     }
 
-    public <T> T fetchLinks(T t, String name) {
+    public T fetchLinks(T t, String name) {
         return this.dao().fetchLinks(t, name);
     }
 
-    public <T> T fetchLinks(T t, String name, Condition cnd) {
+    public T fetchLinks(T t, String name, Condition cnd) {
         return this.dao().fetchLinks(t, name, cnd);
     }
 
@@ -215,10 +215,9 @@ public class Service<T> extends EntityService<T> {
      * @param tableName
      * @param cloName
      * @param value
-     * @param <T>
      * @return
      */
-    public <T> String getSubPath(String tableName, String cloName, String value) {
+    public String getSubPath(String tableName, String cloName, String value) {
         final String val = Strings.sNull(value);
         Sql sql = Sqls.create("select " + cloName + " from " + tableName
                 + " where " + cloName + " like '" + val + "____' order by "
@@ -269,10 +268,9 @@ public class Service<T> extends EntityService<T> {
      * 别返回Map对象，因为MySql和Oracle中字段名有大小写之分
      *
      * @param sql
-     * @param <T>
      * @return
      */
-    public <T> List<Record> list(Sql sql) {
+    public List<Record> list(Sql sql) {
         sql.setCallback(Sqls.callback.records());
         this.dao().execute(sql);
         return sql.getList(Record.class);
@@ -283,10 +281,9 @@ public class Service<T> extends EntityService<T> {
      * 自定义sql获取map key-value
      *
      * @param sql
-     * @param <T>
      * @return
      */
-    public <T> Map getMap(Sql sql) {
+    public Map getMap(Sql sql) {
         sql.setCallback(new SqlCallback() {
             @Override
             public Object invoke(Connection conn, ResultSet rs, Sql sql)
