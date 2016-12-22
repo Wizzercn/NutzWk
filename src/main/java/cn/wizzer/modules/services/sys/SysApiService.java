@@ -76,8 +76,7 @@ public class SysApiService extends Service<Sys_api> {
                 key = (Key) keyIn.readObject();
                 keyIn.close();
             }
-            Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getSubject().equals(appId);
-            return true;
+            return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getSubject().equals(appId);;
         } catch (Exception e) {
             log.debug(e.getMessage());
             return false;
