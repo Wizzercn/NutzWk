@@ -11,6 +11,7 @@ import org.nutz.ioc.Ioc;
 import org.nutz.lang.Lang;
 import org.nutz.lang.segment.CharSegment;
 import org.nutz.lang.util.Context;
+import org.nutz.mvc.Mvcs;
 
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.modules.models.sys.Sys_log;
@@ -74,6 +75,8 @@ public class SLogAopInterceptor implements MethodInterceptor {
             Context ctx = Lang.context();
             ctx.set("args", chain.getArgs());
             ctx.set("return", chain.getReturn());
+            ctx.set("req", Mvcs.getReq());
+            ctx.set("resp", Mvcs.getResp());
             Context _ctx = Lang.context();
             for (String key : msg.keys()) {
                 _ctx.set(key, els.get(key).eval(ctx));
