@@ -39,8 +39,44 @@ public class Service<T> extends EntityService<T> {
         super(dao);
     }
 
+    /**
+     * 统计符合条件的对象表条数
+     *
+     * @param cnd
+     * @return
+     */
+    public int count(Condition cnd) {
+        return this.dao().count(this.getEntityClass(), cnd);
+    }
+
+    /**
+     * 统计对象表条数
+     *
+     * @return
+     */
+    public int count() {
+        return this.dao().count(this.getEntityClass());
+    }
+
+    /**
+     * 统计符合条件的记录条数
+     *
+     * @param tableName
+     * @param cnd
+     * @return
+     */
     public int count(String tableName, Condition cnd) {
         return this.dao().count(tableName, cnd);
+    }
+
+    /**
+     * 统计表记录条数
+     *
+     * @param tableName
+     * @return
+     */
+    public int count(String tableName) {
+        return this.dao().count(tableName);
     }
 
     public T fetch(long id) {
@@ -87,6 +123,29 @@ public class Service<T> extends EntityService<T> {
      */
     public int updateIgnoreNull(Object obj) {
         return this.dao().updateIgnoreNull(obj);
+    }
+
+    /**
+     * 部分更新实体表
+     *
+     * @param chain
+     * @param cnd
+     * @return
+     */
+    public int update(Chain chain, Condition cnd) {
+        return this.dao().update(this.getEntityClass(), chain, cnd);
+    }
+
+    /**
+     * 部分更新表
+     *
+     * @param tableName
+     * @param chain
+     * @param cnd
+     * @return
+     */
+    public int update(String tableName, Chain chain, Condition cnd) {
+        return this.dao().update(tableName, chain, cnd);
     }
 
     public int delete(long id) {
