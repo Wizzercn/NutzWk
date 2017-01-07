@@ -29,12 +29,23 @@ NutzWk v4.x
 
 部署说明
 ======
-1、编译Vue前端：
+##1、编译Vue前端：
+
+运行环境 可以build编译成单网页应用(80端口):
+
 *   >cd src/vue-admin
 *   >npm i
 *   >npm run build
 
-2、启动 NutzWk 后端：
+开发环境 可以调试Vue(8080端口):
+
+*   >npm run dev
+
+访问   http://127.0.0.1:8080/
+
+(若调试模块功能需通过 http://127.0.0.1/sysadmin 先登录获取身份)
+
+##2、启动 NutzWk 后端(80端口)：
 *   创建空的数据库
 *   修改数据库连接 /resources/config/custom/db.properties
 *   项目使用Maven构建，IDEA/Eclipse直接打开，等待包下载完毕
