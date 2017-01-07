@@ -6,7 +6,7 @@ module.exports = {
     env: require('./prod.env'),
     index: path.resolve(__dirname, '../../main/webapp/WEB-INF/views/platform/index.html'),// build 目的路径
     assetsRoot: path.resolve(__dirname, '../../main/webapp'),// build static文件夹目的路径
-    assetsSubDirectory: 'static',
+    assetsSubDirectory: 'assets',
     assetsPublicPath: '${base!}/',// build 时vue系统资源增加${base!}前缀
     productionSourceMap: true,
     // Gzip off by default as many popular static hosts such as
