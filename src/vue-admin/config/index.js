@@ -5,7 +5,7 @@ module.exports = {
   build: {
     env: require('./prod.env'),
     index: path.resolve(__dirname, '../../main/webapp/WEB-INF/views/platform/index.html'),// build 目的路径
-    assetsRoot: path.resolve(__dirname, '../../main/webapp'),// build static文件夹目的路径
+    assetsRoot: path.resolve(__dirname, '../../main/webapp'),// build assets文件夹目的路径
     assetsSubDirectory: 'assets',
     assetsPublicPath: '${base!}/',// build 时vue系统资源增加${base!}前缀
     productionSourceMap: true,

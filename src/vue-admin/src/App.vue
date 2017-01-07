@@ -8,21 +8,21 @@
         <div class="pg-close ti-close"></div>
         <div class="options-container color-options">
           <h6>样式</h6>
-          <a onclick="sublimeApp.changeTheme('palette.css')" :href="base+'/static/styles/skins/palette.css'"
+          <a onclick="sublimeApp.changeTheme('palette.css')" :href="base+'/assets/static/styles/skins/palette.css'"
              class="css_orange cs_color cs_1 "  v-bind:class="[currUser.theme=='palette.css'? 'active' : '']">
             <div></div>
             <div></div>
             <div></div>
             <div></div>
           </a>
-          <a onclick="sublimeApp.changeTheme('palette.2.css')" :href="base+'/static/styles/skins/palette.2.css'"
+          <a onclick="sublimeApp.changeTheme('palette.2.css')" :href="base+'/assets/static/styles/skins/palette.2.css'"
              class="css_orange cs_color cs_2 " v-bind:class="[currUser.theme=='palette.2.css'? 'active' : '']">
             <div></div>
             <div></div>
             <div></div>
             <div></div>
           </a>
-          <a onclick="sublimeApp.changeTheme('palette.3.css')" :href="base+'/static/styles/skins/palette.3.css'"
+          <a onclick="sublimeApp.changeTheme('palette.3.css')" :href="base+'/assets/static/styles/skins/palette.3.css'"
              class="css_orange cs_color cs_3 " v-bind:class="[currUser.theme=='palette.3.css'? 'active' : '']">
             <div></div>
             <div></div>
@@ -33,13 +33,13 @@
         <div class="options-container">
           <h6>布局</h6>
           <a class="pg-val toggle-sidebar toggle-active" v-bind:class="[currClass['small-menu'] ? 'active' : '']" href="javascript:;">
-            <img :src="base+'/static/images/panel/small.png'" alt="">
+            <img :src="base+'/assets/static/images/panel/small.png'" alt="">
           </a>
           <a class="pg-val toggle-scroll toggle-active" v-bind:class="[currClass['fixed-scroll'] ? 'active' : '']" href="javascript:;">
-            <img :src="base+'/static/images/panel/scroll.png'" alt="">
+            <img :src="base+'/assets/static/images/panel/scroll.png'" alt="">
           </a>
           <a class="pg-val toggle-boxed toggle-active" v-bind:class="[currClass['boxed'] ? 'active' : '']" href="javascript:;">
-            <img :src="base+'/static/images/panel/boxed.png'" alt="">
+            <img :src="base+'/assets/static/images/panel/boxed.png'" alt="">
           </a>
         </div>
         <small class="pg-footer"><i class="ti-info-alt mr5"></i></small>
@@ -118,7 +118,7 @@
             this.pathMenus=d.data.pathMenus
             this.customMenus=d.data.customMenu
             if(this.currUser.theme){
-               $("#skin").attr('href',vue+'/static/styles/skins/'+this.currUser.theme)
+               $("#skin").attr('href',vue+'/assets/static/styles/skins/'+this.currUser.theme)
             }
             this.currMenu=this.selectMenu(this.$route.path, this.secondMenus, this.pathMenus);
           }else {
