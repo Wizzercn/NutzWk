@@ -19,7 +19,7 @@ module.exports = {
   dev: {
     env: require('./dev.env'),
     port: 8080,
-    assetsSubDirectory: 'static',
+    assetsSubDirectory: 'assets/static',
     assetsPublicPath: '/',
     proxyTable: {// 解决开发时跨越访问问题
       '/vue': {
