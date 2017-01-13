@@ -85,7 +85,7 @@ public class WxMenuController {
     @RequiresAuthentication
     public void add(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
-        req.setAttribute("menus", wxMenuService.query(Cnd.where("wxid", "=", wxid).and("parentId", "=", "").asc("location")));
+        req.setAttribute("menus", wxMenuService.query(Cnd.where("wxid", "=", wxid).and(Cnd.exps("parentId", "=", "").or("parentId", "is", null)).asc("location")));
         req.setAttribute("config", wxConfigService.fetch(wxid));
     }
 
@@ -145,7 +145,7 @@ public class WxMenuController {
     public Object edit(String id, HttpServletRequest req) {
         Wx_menu menu = wxMenuService.fetch(id);
         req.setAttribute("config", wxConfigService.fetch(menu.getWxid()));
-        return wxMenuService.fetchLinks(menu,"wxConfig");
+        return wxMenuService.fetchLinks(menu, "wxConfig");
     }
 
     @At
@@ -244,7 +244,7 @@ public class WxMenuController {
                 }
             }
             WxResp wxResp = wxApi2.menu_create(m1);
-            if(wxResp.errcode()!=0){
+            if (wxResp.errcode() != 0) {
                 return Result.error(wxResp.errmsg());
             }
             return Result.success("system.success");
