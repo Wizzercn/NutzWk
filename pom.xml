@@ -60,32 +60,32 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz</artifactId>
-            <version>1.r.59</version>
+            <version>1.r.60</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-daocache</artifactId>
-            <version>1.r.59</version>
+            <version>1.r.60</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-quartz</artifactId>
-            <version>1.r.59</version>
+            <version>1.r.60</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-shiro</artifactId>
-            <version>1.r.59</version>
+            <version>1.r.60</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzwx</artifactId>
-            <version>1.r.58</version>
+            <version>1.r.60</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-views</artifactId>
-            <version>1.r.59</version>
+            <version>1.r.60</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.nutz</groupId>
@@ -332,7 +332,7 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-mock</artifactId>
-            <version>1.r.59</version>
+            <version>1.r.60</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
