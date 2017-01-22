@@ -39,6 +39,7 @@ public class Setup implements org.nutz.mvc.Setup {
 
     public void init(NutConfig config) {
         try {
+
             // 环境检查
             if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
                 log.warn("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
@@ -71,6 +72,10 @@ public class Setup implements org.nutz.mvc.Setup {
             initSysRoute(config, dao);
             // 初始化热插拔插件
             initSysPlugin(config, dao);
+            log.info("\n _  _ _   _ _____ ______      ___  __\n" +
+                    "| \\| | | | |_   _|_  /\\ \\    / / |/ /\n" +
+                    "| .` | |_| | | |  / /  \\ \\/\\/ /| ' < \n" +
+                    "|_|\\_|\\___/  |_| /___|  \\_/\\_/ |_|\\_\\");
         } catch (Exception e) {
             e.printStackTrace();
         }
