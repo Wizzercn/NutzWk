@@ -49,19 +49,6 @@ public class Setup implements org.nutz.mvc.Setup {
             Dao dao = ioc.get(Dao.class);
             // 初始化数据表
             initSysData(config, dao);
-
-            //-------------Redis作为shiro二级缓存时启用这里---------
-            //JedisAgent jedisAgent = ioc.get(JedisAgent.class);
-            //LCacheManager.me().setJedisAgent(jedisAgent);
-            //RedisCache.DEBUG = true;
-            //-------------Redis作为shiro二级缓存时启用这里---------
-
-            //---RedisService测试----
-            //RedisService redisService=ioc.get(RedisService.class);
-            //redisService.set("test","aaaaaaaa");
-            //log.debug("test redis::"+redisService.get("test"));
-
-
             // 初始化系统变量
             initSysSetting(config, dao);
             // 初始化定时任务
