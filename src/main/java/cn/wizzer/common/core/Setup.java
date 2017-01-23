@@ -4,8 +4,6 @@ import cn.wizzer.common.base.Globals;
 import cn.wizzer.common.plugin.IPlugin;
 import cn.wizzer.common.plugin.PluginMaster;
 import cn.wizzer.modules.models.sys.*;
-import net.sf.ehcache.CacheManager;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -16,7 +14,7 @@ import org.nutz.dao.Sqls;
 import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
-import org.nutz.integration.jedis.JedisAgent;
+import org.nutz.integration.jedis.RedisService;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
@@ -57,6 +55,12 @@ public class Setup implements org.nutz.mvc.Setup {
             //LCacheManager.me().setJedisAgent(jedisAgent);
             //RedisCache.DEBUG = true;
             //-------------Redis作为shiro二级缓存时启用这里---------
+
+            //---RedisService测试----
+            //RedisService redisService=ioc.get(RedisService.class);
+            //redisService.set("test","aaaaaaaa");
+            //log.debug("test redis::"+redisService.get("test"));
+
 
             // 初始化系统变量
             initSysSetting(config, dao);
