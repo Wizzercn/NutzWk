@@ -40,7 +40,6 @@ public class Setup implements org.nutz.mvc.Setup {
 
     public void init(NutConfig config) {
         try {
-
             // 环境检查
             if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
                 log.warn("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
