@@ -1,8 +1,8 @@
 package cn.wizzer.common.processor;
 
 import cn.wizzer.common.base.Result;
+import cn.wizzer.common.shiro.NutShiro;
 import org.apache.commons.lang3.StringUtils;
-import org.nutz.integration.shiro.NutShiro;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.ActionContext;

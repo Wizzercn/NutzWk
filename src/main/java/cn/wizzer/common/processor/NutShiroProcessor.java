@@ -1,11 +1,11 @@
 package cn.wizzer.common.processor;
 
 import cn.wizzer.common.base.Result;
+import cn.wizzer.common.shiro.NutShiro;
+import cn.wizzer.common.shiro.NutShiroInterceptor;
+import cn.wizzer.common.shiro.NutShiroMethodInterceptor;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.nutz.integration.shiro.NutShiro;
-import org.nutz.integration.shiro.NutShiroInterceptor;
-import org.nutz.integration.shiro.NutShiroMethodInterceptor;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionInfo;
 import org.nutz.mvc.NutConfig;

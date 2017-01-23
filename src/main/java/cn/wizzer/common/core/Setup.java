@@ -16,6 +16,7 @@ import org.nutz.dao.Sqls;
 import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
+import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
@@ -25,6 +26,8 @@ import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
+import org.nutz.plugins.cache.impl.lcache.LCacheManager;
+import org.nutz.plugins.cache.impl.redis.RedisCache;
 import org.quartz.Scheduler;
 
 import java.io.File;
@@ -48,22 +51,13 @@ public class Setup implements org.nutz.mvc.Setup {
             Dao dao = ioc.get(Dao.class);
             // 初始化数据表
             initSysData(config, dao);
-            // 检查一下Ehcache CacheManager 是否正常.
-            CacheManager cacheManager = ioc.get(CacheManager.class);
-            log.debug("Ehcache CacheManager = " + cacheManager);
-            /* redis测试
-            JedisPool jedisPool = ioc.get(JedisPool.class);
-            try (Jedis jedis = jedisPool.getResource()) {
-                String updateCount = jedis.set("_big_fish", "Hello Word!!");
-                log.debug("1.redis say : " + updateCount);
-                updateCount = jedis.get("_big_fish");
-                log.debug("2.redis say : " + updateCount);
-            } finally {}
 
-            RedisService redis = ioc.get(RedisService.class);
-            redis.set("hi", "wendal,rekoe hoho..");
-            log.debug("redis say again : " + redis.get("hi"));
-            */
+            //-------------Redis作为shiro二级缓存时启用这里---------
+            //JedisAgent jedisAgent = ioc.get(JedisAgent.class);
+            //LCacheManager.me().setJedisAgent(jedisAgent);
+            //RedisCache.DEBUG = true;
+            //-------------Redis作为shiro二级缓存时启用这里---------
+
             // 初始化系统变量
             initSysSetting(config, dao);
             // 初始化定时任务
