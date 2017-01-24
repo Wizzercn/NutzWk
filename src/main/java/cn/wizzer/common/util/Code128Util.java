@@ -396,16 +396,16 @@ public class Code128Util {
         return rs;
     }
 
-    public static void main(String[] args) throws Exception {
-
-        //Code128Util c = new Code128Util();
-        String rs = getCodeImgbase64("ES7260246660A", Code128Util.Encode.Code128A, 40);
-        System.out.println(rs);
-        getCodeImg("ES7260246660A", Code128Util.Encode.Code128A, "D://A.PNG", 40);
-        getCodeImg("ES7260246660A", Code128Util.Encode.Code128B, "D://B.PNG", 40);
-        getCodeImg("117260246660", Code128Util.Encode.Code128C, "D://C.PNG", 40);
-        getCodeImg("117260246660", Code128Util.Encode.EAN128, "D://EAN.PNG", 40);
-
-    }
+//    public static void main(String[] args) throws Exception {
+//
+//        //Code128Util c = new Code128Util();
+//        String rs = getCodeImgbase64("ES7260246660A", Code128Util.Encode.Code128A, 40);
+//        System.out.println(rs);
+//        getCodeImg("ES7260246660A", Code128Util.Encode.Code128A, "D://A.PNG", 40);
+//        getCodeImg("ES7260246660A", Code128Util.Encode.Code128B, "D://B.PNG", 40);
+//        getCodeImg("117260246660", Code128Util.Encode.Code128C, "D://C.PNG", 40);
+//        getCodeImg("117260246660", Code128Util.Encode.EAN128, "D://EAN.PNG", 40);
+//
+//    }
 
 }
