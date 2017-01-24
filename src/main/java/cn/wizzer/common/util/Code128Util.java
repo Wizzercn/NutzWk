@@ -258,7 +258,6 @@ public class Code128Util {
         try {
             char[] cs = code.toCharArray();
             int width = cs.length;
-            ByteArrayInputStream inputStream = null;
             ByteArrayOutputStream outputStream = null;
             try {
                 BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -271,10 +270,7 @@ public class Code128Util {
                     }
                 }
                 Images.write(bufferedImage, "JPEG", outputStream);
-                byte[] bts = outputStream.toByteArray();
-                inputStream = new ByteArrayInputStream(bts);
                 outputStream.close();
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
