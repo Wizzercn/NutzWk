@@ -1,15 +1,11 @@
 package cn.wizzer.common.util;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import org.nutz.img.Images;
 import org.nutz.repo.Base64;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -262,7 +258,7 @@ public class Code128Util {
         try {
             char[] cs = code.toCharArray();
             int width = cs.length;
-
+            ByteArrayInputStream inputStream = null;
             ByteArrayOutputStream outputStream = null;
             try {
                 BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -274,9 +270,9 @@ public class Code128Util {
                         g.fillRect(i, 0, 1, height);
                     }
                 }
-                JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(outputStream);
-                encoder.encode(bufferedImage);
-
+                Images.write(bufferedImage, "JPEG", outputStream);
+                byte[] bts = outputStream.toByteArray();
+                inputStream = new ByteArrayInputStream(bts);
                 outputStream.close();
 
             } catch (Exception e) {
@@ -329,8 +325,7 @@ public class Code128Util {
                     g.fillRect(i, 0, 1, Height);
                 }
             }
-            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-            encoder.encode(bi);
+            Images.write(bi, myPNG);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -401,16 +396,16 @@ public class Code128Util {
         return rs;
     }
 
-//    public static void main(String[] args) throws Exception {
-//
-//        //Code128Util c = new Code128Util();
-//        String rs=getCodeImgbase64("ES7260246660A", Code128Util.Encode.Code128A, 40);
-//        System.out.println(rs);
-//        getCodeImg("ES7260246660A", Code128Util.Encode.Code128A,"D://A.PNG", 40);
-//        getCodeImg("ES7260246660A", Code128Util.Encode.Code128B,"D://B.PNG", 40);
-//        getCodeImg("117260246660", Code128Util.Encode.Code128C,"D://C.PNG", 40);
-//        getCodeImg("117260246660", Code128Util.Encode.EAN128,"D://EAN.PNG", 40);
-//
-//    }
+    public static void main(String[] args) throws Exception {
+
+        //Code128Util c = new Code128Util();
+        String rs = getCodeImgbase64("ES7260246660A", Code128Util.Encode.Code128A, 40);
+        System.out.println(rs);
+        getCodeImg("ES7260246660A", Code128Util.Encode.Code128A, "D://A.PNG", 40);
+        getCodeImg("ES7260246660A", Code128Util.Encode.Code128B, "D://B.PNG", 40);
+        getCodeImg("117260246660", Code128Util.Encode.Code128C, "D://C.PNG", 40);
+        getCodeImg("117260246660", Code128Util.Encode.EAN128, "D://EAN.PNG", 40);
+
+    }
 
 }
