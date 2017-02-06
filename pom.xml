@@ -106,7 +106,7 @@
         <dependency>
             <groupId>cn.enilu.tools</groupId>
             <artifactId>nutzwk-code-generator</artifactId>
-            <version>1.3.1</version>
+            <version>1.3.2</version>
         </dependency>
         <dependency>
             <groupId>com.vdurmont</groupId>
