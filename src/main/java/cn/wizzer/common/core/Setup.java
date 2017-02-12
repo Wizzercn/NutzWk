@@ -7,6 +7,7 @@ import cn.wizzer.modules.models.sys.*;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.apache.velocity.app.Velocity;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -29,6 +30,7 @@ import org.nutz.plugins.cache.impl.redis.RedisCache;
 import org.quartz.Scheduler;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -56,6 +58,8 @@ public class Setup implements org.nutz.mvc.Setup {
             initSysRoute(config, dao);
             // 初始化热插拔插件
             initSysPlugin(config, dao);
+            // 初始化Velocity
+            velocityInit(config);
             log.info("\n _  _ _   _ _____ ______      ___  __\n" +
                     "| \\| | | | |_   _|_  /\\ \\    / / |/ /\n" +
                     "| .` | |_| | | |  / /  \\ \\/\\/ /| ' < \n" +
@@ -812,6 +816,35 @@ public class Setup implements org.nutz.mvc.Setup {
         Globals.AppRoot = Strings.sNull(config.getAppRoot());//项目路径
         Globals.AppBase = Strings.sNull(config.getServletContext().getContextPath());//部署名
         Globals.init(dao);
+    }
+
+    /**
+     * 初始化Velocity
+     *
+     * @param config
+     * @throws IOException
+     */
+    private void velocityInit(NutConfig config) throws IOException {
+        log.info("Veloctiy Init Start...");
+        Properties p = new Properties();
+        p.setProperty("resource.loader", "file,classloader");
+        p.setProperty("file.resource.loader.path", config.getAppRoot());
+        p.setProperty("file", "org.apache.velocity.tools.view.WebappResourceLoader");
+        p.setProperty("classloader.resource.loader.class", "cn.wizzer.common.view.velocity.VelocityResourceLoader");
+        p.setProperty("classloader.resource.loader.path", config.getAppRoot());
+        p.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
+        p.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");
+        p.setProperty("velocimacro.library.autoreload", "false");
+        p.setProperty("classloader.resource.loader.root", config.getAppRoot());
+        p.setProperty("velocimarco.library.autoreload", "true");
+        p.setProperty("runtime.log.error.stacktrace", "false");
+        p.setProperty("runtime.log.warn.stacktrace", "false");
+        p.setProperty("runtime.log.info.stacktrace", "false");
+        p.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
+        p.setProperty("runtime.log.logsystem.log4j.category", "velocity_log");
+        p.setProperty("velocimacro.library", "/WEB-INF/views/common/globals.html");
+        Velocity.init(p);
+        log.info("Veloctiy Init End.");
     }
 
     public void destroy(NutConfig config) {
