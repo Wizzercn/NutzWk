@@ -1,0 +1,171 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/sys/menu/add" data-pjax><i class="ti-plus"></i>新建菜单</a>
+    </div>
+    <div class="pull-right">
+        <div class="btn-group tool-button">
+            <a class="btn btn-primary navbar-btn" href="${base}/platform/sys/menu/sort" data-pjax><i class="ti-share"></i> 菜单排序</a>
+        </div>
+    </div>
+</header>
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <div class="row mb15">
+            <div class="col-lg-12">
+                <table id="treeTable" class="table no-m">
+                    <thead>
+                    <tr>
+                        <th class="col-md-2 pd-l-lg">
+                            <span class="pd-l-sm ml20"></span>菜单名称
+                        </th>
+                        <th class="col-md-2">路径</th>
+                        <th class="col-md-1">权限类型</th>
+                        <th class="col-md-2">权限标识</th>
+                        <th class="col-md-1">启用状态</th>
+                        <th class="col-md-2">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% for(obj in list){
+                    %>
+                    <tr data-tt-id="${obj.id!}" data-tt-parent-id="${obj.parentId!}" data-tt-branch="${obj.hasChildren!}">
+                        <td>
+                            <span class="pd-l-sm"></span><i class="${obj.icon!}"></i> ${obj.name!}
+                        </td>
+                        <td>${obj.href!}</td>
+                        <td><%if(obj.type=='menu'){%>菜单<%}else{%>数据<%}%></td>
+                        <td>${obj.permission!}</td>
+                        <td><%if(false==obj.disabled){%><i id="disable_${obj.id!}" class="fa fa-circle text-success ml5"></i><%}else{%><i id="disable_${obj.id!}" class="fa fa-circle text-danger ml5"></i><%}%></td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                    <i class="ti-settings"></i>
+                                    <span class="ti-angle-down"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="${base}/platform/sys/menu/edit/${obj.id!}" data-pjax>修改</a></li>
+                                    <li><a href="javascript:;" onclick="del('${obj.id!}')">删除</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="${base}/platform/sys/menu/add?pid=${obj.id!}" data-pjax>添加子菜单</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="javascript:;" onclick="enableRole('${obj.id!}')">启用</a></li>
+                                    <li><a href="javascript:;" onclick="disableRole('${obj.id!}')">禁用</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <%
+                    } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<a class="exit-offscreen"></a>
+<!-- 排序 -->
+<div id="dialogSort" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<!-- 删除 -->
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除菜单</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        删除后无法恢复，请谨慎操作！
+                        <br/>确定要删除吗？
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 详情 -->
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<script>
+    var treeTable;
+    $(function () {
+        $("#dialogDetail").on("hidden.bs.modal", function() {
+            $(this).removeData("bs.modal");
+        });
+        $("#dialogSort").on("hidden.bs.modal", function() {
+            $(this).removeData("bs.modal");
+        });
+        treeTable= $("#treeTable").treetable({
+            expandable: true,
+            onNodeExpand : function(){
+                var node = this;
+                var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\""+node.id+"\" data-tt-branch=\"false\"><td colspan='5'><img src=\""+base+"/assets/img/loading.gif\"/>loading</td></tr>";
+                treeTable.treetable("loadBranch", node, rows);
+                $.post("${base}/platform/sys/menu/child/"+node.id,{}, function(data){
+                    treeTable.treetable("unloadBranch", node);
+                    treeTable.treetable("loadBranch", node, data);
+                });
+            }
+        });
+    });
+    function enableRole(id) {
+        $.post("${base}/platform/sys/menu/enable/" + id, {}, function (data) {
+            if (data.code == 0) {
+                $("#disable_" + id).attr("class", "fa fa-circle text-success ml5");
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function disableRole(id) {
+        $.post("${base}/platform/sys/menu/disable/" + id, {}, function (data) {
+            if (data.code == 0) {
+                $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function del(id){
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#ok").unbind("click");
+        dialog.find("#ok").bind("click", function(event){
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/sys/menu/delete/"+id,{},function(data){
+                //重置按钮状态，关闭提示框
+                dialog.modal("hide");
+                if(data.code==0){
+                    Toast.success(data.msg);
+                    treeTable.treetable("removeNode", id);
+                    //从表格中移除此行
+                }else{
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+            },"json");
+        });
+    }
+</script>
+
+<%}%>

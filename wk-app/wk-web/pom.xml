@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.wizzer</groupId>
-            <artifactId>wf-framework</artifactId>
+            <artifactId>wk-framework</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

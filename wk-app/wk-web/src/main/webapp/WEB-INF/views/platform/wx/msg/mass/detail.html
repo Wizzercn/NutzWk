@@ -1,0 +1,63 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">图文消息</a>
+                    </div>
+                </header>
+                <div class="row mb10" style="text-align: center;padding-top: 10px;">
+                    <table width="90%" style="padding: 10px;">
+                        <tr style="height: 25px;">
+                            <td width="20%" align="right">标题：</td>
+                            <td width="80%" align="left">
+                                ${obj.title!}
+                            </td>
+                        </tr>
+                        <tr style="height: 25px;">
+                            <td width="20%" align="right">作者：</td>
+                            <td width="80%" align="left">
+                                ${obj.author!}
+                            </td>
+                        </tr>
+                        <tr style="height: 25px;">
+                            <td width="20%" align="right">原文地址：</td>
+                            <td width="80%" align="left">
+                                ${obj.content_source_url!}
+                            </td>
+                        </tr>
+                        <tr style="height: 25px;margin-bottom: 10px;">
+                            <td width="20%" align="right">缩略图：</td>
+                            <td width="80%" align="left">
+                                ${obj.thumb_media_id!}
+                            </td>
+                        </tr>
+                        <tr style="height: 25px;">
+                            <td width="20%" align="right">内容：</td>
+                            <td width="80%" align="left">
+                                ${obj.content!}
+                            </td>
+                        </tr>
+                        <tr style="height: 25px;margin-top: 10px;">
+                            <td width="20%" align="right">简述：</td>
+                            <td width="80%" align="left">
+                                ${obj.digest!}
+                            </td>
+                        </tr>
+                        <tr style="height: 25px;">
+                            <td width="20%" align="right">显示封面：</td>
+                            <td width="80%" align="left">
+                                ${obj.show_cover_pic==0?'不显示':'显示'}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+</div>

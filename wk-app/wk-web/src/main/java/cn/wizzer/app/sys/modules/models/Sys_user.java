@@ -1,5 +1,6 @@
 package cn.wizzer.app.sys.modules.models;
 
+import cn.wizzer.framework.base.model.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
@@ -36,9 +37,9 @@ public class Sys_user extends BaseModel implements Serializable {
     private String salt;
 
     @Column
-    @Comment("昵称")
+    @Comment("用户名")
     @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String nickname;
+    private String username;
 
     @Column
     @Comment("是否在线")
@@ -144,12 +145,12 @@ public class Sys_user extends BaseModel implements Serializable {
         this.salt = salt;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUsername() {
+        return username;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public boolean isOnline() {

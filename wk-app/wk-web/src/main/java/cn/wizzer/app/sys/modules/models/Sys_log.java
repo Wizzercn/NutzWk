@@ -1,5 +1,7 @@
 package cn.wizzer.app.sys.modules.models;
 
+import cn.wizzer.framework.base.model.BaseModel;
+import cn.wizzer.framework.util.StringUtil;
 import org.apache.shiro.SecurityUtils;
 import org.nutz.dao.entity.annotation.*;
 
@@ -23,7 +25,7 @@ public class Sys_log extends BaseModel implements Serializable {
     @Column
     @Comment("创建昵称")
     @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String nickname;
+    private String username;
 
     @Column// aop.before aop.after aop.error
     @Comment("日志类型")
@@ -58,12 +60,12 @@ public class Sys_log extends BaseModel implements Serializable {
         this.id = id;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUsername() {
+        return username;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getType() {
@@ -127,18 +129,18 @@ public class Sys_log extends BaseModel implements Serializable {
         sysLog.ip = StringUtil.getRemoteAddr();
         Object u = SecurityUtils.getSubject().getPrincipal();
         String uid = "";
-        String nickname = "";
+        String username = "";
         if (u != null) {
             if (u instanceof Sys_user) {
-                nickname = ((Sys_user) u).getNickname();
+                username = ((Sys_user) u).getUsername();
                 uid = ((Sys_user) u).getId();
             } else if (u instanceof String) {
-                nickname = ((String) u);
+                username = ((String) u);
             }
         }
         sysLog.setOpBy(uid);
         sysLog.setOpAt((int) (System.currentTimeMillis() / 1000));
-        sysLog.nickname = nickname;
+        sysLog.username = username;
         return sysLog;
     }
 }

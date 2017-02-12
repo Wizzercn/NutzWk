@@ -13,7 +13,7 @@
         <module>wk-code</module>
     </modules>
     <packaging>pom</packaging>
-    <name>NutzWk-Dubbo</name>
+    <name>NutzWk</name>
     <url>http://www.wizzer.cn</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,17 +46,6 @@
         </developer>
     </developers>
     <repositories>
-        <repository>
-            <id>ossrh</id>
-            <url>https://jfrog.nutz.cn/artifactory/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
     </repositories>
     <dependencies>
         <dependency>

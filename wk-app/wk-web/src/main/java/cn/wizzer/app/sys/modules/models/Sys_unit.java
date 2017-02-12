@@ -1,5 +1,6 @@
 package cn.wizzer.app.sys.modules.models;
 
+import cn.wizzer.framework.base.model.BaseModel;
 import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.*;
 

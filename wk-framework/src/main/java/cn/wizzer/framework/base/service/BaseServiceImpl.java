@@ -16,7 +16,6 @@ import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.service.EntityService;
 
-import javax.annotation.Resource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,21 +28,9 @@ import java.util.Map;
  */
 public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<T> {
     private static int DEFAULT_PAGE_NUMBER = 10;
-    private Dao dao;
 
-    @Resource(type = Dao.class)
-    public void init(Dao dao) {
-        this.dao = dao;
-        super.setDao(dao);
-    }
-
-    /**
-     * 获取Dao实例
-     *
-     * @return Dao 实例
-     */
-    public Dao dao() {
-        return dao;
+    public BaseServiceImpl(Dao dao) {
+        super(dao);
     }
 
     /**
