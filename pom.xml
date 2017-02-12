@@ -1,17 +1,24 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>cn.wizzer</groupId>
-    <artifactId>nutzwk</artifactId>
-    <version>3.3.4</version>
-    <packaging>war</packaging>
-    <name>NutzWk</name>
+    <artifactId>wk-parent</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
+    <modules>
+        <module>wk-framework</module>
+        <module>wk-app</module>
+        <module>wk-code</module>
+    </modules>
+    <packaging>pom</packaging>
+    <name>NutzWk-Dubbo</name>
     <url>http://www.wizzer.cn</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jetty-version>9.2.21.v20170120</jetty-version>
     </properties>
-
     <developers>
         <developer>
             <id>wizzercn</id>
@@ -67,16 +74,6 @@
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-daocache</artifactId>
             <version>1.r.60</version>
-        </dependency>
-        <dependency>
-            <groupId>org.nutz</groupId>
-            <artifactId>nutz-plugins-cache</artifactId>
-            <version>1.r.61-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.nutz</groupId>
-            <artifactId>nutz-integration-jedis</artifactId>
-            <version>1.r.61-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -186,7 +183,7 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>2.8.1</version>
+            <version>2.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -343,17 +340,6 @@
         </dependency>
     </dependencies>
     <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*</include>
-                </includes>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <finalName>nutzwk</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
