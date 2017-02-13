@@ -1,0 +1,8 @@
+package ${packageName};
+
+import cn.wizzer.framework.base.service.BaseService;
+import ${table.EntityFullClassName};
+
+public interface ${table.ServiceClassName} extends BaseService<${table.EntityClassName}>{
+
+}

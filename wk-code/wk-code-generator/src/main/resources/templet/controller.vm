@@ -1,0 +1,112 @@
+package ${packageName};
+
+import cn.wizzer.framework.base.Result;
+import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.framework.page.datatable.DataTableColumn;
+import cn.wizzer.framework.page.datatable.DataTableOrder;
+import cn.wizzer.framework.util.StringUtil;
+import ${table.EntityFullClassName};
+import ${table.ServiceFullClassName};
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.dao.Cnd;
+import org.nutz.lang.Strings;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.mvc.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+#set($parameterId = '${args[0].id}')
+#set($parameterId2 = "${req.getAttribute('id')}")
+@IocBean
+@At("${table.UriPrefix}")
+public class ${table.ControllerClassName}{
+    @Inject
+	private ${table.ServiceClassName} ${table.ServiceInstanceName};
+
+    @At("")
+	@Ok("beetl:/pages/${table.ViewBasePath}/index")
+	public void index() {
+
+	}
+
+	@At("/data")
+    @Ok("json")
+    public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+		Cnd cnd = Cnd.NEW();
+    	return ${table.ServiceInstanceName}.data(length, start, draw, order, columns, cnd, null);
+    }
+
+    @At("/add")
+    @Ok("beetl:/pages/${table.ViewBasePath}/add")
+    public void add() {
+
+    }
+
+    @At("/addDo")
+    @Ok("json")
+    @RequiresPermissions("${table.Permissions}.add")
+    @SLog(tag = "${table.Label}", msg = "$parameterId")
+    public Object addDo(@Param("..")${table.EntityClassName} ${table.EntityInstanceName}, HttpServletRequest req) {
+		try {
+			${table.ServiceInstanceName}.insert(${table.EntityInstanceName});
+			return Result.success("system.success");
+		} catch (Exception e) {
+			return Result.error("system.error");
+		}
+    }
+
+    @At("/edit/?")
+    @Ok("beetl:/pages/${table.ViewBasePath}/edit")
+    @RequiresAuthentication
+    public void edit(${table.pkType} id,HttpServletRequest req) {
+		req.setAttribute("obj", ${table.ServiceInstanceName}.fetch(id));
+    }
+
+    @At("/editDo")
+    @Ok("json")
+    @RequiresPermissions("${table.Permissions}.edit")
+    @SLog(tag = "${table.Label}", msg = "$parameterId")
+    public Object editDo(@Param("..")${table.EntityClassName} ${table.EntityInstanceName}, HttpServletRequest req) {
+		try {
+            ${table.EntityInstanceName}.setOpBy(StringUtil.getUid());
+			${table.EntityInstanceName}.setOpAt((int) (System.currentTimeMillis() / 1000));
+			${table.ServiceInstanceName}.updateIgnoreNull(${table.EntityInstanceName});
+			return Result.success("system.success");
+		} catch (Exception e) {
+			return Result.error("system.error");
+		}
+    }
+
+    @At({"/delete/?", "/delete"})
+    @Ok("json")
+    @RequiresPermissions("${table.Permissions}.delete")
+    @SLog(tag = "${table.Label}", msg = "$parameterId2")
+    public Object delete(${table.pkType} id, @Param("ids")  ${table.pkType}[] ids, HttpServletRequest req) {
+		try {
+			if(ids!=null&&ids.length>0){
+				${table.ServiceInstanceName}.delete(ids);
+    			req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
+			}else{
+				${table.ServiceInstanceName}.delete(id);
+    			req.setAttribute("id", id);
+			}
+            return Result.success("system.success");
+        } catch (Exception e) {
+            return Result.error("system.error");
+        }
+    }
+
+    @At("/detail/?")
+    @Ok("beetl:/pages/${table.ViewBasePath}/detail")
+	public void detail(${table.pkType} id, HttpServletRequest req) {
+		if (!Strings.isBlank(id)) {
+            req.setAttribute("obj", ${table.ServiceInstanceName}.fetch(id));
+		}else{
+            req.setAttribute("obj", null);
+        }
+    }
+
+}

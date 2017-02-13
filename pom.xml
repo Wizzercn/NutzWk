@@ -48,6 +48,12 @@
     <repositories>
     </repositories>
     <dependencies>
+        <!-- wk-code-generator -->
+        <dependency>
+            <groupId>cn.wizzer</groupId>
+            <artifactId>wk-code-generator</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
