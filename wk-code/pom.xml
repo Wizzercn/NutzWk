@@ -11,7 +11,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>wk-code-generator</module>
-        <module>wk-code-ideaplugin</module>
     </modules>
     <artifactId>wk-code</artifactId>
 
