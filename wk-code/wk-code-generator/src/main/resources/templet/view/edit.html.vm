@@ -1,6 +1,6 @@
-<!--#
+<%
 layout("/layouts/platform.html"){
-#-->
+%>
 #set($obj = '${obj.')
 #set($obj_id='${obj.id}')
 #set($base = '${base}')
@@ -73,4 +73,4 @@ layout("/layouts/platform.html"){
         });
     });
 </script>
-<!--#}#-->
+<%}%>

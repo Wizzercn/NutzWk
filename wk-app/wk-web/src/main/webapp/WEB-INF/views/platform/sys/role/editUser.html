@@ -40,8 +40,8 @@ layout("/layouts/platform.html"){
                 <input type="text" id="loginname" name="loginname" onclick="this.value=''" class="form-control" placeholder="用户名" autofocus>
             </div>
             <div class="form-group">
-                <label for="nickname">姓名</label>
-                <input type="text" id="nickname" name="nickname" onclick="this.value=''" class="form-control" placeholder="姓名/昵称">
+                <label for="username">姓名</label>
+                <input type="text" id="username" name="username" onclick="this.value=''" class="form-control" placeholder="姓名/昵称">
             </div>
             <button id="searchBtn" type="button" class="btn btn-default">查询</button>
         </div>
@@ -79,13 +79,13 @@ layout("/layouts/platform.html"){
                 "data": function (d) {
                     d.roleid = $('#roleid').val();
                     d.loginname = $('#loginname').val();
-                    d.nickname = $('#nickname').val();
+                    d.username = $('#username').val();
                 }
             },
             "order": [[0, "desc"]],
             "columns": [
                 {"data": "loginname", "bSortable": true},
-                {"data": "nickname", "bSortable": true},
+                {"data": "username", "bSortable": true},
                 {"data": "disabled", "bSortable": true}
             ],
             "columnDefs": [

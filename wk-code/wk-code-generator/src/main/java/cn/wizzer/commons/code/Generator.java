@@ -79,7 +79,7 @@ public class Generator {
 
         Pattern includePattern = Pattern.compile(".*");
         Pattern excludePattern = null;
-        String basePackageName = "com.aebiz.app";
+        String basePackageName = "cn.wizzer.app";
         String controllerPackageName = "controllers";
         String servicePackageName = "services";
         String modelPackageName = "models";
@@ -94,7 +94,7 @@ public class Generator {
         options.addOption("c", "config", true, "spring datasource config file(classpath)");
         options.addOption("i", "include", true, "include table pattern");
         options.addOption("x", "exclude", true, "exclude table pattern");
-        options.addOption("p", "package", true, "base package name,default:com.aebiz.app");
+        options.addOption("p", "package", true, "base package name,default:cn.wizzer.app");
         options.addOption("ctr",
                 "package",
                 true,
@@ -280,7 +280,7 @@ public class Generator {
 
         for (String view : pages) {
             String templatePath = "templet/view/" + view + ".html.vm";
-            File file = new File("src/main/webapp/WEB-INF/views/pages/"
+            File file = new File("src/main/webapp/WEB-INF/views/"
                     + table.getViewBasePath()
                     + "/"
                     + view
