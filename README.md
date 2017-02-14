@@ -34,7 +34,7 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 
 如果您的项目需要快速开发，并习惯通过负载均衡方式提升性能，可以选用v3.x版本，她采用Bootstrap+JQuery+Json开发；
 
-如果您的项目有大数据及大并发、分布式部署等需求，那么你可以选用v4.x版本，她在v3.x基础上拆分模块并接口化；
+如果您的项目有大数据及大并发、分布式部署等需求，那么您可以选用v4.x版本，她在v3.x基础上拆分模块并接口化；
 
 
 #本版说明(v4.x)
@@ -97,13 +97,18 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 
 
 ##NutzWk 4.x 代码生成器安装使用:
-*   鸣谢@enilu
-*   1) IDEA Settings --> Plugins --> Install plugin from disk --> wk-code-ideaplugin.jar
-*   2) 创建实体类,必须有@Table,若字段需生成到模板页面则需加 @Comment 字段备注
-*   3) 编译wk-web项目,使其打包发布至 target/ 目录
-*   4) 在实体类上鼠标右击,Code(Alt+Insert/Mouse Right) --> Generate --> wk mvc
+*   IDEA Settings --> Plugins --> Install plugin from disk --> wk-code-ideaplugin.jar
+*   创建实体类,必须有@Table,若字段需生成到模板页面则需加 @Comment 字段备注
+*   编译wk-web项目,使其打包发布至 target/ 目录
+*   在实体类上鼠标右击,Code(Alt+Insert/Mouse Right) --> Generate --> wk mvc
 
 ![IDEA插件截图](wk-code/wk-code-ideaplugin/demo.png)
+
+#鸣谢
+*   @wendal (技术大牛,Nutz主要作者,无所不知且乐于助人)
+*   @rekoe (代码贡献者之一)
+*   @enilu (代码生成器及IDEA插件贡献者)
+*   以及交流群里热心的小伙伴们~
 
 #关于捐赠
 请使用本框架进行开发，或基于此改造，或获取灵感的码友们，以资鼓励，DEMO服务器续费及开发动力来源于你们的支持~~感谢！
