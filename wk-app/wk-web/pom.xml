@@ -5,7 +5,7 @@
     <parent>
         <artifactId>wk-app</artifactId>
         <groupId>cn.wizzer.app</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>4.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
@@ -14,13 +14,13 @@
         <dependency>
             <groupId>cn.wizzer</groupId>
             <artifactId>wk-framework</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>4.0.1-SNAPSHOT</version>
         </dependency>
         <!-- 代码生成器,覆盖根目录的代码生成器配置,防止打包进lib,造成类冲突-->
         <dependency>
             <groupId>cn.wizzer</groupId>
             <artifactId>wk-code-generator</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>4.0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
