@@ -7,7 +7,7 @@ NutzWk 基于Nutz的开源企业级开发框架
 
 开发计划:
 
-* NutzWk 4.0.x   前后端分离版 (vue + nutz + dubbo) **开发中..**
+* NutzWk 4.0.x   分布式版本 (beetl / beetl+velocity)
 * NutzWk 3.3.x   CMS+微信+系统+权限+常用功能封装 (beetl / beetl+velocity)
 * NutzWk 2.0.x   试验版(不建议使用)
 * NutzWk 1.0.x   传统版(velocity 支持IE6)
@@ -20,7 +20,7 @@ QQ交流群: 68428921
 ======
 https://nutzwk.wizzer.cn/                 NutzWk v3.x
 
-https://vue.wizzer.cn                     NutzWk v4.x
+https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 https://github.com/Wizzercn/NodeWk       Node.js版源码
 
