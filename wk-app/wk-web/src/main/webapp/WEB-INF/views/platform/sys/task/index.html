@@ -115,6 +115,8 @@ layout("/layouts/platform.html"){
                                 '<li class="divider"></li>' +
                                 '<li><a href="javascript:;" onclick="enableTask(\'' + row.id + '\')">启用</a></li>' +
                                 '<li><a href="javascript:;" onclick="disableTask(\'' + row.id + '\')">禁用</a></li>' +
+//                              '<li><a href="javascript:;" onclick="suspend(\'' + row.id + '\')">暂停</a></li>' +
+//                              '<li><a href="javascript:;" onclick="restore(\'' + row.id + '\')">恢复</a></li>' +
                                 '</ul></div>';
                     },
                     "targets": 6
@@ -141,6 +143,24 @@ layout("/layouts/platform.html"){
         $.post("${base}/platform/sys/task/disable/" + id, {}, function (data) {
             if (data.code == 0) {
                 $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function suspend(id) {
+        $.post("${base}/platform/sys/task/suspend/" + id, {}, function (data) {
+            if (data.code == 0) {
+                $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function restore(id) {
+        $.post("${base}/platform/sys/task/restore/" + id, {}, function (data) {
+            if (data.code == 0) {
+                $("#disable_" + id).attr("class", "fa fa-circle text-success ml5");
             } else {
                 Toast.error(data.msg);
             }

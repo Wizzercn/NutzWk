@@ -1,5 +1,6 @@
 package cn.wizzer.app.web.modules.controllers.open.wx;
 
+import cn.wizzer.app.web.commons.services.wx.WxHandler;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -8,7 +9,6 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.View;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
-import org.nutz.weixin.spi.WxHandler;
 import org.nutz.weixin.util.Wxs;
 
 import javax.servlet.http.HttpServletRequest;

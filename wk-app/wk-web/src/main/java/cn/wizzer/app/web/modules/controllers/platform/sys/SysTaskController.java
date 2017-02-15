@@ -223,4 +223,56 @@ public class SysTaskController {
             return Result.error("system.error");
         }
     }
+//
+//    @At("/suspend/?")
+//    @Ok("json")
+//    @RequiresPermissions("sys.manager.task.edit")
+//    @SLog(tag = "暂停任务", msg = "任务名:${req.getAttribute('name')}")
+//    public Object suspend(String id, HttpServletRequest req) {
+//        try {
+//            Sys_task sysTask = taskService.fetch(id);
+//            try {
+//                boolean isExist = quartzManager.exist(new JobKey(sysTask.getId(), sysTask.getId()));
+//                if (!isExist) {
+//                    QuartzJob qj = new QuartzJob();
+//                    qj.setJobName(sysTask.getId());
+//                    qj.setJobGroup(sysTask.getId());
+//                    quartzManager.pause(qj);
+//                }
+//            } catch (Exception e) {
+//                log.error(e.getMessage());
+//            }
+//            req.setAttribute("name", sysTask.getName());
+//            taskService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", id));
+//            return Result.success("system.success");
+//        } catch (Exception e) {
+//            return Result.error("system.error");
+//        }
+//    }
+//
+//    @At("/restore/?")
+//    @Ok("json")
+//    @RequiresPermissions("sys.manager.task.edit")
+//    @SLog(tag = "恢复任务", msg = "任务名:${req.getAttribute('name')}")
+//    public Object restore(String id, HttpServletRequest req) {
+//        try {
+//            Sys_task sysTask = taskService.fetch(id);
+//            try {
+//                boolean isExist = quartzManager.exist(new JobKey(sysTask.getId(), sysTask.getId()));
+//                if (!isExist) {
+//                    QuartzJob qj = new QuartzJob();
+//                    qj.setJobName(sysTask.getId());
+//                    qj.setJobGroup(sysTask.getId());
+//                    quartzManager.resume(qj);
+//                }
+//            } catch (Exception e) {
+//                log.error(e.getMessage());
+//            }
+//            req.setAttribute("name", sysTask.getName());
+//            taskService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", id));
+//            return Result.success("system.success");
+//        } catch (Exception e) {
+//            return Result.error("system.error");
+//        }
+//    }
 }

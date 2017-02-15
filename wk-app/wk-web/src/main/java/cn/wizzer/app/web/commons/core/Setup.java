@@ -127,7 +127,7 @@ public class Setup implements org.nutz.mvc.Setup {
             Sys_task task = new Sys_task();
             task.setDisabled(true);
             task.setName("测试任务");
-            task.setJobClass("cn.wizzer.common.quartz.job.TestJob");
+            task.setJobClass("cn.wizzer.app.web.commons.quartz.job.TestJob");
             task.setCron("*/5 * * * * ?");
             task.setData("{\"hi\":\"Wechat:wizzer | send red packets of support,thank u\"}");
             task.setNote("微信号：wizzer | 欢迎发送红包以示支持，多谢。。");
@@ -157,7 +157,7 @@ public class Setup implements org.nutz.mvc.Setup {
      * @param dao
      */
     private void initSysData(NutConfig config, Dao dao) {
-        Daos.createTablesInPackage(dao, "cn.wizzer.modules", false);
+        Daos.createTablesInPackage(dao, "cn.wizzer.app", false);
         // 若必要的数据表不存在，则初始化数据库
         if (0 == dao.count(Sys_user.class)) {
             //初始化配置表
