@@ -63,7 +63,7 @@ public class WxUserController {
         return wxUserService.data(length, start, draw, order, columns, cnd, null);
     }
 
-    @At("/down/?")
+    @At({"/down/","/down/?"})
     @Ok("json")
     @RequiresPermissions("wx.user.list.sync")
     @SLog(tag = "同步微信会员", msg = "公众号:${args[1].getAttribute('appname')}")
