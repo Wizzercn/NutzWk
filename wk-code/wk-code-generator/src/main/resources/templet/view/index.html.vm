@@ -19,6 +19,7 @@ layout("/layouts/platform.html"){
     #set($temp = '${msg['''+${table.LocalePath}+'.column.'+${column.fieldName}+''']}')
                             <th>$temp</th>
 #end
+                            <th>${msg['globals.table.column.operation']}</th>
                     </tr>
                 </thead>
             </table>
