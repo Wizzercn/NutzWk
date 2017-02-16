@@ -133,10 +133,19 @@ public class SysLoginController {
             subject.login(token);
             Sys_user user = (Sys_user) subject.getPrincipal();
             int count = user.getLoginCount() == null ? 0 : user.getLoginCount();
-            sLogService.async(Sys_log.c("info", "用户登陆", "成功登录系统！", null));
             userService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", (int) (System.currentTimeMillis() / 1000))
                             .add("loginCount", count + 1).add("isOnline", true)
                     , Cnd.where("id", "=", user.getId()));
+			Sys_log sysLog = new Sys_log();
+            sysLog.setType("info");
+            sysLog.setTag("用户登陆");
+            sysLog.setSrc(this.getClass().getName()+"#doLogin");
+            sysLog.setMsg("成功登录系统！");
+            sysLog.setIp(StringUtil.getRemoteAddr());
+            sysLog.setOpBy(user.getId());
+            sysLog.setOpAt((int) (System.currentTimeMillis() / 1000));
+            sysLog.setUsername(user.getUsername());
+            sLogService.async(sysLog);
             return Result.success("login.success");
         } catch (IncorrectCaptchaException e) {
             //自定义的验证码错误异常
