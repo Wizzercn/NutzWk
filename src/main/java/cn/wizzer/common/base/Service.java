@@ -541,7 +541,10 @@ public class Service<T> extends EntityService<T> {
         re.put("recordsFiltered", this.dao().count(this.getEntityClass(), cnd));
         List<?> list = this.dao().query(this.getEntityClass(), cnd, pager);
         if (!Strings.isBlank(linkName)) {
-            this.dao().fetchLinks(list, linkName, subCnd);
+            if (subCnd != null)
+                this.dao().fetchLinks(list, linkName, subCnd);
+            else
+                this.dao().fetchLinks(list, linkName);
         }
         re.put("data", list);
         re.put("draw", draw);
