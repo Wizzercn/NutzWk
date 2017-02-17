@@ -668,6 +668,39 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
+     * DataTable Page
+     *
+     * @param length   页大小
+     * @param start    start
+     * @param draw     draw
+     * @param orders   排序
+     * @param columns  字段
+     * @param cnd      查询条件
+     * @param linkName 关联查询
+     * @param subCnd   关联查询条件
+     * @return
+     */
+    public NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName, Cnd subCnd) {
+        NutMap re = new NutMap();
+        if (orders != null && orders.size() > 0) {
+            for (DataTableOrder order : orders) {
+                DataTableColumn col = columns.get(order.getColumn());
+                cnd.orderBy(Sqls.escapeSqlFieldValue(col.getData()).toString(), order.getDir());
+            }
+        }
+        Pager pager = new OffsetPager(start, length);
+        re.put("recordsFiltered", this.dao().count(this.getEntityClass(), cnd));
+        List<?> list = this.dao().query(this.getEntityClass(), cnd, pager);
+        if (!Strings.isBlank(linkName)) {
+            this.dao().fetchLinks(list, linkName, subCnd);
+        }
+        re.put("data", list);
+        re.put("draw", draw);
+        re.put("recordsTotal", length);
+        return re;
+    }
+
+    /**
      * DataTable Page SQL
      *
      * @param length   页大小
