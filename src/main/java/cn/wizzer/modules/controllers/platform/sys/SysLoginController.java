@@ -2,6 +2,7 @@ package cn.wizzer.modules.controllers.platform.sys;
 
 import cn.apiclub.captcha.Captcha;
 import cn.wizzer.common.base.Result;
+import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.common.services.log.SLogService;
 import cn.wizzer.common.shiro.exception.EmptyCaptchaException;
 import cn.wizzer.common.shiro.exception.IncorrectCaptchaException;
@@ -144,7 +145,7 @@ public class SysLoginController {
             sysLog.setIp(StringUtil.getRemoteAddr());
             sysLog.setOpBy(user.getId());
             sysLog.setOpAt((int) (System.currentTimeMillis() / 1000));
-            sysLog.setUsername(user.getUsername());
+            sysLog.setNickname(user.getNickname());
             sLogService.async(sysLog);
             return Result.success("login.success");
         } catch (IncorrectCaptchaException e) {
