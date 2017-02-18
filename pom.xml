@@ -48,12 +48,6 @@
     <repositories>
     </repositories>
     <dependencies>
-        <!-- 代码生成器,若使用IDEA可视化插件则需启用 -->
-        <dependency>
-            <groupId>cn.wizzer</groupId>
-            <artifactId>wk-code-generator</artifactId>
-            <version>4.0.1-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -341,24 +335,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <excludes>
-                                <exclude>src/main/resources/**/*</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.1</version>
                 <configuration>
@@ -373,25 +349,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <archiveClasses>true</archiveClasses>
-                    <packagingExcludes>WEB-INF/web.xml</packagingExcludes>
-                    <warSourceExcludes>WEB-INF/classes/cn/**</warSourceExcludes>
-                    <webResources>
-                        <resource>
-                            <directory>src/main/resources</directory>
-                            <targetPath>WEB-INF/classes</targetPath>
-                            <includes>
-                                <include>**</include>
-                            </includes>
-                        </resource>
-                    </webResources>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19.1</version>
                 <configuration>
@@ -400,39 +357,6 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty-version}</version>
-                <configuration>
-                    <httpConnector>
-                        <port>8080</port>
-                    </httpConnector>
-                    <stopKey>shutdown</stopKey>
-                    <stopPort>9966</stopPort>
-                    <scanIntervalSeconds>5</scanIntervalSeconds>
-                    <dumpOnStart>true</dumpOnStart>
-                    <webApp>
-                        <contextPath>/</contextPath>
-                        <!--
-                        <resourceBases>
-                          <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
-                          <resourceBase>${project.basedir}/commons</resourceBase>
-                        </resourceBases>
-                        -->
-                    </webApp>
-                    <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
-                        <filename>target/access-yyyy_mm_dd.log</filename>
-                        <filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
-                        <logDateFormat>yyyy-MM-dd HH:mm:ss</logDateFormat>
-                        <logTimeZone>GMT+8:00</logTimeZone>
-                        <append>true</append>
-                        <logServer>true</logServer>
-                        <retainDays>120</retainDays>
-                        <logCookies>true</logCookies>
-                    </requestLog>
-                </configuration>
-            </plugin>
 
         </plugins>
     </build>

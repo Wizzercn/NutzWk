@@ -16,7 +16,6 @@
             <artifactId>wk-framework</artifactId>
             <version>4.0.1-SNAPSHOT</version>
         </dependency>
-        <!-- 代码生成器,覆盖根目录的代码生成器配置,防止打包进lib,造成类冲突-->
         <dependency>
             <groupId>cn.wizzer</groupId>
             <artifactId>wk-code-generator</artifactId>
@@ -39,17 +38,21 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
-                    <compilerArgs>
-                        <arg>-parameters</arg>
-                    </compilerArgs>
-                    <useIncrementalCompilation>false</useIncrementalCompilation>
-                </configuration>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <excludes>
+                                <exclude>src/main/resources/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -68,6 +71,40 @@
                             </includes>
                         </resource>
                     </webResources>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty-version}</version>
+                <configuration>
+                    <httpConnector>
+                        <port>8080</port>
+                    </httpConnector>
+                    <stopKey>shutdown</stopKey>
+                    <stopPort>9966</stopPort>
+                    <scanIntervalSeconds>5</scanIntervalSeconds>
+                    <dumpOnStart>true</dumpOnStart>
+                    <webApp>
+                        <contextPath>/</contextPath>
+                        <!--
+                        <resourceBases>
+                          <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
+                          <resourceBase>${project.basedir}/commons</resourceBase>
+                        </resourceBases>
+                        -->
+                    </webApp>
+                    <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+                        <filename>target/access-yyyy_mm_dd.log</filename>
+                        <filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
+                        <logDateFormat>yyyy-MM-dd HH:mm:ss</logDateFormat>
+                        <logTimeZone>GMT+8:00</logTimeZone>
+                        <append>true</append>
+                        <logServer>true</logServer>
+                        <retainDays>120</retainDays>
+                        <logCookies>true</logCookies>
+                    </requestLog>
                 </configuration>
             </plugin>
         </plugins>

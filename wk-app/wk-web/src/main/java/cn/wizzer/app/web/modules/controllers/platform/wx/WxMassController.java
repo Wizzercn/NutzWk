@@ -228,9 +228,6 @@ public class WxMassController {
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error("system.error");
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return Result.error("system.error");
         }
     }
 

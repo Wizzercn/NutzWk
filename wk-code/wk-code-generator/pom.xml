@@ -8,7 +8,7 @@
         <version>4.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <packaging>jar</packaging>
     <artifactId>wk-code-generator</artifactId>
     <properties>
         <evo-inflector-version>1.0.1</evo-inflector-version>
