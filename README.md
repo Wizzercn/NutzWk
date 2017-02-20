@@ -62,7 +62,7 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 *   支持动作链配置(想加过滤器So easy)
 *   支持注解式日志(@SLog注解自动记录日志)
 *   支持自定义路由(显性转发或隐性转发)
-*   支持插件热插拔(热插拔class或jar包)
+*   支持class或jar插件热插拔(单机部署模式)
 *   支持API Token及应用管理(结合Nodejs一键生成API DOC)
 *   后台管理界面采用Pjax+Bootstrap
 *   系统模块(单位、角色、用户、菜单等完整的权限体系)
@@ -97,6 +97,7 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 
 >wk-framework            (基础框架)
 
+>wk-wiki                (开发指南)
 
 
 ##NutzWk 4.x 代码生成器安装使用:
@@ -108,10 +109,11 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 ![IDEA插件截图](wk-code/wk-code-ideaplugin/demo.png)
 
 #鸣谢
-*   @wendal (技术大牛,Nutz主要作者,无所不知且乐于助人)
-*   @rekoe (代码贡献者之一)
-*   @enilu (代码生成器及IDEA插件贡献者)
-*   以及交流群里热心的小伙伴们~
+*   [@wendal](https://github.com/wendal) (代码贡献者,技术大牛,Nutz主要作者,无所不知且乐于助人)
+*   [@rekoe](https://github.com/Rekoe) (代码贡献者)
+*   [@enilu](https://github.com/enilu) (代码生成器及IDEA插件贡献者)
+*   [@loyalove](https://github.com/loyalove)(Vue代码贡献者)
+*   以及交流群里热心的小伙伴们~
 
 #关于捐赠
 请使用本框架进行开发，或基于此改造，或获取灵感的码友们，以资鼓励，DEMO服务器续费及开发动力来源于你们的支持~~感谢！
