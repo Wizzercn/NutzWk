@@ -1,4 +1,4 @@
-NutzWk 基于Nutz的开源企业级开发框架 
+NutzWk 基于Nutz的开源企业级开发框架
 ======
 
 [![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
@@ -11,7 +11,7 @@ https://nutzwk.wizzer.cn/                 NutzWk v3.x、v4.x
 
 https://vue.wizzer.cn                     NutzWk v3.x-vue
 
-#前言
+# 前言
 
 本项目源于2010年，那时老东家还在使用Jsp和Struts1，需要手动创建并释放连接池、需要配置XML请求路径和类映射关系、要支持刚刚兴起的JSON非常痛苦等等的原因，开始选择适用“快速开发、功能丰富、扩展性强、性能优越”等技术要求的框架产品，讨厌Spring的繁杂配置、Hibernate及Mybatis的繁琐，讨厌一切让开发变得低效和繁杂的技术，这和Nutz的设计理念不谋而合。
 
@@ -19,11 +19,11 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 我们有强大的后援 —— Nutz 社区支持  https://nutz.cn  及 Nutz 使用手册 https://nutzam.com/core/nutz_preface.html
 
-###QQ交流群: 68428921
+### QQ交流群: 68428921
 
 ps：这几年明显感受到国产开源项目越来越多，各种五花八门的框架，让使用者很难选择；不鼓吹自己的框架多么多么好，个人觉得适用于项目需要并且能在满足技术需求的基础上最大限度的提高开发效率的框架，就是好框架。
 
-#版本说明
+# 版本说明
 
 *   NutzWk v4.x 模块化版本(统一提供代码生成器及IDEA可视化插件)
 *   NutzWk v3.x 单应用版本(CMS+微信+系统+权限+常用功能封装 beetl/velocity)
@@ -36,19 +36,19 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 
 如果您的项目有大数据及大并发、分布式部署等需求，那么您可以选用v4.x版本，她在v3.x基础上拆分模块并接口化；
 
-##NutzWk v3.x主分支
+## NutzWk v3.x主分支
 
 https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发, 功能与v4.x同步升级
 
-#本版说明(v4.x)
+# 本版说明(v4.x)
 
-##NutzWk 4.x 运行环境：
+## NutzWk 4.x 运行环境：
 
 *   JDK 8
 *   Tomcat 8.x +
 *   Maven 3.3.x +
 
-##NutzWk 4.x 新特性：
+## NutzWk 4.x 新特性：
 
 *   模块化可自由拆分(Dubbo/RSF自由选择)
 *   集成Shiro权限框架(支持二级缓存)
@@ -70,7 +70,7 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 *   微信模块(支持多帐号配置等微信功能)
 
 
-##NutzWk 4.x 使用说明：
+## NutzWk 4.x 使用说明：
 
 *   创建空的数据库
 *   修改数据库连接 wk-app/wk-web/src/main/resources/config/custom/db.properties
@@ -79,7 +79,7 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 *   http://127.0.0.1/sysadmin
 *   用户名：superadmin 密码：1
 
-##NutzWk 4.x 代码结构:
+## NutzWk 4.x 代码结构:
 
 >wk-app
 
@@ -100,7 +100,7 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 >wk-wiki                (开发指南)
 
 
-##NutzWk 4.x 代码生成器安装使用:
+## NutzWk 4.x 代码生成器安装使用:
 *   IDEA Settings --> Plugins --> Install plugin from disk --> wk-code-ideaplugin.jar
 *   创建实体类,必须有@Table,若字段需生成到模板页面则需加 @Comment 字段备注
 *   编译wk-web项目,使其打包发布至 target/ 目录
@@ -108,17 +108,23 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 
 ![IDEA插件截图](wk-code/wk-code-ideaplugin/demo.png)
 
-#鸣谢
+# 鸣谢
 *   [@wendal](https://github.com/wendal) (代码贡献者,技术大牛,Nutz主要作者,无所不知且乐于助人)
 *   [@rekoe](https://github.com/Rekoe) (代码贡献者)
 *   [@enilu](https://github.com/enilu) (代码生成器及IDEA插件贡献者)
 *   [@loyalove](https://github.com/loyalove)(Vue代码贡献者)
 *   以及交流群里热心的小伙伴们~
 
-#关于捐赠
-请使用本框架进行开发，或基于此改造，或获取灵感的码友们，以资鼓励，DEMO服务器续费及开发动力来源于你们的支持~~感谢！
+# 关于
 
-### 支付宝扫码捐赠
-![支付宝扫码捐赠](alipay.png)
+本项目完全开源，商用也是免费的。
 
-受捐清单：https://nutzwk.wizzer.cn/private/pm/info
+欢迎 “打赏” 以资鼓励，服务器续费及开发动力来源于你们的支持~~感谢~
+
+打赏地址：https://nutz.cn/pay/bc
+
+![打赏](apay.png)
+
+或支付宝扫码：
+
+![支付宝](alipay.png)
