@@ -46,6 +46,13 @@
         </developer>
     </developers>
     <repositories>
+        <repository>
+            <id>nutzcn-snapshots</id>
+            <url>https://jfrog.nutz.cn/artifactory/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -356,7 +363,6 @@
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
-
 
         </plugins>
     </build>
