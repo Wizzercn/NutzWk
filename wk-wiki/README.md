@@ -31,4 +31,4 @@
   - [05.02 **Loading**](05.Web/05.02.Loading.md)
   - [05.03 **提示框**](05.Web/05.03.Toast.md)
   - [05.04 **表单验证**](05.Web/05.04.Parsley.md)
-- [06 ** Nutz 官方文档**](http://nutzam.com/core/nutz_preface.html)
+- [06 **Nutz 官方文档**](http://nutzam.com/core/nutz_preface.html)
