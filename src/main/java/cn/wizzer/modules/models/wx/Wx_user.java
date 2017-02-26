@@ -73,7 +73,7 @@ public class Wx_user extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String wxid;
 
-    @One(target = Wx_config.class, field = "wxid")
+    @One(field = "wxid")
     private Wx_config wxConfig;
 
     public String getId() {

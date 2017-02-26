@@ -90,16 +90,19 @@ public class Sys_user extends Model implements Serializable {
     private boolean loginScroll;
 
     @Column
+    private boolean loginPjax;
+
+    @Column
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String unitid;
 
-    @One(target = Sys_unit.class, field = "unitid")
+    @One(field = "unitid")
     private Sys_unit unit;
 
-    @ManyMany(from = "userId", relation = "sys_user_role", target = Sys_role.class, to = "roleId")
+    @ManyMany(from = "userId", relation = "sys_user_role", to = "roleId")
     private List<Sys_role> roles;
 
-    @ManyMany(from = "userId", relation = "sys_user_unit", target = Sys_role.class, to = "unitId")
+    @ManyMany(from = "userId", relation = "sys_user_unit", to = "unitId")
     protected List<Sys_unit> units;
 
     protected List<Sys_menu> menus;
@@ -108,9 +111,9 @@ public class Sys_user extends Model implements Serializable {
 
     protected Map<String, List<Sys_menu>> secondMenus;
 
-    protected Map<String, String> pathMenus;
-
     private List<Sys_menu> customMenus;
+
+    protected Map<String, String> pathMenus;//vue
 
     public String getId() {
         return id;
@@ -238,6 +241,14 @@ public class Sys_user extends Model implements Serializable {
 
     public void setLoginScroll(boolean loginScroll) {
         this.loginScroll = loginScroll;
+    }
+
+    public boolean isLoginPjax() {
+        return loginPjax;
+    }
+
+    public void setLoginPjax(boolean loginPjax) {
+        this.loginPjax = loginPjax;
     }
 
     public String getUnitid() {

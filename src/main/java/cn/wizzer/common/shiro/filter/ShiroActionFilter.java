@@ -56,7 +56,7 @@ public class ShiroActionFilter implements ActionFilter {
     }
 
     private View view = new ServerRedirectView("/");
-    private View NOT_PERMISSION = new ServerRedirectView("/private/login");
+    private View NOT_PERMISSION = new ServerRedirectView("/platform/login");
 
     public ShiroActionFilter() {
 

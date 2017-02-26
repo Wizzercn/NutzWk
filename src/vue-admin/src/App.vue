@@ -1,5 +1,5 @@
 <template>
-  <div class="app" v-bind:class="currClass">
+  <div id="app" class="app" :class="currClass">
     <div class="gallery-loader" style="background-color:transparent;">
       <div class="loader"></div>
     </div>
@@ -8,22 +8,22 @@
         <div class="pg-close ti-close"></div>
         <div class="options-container color-options">
           <h6>样式</h6>
-          <a onclick="sublimeApp.changeTheme('palette.css')" :href="base+'/assets/static/styles/skins/palette.css'"
-             class="css_orange cs_color cs_1 "  v-bind:class="[currUser.theme=='palette.css'? 'active' : '']">
+          <a onclick="sublimeApp.changeTheme('palette.css')" :href="base+'/assets/styles/skins/palette.css'"
+             class="css_orange cs_color cs_1 " :class="[currUser.theme=='palette.css'? 'active' : '']">
             <div></div>
             <div></div>
             <div></div>
             <div></div>
           </a>
-          <a onclick="sublimeApp.changeTheme('palette.2.css')" :href="base+'/assets/static/styles/skins/palette.2.css'"
-             class="css_orange cs_color cs_2 " v-bind:class="[currUser.theme=='palette.2.css'? 'active' : '']">
+          <a onclick="sublimeApp.changeTheme('palette.2.css')" :href="base+'/assets/styles/skins/palette.2.css'"
+             class="css_orange cs_color cs_2 " :class="[currUser.theme=='palette.2.css'? 'active' : '']">
             <div></div>
             <div></div>
             <div></div>
             <div></div>
           </a>
-          <a onclick="sublimeApp.changeTheme('palette.3.css')" :href="base+'/assets/static/styles/skins/palette.3.css'"
-             class="css_orange cs_color cs_3 " v-bind:class="[currUser.theme=='palette.3.css'? 'active' : '']">
+          <a onclick="sublimeApp.changeTheme('palette.3.css')" :href="base+'/assets/styles/skins/palette.3.css'"
+             class="css_orange cs_color cs_3 " :class="[currUser.theme=='palette.3.css'? 'active' : '']">
             <div></div>
             <div></div>
             <div></div>
@@ -32,14 +32,17 @@
         </div>
         <div class="options-container">
           <h6>布局</h6>
-          <a class="pg-val toggle-sidebar toggle-active" v-bind:class="[currClass['small-menu'] ? 'active' : '']" href="javascript:;">
-            <img :src="base+'/assets/static/images/panel/small.png'" alt="">
+          <a class="pg-val toggle-sidebar toggle-active" :class="[currClass['small-menu'] ? 'active' : '']"
+             href="javascript:;">
+            <img :src="base+'/assets/images/panel/small.png'" alt="">
           </a>
-          <a class="pg-val toggle-scroll toggle-active" v-bind:class="[currClass['fixed-scroll'] ? 'active' : '']" href="javascript:;">
-            <img :src="base+'/assets/static/images/panel/scroll.png'" alt="">
+          <a class="pg-val toggle-scroll toggle-active" :class="[currClass['fixed-scroll'] ? 'active' : '']"
+             href="javascript:;">
+            <img :src="base+'/assets/images/panel/scroll.png'" alt="">
           </a>
-          <a class="pg-val toggle-boxed toggle-active" v-bind:class="[currClass['boxed'] ? 'active' : '']" href="javascript:;">
-            <img :src="base+'/assets/static/images/panel/boxed.png'" alt="">
+          <a class="pg-val toggle-boxed toggle-active" :class="[currClass['boxed'] ? 'active' : '']"
+             href="javascript:;">
+            <img :src="base+'/assets/images/panel/boxed.png'" alt="">
           </a>
         </div>
         <small class="pg-footer"><i class="ti-info-alt mr5"></i></small>
@@ -48,7 +51,7 @@
     <navbar :curr-user="currUser" :first-menus="firstMenus" @switch-menu="switchMenu"></navbar>
 
     <section class="layout">
-      <sidebar :curr-menu="currMenu" :custom-menus="customMenus" :path-menus="pathMenus" ></sidebar>
+      <sidebar :curr-menu="currMenu" :custom-menus="customMenus" :path-menus="pathMenus"></sidebar>
 
       <!-- main content -->
       <section class="main-content">
@@ -76,6 +79,7 @@
   import Sidebar from './components/common/Sidebar'
 
   export default {
+    name: 'app',
     components: {
       Navbar,
       Sidebar
@@ -118,7 +122,7 @@
             this.pathMenus=d.data.pathMenus
             this.customMenus=d.data.customMenu
             if(this.currUser.theme){
-               $("#skin").attr('href',vue+'/assets/static/styles/skins/'+this.currUser.theme)
+               $("#skin").attr('href',vue+'/assets/styles/skins/'+this.currUser.theme)
             }
             this.currMenu=this.selectMenu(this.$route.path, this.secondMenus, this.pathMenus);
           }else {
@@ -169,12 +173,13 @@
         if(path.startsWith(base)){
           path=path.substring(base.length)
         }
+
         var p=this.pathMenus[path]
-        if(p&&p.length>=8){
+        if(p&&p.length>=8){console.log(p)
           return p.substring(0,8)
         }else {
           var pp=this.getPath(path)
-          if(pp){
+          if(pp){console.log(pp)
             return pp.substring(0,8)
           }
           return ''
@@ -202,16 +207,20 @@
       //初始化菜单
       this.initMenus()
     },
-    ready: function () {
-      //初始化sublime前端框架
-      window.sublimeApp = SublimeApp()
-      window.sublimeApp.init();
-      window.offScreen = OffScreen()
-      window.offScreen.init();
-      //隐藏loading
-      $(".gallery-loader").fadeOut(500)
+    mounted: function () {
+        this.$nextTick(function () {
+             //初始化sublime前端框架
+          window.sublimeApp = SublimeApp()
+          window.sublimeApp.init();
+          window.offScreen = OffScreen()
+          window.offScreen.init();
+          //隐藏loading
+          $(".gallery-loader").fadeOut(500)
+      })
+
     }
   }
+
 </script>
 
 <style>

@@ -1,6 +1,7 @@
 package cn.wizzer.modules.controllers.platform.sys;
 
 import cn.apiclub.captcha.Captcha;
+import cn.wizzer.common.base.Globals;
 import cn.wizzer.common.base.Result;
 import cn.wizzer.common.services.log.SLogService;
 import cn.wizzer.common.shiro.exception.EmptyCaptchaException;
@@ -8,7 +9,6 @@ import cn.wizzer.common.shiro.exception.IncorrectCaptchaException;
 import cn.wizzer.common.shiro.filter.AuthenticationFilter;
 import cn.wizzer.modules.models.sys.Sys_log;
 import cn.wizzer.modules.models.sys.Sys_user;
-import cn.wizzer.modules.services.sys.SysMenuService;
 import cn.wizzer.modules.services.sys.SysUserService;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.SecurityUtils;
@@ -44,8 +44,6 @@ public class SysLoginController {
     @Inject
     SysUserService userService;
     @Inject
-    SysMenuService menuService;
-    @Inject
     SLogService sLogService;
 
     @At("")
@@ -54,10 +52,17 @@ public class SysLoginController {
     public String login() {
         Subject subject = SecurityUtils.getSubject();
         if (subject.isAuthenticated()) {
-            return "redirect:/platform/home";
+            return "redirect:" + Globals.AppBase + "/platform/home";
         } else {
             return "beetl:/platform/login.html";
         }
+    }
+
+    @At("/noPermission")
+    @Ok("beetl:/platform/sys/noPermission.html")
+    @Filters
+    public void noPermission() {
+
     }
 
     /**
@@ -132,7 +137,7 @@ public class SysLoginController {
             int count = user.getLoginCount() == null ? 0 : user.getLoginCount();
             sLogService.async(Sys_log.c("info", "用户登陆", "成功登录系统！", null));
             userService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", (int) (System.currentTimeMillis() / 1000))
-                    .add("loginCount", count + 1).add("isOnline", true)
+                            .add("loginCount", count + 1).add("isOnline", true)
                     , Cnd.where("id", "=", user.getId()));
             return Result.success("login.success");
         } catch (IncorrectCaptchaException e) {
@@ -180,8 +185,8 @@ public class SysLoginController {
      * 退出系统
      */
     @At
-    @Ok(">>:/platform/login")
-    public void logout(HttpSession session) {
+    @Ok("re")
+    public String logout(HttpSession session) {
         try {
             Subject currentUser = SecurityUtils.getSubject();
             Sys_user user = (Sys_user) currentUser.getPrincipal();
@@ -193,6 +198,7 @@ public class SysLoginController {
         } catch (Exception e) {
             log.debug("Logout error", e);
         }
+        return "redirect:" + Globals.AppBase + "/platform/login";
     }
 
     @At("/captcha")

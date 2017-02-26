@@ -6,6 +6,7 @@
 
 <script>
     export default {
+        name:'Role',
         data: function() {
             return {
 
@@ -13,7 +14,7 @@
         },
         methods: {
         },
-        ready: function() {
+        mounted: function() {
         }
     }
 </script>

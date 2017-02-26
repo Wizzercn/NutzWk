@@ -11,6 +11,7 @@ import org.nutz.ioc.Ioc;
 import org.nutz.lang.Lang;
 import org.nutz.lang.segment.CharSegment;
 import org.nutz.lang.util.Context;
+import org.nutz.mvc.Mvcs;
 
 import cn.wizzer.common.annotation.SLog;
 import cn.wizzer.modules.models.sys.Sys_log;
@@ -20,7 +21,7 @@ import cn.wizzer.modules.models.sys.Sys_log;
  */
 public class SLogAopInterceptor implements MethodInterceptor {
 
-    protected SLogService sysLogService;
+    protected SLogService sLogService;
 
     protected String source;
 
@@ -74,6 +75,8 @@ public class SLogAopInterceptor implements MethodInterceptor {
             Context ctx = Lang.context();
             ctx.set("args", chain.getArgs());
             ctx.set("return", chain.getReturn());
+            ctx.set("req", Mvcs.getReq());
+            ctx.set("resp", Mvcs.getResp());
             Context _ctx = Lang.context();
             for (String key : msg.keys()) {
                 _ctx.set(key, els.get(key).eval(ctx));
@@ -83,11 +86,11 @@ public class SLogAopInterceptor implements MethodInterceptor {
             _msg = msg.getOrginalString();
         }
         Sys_log sysLog = Sys_log.c(t, tag, _msg, source);
-        if (sysLogService == null)
-            sysLogService = ioc.get(SLogService.class);
+        if (sLogService == null)
+            sLogService = ioc.get(SLogService.class);
         if (async)
-            sysLogService.async(sysLog);
+            sLogService.async(sysLog);
         else
-            sysLogService.sync(sysLog);
+            sLogService.sync(sysLog);
     }
 }

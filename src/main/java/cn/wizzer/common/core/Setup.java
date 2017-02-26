@@ -1,8 +1,9 @@
 package cn.wizzer.common.core;
 
 import cn.wizzer.common.base.Globals;
+import cn.wizzer.common.plugin.IPlugin;
+import cn.wizzer.common.plugin.PluginMaster;
 import cn.wizzer.modules.models.sys.*;
-import net.sf.ehcache.CacheManager;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -13,16 +14,21 @@ import org.nutz.dao.Sqls;
 import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
+import org.nutz.integration.jedis.RedisService;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
 import org.nutz.lang.Encoding;
+import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
+import org.nutz.plugins.cache.impl.lcache.LCacheManager;
+import org.nutz.plugins.cache.impl.redis.RedisCache;
 import org.quartz.Scheduler;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -42,30 +48,51 @@ public class Setup implements org.nutz.mvc.Setup {
             Dao dao = ioc.get(Dao.class);
             // 初始化数据表
             initSysData(config, dao);
-            // 检查一下Ehcache CacheManager 是否正常.
-            CacheManager cacheManager = ioc.get(CacheManager.class);
-            log.debug("Ehcache CacheManager = " + cacheManager);
-            /* redis测试
-            JedisPool jedisPool = ioc.get(JedisPool.class);
-            try (Jedis jedis = jedisPool.getResource()) {
-                String updateCount = jedis.set("_big_fish", "Hello Word!!");
-                log.debug("1.redis say : " + updateCount);
-                updateCount = jedis.get("_big_fish");
-                log.debug("2.redis say : " + updateCount);
-            } finally {}
-
-            RedisService redis = ioc.get(RedisService.class);
-            redis.set("hi", "wendal,rekoe hoho..");
-            log.debug("redis say again : " + redis.get("hi"));
-            */
             // 初始化系统变量
             initSysSetting(config, dao);
             // 初始化定时任务
             initSysTask(config, dao);
             // 初始化自定义路由
             initSysRoute(config, dao);
+            // 初始化热插拔插件
+            initSysPlugin(config, dao);
+            log.info("\n _  _ _   _ _____ ______      ___  __\n" +
+                    "| \\| | | | |_   _|_  /\\ \\    / / |/ /\n" +
+                    "| .` | |_| | | |  / /  \\ \\/\\/ /| ' < \n" +
+                    "|_|\\_|\\___/  |_| /___|  \\_/\\_/ |_|\\_\\");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 初始化热插拔插件
+     *
+     * @param config
+     * @param dao
+     */
+    private void initSysPlugin(NutConfig config, Dao dao) {
+        try {
+            PluginMaster pluginMaster = config.getIoc().get(PluginMaster.class);
+            List<Sys_plugin> list = dao.query(Sys_plugin.class, Cnd.where("disabled", "=", 0));
+            for (Sys_plugin sysPlugin : list) {
+                String name = sysPlugin.getPath().substring(sysPlugin.getPath().indexOf(".")).toLowerCase();
+                File file = new File(Globals.AppRoot + sysPlugin.getPath());
+                String[] p = new String[]{};
+                IPlugin plugin;
+                if (".jar".equals(name)) {
+                    plugin = pluginMaster.buildFromJar(file, sysPlugin.getClassName());
+                } else {
+                    byte[] buf = Files.readBytes(file);
+                    plugin = pluginMaster.build(sysPlugin.getClassName(), buf);
+                }
+                if (!Strings.isBlank(sysPlugin.getArgs())) {
+                    p = org.apache.commons.lang3.StringUtils.split(sysPlugin.getArgs(), ",");
+                }
+                pluginMaster.register(sysPlugin.getCode(), plugin, p);
+            }
+        } catch (Exception e) {
+            log.debug("plugin load error", e);
         }
     }
 
@@ -143,7 +170,7 @@ public class Setup implements org.nutz.mvc.Setup {
             dao.insert(conf);
             conf = new Sys_config();
             conf.setConfigKey("AppShrotName");
-            conf.setConfigValue("NutzWk架");
+            conf.setConfigValue("NutzWk");
             conf.setNote("系统短名称");
             dao.insert(conf);
             conf = new Sys_config();
@@ -664,6 +691,52 @@ public class Setup implements org.nutz.mvc.Setup {
             menu.setParentId(d.getId());
             menu.setType("data");
             Sys_menu d3 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("000100010011");
+            menu.setName("插件管理");
+            menu.setAliasName("Plugin");
+            menu.setLocation(0);
+            menu.setHref("/platform/sys/plugin");
+            menu.setTarget("data-pjax");
+            menu.setIsShow(true);
+            menu.setPermission("sys.manager.plugin");
+            menu.setParentId(m1.getId());
+            menu.setType("menu");
+            Sys_menu p = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100110001");
+            menu.setName("添加插件");
+            menu.setAliasName("Add");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.plugin.add");
+            menu.setParentId(p.getId());
+            menu.setType("data");
+            Sys_menu p1 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100110002");
+            menu.setName("启用禁用");
+            menu.setAliasName("Update");
+            menu.setLocation(2);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.plugin.update");
+            menu.setParentId(p.getId());
+            menu.setType("data");
+            Sys_menu p2 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000100110003");
+            menu.setName("删除插件");
+            menu.setAliasName("Delete");
+            menu.setLocation(3);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.plugin.delete");
+            menu.setParentId(p.getId());
+            menu.setType("data");
+            Sys_menu p3 = dao.insert(menu);
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
@@ -700,6 +773,7 @@ public class Setup implements org.nutz.mvc.Setup {
             user.setLoginBoxed(false);
             user.setLoginScroll(false);
             user.setLoginSidebar(false);
+            user.setLoginPjax(true);
             user.setUnitid(dbunit.getId());
             Sys_user dbuser = dao.insert(user);
             //不同的插入数据方式(安全)

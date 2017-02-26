@@ -1,9 +1,9 @@
 package cn.wizzer.common.core;
 
 
+import cn.wizzer.common.shiro.ShiroSessionProvider;
 import org.beetl.ext.nutz.BeetlViewMaker;
 
-import org.nutz.integration.shiro.ShiroSessionProvider;
 import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.ioc.provider.ComboIocProvider;
 import org.nutz.plugins.view.pdf.PdfViewMaker;

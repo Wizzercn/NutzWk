@@ -2,7 +2,9 @@
   <div>
     <header class="header navbar bg-white shadow">
       <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" v-link="{path:base+'/platform/sys/unit/add'}"><i class="ti-plus"></i>新建单位</a>
+        <router-link :to="base + '/platform/sys/unit/add'" class="btn btn-primary navbar-btn">
+          <i class="ti-plus"></i>新建单位
+        </router-link>
       </div>
     </header>
     <div class="content-wrap">
@@ -36,7 +38,7 @@
                       <span class="ti-angle-down"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                      <li><a v-link="{path:base+'/platform/sys/detail/'+unit.id}" data-toggle="modal"
+                      <li><a :href="base+'/platform/sys/detail/'+unit.id" data-toggle="modal"
                              data-target="#dialogDetail">查看</a></li>
                       <li><a href="${base}/private/sys/unit/edit/${o.id}" data-pjax>修改</a></li>
                       <li><a href="javascript:;" @click="del(unit.id)">删除</a></li>
@@ -98,6 +100,7 @@
 </template>
 <script>
   export default{
+    name:'Unit',
     data(){
       return {
         base:base,
@@ -109,10 +112,7 @@
 
       },
       load:function () {
-        sublimeApp.showLoadingbar()
         this.$http.get(vue+'/platform/sys/unit/list').then((resp) => {
-          sublimeApp.closeLoadingbar()
-          sublimeApp.tree
           return resp.json()
         }).then((d)=> {
           if (d.code == 0) {
@@ -123,8 +123,10 @@
         });
       }
     },
-    ready: function () {
+    mounted: function () {
+     this.$nextTick(function () {
       this.load()
+      })
     }
   }
 </script>

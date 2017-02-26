@@ -71,7 +71,7 @@ public class Cms_article extends Model implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String channelId;
 
-    @One(target = Cms_channel.class, field = "channelId")
+    @One(field = "channelId")
     private Cms_channel channel;
 
     public String getId() {

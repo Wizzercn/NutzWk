@@ -14,9 +14,7 @@
           </a>
           <ul class="sub-menu" style="display:block;">
             <li v-for="cust in customMenus">
-              <a @click="goMenu(cust)" style="cursor:pointer;">
-                <span>{{cust.name}}</span>
-              </a>
+              <router-link :to="base + cust.href"><span>{{cust.name}}</span></router-link>
             </li>
           </ul>
         </li>
@@ -29,9 +27,8 @@
           </a>
           <ul class="sub-menu" :style="{'display' : menu.path==getPerPath($route.path)?'block':'none'}">
             <li v-for="sub in menu[menu.path]" :class="{'active' : sub.path==getPath($route.path)}">
-              <a @click="goMenu(sub)" style="cursor:pointer;">
-                <span>{{sub.name}}</span>
-              </a>
+              <router-link :to="base + sub.href"><span>{{sub.name}}</span></router-link>
+
             </li>
           </ul>
         </li>
@@ -45,6 +42,7 @@
 
 <script>
   export default {
+    name:'Sidebar',
     data: function () {
       return {
         base: base
@@ -81,7 +79,3 @@
   }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

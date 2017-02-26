@@ -1,5 +1,6 @@
 package cn.wizzer.common.base;
 
+import org.nutz.lang.Strings;
 import org.nutz.mvc.Mvcs;
 
 /**
@@ -16,7 +17,7 @@ public class Result {
 
     public Result(int code, String msg, Object data) {
         this.code = code;
-        this.msg = Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
+        this.msg = Strings.isBlank(msg) ? "" : Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
         this.data = data;
     }
 

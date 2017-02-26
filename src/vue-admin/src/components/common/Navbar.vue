@@ -8,11 +8,11 @@
       <!-- /toggle offscreen menu -->
 
       <!-- logo -->
-      <a v-link="base+'/platform/home'" class="navbar-brand">
-        <img :src="base+'/assets/static/images/logo.png'" alt="logo" class="logo-img"
+      <a :href="base+'/platform/home'" class="navbar-brand">
+        <img :src="base+'/assets/images/logo.png'" alt="logo" class="logo-img"
              v-bind:class="[currUser.sidebar? '' : 'logo-hide']">
         <span class="heading-font logo-img " v-bind:class="[currUser.sidebar ? 'logo-hide' : '']">
-                 <img :src="base+'/assets/static/images/logoa.png'">
+                 <img :src="base+'/assets/images/logoa.png'">
                </span>
       </a>
       <!-- /logo -->
@@ -46,7 +46,7 @@
           <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
             <li>
               <a href="?lang=en_US">
-                <img :src="base+'/assets/static/images/avatar.jpg'" class="flag">
+                <img :src="base+'/assets/images/avatar.jpg'" class="flag">
                 <span class="language">English</span>
               </a>
             </li>
@@ -94,6 +94,7 @@
 
 <script>
   export default {
+    name:'Navbar',
     data: function () {
       return {
         base: base,

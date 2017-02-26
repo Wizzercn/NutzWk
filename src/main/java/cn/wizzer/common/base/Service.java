@@ -11,7 +11,6 @@ import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.sql.SqlCallback;
 import org.nutz.dao.util.Daos;
-import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
@@ -21,7 +20,6 @@ import org.nutz.service.EntityService;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +39,44 @@ public class Service<T> extends EntityService<T> {
         super(dao);
     }
 
+    /**
+     * 统计符合条件的对象表条数
+     *
+     * @param cnd
+     * @return
+     */
+    public int count(Condition cnd) {
+        return this.dao().count(this.getEntityClass(), cnd);
+    }
+
+    /**
+     * 统计对象表条数
+     *
+     * @return
+     */
+    public int count() {
+        return this.dao().count(this.getEntityClass());
+    }
+
+    /**
+     * 统计符合条件的记录条数
+     *
+     * @param tableName
+     * @param cnd
+     * @return
+     */
     public int count(String tableName, Condition cnd) {
         return this.dao().count(tableName, cnd);
+    }
+
+    /**
+     * 统计表记录条数
+     *
+     * @param tableName
+     * @return
+     */
+    public int count(String tableName) {
+        return this.dao().count(tableName);
     }
 
     public T fetch(long id) {
@@ -53,12 +87,16 @@ public class Service<T> extends EntityService<T> {
         return this.dao().fetch(this.getEntityClass(), name);
     }
 
-    public int delete(String name) {
-        return this.dao().delete(this.getEntityClass(), name);
-    }
-
     public T fetchLinks(T t, String name) {
         return this.dao().fetchLinks(t, name);
+    }
+
+    public T fetchLinks(T t, String name, Condition cnd) {
+        return this.dao().fetchLinks(t, name, cnd);
+    }
+
+    public int delete(String name) {
+        return this.dao().delete(this.getEntityClass(), name);
     }
 
     public T insert(T t) {
@@ -87,8 +125,27 @@ public class Service<T> extends EntityService<T> {
         return this.dao().updateIgnoreNull(obj);
     }
 
-    public T fetchLinks(T t, String name, Condition cnd) {
-        return this.dao().fetchLinks(t, name, cnd);
+    /**
+     * 部分更新实体表
+     *
+     * @param chain
+     * @param cnd
+     * @return
+     */
+    public int update(Chain chain, Condition cnd) {
+        return this.dao().update(this.getEntityClass(), chain, cnd);
+    }
+
+    /**
+     * 部分更新表
+     *
+     * @param tableName
+     * @param chain
+     * @param cnd
+     * @return
+     */
+    public int update(String tableName, Chain chain, Condition cnd) {
+        return this.dao().update(tableName, chain, cnd);
     }
 
     public int delete(long id) {
@@ -130,30 +187,25 @@ public class Service<T> extends EntityService<T> {
         this.dao().clear(getEntityClass(), Cnd.where("id", "in", ids));
     }
 
-    public int vDelete(int id) {
-        return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "=", id));
-    }
-
-    public int vDelete(Integer[] ids) {
-        return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "in", ids));
-    }
-
-    public int vDelete(long id) {
-        return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "=", id));
-    }
-
-    public int vDelete(Long[] ids) {
-        return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "in", ids));
-    }
-
+    /**
+     * 伪删除
+     *
+     * @param id
+     * @return
+     */
     public int vDelete(String id) {
         return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "=", id));
     }
 
+    /**
+     * 批量伪删除
+     *
+     * @param ids
+     * @return
+     */
     public int vDelete(String[] ids) {
         return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "in", ids));
     }
-
 
     /**
      * 通过LONG主键获取部分字段值
@@ -222,10 +274,9 @@ public class Service<T> extends EntityService<T> {
      * @param tableName
      * @param cloName
      * @param value
-     * @param <T>
      * @return
      */
-    public <T> String getSubPath(String tableName, String cloName, String value) {
+    public String getSubPath(String tableName, String cloName, String value) {
         final String val = Strings.sNull(value);
         Sql sql = Sqls.create("select " + cloName + " from " + tableName
                 + " where " + cloName + " like '" + val + "____' order by "
@@ -276,14 +327,35 @@ public class Service<T> extends EntityService<T> {
      * 别返回Map对象，因为MySql和Oracle中字段名有大小写之分
      *
      * @param sql
-     * @param <T>
      * @return
      */
-    public <T> List<Record> list(Sql sql) {
+    public List<Record> list(Sql sql) {
         sql.setCallback(Sqls.callback.records());
         this.dao().execute(sql);
         return sql.getList(Record.class);
 
+    }
+
+    /**
+     * 自定义sql获取map key-value
+     *
+     * @param sql
+     * @return
+     */
+    public Map getMap(Sql sql) {
+        sql.setCallback(new SqlCallback() {
+            @Override
+            public Object invoke(Connection conn, ResultSet rs, Sql sql)
+                    throws SQLException {
+                Map<String, String> map = new HashMap<>();
+                while (rs.next()) {
+                    map.put(Strings.sNull(rs.getString(1)), Strings.sNull(rs.getString(2)));
+                }
+                return map;
+            }
+        });
+        this.dao().execute(sql);
+        return sql.getObject(Map.class);
     }
 
     /**

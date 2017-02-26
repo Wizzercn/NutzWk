@@ -8,6 +8,7 @@
 
 <script>
   export default {
+        name:'User',
         data: function() {
             return {
 
@@ -16,7 +17,7 @@
         methods: {
 
         },
-        ready: function() {
+        mounted: function() {
 
         }
     }

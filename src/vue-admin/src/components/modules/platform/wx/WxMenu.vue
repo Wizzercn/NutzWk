@@ -6,6 +6,7 @@
 
 <script>
     export default {
+        name:'WxMenu',
         data: function() {
             return {
 

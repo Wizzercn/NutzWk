@@ -1,10 +1,11 @@
 package cn.wizzer.modules.services.sys;
 
-import cn.wizzer.common.util.StringUtil;
 import cn.wizzer.modules.models.sys.Sys_menu;
 import cn.wizzer.modules.models.sys.Sys_role;
 import cn.wizzer.modules.models.sys.Sys_user;
 import cn.wizzer.common.base.Service;
+import cn.wizzer.common.util.StringUtil;
+
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -29,6 +30,7 @@ public class SysUserService extends Service<Sys_user> {
 
     @Inject
     SysMenuService menuService;
+    
     public SysUserService(Dao dao) {
         super(dao);
     }
@@ -123,9 +125,9 @@ public class SysUserService extends Service<Sys_user> {
         dao().clear("sys_user_role", Cnd.where("userId", "in", userIds));
         dao().clear("sys_user", Cnd.where("id", "in", userIds));
     }
-
+    
     public void fillMenu(Sys_user user) {
-        //获取用户菜单
+      //获取用户菜单
         user.setMenus(getMenus(user.getId()));
         user.setLoginIp(StringUtil.getRemoteAddr());
         //计算左侧菜单
