@@ -23,3 +23,10 @@ https://github.com/Wizzercn/NutzCodematic/tree/v1.0.0
 ===================================================
 
 https://github.com/Wizzercn/NutzWk/issues/10
+
+
+后台地址
+==========
+http://127.0.0.1/private/login
+superadmin
+1
