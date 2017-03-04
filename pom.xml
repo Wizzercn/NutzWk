@@ -62,12 +62,7 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz</artifactId>
-            <version>1.b.52</version>
-        </dependency>
-        <dependency>
-            <groupId>org.nutz</groupId>
-            <artifactId>nutz-web</artifactId>
-            <version>1.b.49</version>
+            <version>1.r.60</version>
         </dependency>
         <dependency>
             <groupId>com.octo.captcha</groupId>
@@ -346,6 +341,22 @@
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<version>2.0-beta-1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.4.1.v20170120</version>
+				<configuration>
+					<jvmArgs>-Dfile.encoding=UTF-8</jvmArgs>
+					<scanIntervalSeconds>5</scanIntervalSeconds>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.jetty.websocket</groupId>
+						<artifactId>websocket-server</artifactId>
+						<version>9.4.1.v20170120</version>
+					</dependency>
+				</dependencies>
 			</plugin>
         </plugins>
     </build>
