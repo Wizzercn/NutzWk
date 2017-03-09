@@ -10,7 +10,6 @@
     <modules>
         <module>wk-framework</module>
         <module>wk-app</module>
-        <module>wk-code</module>
     </modules>
     <packaging>pom</packaging>
     <name>NutzWk</name>
@@ -328,6 +327,11 @@
             <artifactId>nutz-plugins-mock</artifactId>
             <version>1.r.60</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.wizzer</groupId>
+            <artifactId>wk-code-generator</artifactId>
+            <version>4.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
