@@ -17,4 +17,8 @@ public interface SysRoleService extends BaseService<Sys_role> {
     List<Sys_menu> getDatas();
 
     List<String> getPermissionNameList(Sys_role role);
+
+    void del(String roleid);
+
+    void del(String[] roleids);
 }

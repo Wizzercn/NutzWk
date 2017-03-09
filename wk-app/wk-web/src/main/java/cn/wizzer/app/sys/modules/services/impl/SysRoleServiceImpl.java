@@ -4,10 +4,13 @@ import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.models.Sys_role;
 import cn.wizzer.app.sys.modules.services.SysRoleService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
+import org.nutz.aop.interceptor.ioc.TransAop;
+import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.sql.Sql;
+import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 
@@ -69,5 +72,19 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
             }
         }
         return list;
+    }
+
+    @Aop(TransAop.READ_COMMITTED)
+    public void del(String roleid) {
+        this.dao().clear("sys_user_role", Cnd.where("roleId", "=", roleid));
+        this.dao().clear("sys_role_menu", Cnd.where("roleId", "=", roleid));
+        this.delete(roleid);
+    }
+
+    @Aop(TransAop.READ_COMMITTED)
+    public void del(String[] roleids) {
+        this.dao().clear("sys_user_role", Cnd.where("roleId", "in", roleids));
+        this.dao().clear("sys_role_menu", Cnd.where("roleId", "in", roleids));
+        this.delete(roleids);
     }
 }
