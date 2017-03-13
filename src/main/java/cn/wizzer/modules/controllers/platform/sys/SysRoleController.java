@@ -364,8 +364,7 @@ public class SysRoleController {
             if ("sysadmin".equals(role.getCode()) || "public".equals(role.getCode())) {
                 return Result.error("system.not.allow");
             }
-            roleService.delete(roleId);
-            roleService.dao().clear("sys_user_role", Cnd.where("roleId", "=", roleId));
+            roleService.del(roleId);
             req.setAttribute("name", role.getName());
             return Result.success("system.success");
         } catch (Exception e) {
@@ -388,7 +387,7 @@ public class SysRoleController {
                 }
                 sb.append(s).append(",");
             }
-            roleService.delete(roleIds);
+            roleService.del(roleIds);
             req.setAttribute("ids", sb.toString());
             return Result.success("system.success");
         } catch (Exception e) {
