@@ -27,20 +27,23 @@ public class ${table.ControllerClassName}{
 	private ${table.ServiceClassName} ${table.ServiceInstanceName};
 
     @At("")
-	@Ok("beetl:/pages/${table.ViewBasePath}/index")
+	@Ok("beetl:/${table.ViewBasePath}/index.html")
+    @RequiresAuthentication
 	public void index() {
 
 	}
 
 	@At("/data")
     @Ok("json")
+    @RequiresAuthentication
     public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
 		Cnd cnd = Cnd.NEW();
     	return ${table.ServiceInstanceName}.data(length, start, draw, order, columns, cnd, null);
     }
 
     @At("/add")
-    @Ok("beetl:/pages/${table.ViewBasePath}/add")
+    @Ok("beetl:/${table.ViewBasePath}/add.html")
+    @RequiresAuthentication
     public void add() {
 
     }
@@ -59,7 +62,7 @@ public class ${table.ControllerClassName}{
     }
 
     @At("/edit/?")
-    @Ok("beetl:/pages/${table.ViewBasePath}/edit")
+    @Ok("beetl:/${table.ViewBasePath}/edit.html")
     @RequiresAuthentication
     public void edit(${table.pkType} id,HttpServletRequest req) {
 		req.setAttribute("obj", ${table.ServiceInstanceName}.fetch(id));
@@ -100,7 +103,8 @@ public class ${table.ControllerClassName}{
     }
 
     @At("/detail/?")
-    @Ok("beetl:/pages/${table.ViewBasePath}/detail")
+    @Ok("beetl:/${table.ViewBasePath}/detail.html")
+    @RequiresAuthentication
 	public void detail(${table.pkType} id, HttpServletRequest req) {
 		if (!Strings.isBlank(id)) {
             req.setAttribute("obj", ${table.ServiceInstanceName}.fetch(id));

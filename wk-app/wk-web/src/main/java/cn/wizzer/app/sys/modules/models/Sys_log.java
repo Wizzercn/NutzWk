@@ -127,17 +127,8 @@ public class Sys_log extends BaseModel implements Serializable {
         sysLog.src = source;
         sysLog.msg = msg;
         sysLog.ip = StringUtil.getRemoteAddr();
-        Object u = SecurityUtils.getSubject().getPrincipal();
-        String uid = "";
-        String username = "";
-        if (u != null) {
-            if (u instanceof Sys_user) {
-                username = ((Sys_user) u).getUsername();
-                uid = ((Sys_user) u).getId();
-            } else if (u instanceof String) {
-                username = ((String) u);
-            }
-        }
+        String uid = StringUtil.getUid();
+        String username = StringUtil.getUsername();
         sysLog.setOpBy(uid);
         sysLog.setOpAt((int) (System.currentTimeMillis() / 1000));
         sysLog.username = username;

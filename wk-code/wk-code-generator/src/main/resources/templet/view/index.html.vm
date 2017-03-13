@@ -64,7 +64,7 @@ layout("/layouts/platform.html"){
             "select": true,
             "ordering": true,
             "language": {
-                "url": "$base/assets/platform/vendor/datatables/locale/${lang}.json"
+                "url": "$base/assets/plugins/datatables/${lang}.json"
             },
             "preDrawCallback": function () {
                 sublime.showLoadingbar($(".main-content"));
