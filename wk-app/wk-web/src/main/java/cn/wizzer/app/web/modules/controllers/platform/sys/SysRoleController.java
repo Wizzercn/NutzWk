@@ -364,7 +364,6 @@ public class SysRoleController {
                 return Result.error("system.not.allow");
             }
             roleService.del(roleId);
-            roleService.dao().clear("sys_user_role", Cnd.where("roleId", "=", roleId));
             req.setAttribute("name", role.getName());
             return Result.success("system.success");
         } catch (Exception e) {
