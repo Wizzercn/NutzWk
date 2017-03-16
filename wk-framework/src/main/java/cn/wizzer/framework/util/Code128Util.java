@@ -1,6 +1,7 @@
 package cn.wizzer.framework.util;
 
 import org.nutz.img.Images;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.repo.Base64;
 
 import java.awt.*;
@@ -17,6 +18,7 @@ import java.util.List;
  *
  * @author pandy 2017/1/17.
  */
+@IocBean
 public class Code128Util {
 
     public static enum Encode {

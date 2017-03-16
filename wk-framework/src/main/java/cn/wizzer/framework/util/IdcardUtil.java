@@ -1,5 +1,7 @@
 package cn.wizzer.framework.util;
 
+import org.nutz.ioc.loader.annotation.IocBean;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -11,6 +13,7 @@ import java.util.Map;
  * 身份证工具类
  * 
  */
+@IocBean
 public class IdcardUtil {
 
 	/** 中国公民身份证号码最小长度。 */

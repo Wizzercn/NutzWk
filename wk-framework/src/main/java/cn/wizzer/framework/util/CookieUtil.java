@@ -1,5 +1,7 @@
 package cn.wizzer.framework.util;
 
+import org.nutz.ioc.loader.annotation.IocBean;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +14,7 @@ import java.util.Map;
 /**
  * Created by Wizzer.cn on 2015/7/2.
  */
+@IocBean
 public class CookieUtil {
     /**
      * 设置 Cookie（生成时间为1天）
