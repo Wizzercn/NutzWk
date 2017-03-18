@@ -17,6 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jetty-version>9.2.21.v20170120</jetty-version>
+        <nutz-version>1.r.61-SNAPSHOT</nutz-version>
     </properties>
     <developers>
         <developer>
@@ -63,27 +64,27 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz</artifactId>
-            <version>1.r.60</version>
+            <version>${nutz-version}</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-daocache</artifactId>
-            <version>1.r.60</version>
+            <version>${nutz-version}</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-quartz</artifactId>
-            <version>1.r.60</version>
+            <version>${nutz-version}</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzwx</artifactId>
-            <version>1.r.60</version>
+            <version>${nutz-version}</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-views</artifactId>
-            <version>1.r.60</version>
+            <version>${nutz-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.nutz</groupId>
@@ -325,7 +326,7 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutz-plugins-mock</artifactId>
-            <version>1.r.60</version>
+            <version>${nutz-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
