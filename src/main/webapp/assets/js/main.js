@@ -20,6 +20,13 @@ function removeHTMLTag(str) {
   str=str.replace(/&nbsp;/ig,'');//去掉&nbsp;
   return str;
 }
+function GetQueryString(name)
+{
+    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if(r!=null)return  unescape(r[2]);
+    return "";
+}
 var sublime = function () {
     var linkLocation, searchOpen = false, app = $(".app"), maxHeight = 0;
     var sidebar=false,boxed=false,scroll=false;
@@ -532,6 +539,19 @@ var sublime = function () {
             initTheme();
         },
         initIcheck : initIcheck,//初始化复选框控件
+        changeLang:function(lang){
+            var url = window.location.href;
+            if(url.indexOf("lang=")>0){
+                url=url.replace("?lang="+GetQueryString("lang"),"").replace("&lang="+GetQueryString("lang"),"");
+                console.log(url);
+            } console.log(url);
+            if(url.indexOf("?")>0){
+                url+="&lang="+lang;
+            }else {
+                url+="?lang="+lang;
+            }
+            window.location.href=url;
+        },
         changeTheme:function(obj){
             jQuery.post(base+"/platform/login/theme", {loginTheme:obj});
         },
