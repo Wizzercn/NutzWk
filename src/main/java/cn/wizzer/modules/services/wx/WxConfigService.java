@@ -25,7 +25,7 @@ public class WxConfigService extends Service<Wx_config> {
     public WxApi2 getWxApi2(String wxid) {
         Wx_config appInfo = this.fetch(Cnd.where("id", "=", wxid));
         DaoAccessTokenStore myDaoAccessTokenStore = new DaoAccessTokenStore(dao());
-        Map<String, Object> params = new HashMap();
+        Map<String, Object> params = new HashMap<>();
         params.put("id", appInfo.getId());
         myDaoAccessTokenStore.setTableAccessToken("access_token");
         myDaoAccessTokenStore.setTableAccessTokenExpires("access_token_expires");
