@@ -16,6 +16,7 @@ layout("/layouts/platform.html"){
                 <th>Appid</th>
                 <th>Appsecret</th>
                 <th>Token</th>
+                <th>微信支付</th>
                 <th>操作</th>
         </table>
     </div>
@@ -71,9 +72,18 @@ layout("/layouts/platform.html"){
                 {"data": "appname", "bSortable": true},
                 {"data": "appid", "bSortable": true},
                 {"data": "appsecret", "bSortable": true},
-                {"data": "token", "bSortable": true}
+                {"data": "token", "bSortable": true},
+                {"data": "payEnabled", "bSortable": true}
             ],
             "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        if(data)
+                            return "启用";
+                        return "禁用";
+                    },
+                    "targets": 4
+                },
                 {
                     "render": function (data, type, row) {
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
@@ -82,7 +92,7 @@ layout("/layouts/platform.html"){
                                 '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
                                 '</ul></div>';
                     },
-                    "targets": 4
+                    "targets": 5
                 }
             ]
         });

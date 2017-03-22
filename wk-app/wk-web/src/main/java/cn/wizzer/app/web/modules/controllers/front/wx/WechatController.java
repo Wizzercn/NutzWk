@@ -78,10 +78,12 @@ public class WechatController {
         WxResp resp = wxApi2.user_info(openid, "zh_CN");
         if (usr == null) {
             usr = Json.fromJson(Wx_user.class, Json.toJson(resp.user()));
-            usr.setNickname(EmojiParser.parseToAliases(usr.getNickname(), EmojiParser.FitzpatrickAction.REMOVE));
-            usr.setSubscribeAt((int) (resp.user().getSubscribe_time()));
-            usr.setWxid(wxid);
-            wxUserService.insert(usr);
+            if (usr != null && usr.getNickname() != null) {
+                usr.setNickname(Strings.sNull(EmojiParser.parseToAliases(usr.getNickname(), EmojiParser.FitzpatrickAction.REMOVE)));
+                usr.setSubscribeAt((int) (resp.user().getSubscribe_time()));
+                usr.setWxid(wxid);
+                wxUserService.insert(usr);
+            }
         } else {
             String id = usr.getId();
             usr = Json.fromJson(Wx_user.class, Json.toJson(resp.user()));

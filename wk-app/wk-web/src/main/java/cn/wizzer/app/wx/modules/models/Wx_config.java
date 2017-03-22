@@ -48,6 +48,31 @@ public class Wx_config extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String token;
 
+    @Column
+    @Comment("access_token")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String access_token;
+
+    @Column
+    @Comment("access_token_expires")
+    @ColDefine(type = ColType.INT)
+    private Integer access_token_expires;
+
+    @Column
+    @Comment("access_token_lastat")
+    @ColDefine(type = ColType.VARCHAR, width = 50)
+    private String access_token_lastat;
+
+    @Column
+    @Comment("禁用支付")
+    @ColDefine(type = ColType.BOOLEAN)
+    private boolean payEnabled;
+
+    @Column
+    @Comment("支付信息")
+    @ColDefine(type = ColType.TEXT)
+    private String payInfo;
+
     public String getId() {
         return id;
     }
@@ -102,5 +127,45 @@ public class Wx_config extends BaseModel implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getAccess_token() {
+        return access_token;
+    }
+
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
+    }
+
+    public Integer getAccess_token_expires() {
+        return access_token_expires;
+    }
+
+    public void setAccess_token_expires(Integer access_token_expires) {
+        this.access_token_expires = access_token_expires;
+    }
+
+    public String getAccess_token_lastat() {
+        return access_token_lastat;
+    }
+
+    public void setAccess_token_lastat(String access_token_lastat) {
+        this.access_token_lastat = access_token_lastat;
+    }
+
+    public boolean isPayEnabled() {
+        return payEnabled;
+    }
+
+    public void setPayEnabled(boolean payEnabled) {
+        this.payEnabled = payEnabled;
+    }
+
+    public String getPayInfo() {
+        return payInfo;
+    }
+
+    public void setPayInfo(String payInfo) {
+        this.payInfo = payInfo;
     }
 }
