@@ -42,6 +42,7 @@ public class WxController {
     @At
     @Ok("json")
     @RequiresAuthentication
+    @SuppressWarnings("deprecation")
     public Object uploadimage(@Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
         String wxid = Strings.sBlank(req.getSession().getAttribute("wxid"));
         NutMap nutMap = new NutMap();
@@ -67,9 +68,6 @@ public class WxController {
                 return nutMap;
             }
         } catch (Exception e) {
-            nutMap.addv("state", "FAIL");
-            return nutMap;
-        } catch (Throwable e) {
             nutMap.addv("state", "FAIL");
             return nutMap;
         }

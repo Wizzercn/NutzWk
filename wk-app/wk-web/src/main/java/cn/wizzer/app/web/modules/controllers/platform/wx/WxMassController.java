@@ -33,6 +33,7 @@ import org.nutz.weixin.spi.WxApi2;
 import org.nutz.weixin.spi.WxResp;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -140,6 +141,7 @@ public class WxMassController {
     @At("/uploadThumb/?")
     @Ok("json")
     @RequiresAuthentication
+    @SuppressWarnings("deprecation")
     //AdaptorErrorContext必须是最后一个参数
     public Object uploadThumb(String wxid, @Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
         try {
