@@ -45,7 +45,7 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 ## NutzWk 4.x 运行环境：
 
 *   JDK 8
-*   Tomcat 8.x +
+*   Tomcat 8.x + / Jetty 9.x +
 *   Maven 3.3.x +
 
 ## NutzWk 4.x 新特性：
