@@ -36,6 +36,43 @@ layout("/layouts/platform.html"){
                             </div>
 
                         </div>
+                        <div class="form-group">
+                            <div class="col-sm-12" style="padding-bottom: 5px;">
+                                <hr/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" style="text-align: right">测试红包金额（单位：分）</label>
+                            <div class="col-sm-7" style="padding-bottom: 5px;">
+                                <input id="redpack" style="width: 150px;" type="text" class="form-control" value="1"
+                                       data-parsley-required="true"
+                                       data-parsley-type="integer">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" style="text-align: right">关注此公众号的openid</label>
+                            <div class="col-sm-7" style="padding-bottom: 5px;">
+                                <input id="openid" style="width: 250px;" type="text" class="form-control" value="oeLLCvhCWOEqX-mXMhkRJtLgvASU"
+                                       data-parsley-required="true"
+                                       data-parsley-type="integer">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-7" style="padding-bottom: 5px;">
+                                <button id="redpackBtn" class="btn btn-primary">发普通红包</button>
+                                <button id="redpackGroupBtn" class="btn btn-primary">发裂变红包</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-7" style="padding-bottom: 5px;">
+                                <div id="redpackTip"></div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -56,6 +93,26 @@ layout("/layouts/platform.html"){
                     } else {
                         $("#qrCode").html("微信支付不可用，请使用其他支付方式");
                     }
+                    sublime.closeLoadingbar($(".main-content"));
+                }, 'json'
+            );
+        });
+        $("#redpackBtn").on("click", function () {
+            sublime.showLoadingbar($(".main-content"));
+            $.get(
+                "${base}/platform/wx/conf/account/paytest/redpack?redpack=" + $("#redpack").val()+"&openid="+$("#openid").val(),
+                function (result) {
+                    $("#redpackTip").html(result.msg);
+                    sublime.closeLoadingbar($(".main-content"));
+                }, 'json'
+            );
+        });
+        $("#redpackGroupBtn").on("click", function () {
+            sublime.showLoadingbar($(".main-content"));
+            $.get(
+                "${base}/platform/wx/conf/account/paytest/redpackGroup?redpack=" + $("#redpack").val()+"&openid="+$("#openid").val(),
+                function (result) {
+                    $("#redpackTip").html(result.msg);
                     sublime.closeLoadingbar($(".main-content"));
                 }, 'json'
             );
