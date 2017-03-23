@@ -77,6 +77,7 @@ layout("/layouts/platform.html"){
                                 <input type="radio" name="payEnabled" value="0" <%if(!obj.payEnabled){%>checked<%}%>>禁用
                                 <button class="btn btn-info" type="button" id="btnWxpay"> 配置
                                 </button>
+                                <a class="btn btn-info" href="${base}/platform/wx/conf/account/paytest" data-pjax>测试</a>
                                 <textarea name="payInfo" id="payInfo" hidden>${obj.payInfo!}</textarea>
 
                             </div>
@@ -120,15 +121,6 @@ layout("/layouts/platform.html"){
                         <label class="col-sm-3 control-label">key</label>
                         <div class="col-sm-7" style="padding-bottom: 5px;">
                             <input id="wxpay_key" type="text" class="form-control" value="">
-
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">AppSecret</label>
-                        <div class="col-sm-7" style="padding-bottom: 5px;">
-                            <input id="wxpay_appsecret" type="text" class="form-control" value="">
 
                         </div>
                     </div>
