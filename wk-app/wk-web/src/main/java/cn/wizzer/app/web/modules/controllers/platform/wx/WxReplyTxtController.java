@@ -7,7 +7,6 @@ import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -31,14 +30,14 @@ public class WxReplyTxtController {
 
     @At("")
     @Ok("beetl:/platform/wx/reply/txt/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.reply")
     public void index() {
 
     }
 
     @At
     @Ok("beetl:/platform/wx/reply/txt/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.reply")
     public void add() {
 
     }
@@ -58,7 +57,7 @@ public class WxReplyTxtController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/wx/reply/txt/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.reply")
     public Object edit(String id) {
         return wxReplyTxtService.fetch(id);
     }
@@ -105,7 +104,7 @@ public class WxReplyTxtController {
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.reply")
     public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         return wxReplyTxtService.data(length, start, draw, order, columns, cnd, null);

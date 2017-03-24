@@ -6,7 +6,6 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -30,14 +29,14 @@ public class SysApiController {
 
     @At("")
     @Ok("beetl:/platform/sys/api/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.api")
     public void index() {
 
     }
 
     @At
     @Ok("beetl:/platform/sys/api/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.api")
     public void add() {
 
     }
@@ -87,7 +86,7 @@ public class SysApiController {
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.api")
     public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         return apiService.data(length, start, draw, order, columns, cnd, null);

@@ -5,7 +5,7 @@ import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.app.wx.modules.services.WxTplLogService;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -28,7 +28,7 @@ public class WxTplLogController {
 
     @At({"", "/index/?"})
     @Ok("beetl:/platform/wx/tpl/log/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.tpl.log")
     public void index(String wxid, HttpServletRequest req) {
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
@@ -40,7 +40,7 @@ public class WxTplLogController {
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.tpl.log")
     public Object data(@Param("wxid") String wxid, @Param("nickname") String nickname, @Param("openid") String openid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
@@ -54,6 +54,5 @@ public class WxTplLogController {
         }
         return wxTplLogService.data(length, start, draw, order, columns, cnd, null);
     }
-
 
 }

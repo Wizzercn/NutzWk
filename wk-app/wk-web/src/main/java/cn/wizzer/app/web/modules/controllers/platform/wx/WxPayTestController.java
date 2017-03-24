@@ -46,6 +46,7 @@ public class WxPayTestController {
 
     @At
     @Ok("json")
+    @RequiresAuthentication
     public Object payWxpay(@Param("money") int money, HttpServletRequest req) {
         try {
             Wx_config config = wxConfigService.fetch(Cnd.NEW().limit(1, 1));
@@ -74,6 +75,7 @@ public class WxPayTestController {
 
     @At
     @Ok("json")
+    @RequiresAuthentication
     public Object redpack(@Param("redpack") int redpack, @Param("openid") String openid, HttpServletRequest req) {
         try {
             Wx_config config = wxConfigService.fetch(Cnd.NEW().limit(1, 1));
@@ -107,6 +109,7 @@ public class WxPayTestController {
 
     @At
     @Ok("json")
+    @RequiresAuthentication
     public Object redpackGroup(@Param("redpack") int redpack, @Param("openid") String openid, HttpServletRequest req) {
         try {
             Wx_config config = wxConfigService.fetch(Cnd.NEW().limit(1, 1));
@@ -140,6 +143,7 @@ public class WxPayTestController {
 
     @At
     @Ok("json")
+    @RequiresAuthentication
     public Object transfers(@Param("redpack") int redpack, @Param("openid") String openid, HttpServletRequest req) {
         try {
             Wx_config config = wxConfigService.fetch(Cnd.NEW().limit(1, 1));

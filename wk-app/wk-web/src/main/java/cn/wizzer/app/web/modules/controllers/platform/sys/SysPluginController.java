@@ -6,7 +6,6 @@ import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.plugin.IPlugin;
 import cn.wizzer.app.web.commons.plugin.PluginMaster;
 import cn.wizzer.framework.base.Result;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.util.StringUtils;
 import org.nutz.dao.Cnd;
@@ -38,7 +37,7 @@ public class SysPluginController {
 
     @At("")
     @Ok("beetl:/platform/sys/plugin/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.plugin")
     public Object index() {
         return sysPluginService.query(Cnd.where("disabled", "=", false).asc("code"));
     }

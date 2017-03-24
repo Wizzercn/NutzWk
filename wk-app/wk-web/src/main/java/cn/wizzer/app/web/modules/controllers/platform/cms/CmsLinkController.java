@@ -8,7 +8,6 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.util.StringUtils;
 import org.nutz.dao.Cnd;
@@ -37,7 +36,7 @@ public class CmsLinkController {
 
     @At({"", "/index/","/index/?"})
     @Ok("beetl:/platform/cms/link/link/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.link.link")
     public void index(String classId, HttpServletRequest req) {
         List<Cms_link_class> list = cmsLinkClassService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(classId)) {
@@ -49,7 +48,7 @@ public class CmsLinkController {
 
     @At({"/add/","/add/?"})
     @Ok("beetl:/platform/cms/link/link/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.link.link")
     public void add(String classId, HttpServletRequest req) {
         req.setAttribute("classId", Strings.sBlank(classId));
         req.setAttribute("list", cmsLinkClassService.query(Cnd.NEW()));
@@ -71,7 +70,7 @@ public class CmsLinkController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/cms/link/link/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.link.link")
     public Object edit(String id, HttpServletRequest req) {
         Cms_link link = cmsLinkService.fetch(id);
         List<Cms_link_class> list = cmsLinkClassService.query(Cnd.NEW());
@@ -115,7 +114,7 @@ public class CmsLinkController {
 
     @At({"/data/", "/data/?"})
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.link.link")
     public Object data(String classId, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(classId)) {

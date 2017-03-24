@@ -10,7 +10,6 @@ import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
@@ -43,13 +42,13 @@ public class CmsArticleController {
 
     @At("")
     @Ok("beetl:/platform/cms/article/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.content.article")
     public void index() {
     }
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.content.article")
     public Object tree(@Param("pid") String pid) {
         List<Cms_channel> list = cmsChannelService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("location").asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();
@@ -72,7 +71,7 @@ public class CmsArticleController {
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.content.article")
     public Object data(@Param("channelId") String channelId, @Param("title") String title, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(channelId) && !"0".equals(channelId)) {
@@ -86,7 +85,7 @@ public class CmsArticleController {
 
     @At
     @Ok("beetl:/platform/cms/article/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.content.article")
     public void add(@Param("channelId") String channelId, HttpServletRequest req) {
         req.setAttribute("channel", channelId != null && !"0".equals(channelId) ? cmsChannelService.fetch(channelId) : null);
         Subject subject = SecurityUtils.getSubject();
@@ -113,7 +112,7 @@ public class CmsArticleController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/cms/article/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.content.article")
     public Object edit(String id, HttpServletRequest req) {
         Cms_article article = cmsArticleService.fetch(id);
         req.setAttribute("channel", article != null ? cmsChannelService.fetch(article.getChannelId()) : null);

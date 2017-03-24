@@ -55,7 +55,7 @@ public class WxMassController {
 
     @At({"/", "/?"})
     @Ok("beetl:/platform/wx/msg/mass/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.msg.mass")
     public void index(String wxid, HttpServletRequest req) {
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
@@ -67,7 +67,7 @@ public class WxMassController {
 
     @At({"/massData/", "/massData/?"})
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.msg.mass")
     public Object massData(String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
@@ -78,14 +78,14 @@ public class WxMassController {
 
     @At("/news/?")
     @Ok("beetl:/platform/wx/msg/mass/news.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.msg.mass")
     public void news(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
     }
 
     @At("/newsData/?")
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.msg.mass")
     public Object newsData(String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
@@ -110,7 +110,7 @@ public class WxMassController {
 
     @At("/addNews/?")
     @Ok("beetl:/platform/wx/msg/mass/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.msg.mass")
     public void add(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
         req.getSession().setAttribute("wxid", wxid);
@@ -131,7 +131,7 @@ public class WxMassController {
 
     @At("/newsDetail/?")
     @Ok("beetl:/platform/wx/msg/mass/detail.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.msg.mass")
     public Object newsDetail(String id, HttpServletRequest req) {
         return wxMassNewsService.fetch(id);
     }
@@ -140,7 +140,7 @@ public class WxMassController {
     @POST
     @At("/uploadThumb/?")
     @Ok("json")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.msg.mass")
     @SuppressWarnings("deprecation")
     //AdaptorErrorContext必须是最后一个参数
     public Object uploadThumb(String wxid, @Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
@@ -167,14 +167,14 @@ public class WxMassController {
 
     @At("/send/?")
     @Ok("beetl:/platform/wx/msg/mass/send.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.msg.mass")
     public void send(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
     }
 
     @At("/select/?")
     @Ok("beetl:/platform/wx/msg/mass/select.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.msg.mass")
     public void select(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
     }
@@ -235,7 +235,7 @@ public class WxMassController {
 
     @At("/sendDetail/?")
     @Ok("beetl:/platform/wx/msg/mass/sendDetail.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.msg.mass")
     public Object sendDetail(String id, HttpServletRequest req) {
         Wx_mass mass = wxMassService.fetch(id);
         if ("news".equals(mass.getType())) {

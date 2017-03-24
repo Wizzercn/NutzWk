@@ -6,7 +6,6 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.util.StringUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
@@ -35,7 +34,7 @@ public class CmsChannelController {
 
     @At("")
     @Ok("beetl:/platform/cms/channel/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.content.channel")
     public void index(HttpServletRequest req) {
         req.setAttribute("list", cmsChannelService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("location").asc("path")));
 
@@ -43,7 +42,7 @@ public class CmsChannelController {
 
     @At
     @Ok("beetl:/platform/cms/channel/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.content.channel")
     public Object add(@Param("pid") String pid, HttpServletRequest req) {
         return Strings.isBlank(pid) ? null : cmsChannelService.fetch(pid);
     }
@@ -63,7 +62,7 @@ public class CmsChannelController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/cms/channel/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.content.channel")
     public Object edit(String id, HttpServletRequest req) {
         Cms_channel channel = cmsChannelService.fetch(id);
         if (channel != null) {
@@ -132,7 +131,7 @@ public class CmsChannelController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.content.channel")
     public Object tree(@Param("pid") String pid) {
         List<Cms_channel> list = cmsChannelService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("location").asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();
@@ -148,14 +147,14 @@ public class CmsChannelController {
 
     @At("/child/?")
     @Ok("beetl:/platform/cms/channel/child.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.content.channel")
     public Object child(String id) {
         return cmsChannelService.query(Cnd.where("parentId", "=", id).asc("location").asc("path"));
     }
 
     @At
     @Ok("beetl:/platform/cms/channel/sort.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.content.channel")
     public void sort(HttpServletRequest req) {
         List<Cms_channel> list = cmsChannelService.query(Cnd.orderBy().asc("location").asc("path"));
         List<Cms_channel> firstMenus = new ArrayList<>();

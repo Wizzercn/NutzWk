@@ -13,7 +13,6 @@ import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -44,7 +43,7 @@ public class WxReplyController {
 
     @At("/?")
     @Ok("beetl:/platform/wx/reply/conf/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.reply")
     public void index(String type, @Param("wxid") String wxid, HttpServletRequest req) {
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
@@ -57,7 +56,7 @@ public class WxReplyController {
 
     @At("/?/add")
     @Ok("beetl:/platform/wx/reply/conf/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.reply")
     public void add(String type, @Param("wxid") String wxid, HttpServletRequest req) {
         req.setAttribute("config", wxConfigService.fetch(wxid));
         req.setAttribute("type", type);
@@ -100,7 +99,7 @@ public class WxReplyController {
 
     @At("/?/edit/?")
     @Ok("beetl:/platform/wx/reply/conf/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.reply")
     public Object edit(String type, String id, HttpServletRequest req) {
         Wx_reply reply = wxReplyService.fetch(id);
         if ("txt".equals(reply.getMsgType())) {
@@ -165,7 +164,7 @@ public class WxReplyController {
 
     @At("/?/data")
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.reply")
     public Object data(String type, @Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(type)) {
@@ -179,7 +178,7 @@ public class WxReplyController {
 
     @At("/?/select")
     @Ok("beetl:/platform/wx/reply/conf/select.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.reply")
     public void select(String type, @Param("wxid") String wxid, @Param("msgType") String msgType, HttpServletRequest req) {
         req.setAttribute("type", type);
         req.setAttribute("wxid", wxid);
@@ -188,7 +187,7 @@ public class WxReplyController {
 
     @At("/?/selectData")
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.reply")
     public Object selectData(String type, @Param("msgType") String msgType, @Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if ("txt".equals(msgType)) {

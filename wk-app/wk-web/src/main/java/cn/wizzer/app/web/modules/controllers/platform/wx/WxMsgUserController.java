@@ -10,7 +10,6 @@ import cn.wizzer.app.wx.modules.services.WxMsgService;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -42,7 +41,7 @@ public class WxMsgUserController {
 
     @At({"/", "/?"})
     @Ok("beetl:/platform/wx/msg/user/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.user.list")
     public void index(String wxid, HttpServletRequest req) {
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
@@ -54,7 +53,7 @@ public class WxMsgUserController {
 
     @At({"/data/","/data/?"})
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.user.list")
     public Object data(String wxid, @Param("nickname") String nickname, @Param("content") String content, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
@@ -71,7 +70,7 @@ public class WxMsgUserController {
 
     @At({"/reply/?"})
     @Ok("beetl:/platform/wx/msg/user/reply.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.user.list")
     public Object reply(String id, @Param("type") int type, HttpServletRequest req) {
         Wx_msg msg = wxMsgService.fetch(id);
         req.setAttribute("wxid", msg.getWxid());
@@ -82,7 +81,7 @@ public class WxMsgUserController {
 
     @At("/replyData/?")
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.user.list")
     public Object replyData(String wxid, @Param("openid") String openid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {

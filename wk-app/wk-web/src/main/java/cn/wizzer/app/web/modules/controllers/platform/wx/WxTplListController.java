@@ -34,7 +34,7 @@ public class WxTplListController {
 
     @At({"", "/index/?"})
     @Ok("beetl:/platform/wx/tpl/list/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.tpl.list")
     public void index(String wxid, HttpServletRequest req) {
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
@@ -46,7 +46,7 @@ public class WxTplListController {
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.tpl.list")
     public Object data(@Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
@@ -54,7 +54,6 @@ public class WxTplListController {
         }
         return wxTplListService.data(length, start, draw, order, columns, cnd, null);
     }
-
 
     @At
     @Ok("json")

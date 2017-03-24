@@ -8,12 +8,10 @@ import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import cn.wizzer.framework.util.StringUtil;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -30,14 +28,14 @@ public class SysRouteController {
 
     @At("")
     @Ok("beetl:/platform/sys/route/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.route")
     public void index() {
 
     }
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.route")
     public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         return routeService.data(length, start, draw, order, columns, cnd, null);
@@ -45,7 +43,7 @@ public class SysRouteController {
 
     @At
     @Ok("beetl:/platform/sys/route/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.route")
     public void add() {
 
     }
@@ -66,7 +64,7 @@ public class SysRouteController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/sys/route/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.route")
     public Object edit(String id) {
         return routeService.fetch(id);
     }

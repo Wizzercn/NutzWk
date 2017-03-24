@@ -7,7 +7,6 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -31,14 +30,14 @@ public class SysConfController {
 
     @At("")
     @Ok("beetl:/platform/sys/conf/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.conf")
     public void index() {
 
     }
 
     @At
     @Ok("beetl:/platform/sys/conf/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.conf")
     public void add() {
 
     }
@@ -60,7 +59,7 @@ public class SysConfController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/sys/conf/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.conf")
     public Object edit(String id) {
         return configService.fetch(id);
     }
@@ -100,7 +99,7 @@ public class SysConfController {
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.conf")
     public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         return configService.data(length, start, draw, order, columns, cnd, null);

@@ -50,14 +50,14 @@ public class SysUserController {
 
     @At("")
     @Ok("beetl:/platform/sys/user/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.user")
     public void index() {
 
     }
 
     @At
     @Ok("beetl:/platform/sys/user/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.user")
     public Object add(@Param("unitid") String unitid) {
         return Strings.isBlank(unitid) ? null : unitService.fetch(unitid);
     }
@@ -85,7 +85,7 @@ public class SysUserController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/sys/user/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.user")
     public Object edit(String id) {
         return userService.fetchLinks(userService.fetch(id), "unit");
     }
@@ -202,7 +202,7 @@ public class SysUserController {
 
     @At("/detail/?")
     @Ok("beetl:/platform/sys/user/detail.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.user")
     public Object detail(String id) {
         if (!Strings.isBlank(id)) {
             Sys_user user = userService.fetch(id);
@@ -213,7 +213,7 @@ public class SysUserController {
 
     @At("/menu/?")
     @Ok("beetl:/platform/sys/user/menu.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.user")
     public Object menu(String id, HttpServletRequest req) {
         Sys_user user = userService.fetch(id);
         List<Sys_menu> menus = userService.getMenusAndButtons(id);
@@ -241,7 +241,7 @@ public class SysUserController {
 
     @At
     @Ok("json:{locked:'password|salt',ignoreNull:false}") // 忽略password和createAt属性,忽略空属性的json输出
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.user")
     public Object data(@Param("unitid") String unitid, @Param("loginname") String loginname, @Param("username") String username, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(unitid) && !"root".equals(unitid))
@@ -255,7 +255,7 @@ public class SysUserController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.user")
     public Object tree(@Param("pid") String pid) {
         List<Sys_unit> list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();

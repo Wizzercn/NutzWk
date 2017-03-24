@@ -8,7 +8,6 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.util.StringUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
@@ -41,14 +40,14 @@ public class SysMenuController {
 
     @At("")
     @Ok("beetl:/platform/sys/menu/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.menu")
     public void index(HttpServletRequest req) {
         req.setAttribute("list", menuService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("location").asc("path")));
     }
 
     @At
     @Ok("beetl:/platform/sys/menu/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.menu")
     public Object add(@Param("pid") String pid, HttpServletRequest req) {
         return Strings.isBlank(pid) ? null : menuService.fetch(pid);
     }
@@ -75,7 +74,7 @@ public class SysMenuController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/sys/menu/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.menu")
     public Object edit(String id, HttpServletRequest req) {
         Sys_menu menu = menuService.fetch(id);
         if (menu != null) {
@@ -153,7 +152,7 @@ public class SysMenuController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.menu")
     public Object tree(@Param("pid") String pid) {
         List<Sys_menu> list = menuService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).and("type", "=", "menu").asc("location").asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();
@@ -169,7 +168,7 @@ public class SysMenuController {
 
     @At("/child/?")
     @Ok("beetl:/platform/sys/menu/child.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.menu")
     public Object child(String id) {
         Sys_menu m = menuService.fetch(id);
         List<Sys_menu> list = new ArrayList<>();
@@ -189,7 +188,7 @@ public class SysMenuController {
 
     @At
     @Ok("beetl:/platform/sys/menu/sort.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.menu")
     public void sort(HttpServletRequest req) {
         List<Sys_menu> list = menuService.query(Cnd.orderBy().asc("location").asc("path"));
         List<Sys_menu> firstMenus = new ArrayList<>();

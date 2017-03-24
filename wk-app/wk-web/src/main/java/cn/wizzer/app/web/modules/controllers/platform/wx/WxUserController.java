@@ -9,7 +9,6 @@ import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.vdurmont.emoji.EmojiParser;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -39,7 +38,7 @@ public class WxUserController {
 
     @At({"/index", "/index/?"})
     @Ok("beetl:/platform/wx/user/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.user.list")
     public void index(String wxid, HttpServletRequest req) {
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
@@ -51,7 +50,7 @@ public class WxUserController {
 
     @At({"/data/","/data/?"})
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.user.list")
     public Object data(String wxid, @Param("nickname") String nickname, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {

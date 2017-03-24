@@ -5,7 +5,6 @@ import cn.wizzer.app.sys.modules.services.SysUnitService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.util.StringUtil;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -33,14 +32,14 @@ public class SysUnitController {
 
     @At("")
     @Ok("beetl:/platform/sys/unit/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.unit")
     public Object index() {
         return sysUnitService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("path"));
     }
 
     @At
     @Ok("beetl:/platform/sys/unit/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.unit")
     public Object add(@Param("pid") String pid) {
         return Strings.isBlank(pid) ? null : sysUnitService.fetch(pid);
     }
@@ -60,21 +59,21 @@ public class SysUnitController {
 
     @At("/child/?")
     @Ok("beetl:/platform/sys/unit/child.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.unit")
     public Object child(String id) {
         return sysUnitService.query(Cnd.where("parentId", "=", id).asc("path"));
     }
 
     @At("/detail/?")
     @Ok("beetl:/platform/sys/unit/detail.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.unit")
     public Object detail(String id) {
         return sysUnitService.fetch(id);
     }
 
     @At("/edit/?")
     @Ok("beetl:/platform/sys/unit/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.unit")
     public Object edit(String id, HttpServletRequest req) {
         Sys_unit unit = sysUnitService.fetch(id);
         if (unit != null) {
@@ -118,7 +117,7 @@ public class SysUnitController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.unit")
     public Object tree(@Param("pid") String pid) {
         List<Sys_unit> list = sysUnitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();

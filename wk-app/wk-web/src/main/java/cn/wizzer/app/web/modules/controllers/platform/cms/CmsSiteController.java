@@ -4,7 +4,6 @@ import cn.wizzer.app.cms.modules.models.Cms_site;
 import cn.wizzer.app.cms.modules.services.CmsSiteService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -25,7 +24,7 @@ public class CmsSiteController {
 
     @At("")
     @Ok("beetl:/platform/cms/site/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.site.settings")
     public Object index() {
         Cms_site site = cmsSiteService.fetch("site");
         if (site == null) {

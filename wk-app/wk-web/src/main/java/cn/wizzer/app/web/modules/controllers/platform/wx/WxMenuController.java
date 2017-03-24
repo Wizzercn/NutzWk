@@ -13,7 +13,6 @@ import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import cn.wizzer.framework.util.StringUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
@@ -53,7 +52,7 @@ public class WxMenuController {
 
     @At({"", "/index/?"})
     @Ok("beetl:/platform/wx/menu/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.menu")
     public void index(String wxid, HttpServletRequest req) {
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
@@ -80,7 +79,7 @@ public class WxMenuController {
 
     @At("/add/?")
     @Ok("beetl:/platform/wx/menu/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.menu")
     public void add(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
         req.setAttribute("menus", wxMenuService.query(Cnd.where("wxid", "=", wxid).and(Cnd.exps("parentId", "=", "").or("parentId", "is", null)).asc("location")));
@@ -89,7 +88,7 @@ public class WxMenuController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.menu")
     public Object checkDo(@Param("wxid") String wxid, @Param("parentId") String parentId, HttpServletRequest req) {
         int count = wxMenuService.count(Cnd.where("wxid", "=", Strings.sBlank(wxid)).and("parentId", "=", Strings.sBlank(parentId)));
         if (Strings.isBlank(parentId) && count > 2) {
@@ -139,7 +138,7 @@ public class WxMenuController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/wx/menu/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.menu")
     public Object edit(String id, HttpServletRequest req) {
         Wx_menu menu = wxMenuService.fetch(id);
         req.setAttribute("config", wxConfigService.fetch(menu.getWxid()));
@@ -254,14 +253,14 @@ public class WxMenuController {
 
     @At("/keyword/?")
     @Ok("beetl:/platform/wx/menu/keyword.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.menu")
     public void keyword(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
     }
 
     @At("/keywordData")
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.menu")
     public Object keywordData(@Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
@@ -274,14 +273,14 @@ public class WxMenuController {
 
     @At("/cms/?")
     @Ok("beetl:/platform/wx/menu/cms.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.menu")
     public void cms(String type, HttpServletRequest req) {
         req.setAttribute("type", type);
     }
 
     @At("/cmsData/?")
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.menu")
     public Object cmsData(String type, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if ("channel".equals(type)) {

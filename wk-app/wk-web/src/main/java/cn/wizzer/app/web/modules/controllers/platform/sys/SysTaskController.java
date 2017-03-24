@@ -7,14 +7,12 @@ import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import cn.wizzer.framework.util.StringUtil;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -34,14 +32,14 @@ public class SysTaskController {
 
     @At("")
     @Ok("beetl:/platform/sys/task/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.task")
     public void index() {
 
     }
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.task")
     public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         return taskService.data(length, start, draw, order, columns, cnd, null);
@@ -49,7 +47,7 @@ public class SysTaskController {
 
     @At
     @Ok("beetl:/platform/sys/task/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.task")
     public void add() {
 
     }
@@ -83,7 +81,7 @@ public class SysTaskController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/sys/task/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.task")
     public Object edit(String id) {
         return taskService.fetch(id);
     }

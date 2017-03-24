@@ -13,7 +13,6 @@ import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import cn.wizzer.framework.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
@@ -50,14 +49,14 @@ public class SysRoleController {
 
     @At("")
     @Ok("beetl:/platform/sys/role/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.role")
     public void index() {
 
     }
 
     @At
     @Ok("beetl:/platform/sys/role/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.role")
     public Object add(@Param("unitid") String unitid, HttpServletRequest req) {
         List<Sys_menu> list = menuService.query(Cnd.orderBy().asc("location").asc("path"));
         List<Sys_menu> datas = roleService.getDatas();
@@ -108,7 +107,7 @@ public class SysRoleController {
 
     @At("/menu/?")
     @Ok("beetl:/platform/sys/role/menu.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.role")
     public Object menu(String id, HttpServletRequest req) {
         Sys_role role = roleService.fetch(id);
         List<Sys_menu> menus = roleService.getMenusAndButtons(id);
@@ -136,7 +135,7 @@ public class SysRoleController {
 
     @At("/editMenu/?")
     @Ok("beetl:/platform/sys/role/editMenu.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.role")
     public Object editMenu(String roleId, HttpServletRequest req) {
         StringBuilder roleMenuIds = new StringBuilder();
         List<Sys_menu> list = menuService.query(Cnd.orderBy().asc("location").asc("path"));
@@ -195,14 +194,14 @@ public class SysRoleController {
 
     @At("/editUser/?")
     @Ok("beetl:/platform/sys/role/editUser.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.role")
     public Object editUser(String roleId, HttpServletRequest req) {
         return roleService.fetch(roleId);
     }
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.role")
     public Object userData(@Param("roleid") String roleid, @Param("loginname") String loginname, @Param("nickname") String nickname, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         String sql = "SELECT a.* FROM sys_user a,sys_user_role b WHERE a.id=b.userId ";
         if (!Strings.isBlank(roleid)) {
@@ -226,14 +225,14 @@ public class SysRoleController {
 
     @At
     @Ok("beetl:/platform/sys/role/selectUser.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.role")
     public void selectUser(HttpServletRequest req) {
 
     }
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.role")
     public Object selectData(@Param("roleid") String roleid, @Param("name") String name, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         String sql = "SELECT a.* FROM sys_user a WHERE 1=1 ";
         if (!Strings.isBlank(roleid)) {
@@ -290,7 +289,7 @@ public class SysRoleController {
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.role")
     public Object data(@Param("unitid") String unitid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(unitid) && !"root".equals(unitid))
@@ -300,7 +299,7 @@ public class SysRoleController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.role")
     public Object tree(@Param("pid") String pid) {
         List<Sys_unit> list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();
@@ -323,7 +322,7 @@ public class SysRoleController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/sys/role/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.role")
     public Object edit(String roleId, HttpServletRequest req) {
         Sys_role role = roleService.fetch(roleId);
         req.setAttribute("unit", unitService.fetch(role.getUnitid()));

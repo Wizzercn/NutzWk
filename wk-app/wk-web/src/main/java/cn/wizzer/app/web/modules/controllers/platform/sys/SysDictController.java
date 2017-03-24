@@ -6,7 +6,6 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
@@ -35,14 +34,14 @@ public class SysDictController {
 
     @At("")
     @Ok("beetl:/platform/sys/dict/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.dict")
     public Object index() {
         return dictService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("location").asc("path"));
     }
 
     @At
     @Ok("beetl:/platform/sys/dict/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.dict")
     public Object add(@Param("pid") String pid) {
         return Strings.isBlank(pid) ? null : dictService.fetch(pid);
     }
@@ -62,14 +61,14 @@ public class SysDictController {
 
     @At("/child/?")
     @Ok("beetl:/platform/sys/dict/child.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.dict")
     public Object child(String id) {
         return dictService.query(Cnd.where("parentId", "=", id).asc("location").asc("path"));
     }
 
     @At("/edit/?")
     @Ok("beetl:/platform/sys/dict/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.dict")
     public Object edit(String id, HttpServletRequest req) {
         Sys_dict dict = dictService.fetch(id);
         if (dict != null) {
@@ -110,7 +109,7 @@ public class SysDictController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.dict")
     public Object tree(@Param("pid") String pid) {
         List<Sys_dict> list = dictService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();
@@ -126,7 +125,7 @@ public class SysDictController {
 
     @At
     @Ok("beetl:/platform/sys/dict/sort.html")
-    @RequiresAuthentication
+    @RequiresPermissions("sys.manager.dict")
     public void sort(HttpServletRequest req) {
         List<Sys_dict> list = dictService.query(Cnd.orderBy().asc("location").asc("path"));
         List<Sys_dict> firstMenus = new ArrayList<>();

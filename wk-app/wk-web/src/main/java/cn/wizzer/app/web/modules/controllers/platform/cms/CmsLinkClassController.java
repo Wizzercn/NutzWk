@@ -7,7 +7,6 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -34,14 +33,14 @@ public class CmsLinkClassController {
 
     @At("")
     @Ok("beetl:/platform/cms/link/class/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.link.class")
     public void index() {
 
     }
 
     @At
     @Ok("beetl:/platform/cms/link/class/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.link.class")
     public void add() {
 
     }
@@ -61,7 +60,7 @@ public class CmsLinkClassController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/cms/link/class/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.link.class")
     public Object edit(String id) {
         return cmsLinkClassService.fetch(id);
     }
@@ -102,7 +101,7 @@ public class CmsLinkClassController {
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("cms.link.class")
     public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         return cmsLinkClassService.data(length, start, draw, order, columns, cnd, null);

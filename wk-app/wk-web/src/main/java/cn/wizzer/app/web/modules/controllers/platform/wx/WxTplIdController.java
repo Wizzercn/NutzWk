@@ -34,7 +34,7 @@ public class WxTplIdController {
 
 	@At({"", "/index/?"})
 	@Ok("beetl:/platform/wx/tpl/id/index.html")
-	@RequiresAuthentication
+	@RequiresPermissions("wx.tpl.id")
 	public void index(String wxid, HttpServletRequest req) {
 		List<Wx_config> list = wxConfigService.query(Cnd.NEW());
 		if (list.size() > 0 && Strings.isBlank(wxid)) {
@@ -46,7 +46,7 @@ public class WxTplIdController {
 
 	@At
 	@Ok("json:full")
-	@RequiresAuthentication
+	@RequiresPermissions("wx.tpl.id")
 	public Object data(@Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
 		Cnd cnd = Cnd.NEW();
 		if(!Strings.isBlank(wxid)){
@@ -57,7 +57,7 @@ public class WxTplIdController {
 
     @At
     @Ok("beetl:/platform/wx/tpl/id/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.tpl.id")
 	public void add(String wxid, HttpServletRequest req) {
 		req.setAttribute("wxid", wxid);
     }
@@ -118,7 +118,7 @@ public class WxTplIdController {
 
     @At("/detail/?")
     @Ok("beetl:/platform/wx/tpl/id/detail.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.tpl.id")
 	public Object detail(String id) {
 		if (!Strings.isBlank(id)) {
 			return wxTplIdService.fetch(id);

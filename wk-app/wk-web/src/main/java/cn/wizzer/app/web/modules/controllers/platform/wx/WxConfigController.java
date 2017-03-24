@@ -6,7 +6,6 @@ import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -31,14 +30,14 @@ public class WxConfigController {
 
     @At("")
     @Ok("beetl:/platform/wx/account/index.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.account")
     public void index() {
 
     }
 
     @At
     @Ok("beetl:/platform/wx/account/add.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.account")
     public void add() {
 
     }
@@ -58,7 +57,7 @@ public class WxConfigController {
 
     @At("/edit/?")
     @Ok("beetl:/platform/wx/account/edit.html")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.account")
     public Object edit(String id) {
         return wxConfigService.fetch(id);
     }
@@ -92,7 +91,7 @@ public class WxConfigController {
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @RequiresPermissions("wx.conf.account")
     public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         Cnd cnd = Cnd.NEW();
         return wxConfigService.data(length, start, draw, order, columns, cnd, null);
