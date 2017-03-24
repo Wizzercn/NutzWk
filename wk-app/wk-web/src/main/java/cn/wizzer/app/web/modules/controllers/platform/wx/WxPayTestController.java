@@ -10,9 +10,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
-import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
-import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
@@ -20,15 +18,11 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
-import org.nutz.weixin.bean.WxPayTransfers;
-import org.nutz.weixin.bean.WxPayUnifiedOrder;
-import org.nutz.weixin.bean.WxRedPack;
-import org.nutz.weixin.bean.WxRedPackGroup;
+import org.nutz.weixin.bean.*;
 import org.nutz.weixin.spi.WxApi2;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -85,7 +79,7 @@ public class WxPayTestController {
             Wx_config config = wxConfigService.fetch(Cnd.NEW().limit(1, 1));
             NutMap payinfo = Json.fromJson(NutMap.class, config.getPayInfo());
             WxApi2 wxApi2 = wxConfigService.getWxApi2(config.getId());
-            WxRedPack redPack = new WxRedPack();
+            WxPayRedPack redPack = new WxPayRedPack();
             redPack.setNonce_str(R.UU32());
             redPack.setMch_billno(payinfo.getString("wxpay_mchid") + DateUtil.format(new Date(), "yyyyMMddHHmmss"));
             redPack.setMch_id(payinfo.getString("wxpay_mchid"));
@@ -99,7 +93,7 @@ public class WxPayTestController {
             redPack.setAct_name("扫码得红包");
             redPack.setRemark("扫得越多得的越多！");
             redPack.setScene_id("PRODUCT_1");
-            File file= new File(Globals.AppRoot + "/WEB-INF/cert/wx/" + config.getId() + ".p12");
+            File file = new File(Globals.AppRoot + "/WEB-INF/cert/wx/" + config.getId() + ".p12");
             NutMap resp = wxApi2.send_redpack(payinfo.getString("wxpay_key"), redPack,
                     file,
                     payinfo.getString("wxpay_mchid"));
@@ -118,7 +112,7 @@ public class WxPayTestController {
             Wx_config config = wxConfigService.fetch(Cnd.NEW().limit(1, 1));
             NutMap payinfo = Json.fromJson(NutMap.class, config.getPayInfo());
             WxApi2 wxApi2 = wxConfigService.getWxApi2(config.getId());
-            WxRedPackGroup redPack = new WxRedPackGroup();
+            WxPayRedPackGroup redPack = new WxPayRedPackGroup();
             redPack.setNonce_str(R.UU32());
             redPack.setMch_billno(payinfo.getString("wxpay_mchid") + DateUtil.format(new Date(), "yyyyMMddHHmmss"));
             redPack.setMch_id(payinfo.getString("wxpay_mchid"));
@@ -132,7 +126,7 @@ public class WxPayTestController {
             redPack.setAct_name("扫码得红包");
             redPack.setRemark("扫得越多得的越多！");
             redPack.setScene_id("PRODUCT_1");
-            File file= new File(Globals.AppRoot + "/WEB-INF/cert/wx/" + config.getId() + ".p12");
+            File file = new File(Globals.AppRoot + "/WEB-INF/cert/wx/" + config.getId() + ".p12");
             NutMap resp = wxApi2.send_redpackgroup(payinfo.getString("wxpay_key"), redPack,
                     file,
                     payinfo.getString("wxpay_mchid"));
@@ -162,7 +156,7 @@ public class WxPayTestController {
             wxPayTransfers.setOpenid(openid);
             wxPayTransfers.setSpbill_create_ip(Lang.getIP(req));
             wxPayTransfers.setRe_user_name("大鲨鱼");
-            File file= new File(Globals.AppRoot + "/WEB-INF/cert/wx/" + config.getId() + ".p12");
+            File file = new File(Globals.AppRoot + "/WEB-INF/cert/wx/" + config.getId() + ".p12");
             NutMap resp = wxApi2.pay_transfers(payinfo.getString("wxpay_key"), wxPayTransfers,
                     file,
                     payinfo.getString("wxpay_mchid"));
