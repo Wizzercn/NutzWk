@@ -64,6 +64,7 @@ layout("/layouts/platform.html"){
                             <div class="col-sm-7" style="padding-bottom: 5px;">
                                 <button id="redpackBtn" class="btn btn-primary">发普通红包</button>
                                 <button id="redpackGroupBtn" class="btn btn-primary">发裂变红包</button>
+                                <button id="transfersBtn" class="btn btn-primary">向个人付款</button>
                             </div>
                         </div>
                         <div class="form-group">
@@ -107,10 +108,10 @@ layout("/layouts/platform.html"){
                 }, 'json'
             );
         });
-        $("#redpackGroupBtn").on("click", function () {
+        $("#transfersBtn").on("click", function () {
             sublime.showLoadingbar($(".main-content"));
             $.get(
-                "${base}/platform/wx/conf/account/paytest/redpackGroup?redpack=" + $("#redpack").val()+"&openid="+$("#openid").val(),
+                "${base}/platform/wx/conf/account/paytest/transfers?redpack=" + $("#redpack").val()+"&openid="+$("#openid").val(),
                 function (result) {
                     $("#redpackTip").html(result.msg);
                     sublime.closeLoadingbar($(".main-content"));

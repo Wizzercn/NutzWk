@@ -20,6 +20,7 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
+import org.nutz.weixin.bean.WxPayTransfers;
 import org.nutz.weixin.bean.WxPayUnifiedOrder;
 import org.nutz.weixin.bean.WxRedPack;
 import org.nutz.weixin.bean.WxRedPackGroup;
@@ -133,6 +134,36 @@ public class WxPayTestController {
             redPack.setScene_id("PRODUCT_1");
             File file= new File(Globals.AppRoot + "/WEB-INF/cert/wx/" + config.getId() + ".p12");
             NutMap resp = wxApi2.send_redpackgroup(payinfo.getString("wxpay_key"), redPack,
+                    file,
+                    payinfo.getString("wxpay_mchid"));
+            log.debug("resp:::" + Json.toJson(resp));
+            return Result.success(Json.toJson(resp));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("system.error");
+        }
+    }
+
+    @At
+    @Ok("json")
+    public Object transfers(@Param("redpack") int redpack, @Param("openid") String openid, HttpServletRequest req) {
+        try {
+            Wx_config config = wxConfigService.fetch(Cnd.NEW().limit(1, 1));
+            NutMap payinfo = Json.fromJson(NutMap.class, config.getPayInfo());
+            WxApi2 wxApi2 = wxConfigService.getWxApi2(config.getId());
+            WxPayTransfers wxPayTransfers = new WxPayTransfers();
+            wxPayTransfers.setNonce_str(R.UU32());
+            wxPayTransfers.setAmount(redpack);
+            wxPayTransfers.setCheck_name("NO_CHECK");
+            wxPayTransfers.setDesc("付款测试");
+            wxPayTransfers.setMchid(payinfo.getString("wxpay_mchid"));
+            wxPayTransfers.setMch_appid(config.getAppid());
+            wxPayTransfers.setPartner_trade_no(payinfo.getString("wxpay_mchid") + DateUtil.format(new Date(), "yyyyMMddHHmmss"));
+            wxPayTransfers.setOpenid(openid);
+            wxPayTransfers.setSpbill_create_ip(Lang.getIP(req));
+            wxPayTransfers.setRe_user_name("大鲨鱼");
+            File file= new File(Globals.AppRoot + "/WEB-INF/cert/wx/" + config.getId() + ".p12");
+            NutMap resp = wxApi2.pay_transfers(payinfo.getString("wxpay_key"), wxPayTransfers,
                     file,
                     payinfo.getString("wxpay_mchid"));
             log.debug("resp:::" + Json.toJson(resp));
