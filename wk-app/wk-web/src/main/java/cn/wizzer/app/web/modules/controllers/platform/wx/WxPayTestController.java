@@ -93,7 +93,7 @@ public class WxPayTestController {
             redPack.setAct_name("扫码得红包");
             redPack.setRemark("扫得越多得的越多！");
             redPack.setScene_id("PRODUCT_1");
-            File file = new File(Globals.AppRoot + "/WEB-INF/cert/wx/" + config.getId() + ".p12");
+            File file = new File(Globals.AppRoot + "/WEB-INF/cert/wxpay/" + config.getId() + ".p12");
             NutMap resp = wxApi2.send_redpack(payinfo.getString("wxpay_key"), redPack,
                     file,
                     payinfo.getString("wxpay_mchid"));
@@ -126,7 +126,7 @@ public class WxPayTestController {
             redPack.setAct_name("扫码得红包");
             redPack.setRemark("扫得越多得的越多！");
             redPack.setScene_id("PRODUCT_1");
-            File file = new File(Globals.AppRoot + "/WEB-INF/cert/wx/" + config.getId() + ".p12");
+            File file = new File(Globals.AppRoot + "/WEB-INF/cert/wxpay/" + config.getId() + ".p12");
             NutMap resp = wxApi2.send_redpackgroup(payinfo.getString("wxpay_key"), redPack,
                     file,
                     payinfo.getString("wxpay_mchid"));
@@ -156,7 +156,7 @@ public class WxPayTestController {
             wxPayTransfers.setOpenid(openid);
             wxPayTransfers.setSpbill_create_ip(Lang.getIP(req));
             wxPayTransfers.setRe_user_name("大鲨鱼");
-            File file = new File(Globals.AppRoot + "/WEB-INF/cert/wx/" + config.getId() + ".p12");
+            File file = new File(Globals.AppRoot + "/WEB-INF/cert/wxpay/" + config.getId() + ".p12");
             NutMap resp = wxApi2.pay_transfers(payinfo.getString("wxpay_key"), wxPayTransfers,
                     file,
                     payinfo.getString("wxpay_mchid"));
