@@ -108,6 +108,16 @@ layout("/layouts/platform.html"){
                 }, 'json'
             );
         });
+        $("#redpackGroupBtn").on("click", function () {
+            sublime.showLoadingbar($(".main-content"));
+            $.get(
+                "${base}/platform/wx/conf/account/paytest/redpackGroup?redpack=" + $("#redpack").val()+"&openid="+$("#openid").val(),
+                function (result) {
+                    $("#redpackTip").html(result.msg);
+                    sublime.closeLoadingbar($(".main-content"));
+                }, 'json'
+            );
+        });
         $("#transfersBtn").on("click", function () {
             sublime.showLoadingbar($(".main-content"));
             $.get(
