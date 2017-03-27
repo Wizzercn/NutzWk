@@ -49,7 +49,8 @@ public class SysLoginController {
     @At("")
     @Ok("re")
     @Filters
-    public String login() {
+    public String login(HttpServletRequest req) {
+        log.debug("");
         Subject subject = SecurityUtils.getSubject();
         if (subject.isAuthenticated()) {
             return "redirect:/platform/home";

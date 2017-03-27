@@ -73,7 +73,17 @@
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
+            <artifactId>nutz-plugins-cache</artifactId>
+            <version>${nutz-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.nutz</groupId>
             <artifactId>nutz-integration-quartz</artifactId>
+            <version>${nutz-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutz-integration-jedis</artifactId>
             <version>${nutz-version}</version>
         </dependency>
         <dependency>
