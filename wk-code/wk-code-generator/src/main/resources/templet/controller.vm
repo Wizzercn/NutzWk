@@ -11,6 +11,8 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.lang.Strings;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.mvc.annotation.*;
@@ -23,17 +25,17 @@ import java.util.List;
 @IocBean
 @At("${table.UriPrefix}")
 public class ${table.ControllerClassName}{
+    private static final Log log = Logs.get();
     @Inject
-	private ${table.ServiceClassName} ${table.ServiceInstanceName};
+    private ${table.ServiceClassName} ${table.ServiceInstanceName};
 
     @At("")
-	@Ok("beetl:/${table.ViewBasePath}/index.html")
+    @Ok("beetl:/${table.ViewBasePath}/index.html")
     @RequiresPermissions("${table.Permissions}")
-	public void index() {
+    public void index() {
+    }
 
-	}
-
-	@At("/data")
+    @At("/data")
     @Ok("json")
     @RequiresPermissions("${table.Permissions}")
     public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
