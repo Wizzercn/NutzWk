@@ -67,7 +67,7 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 *   后台管理界面采用Pjax+Bootstrap
 *   系统模块(单位、角色、用户、菜单等完整的权限体系)
 *   CMS模块(简易的内容管理功能)
-*   微信模块(支持多帐号配置等微信功能)
+*   微信模块(支持多公众号、微信支付等功能)
 
 
 ## NutzWk 4.x 使用说明：
