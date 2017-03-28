@@ -36,6 +36,10 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 
 如果您的项目有大数据及大并发、分布式部署等需求，那么您可以选用v4.x版本，她在v3.x基础上拆分模块并接口化；
 
+## NutzWk v4.x主分支
+
+https://github.com/Wizzercn/NutzWk/tree/modular   模块化支持分布式部署
+
 ## NutzWk v3.x主分支
 
 https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发, 功能与v4.x同步升级
