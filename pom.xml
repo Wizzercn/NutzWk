@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.wizzer</groupId>
     <artifactId>nutzwk</artifactId>
-    <version>3.3.6</version>
+    <version>3.3.8</version>
     <packaging>war</packaging>
     <name>NutzWk</name>
     <url>http://www.wizzer.cn</url>

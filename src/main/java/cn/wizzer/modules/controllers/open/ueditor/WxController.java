@@ -44,6 +44,7 @@ public class WxController {
     @At
     @Ok("json")
     @RequiresAuthentication
+    @SuppressWarnings("deprecation")
     public Object uploadimage(@Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
         String wxid = Strings.sBlank(req.getSession().getAttribute("wxid"));
         NutMap nutMap = new NutMap();

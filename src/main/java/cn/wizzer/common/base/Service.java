@@ -457,7 +457,7 @@ public class Service<T> extends EntityService<T> {
         pageNumber = getPageNumber(pageNumber);
         pageSize = getPageSize(pageSize);
         Pager pager = this.dao().createPager(pageNumber, pageSize);
-        pager.setRecordCount((int) Daos.queryCount(this.dao(), sql.toString()));// 记录数需手动设置
+        pager.setRecordCount((int) Daos.queryCount(this.dao(), sql));// 记录数需手动设置
         sql.setPager(pager);
         sql.setCallback(Sqls.callback.records());
         dao().execute(sql);
@@ -565,7 +565,7 @@ public class Service<T> extends EntityService<T> {
     public NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql) {
         NutMap re = new NutMap();
         Pager pager = new OffsetPager(start, length);
-        pager.setRecordCount((int) Daos.queryCount(this.dao(), countSql.toString()));// 记录数需手动设置
+        pager.setRecordCount((int) Daos.queryCount(this.dao(), countSql));// 记录数需手动设置
         orderSql.setPager(pager);
         orderSql.setCallback(Sqls.callback.records());
         this.dao().execute(orderSql);
