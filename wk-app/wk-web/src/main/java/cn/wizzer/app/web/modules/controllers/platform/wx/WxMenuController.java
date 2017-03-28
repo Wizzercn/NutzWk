@@ -212,6 +212,12 @@ public class WxMenuController {
                                 xm2.setType(secondMenu.getMenuType());
                                 xm2.setKey(secondMenu.getMenuKey());
                                 xm2.setName(secondMenu.getMenuName());
+                            } else if ("miniprogram".equals(secondMenu.getMenuType())) {
+                                xm2.setType(secondMenu.getMenuType());
+                                xm2.setName(secondMenu.getMenuName());
+                                xm2.setUrl(secondMenu.getUrl());
+                                xm2.setAppid(secondMenu.getAppid());
+                                xm2.setPagepath(secondMenu.getPagepath());
                             } else {
                                 xm2.setName(secondMenu.getMenuName());
                                 xm2.setType("click");
@@ -232,6 +238,12 @@ public class WxMenuController {
                         xm2.setType(firstMenu.getMenuType());
                         xm2.setKey(firstMenu.getMenuKey());
                         xm2.setName(firstMenu.getMenuName());
+                    } else if ("miniprogram".equals(firstMenu.getMenuType())) {
+                        xm2.setType(firstMenu.getMenuType());
+                        xm2.setName(firstMenu.getMenuName());
+                        xm2.setUrl(firstMenu.getUrl());
+                        xm2.setAppid(firstMenu.getAppid());
+                        xm2.setPagepath(firstMenu.getPagepath());
                     } else {
                         xm2.setName(firstMenu.getMenuName());
                         xm2.setType("click");

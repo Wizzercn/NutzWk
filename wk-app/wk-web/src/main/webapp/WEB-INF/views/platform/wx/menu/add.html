@@ -14,7 +14,7 @@ layout("/layouts/platform.html"){
                   action="${base}/platform/wx/conf/menu/addDo" method="post">
                 <input id="wxid" name="wxid" type="hidden" value="${wxid!}">
 
-                <div class="row mb10">
+                <div class="row mb10 mt10">
                     <div class="col-lg-12">
                         <div class="form-group">
                             <label for="parentId" class="col-sm-2 control-label">上级菜单</label>
@@ -51,6 +51,7 @@ layout("/layouts/platform.html"){
                                 <div class="radio"><label><input onclick="clickRadio('')" type="radio" name="menuType" value="" checked>无</label></div>
                                 <div class="radio"><label><input onclick="clickRadio('view')" type="radio" name="menuType" value="view">链接</label></div>
                                 <div class="radio"><label><input onclick="clickRadio('click')" type="radio" name="menuType" value="click">事件</label></div>
+                                <div class="radio"><label><input onclick="clickRadio('miniprogram')" type="radio" name="menuType" value="miniprogram">小程序</label></div>
                             </div>
                         </div>
                         <div id="div_url" class="form-group" style="display: none">
@@ -67,6 +68,24 @@ layout("/layouts/platform.html"){
                                 </div>
                                 <input type="checkbox" id="btnUrl">网页oauth2.0
                                 <input type="checkbox" id="btnUrl2">应用oauth2.0
+                            </div>
+                        </div>
+                        <div id="div_appurl" class="form-group" style="display: none">
+                            <label for="appid" class="col-sm-2 control-label">URL</label>
+                            <div class="col-sm-8">
+                                <input id="appurl" name="appurl" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div id="div_appid" class="form-group" style="display: none">
+                            <label for="appid" class="col-sm-2 control-label">appid</label>
+                            <div class="col-sm-8">
+                                <input id="appid" name="appid" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div id="div_pagepath" class="form-group" style="display: none">
+                            <label for="pagepath" class="col-sm-2 control-label">pagepath</label>
+                            <div class="col-sm-8">
+                                 <input id="pagepath" name="pagepath" type="text" class="form-control">
                             </div>
                         </div>
                         <div id="div_key" class="form-group" style="display: none">
@@ -93,7 +112,7 @@ layout("/layouts/platform.html"){
                         <label></label>
 
                         <div>
-                            <button class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="正在提交..." id="submit">提 交
+                            <button type="button" class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="正在提交..." id="submit">提 交
                             </button>
                         </div>
                     </div>
@@ -124,16 +143,41 @@ layout("/layouts/platform.html"){
         if (type == 'click') {
             $("#div_url").hide();
             $("#div_key").show();
+            $("#div_appurl").hide();
+            $("#div_appid").hide();
+            $("#div_pagepath").hide();
             $("#url").val("");
+            $("#appurl").val("");
+            $("#appid").val("");
+            $("#pagepath").val("");
         } else if (type == 'view') {
             $("#div_key").hide();
             $("#div_url").show();
+            $("#div_appurl").hide();
+            $("#div_appid").hide();
+            $("#div_pagepath").hide();
+            $("#key").val("");
+            $("#appurl").val("");
+            $("#appid").val("");
+            $("#pagepath").val("");
+        } else if (type == 'miniprogram') {
+            $("#div_key").hide();
+            $("#div_url").hide();
+            $("#div_appurl").show();
+            $("#div_appid").show();
+            $("#div_pagepath").show();
             $("#key").val("");
         } else {
             $("#div_key").hide();
             $("#div_url").hide();
+            $("#div_appurl").hide();
+            $("#div_appid").hide();
+            $("#div_pagepath").hide();
             $("#key").val("");
             $("#url").val("");
+            $("#appurl").val("");
+            $("#appid").val("");
+            $("#pagepath").val("");
         }
     }
     function selKeyword(){
@@ -193,12 +237,21 @@ layout("/layouts/platform.html"){
         $("#dialogSelect").on("hidden.bs.modal", function () {
             $(this).removeData("bs.modal");
         });
+        $("#submit").on("click",function () {
+            if($("input[type='radio']:checked").val()=="miniprogram"){
+                $("#url").val($("#appurl").val());
+            }
+            $('#addForm').submit();
+        });
         $('#addForm').ajaxForm({
             dataType: 'json',
             beforeSubmit: function (arr, form, options) {
                 if($("#errMsg").val()=='true')
                 {
                     return false;
+                }
+                if($("input[type='radio']:checked").val()=="miniprogram"){
+                    $("#url").val($("#appurl").val());
                 }
             },
             success: function (data, statusText, xhr, form) {
