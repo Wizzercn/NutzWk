@@ -11,5 +11,10 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>wk-framework</artifactId>
 
-
+    <distributionManagement>
+        <snapshotRepository>
+            <id>nutzcn-snapshots</id>
+            <url>https://jfrog.nutz.cn/artifactory/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
