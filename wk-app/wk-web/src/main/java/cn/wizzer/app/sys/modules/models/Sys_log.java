@@ -32,7 +32,7 @@ public class Sys_log extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 20)
     private String type;
 
-    @Column("xxx")
+    @Column
     @Comment("日志标识")
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String tag;
