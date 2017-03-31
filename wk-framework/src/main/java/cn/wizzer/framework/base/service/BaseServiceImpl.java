@@ -100,7 +100,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param regex 为null查询全部,支持通配符 ^(a|b)$
      * @return
      */
-    public T fetchLinks(T obj, String regex) {
+    public <T> T fetchLinks(T obj, String regex) {
         return this.dao().fetchLinks(obj, regex);
     }
 
@@ -112,7 +112,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param cnd   关联字段的过滤(排序,条件语句,分页等)
      * @return
      */
-    public T fetchLinks(T obj, String regex, Condition cnd) {
+    public <T> T fetchLinks(T obj, String regex, Condition cnd) {
         return this.dao().fetchLinks(obj, regex, cnd);
     }
 

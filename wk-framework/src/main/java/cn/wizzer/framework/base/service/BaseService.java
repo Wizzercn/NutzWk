@@ -33,9 +33,9 @@ public interface BaseService<T> {
 
     T fetch(String id);
 
-    T fetchLinks(T obj, String regex);
+    <T> T fetchLinks(T obj, String regex);
 
-    T fetchLinks(T obj, String regex, Condition cnd);
+    <T> T fetchLinks(T obj, String regex, Condition cnd);
 
     T fetch(Condition cnd);
 
