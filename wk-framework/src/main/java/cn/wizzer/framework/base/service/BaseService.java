@@ -95,6 +95,8 @@ public interface BaseService<T> {
 
     List<T> query(Condition cnd);
 
+    List<T> query();
+
     String getSubPath(String tableName, String cloName, String value);
 
     int count(Sql sql);

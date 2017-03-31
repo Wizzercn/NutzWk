@@ -420,6 +420,14 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
+     * 获取全部数据
+     * @return
+     */
+    public List<T> query() {
+        return dao().query(getEntityClass(),null);
+    }
+
+    /**
      * 计算子节点ID
      *
      * @param tableName
