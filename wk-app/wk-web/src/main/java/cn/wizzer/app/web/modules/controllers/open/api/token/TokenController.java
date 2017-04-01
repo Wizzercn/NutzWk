@@ -3,6 +3,7 @@ package cn.wizzer.app.web.modules.controllers.open.api.token;
 import cn.wizzer.app.sys.modules.models.Sys_api;
 import cn.wizzer.app.sys.modules.services.SysApiService;
 import cn.wizzer.framework.base.Result;
+import cn.wizzer.framework.util.DateUtil;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -33,7 +34,7 @@ public class TokenController {
      * @apiVersion 1.0.0
      * @apiPermission anyone
      * @apiParam {String}	appId 					appId
-     * @apiParam {String}	sign 				appId+appSecret 计算出的MD5值
+     * @apiParam {String}	sign 				appId+appSecret+yyyyMMddHH 计算出的MD5值
      * @apiParamExample {json} 示例
      * POST /open/api/token
      * {
@@ -71,7 +72,7 @@ public class TokenController {
             Sys_api api = apiService.fetch(Cnd.where("appId", "=", appId));
             if (api == null)
                 return Result.error("appId error");
-            if (!Lang.md5(appId + api.getAppSecret()).equalsIgnoreCase(sign))
+            if (!Lang.md5(appId + api.getAppSecret() + DateUtil.format(new Date(), "yyyyMMddHH")).equalsIgnoreCase(sign))
                 return Result.error("sign error");
             NutMap map = new NutMap();
             Date date = new Date();
