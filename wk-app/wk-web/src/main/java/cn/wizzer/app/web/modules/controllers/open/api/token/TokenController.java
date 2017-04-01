@@ -11,6 +11,8 @@ import org.nutz.lang.Lang;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.adaptor.JsonAdaptor;
+import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
@@ -67,22 +69,23 @@ public class TokenController {
      */
     @At("/get")
     @Ok("json")
-    public Object get(@Param("appId") String appId, @Param("sign") String sign) {
+    @AdaptBy(type = JsonAdaptor.class)
+    public Object get(@Param("..") NutMap map) {
         try {
-            Sys_api api = apiService.fetch(Cnd.where("appId", "=", appId));
+            Sys_api api = apiService.fetch(Cnd.where("appId", "=", map.getString("appid", "")));
             if (api == null)
                 return Result.error("appId error");
-            if (!Lang.md5(appId + api.getAppSecret() + DateUtil.format(new Date(), "yyyyMMddHH")).equalsIgnoreCase(sign))
+            if (!Lang.md5(map.getString("appid", "") + api.getAppSecret() + DateUtil.format(new Date(), "yyyyMMddHH")).equalsIgnoreCase(map.getString("sign", "")))
                 return Result.error("sign error");
-            NutMap map = new NutMap();
+            NutMap resmap = new NutMap();
             Date date = new Date();
             Calendar c = Calendar.getInstance();
             c.setTime(date);
             c.add(Calendar.HOUR, +2);
             date = c.getTime();
-            map.addv("expires", 7200);
-            map.addv("token", apiService.generateToken(date, appId));
-            return Result.success("ok", map);
+            resmap.addv("expires", 7200);
+            resmap.addv("token", apiService.generateToken(date, map.getString("appid", "")));
+            return Result.success("ok", resmap);
         } catch (Exception e) {
             log.debug(e.getMessage());
             return Result.error("fail");
