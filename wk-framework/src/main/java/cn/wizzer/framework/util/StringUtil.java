@@ -1,6 +1,7 @@
 package cn.wizzer.framework.util;
 
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Lang;
@@ -220,5 +221,15 @@ public class StringUtil {
      */
     public boolean contains(String str, String s) {
         return Strings.sNull(str).contains(Strings.sNull(s));
+    }
+
+    /**
+     * 将对象转为JSON字符串（页面上使用）
+     *
+     * @param obj
+     * @return
+     */
+    public String toJson(Object obj) {
+        return Json.toJson(obj, JsonFormat.compact());
     }
 }
