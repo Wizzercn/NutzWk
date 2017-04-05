@@ -4,6 +4,7 @@ import cn.wizzer.common.base.Globals;
 import cn.wizzer.common.plugin.IPlugin;
 import cn.wizzer.common.plugin.PluginMaster;
 import cn.wizzer.modules.models.sys.*;
+import net.sf.ehcache.CacheManager;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -56,6 +57,9 @@ public class Setup implements org.nutz.mvc.Setup {
             initSysRoute(config, dao);
             // 初始化热插拔插件
             initSysPlugin(config, dao);
+            // 检查一下Ehcache CacheManager 是否正常,单机部署要让重启登录不失效需要执行一下
+            CacheManager cacheManager = ioc.get(CacheManager.class);
+            log.debug("Ehcache CacheManager = " + cacheManager);
             log.info("\n _  _ _   _ _____ ______      ___  __\n" +
                     "| \\| | | | |_   _|_  /\\ \\    / / |/ /\n" +
                     "| .` | |_| | | |  / /  \\ \\/\\/ /| ' < \n" +
