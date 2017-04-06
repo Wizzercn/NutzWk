@@ -40,7 +40,11 @@ public class Result {
 
     public Result(int code, String msg, Object data) {
         this.code = code;
-        this.msg = Strings.isBlank(msg) ? "" : Mvcs.getActionContext().getRequest() == null ? msg : Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
+        if (Strings.isBlank(msg) || Mvcs.getActionContext() == null || Mvcs.getActionContext().getRequest() == null || Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg) == null) {
+            this.msg = "";
+        } else {
+            this.msg = Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
+        }
         this.data = data;
     }
 
@@ -66,6 +70,19 @@ public class Result {
 
     public static Result error() {
         return new Result(1, "globals.result.error", null);
+    }
+    
+    
+    public int getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public Object getData() {
+        return data;
     }
 
     @Override
