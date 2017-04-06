@@ -29,7 +29,7 @@ public class Result {
     }
 
     public Result addMsg(String msg) {
-        this.msg = Strings.isBlank(msg) ? "" : Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
+        this.msg = Strings.isBlank(msg) ? "" : Mvcs.getActionContext().getRequest() == null ? msg : Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
         return this;
     }
 
@@ -69,8 +69,8 @@ public class Result {
     }
 
     @Override
-    public String toString(){
-        return Json.toJson(this,JsonFormat.compact());
+    public String toString() {
+        return Json.toJson(this, JsonFormat.compact());
     }
 
 }
