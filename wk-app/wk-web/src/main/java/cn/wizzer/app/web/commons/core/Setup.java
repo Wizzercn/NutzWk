@@ -64,7 +64,7 @@ public class Setup implements org.nutz.mvc.Setup {
             initSysPlugin(config, dao);
             // 初始化rabbitmq
             //initRabbit(config, dao);
-            // 检查一下Ehcache CacheManager 是否正常,单机部署要让重启登录不失效需要执行一下
+            // 检查一下Ehcache CacheManager 是否正常
             CacheManager cacheManager = ioc.get(CacheManager.class);
             log.debug("Ehcache CacheManager = " + cacheManager);
             log.info("\n _  _ _   _ _____ ______      ___  __\n" +
