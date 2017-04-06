@@ -40,7 +40,7 @@ public class Result {
 
     public Result(int code, String msg, Object data) {
         this.code = code;
-        this.msg = Strings.isBlank(msg) ? "" : Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
+        this.msg = Strings.isBlank(msg) ? "" : Mvcs.getActionContext().getRequest() == null ? msg : Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
         this.data = data;
     }
 
