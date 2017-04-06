@@ -7,15 +7,19 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
+import cn.wizzer.framework.rabbit.RabbitMessage;
+import cn.wizzer.framework.rabbit.RabbitProducer;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -27,6 +31,8 @@ public class SysConfController {
     private static final Log log = Logs.get();
     @Inject
     private SysConfigService configService;
+    @Inject
+    private RabbitProducer rabbitProducer;
 
     @At("")
     @Ok("beetl:/platform/sys/conf/index.html")
@@ -50,6 +56,12 @@ public class SysConfController {
         try {
             if (configService.insert(conf) != null) {
                 Globals.initSysConfig(configService.dao());
+                if (Globals.RabbitMQEnabled) {
+                    String exchange = "fanoutExchange";
+                    String routeKey = "sysconfig";
+                    RabbitMessage msg = new RabbitMessage(exchange, routeKey, new NutMap());
+                    rabbitProducer.sendMessage(msg);
+                }
             }
             return Result.success("system.success");
         } catch (Exception e) {
@@ -72,6 +84,12 @@ public class SysConfController {
         try {
             if (configService.updateIgnoreNull(conf) > 0) {
                 Globals.initSysConfig(configService.dao());
+                if (Globals.RabbitMQEnabled) {
+                    String exchange = "fanoutExchange";
+                    String routeKey = "sysconfig";
+                    RabbitMessage msg = new RabbitMessage(exchange, routeKey, new NutMap());
+                    rabbitProducer.sendMessage(msg);
+                }
             }
             return Result.success("system.success");
         } catch (Exception e) {
@@ -90,6 +108,12 @@ public class SysConfController {
             }
             if (configService.delete(configKey) > 0) {
                 Globals.initSysConfig(configService.dao());
+                if (Globals.RabbitMQEnabled) {
+                    String exchange = "fanoutExchange";
+                    String routeKey = "sysconfig";
+                    RabbitMessage msg = new RabbitMessage(exchange, routeKey, new NutMap());
+                    rabbitProducer.sendMessage(msg);
+                }
             }
             return Result.success("system.success");
         } catch (Exception e) {

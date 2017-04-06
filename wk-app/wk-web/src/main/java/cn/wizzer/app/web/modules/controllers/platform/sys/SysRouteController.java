@@ -7,11 +7,14 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
+import cn.wizzer.framework.rabbit.RabbitMessage;
+import cn.wizzer.framework.rabbit.RabbitProducer;
 import cn.wizzer.framework.util.StringUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -25,6 +28,8 @@ public class SysRouteController {
     private static final Log log = Logs.get();
     @Inject
     private SysRouteService routeService;
+    @Inject
+    private RabbitProducer rabbitProducer;
 
     @At("")
     @Ok("beetl:/platform/sys/route/index.html")
@@ -56,6 +61,12 @@ public class SysRouteController {
         try {
             routeService.insert(route);
             Globals.initRoute(routeService.dao());
+            if(Globals.RabbitMQEnabled){
+                String exchange = "fanoutExchange";
+                String routeKey = "sysroute";
+                RabbitMessage msg = new RabbitMessage(exchange, routeKey, new NutMap());
+                rabbitProducer.sendMessage(msg);
+            }
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -79,6 +90,12 @@ public class SysRouteController {
             route.setOpAt((int) (System.currentTimeMillis() / 1000));
             routeService.updateIgnoreNull(route);
             Globals.initRoute(routeService.dao());
+            if(Globals.RabbitMQEnabled){
+                String exchange = "fanoutExchange";
+                String routeKey = "sysroute";
+                RabbitMessage msg = new RabbitMessage(exchange, routeKey, new NutMap());
+                rabbitProducer.sendMessage(msg);
+            }
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -116,6 +133,12 @@ public class SysRouteController {
             req.setAttribute("url", route.getUrl());
             routeService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", id));
             Globals.initRoute(routeService.dao());
+            if(Globals.RabbitMQEnabled){
+                String exchange = "fanoutExchange";
+                String routeKey = "sysroute";
+                RabbitMessage msg = new RabbitMessage(exchange, routeKey, new NutMap());
+                rabbitProducer.sendMessage(msg);
+            }
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -132,6 +155,12 @@ public class SysRouteController {
             req.setAttribute("url", route.getUrl());
             routeService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", id));
             Globals.initRoute(routeService.dao());
+            if(Globals.RabbitMQEnabled){
+                String exchange = "fanoutExchange";
+                String routeKey = "sysroute";
+                RabbitMessage msg = new RabbitMessage(exchange, routeKey, new NutMap());
+                rabbitProducer.sendMessage(msg);
+            }
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");

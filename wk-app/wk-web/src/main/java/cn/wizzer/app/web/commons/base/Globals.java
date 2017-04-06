@@ -25,10 +25,12 @@ public class Globals {
     public static String AppDomain = "127.0.0.1";
     //文件上传路径
     public static String AppUploadPath = "/upload";
+    // 是否启用了队列
+    public static boolean RabbitMQEnabled = false;
     //系统自定义参数
-    public static Map<String, String> MyConfig=new HashMap<>();
+    public static Map<String, String> MyConfig = new HashMap<>();
     //自定义路由
-    public static Map<String, Sys_route> RouteMap=new HashMap<>();
+    public static Map<String, Sys_route> RouteMap = new HashMap<>();
 
     public static void initSysConfig(Dao dao) {
         Globals.MyConfig.clear();

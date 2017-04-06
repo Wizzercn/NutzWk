@@ -4,6 +4,8 @@ import cn.wizzer.app.sys.modules.models.*;
 import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.plugin.IPlugin;
 import cn.wizzer.app.web.commons.plugin.PluginMaster;
+
+import com.rabbitmq.client.*;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -18,15 +20,20 @@ import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
+import org.nutz.json.Json;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Files;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
+import org.nutz.lang.random.R;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
 import org.quartz.Scheduler;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +62,8 @@ public class Setup implements org.nutz.mvc.Setup {
             initSysRoute(config, dao);
             // 初始化热插拔插件
             initSysPlugin(config, dao);
+            // 初始化rabbitmq
+            //initRabbit(config, dao);
             // 检查一下Ehcache CacheManager 是否正常,单机部署要让重启登录不失效需要执行一下
             CacheManager cacheManager = ioc.get(CacheManager.class);
             log.debug("Ehcache CacheManager = " + cacheManager);
@@ -62,6 +71,62 @@ public class Setup implements org.nutz.mvc.Setup {
                     "| \\| | | | |_   _|_  /\\ \\    / / |/ /\n" +
                     "| .` | |_| | | |  / /  \\ \\/\\/ /| ' < \n" +
                     "|_|\\_|\\___/  |_| /___|  \\_/\\_/ |_|\\_\\");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 初始化队列,用于集群部署时的数据更新
+     */
+    private void initRabbit(NutConfig config, Dao dao) {
+        try {
+            String queue = R.UU32(), topicQueue = "topicQueue";
+            ConnectionFactory factory = config.getIoc().get(ConnectionFactory.class, "rabbitmq_cf");
+            log.debug("RabbitMQ :::" + factory.getHost());
+            Connection conn = factory.newConnection();
+            Channel channel = conn.createChannel();
+            channel.queueDeclare(queue, true, true, false, null);
+            channel.queueDeclare(topicQueue, true, false, false, null);
+            channel.exchangeDeclare("topicExchange", BuiltinExchangeType.TOPIC, true);
+            channel.exchangeDeclare("fanoutExchange", BuiltinExchangeType.FANOUT, true);
+            channel.queueBind(queue, "fanoutExchange", "");
+            channel.queueBind(queue, "topicExchange", "topic.*");
+            //添加一个消费者,当系统参数/自定义路由修改时,重新初始化每个tomcat或jetty实例里的全局变量
+            channel.basicConsume(queue, false, "myConsumerTag",
+                    new DefaultConsumer(channel) {
+                        @Override
+                        public void handleDelivery(String consumerTag,
+                                                   Envelope envelope,
+                                                   AMQP.BasicProperties properties,
+                                                   byte[] body)
+                                throws IOException {
+                            String routingKey = envelope.getRoutingKey();
+                            String exchange = envelope.getExchange();
+                            NutMap params = Lang.fromBytes(body, NutMap.class);
+                            log.debug("RabbitMQ exchange=" + exchange + ",routingKey=" + routingKey + ",params=" + Json.toJson(params));
+                            long deliveryTag = envelope.getDeliveryTag();
+                            switch (exchange) {
+                                case "topicExchange"://主题模式,只需一个消费者消费
+                                    break;
+                                case "fanoutExchange"://广播模式,每个消费者都会消费
+                                    switch (routingKey) {
+                                        case "sysconfig":
+                                            Globals.initSysConfig(dao);
+                                            break;
+                                        case "sysroute":
+                                            Globals.initRoute(dao);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    break;
+                            }
+                            // (process the message components here ...)
+                            channel.basicAck(deliveryTag, false);
+                        }
+                    });
+            Globals.RabbitMQEnabled = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
