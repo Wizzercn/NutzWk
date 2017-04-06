@@ -145,6 +145,7 @@ public class StringUtil {
      */
     public static String getRemoteAddr() {
         HttpServletRequest request = Mvcs.getReq();
+        if (request == null) return "";
         String remoteAddr = request.getHeader("X-Real-IP");
         if (Strings.isNotBlank(remoteAddr)) {
             remoteAddr = request.getHeader("X-Forwarded-For");

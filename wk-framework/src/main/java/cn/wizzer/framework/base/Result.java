@@ -29,7 +29,11 @@ public class Result {
     }
 
     public Result addMsg(String msg) {
-        this.msg = Strings.isBlank(msg) ? "" : Mvcs.getActionContext().getRequest() == null ? msg : Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
+        if (Strings.isBlank(msg) || Mvcs.getActionContext() == null || Mvcs.getActionContext().getRequest() == null || Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg) == null) {
+            this.msg = "";
+        } else {
+            this.msg = Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
+        }
         return this;
     }
 
@@ -40,7 +44,11 @@ public class Result {
 
     public Result(int code, String msg, Object data) {
         this.code = code;
-        this.msg = Strings.isBlank(msg) ? "" : Mvcs.getActionContext().getRequest() == null ? msg : Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
+        if (Strings.isBlank(msg) || Mvcs.getActionContext() == null || Mvcs.getActionContext().getRequest() == null || Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg) == null) {
+            this.msg = "";
+        } else {
+            this.msg = Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
+        }
         this.data = data;
     }
 
