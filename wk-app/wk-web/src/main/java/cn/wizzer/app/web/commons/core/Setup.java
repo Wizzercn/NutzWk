@@ -846,6 +846,15 @@ public class Setup implements org.nutz.mvc.Setup {
             //不同的插入数据方式(安全)
             dao.insert("sys_user_unit", Chain.make("userId", dbuser.getId()).add("unitId", dbunit.getId()));
             dao.insert("sys_user_role", Chain.make("userId", dbuser.getId()).add("roleId", dbrole.getId()));
+            //执行Quartz SQL脚本
+            String dbType = dao.getJdbcExpert().getDatabaseType();
+            log.debug("dbType:::"+dbType);
+            FileSqlManager fmq = new FileSqlManager("quartz/" + dbType.toLowerCase()+".sql");
+            List<Sql> sqlListq = fmq.createCombo(fmq.keys());
+            Sql[] sqlsq = sqlListq.toArray(new Sql[sqlListq.size()]);
+            for (Sql sql : sqlsq) {
+                dao.execute(sql);
+            }
             //执行SQL脚本
             FileSqlManager fm = new FileSqlManager("db/");
             List<Sql> sqlList = fm.createCombo(fm.keys());
