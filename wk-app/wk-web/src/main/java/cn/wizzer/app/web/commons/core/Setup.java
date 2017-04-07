@@ -189,9 +189,16 @@ public class Setup implements org.nutz.mvc.Setup {
      * @param dao
      */
     private void initSysTask(NutConfig config, Dao dao) {
-        QuartzManager quartzManager = config.getIoc().get(QuartzManager.class);
-        quartzManager.clear();//启动时清除任务(不影响集群任务)
         if (0 == dao.count(Sys_task.class)) {
+            //执行Quartz SQL脚本
+            String dbType = dao.getJdbcExpert().getDatabaseType();
+            log.debug("dbType:::"+dbType);
+            FileSqlManager fmq = new FileSqlManager("quartz/" + dbType.toLowerCase()+".sql");
+            List<Sql> sqlListq = fmq.createCombo(fmq.keys());
+            Sql[] sqlsq = sqlListq.toArray(new Sql[sqlListq.size()]);
+            for (Sql sql : sqlsq) {
+                dao.execute(sql);
+            }
             //定时任务示例
             Sys_task task = new Sys_task();
             task.setDisabled(true);
@@ -202,6 +209,8 @@ public class Setup implements org.nutz.mvc.Setup {
             task.setNote("微信号：wizzer | 欢迎发送红包以示支持，多谢。。");
             dao.insert(task);
         }
+        QuartzManager quartzManager = config.getIoc().get(QuartzManager.class);
+        quartzManager.clear();//启动时清除任务(不影响集群任务)
         List<Sys_task> taskList = dao.query(Sys_task.class, Cnd.where("disabled", "=", 0));
         for (Sys_task sysTask : taskList) {
             try {
@@ -846,15 +855,6 @@ public class Setup implements org.nutz.mvc.Setup {
             //不同的插入数据方式(安全)
             dao.insert("sys_user_unit", Chain.make("userId", dbuser.getId()).add("unitId", dbunit.getId()));
             dao.insert("sys_user_role", Chain.make("userId", dbuser.getId()).add("roleId", dbrole.getId()));
-            //执行Quartz SQL脚本
-            String dbType = dao.getJdbcExpert().getDatabaseType();
-            log.debug("dbType:::"+dbType);
-            FileSqlManager fmq = new FileSqlManager("quartz/" + dbType.toLowerCase()+".sql");
-            List<Sql> sqlListq = fmq.createCombo(fmq.keys());
-            Sql[] sqlsq = sqlListq.toArray(new Sql[sqlListq.size()]);
-            for (Sql sql : sqlsq) {
-                dao.execute(sql);
-            }
             //执行SQL脚本
             FileSqlManager fm = new FileSqlManager("db/");
             List<Sql> sqlList = fm.createCombo(fm.keys());
