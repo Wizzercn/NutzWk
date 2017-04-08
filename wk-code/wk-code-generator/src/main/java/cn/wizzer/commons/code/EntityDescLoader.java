@@ -44,10 +44,10 @@ public class EntityDescLoader extends Loader {
         for (File file : files) {
             String fileName = file.getName().split("\\.")[0];
             String className = packageName + "." + fileName;
-            Class<?> modelClass = Class.forName(className);
-            if (className.contains(".Model")) {
+            if (className.contains(".Model")||className.contains(".em")) {
                 continue;
             }
+            Class<?> modelClass = Class.forName(className);
             Mirror<?> mirror = Mirror.me(modelClass);
             Table tableAnno = mirror.getAnnotation(Table.class);
             if (tableAnno == null) {
