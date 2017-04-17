@@ -84,7 +84,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      */
     public List<Sys_menu> getMenus(String userId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
-                " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=0) and a.disabled=0 and a.isShow=1 and a.type='menu' order by a.location ASC,a.path asc");
+                " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=false) and a.disabled=false and a.isShow=true and a.type='menu' order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
@@ -101,7 +101,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      */
     public List<Sys_menu> getMenusAndButtons(String userId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
-                " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=0) and a.disabled=0 order by a.location ASC,a.path asc");
+                " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=false) and a.disabled=false order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
@@ -118,7 +118,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      */
     public List<Sys_menu> getDatas(String userId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId  and " +
-                " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=0) and a.disabled=0 and a.type='data' order by a.location ASC,a.path asc");
+                " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=false) and a.disabled=false and a.type='data' order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);

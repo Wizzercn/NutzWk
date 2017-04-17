@@ -58,7 +58,7 @@ public class Globals {
 
     public static void initRoute(Dao dao) {
         Globals.RouteMap.clear();
-        List<Sys_route> routeList = dao.query(Sys_route.class, Cnd.where("disabled", "=", 0));
+        List<Sys_route> routeList = dao.query(Sys_route.class, Cnd.where("disabled", "=", false));
         for (Sys_route route : routeList) {
             Globals.RouteMap.put(route.getUrl(), route);
         }
