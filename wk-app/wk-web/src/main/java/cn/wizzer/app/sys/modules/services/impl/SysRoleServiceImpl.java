@@ -67,7 +67,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
         dao().fetchLinks(role, "menus");
         List<String> list = new ArrayList<String>();
         for (Sys_menu menu : role.getMenus()) {
-            if (!Strings.isEmpty(menu.getPermission())) {
+            if (!Strings.isEmpty(menu.getPermission()) && !menu.isDisabled()) {
                 list.add(menu.getPermission());
             }
         }
