@@ -55,6 +55,7 @@ Released under the UploadiFive Standard License <http://www.uploadify.com/upload
                     'queueID'         : false,              // The ID of the file queue
                     'queueSizeLimit'  : 0,                  // The maximum number of files that can be in the queue
                     'removeCompleted' : false,              // Set to true to remove files that have completed uploading
+                    'removeTimeout' :  1,                   // Set remove files that timeout senconds
                     'simUploadLimit'  : 0,                  // The maximum number of files to upload at once
                     'truncateLength'  : 0,                  // The length to truncate the file names to
                     'uploadLimit'     : 0,                  // The maximum number of files you can upload
@@ -565,7 +566,9 @@ Released under the UploadiFive Standard License <http://www.uploadify.com/upload
                         settings.onUploadComplete.call($this, file, file.xhr.responseText);
                     }
                     if (settings.removeCompleted) {
-                        setTimeout(function() { methods.cancel.call($this, file); }, 3000);
+                        if (settings.removeTimeout == 0) {
+                            methods.cancel.call($this, file);
+                        }else setTimeout(function() { methods.cancel.call($this, file); }, settings.removeTimeout*1000);
                     }
                     file.complete = true;
                     $data.uploads.successful++;
