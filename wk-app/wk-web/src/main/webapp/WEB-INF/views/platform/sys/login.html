@@ -140,10 +140,11 @@
         return new RSAKeyPair("${publicKeyExponent!'10001'}","","${publicKeyModulus!'a5aeb8c636ef1fda5a7a17a2819e51e1ea6e0cceb24b95574ae026536243524f322807df2531a42139389674545f4c596db162f6e6bbb26498baab074c036777'}");
     }
     var key =  bodyRSA();
-
+    var temp;
     $(document).ready(function () {
         $("#year").html(new Date().getFullYear());
         $("#login").on("click",function () {
+            temp=$("#password").val();
             $("#password").val(encryptedString(key,$("#password").val().split("").reverse().join("")));
             $("#loginForm").submit();
         });
@@ -160,7 +161,7 @@
                     window.location.href = "${base!}/platform/home";
                 } else if (data.code == 2) {
                     $("#verifycode").val("");
-                    $("#password").val("").focus();
+                    $("#password").val(temp);
                     $("#dialogVeryCode img").attr("src", '${base!}/platform/login/captcha?_=' + new Date().getTime());
                     return $("#dialogVeryCode").modal({show: true, backdrop: 'static', keyboard: false});
                 } else {
