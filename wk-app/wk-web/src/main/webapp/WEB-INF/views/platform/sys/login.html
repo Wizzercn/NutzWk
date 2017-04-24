@@ -23,6 +23,9 @@
     <script src="${base!}/assets/plugins/modernizr.js"></script>
     <script src="${base!}/assets/plugins/jquery-1.11.1.min.js"></script>
     <script src="${base!}/assets/js/jquery.pjax.js"></script>
+    <script src="${base!}/assets/js/sso/RSA.js"></script>
+    <script src="${base!}/assets/js/sso/BigInt.js"></script>
+    <script src="${base!}/assets/js/sso/Barrett.js"></script>
 
 <body>
 <div class="overlay"></div>
@@ -81,7 +84,7 @@
                             <p id="tip" class="bg-danger p15" style="display:none"></p>
 
                             <div class="show">
-                                <button class="btn btn-primary btn-lg btn-block" type="submit"
+                                <button id="login" class="btn btn-primary btn-lg btn-block" type="button"
                                         data-loading-text="${msg['login.submit']}...">
                                     ${msg['login.submit']}
                                 </button>
@@ -131,8 +134,19 @@
 </div>
 
 <script type="text/javascript">
+    function bodyRSA()
+    {
+        setMaxDigits(200);
+        return new RSAKeyPair("${publicKeyExponent!'10001'}","","${publicKeyModulus!'a5aeb8c636ef1fda5a7a17a2819e51e1ea6e0cceb24b95574ae026536243524f322807df2531a42139389674545f4c596db162f6e6bbb26498baab074c036777'}");
+    }
+    var key =  bodyRSA();
+
     $(document).ready(function () {
         $("#year").html(new Date().getFullYear());
+        $("#login").on("click",function () {
+            $("#password").val(encryptedString(key,$("#password").val().split("").reverse().join("")));
+            $("#loginForm").submit();
+        });
         $("#loginForm").ajaxForm({
             dataType: 'json',
             beforeSubmit: function (arr, form, options) {
@@ -146,10 +160,12 @@
                     window.location.href = "${base!}/platform/home";
                 } else if (data.code == 2) {
                     $("#verifycode").val("");
+                    $("#password").val("").focus();
                     $("#dialogVeryCode img").attr("src", '${base!}/platform/login/captcha?_=' + new Date().getTime());
                     return $("#dialogVeryCode").modal({show: true, backdrop: 'static', keyboard: false});
                 } else {
                     $("#captcha").val("");
+                    $("#password").val("").focus();
                     $('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime());
                     $("#tip").html(data.msg);
                     $("#tip").fadeIn();

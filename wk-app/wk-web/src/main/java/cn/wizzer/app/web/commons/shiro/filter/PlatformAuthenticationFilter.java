@@ -2,23 +2,26 @@ package cn.wizzer.app.web.commons.shiro.filter;
 
 
 import cn.wizzer.framework.shiro.token.CaptchaToken;
+import cn.wizzer.framework.util.RSAUtil;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionFilter;
 import org.nutz.mvc.View;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.security.interfaces.RSAPrivateKey;
 
 /**
  * Created by wizzer on 2017/1/10.
  */
 public class PlatformAuthenticationFilter extends FormAuthenticationFilter implements ActionFilter {
-
+    private final static Log log= Logs.get();
     private String captchaParam = "platformCaptcha";
 
     public String getCaptchaParam() {
@@ -35,6 +38,15 @@ public class PlatformAuthenticationFilter extends FormAuthenticationFilter imple
         String captcha = getCaptcha(request);
         boolean rememberMe = isRememberMe(request);
         String host = getHost(request);
+        try {
+            RSAPrivateKey platformPrivateKey = (RSAPrivateKey) request.getSession().getAttribute("platformPrivateKey");
+            if (platformPrivateKey != null) {
+                password = RSAUtil.decryptByPrivateKey(password, platformPrivateKey);
+                SecurityUtils.getSubject().getSession(true).removeAttribute("platformPrivateKey");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return new CaptchaToken(username, password, rememberMe, host, captcha);
     }
 

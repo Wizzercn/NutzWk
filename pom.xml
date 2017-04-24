@@ -351,6 +351,12 @@
             <version>${nutz-version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- RSA -->
+        <dependency>
+            <groupId>bouncycastle</groupId>
+            <artifactId>bcprov-jdk16</artifactId>
+            <version>140</version>
+        </dependency>
         <!-- wk-code-generator -->
         <dependency>
             <groupId>cn.wizzer</groupId>
