@@ -6,7 +6,7 @@ layout("/layouts/platform.html"){
 <section class="content-wrap bg-white">
     <header class="header navbar bg-white shadow">
         <div class="btn-group tool-button">
-            <a id="add" class="btn btn-primary navbar-btn" href="$base${table.UriPrefix}/add" data-pjax><i class="ti-plus"></i> ${msg['globals.button.add']}${table.Label}</a>
+            <a id="add" class="btn btn-primary navbar-btn" href="$base${table.UriPrefix}/add" data-pjax><i class="ti-plus"></i> ${msg['globals.button.add']}</a>
             <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['globals.button.delete.more']}</button>
         </div>
     </header>
