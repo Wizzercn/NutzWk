@@ -211,7 +211,11 @@ public class Generator {
                     continue;
                 }
                 if (type.equals("view")) {
-                    generateViews(force, table, generator, pages);
+                    String viewpath = "view";
+                    if (!hasLocale(types)) {
+                        viewpath = "view_notlocale";
+                    }
+                    generateViews(force, viewpath, table, generator, pages);
                 } else if (type.equals("locale")) {
                     generateLocales(force, table, generator);
                 } else {
@@ -247,6 +251,15 @@ public class Generator {
         log.debug("done!");
     }
 
+    private static boolean hasLocale(String[] types) {
+        for (String t : types) {
+            if (t.equalsIgnoreCase("locale")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static boolean isTypeMatch(String[] types, String type) {
         for (String t : types) {
             if (t.equalsIgnoreCase(type) || (t + "Impl").equalsIgnoreCase(type) || "all".equalsIgnoreCase(t)) {
@@ -272,14 +285,14 @@ public class Generator {
 
     }
 
-    private static void generateViews(boolean force,
+    private static void generateViews(boolean force, String viewpath,
                                       TableDescriptor table,
                                       Generator generator,
                                       String[] pages)
             throws IOException {
 
         for (String view : pages) {
-            String templatePath = "templet/view/" + view + ".html.vm";
+            String templatePath = "templet/" + viewpath + "/" + view + ".html.vm";
             File file = new File("src/main/webapp/WEB-INF/views/"
                     + table.getViewBasePath()
                     + "/"
