@@ -69,7 +69,7 @@
                         <form id="loginForm" action="${base!}/platform/login/doLogin" data-parsley-validate="" novalidate=""
                               role="form"
                               method="post">
-                            <input type="hidden" id="captcha" name="captcha">
+                            <input type="hidden" id="platformCaptcha" name="platformCaptcha">
 
                             <div class="form-group">
                                 <input type="text" id="username" name="username" value="superadmin" required
@@ -165,7 +165,7 @@
                     $("#dialogVeryCode img").attr("src", '${base!}/platform/login/captcha?_=' + new Date().getTime());
                     return $("#dialogVeryCode").modal({show: true, backdrop: 'static', keyboard: false});
                 } else {
-                    $("#captcha").val("");
+                    $("#platformCaptcha").val("");
                     $("#password").val("").focus();
                     $('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime());
                     $("#tip").html(data.msg);
@@ -180,7 +180,7 @@
                 $("#f2").submit();
                 return false;
             }
-            $("#captcha").val($("#verifycode").val());
+            $("#platformCaptcha").val($("#verifycode").val());
             $("#loginForm").submit();
         });
         $("#dialogVeryCode").on("keypress", function (event) {
