@@ -322,7 +322,7 @@ public class SysUserController {
     @RequiresAuthentication
     public Object customDo(@Param("ids") String ids, HttpServletRequest req) {
         try {
-            userService.update(Chain.make("customMenu", ids), Cnd.where("id", "=", req.getAttribute("uid")));
+            userService.update(Chain.make("customMenu", ids), Cnd.where("id", "=",StringUtil.getUid()));
             Subject subject = SecurityUtils.getSubject();
             Sys_user user = (Sys_user) subject.getPrincipal();
             if (!Strings.isBlank(ids)) {
