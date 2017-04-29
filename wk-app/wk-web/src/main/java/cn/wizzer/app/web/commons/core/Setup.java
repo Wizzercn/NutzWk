@@ -5,6 +5,7 @@ import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.plugin.IPlugin;
 import cn.wizzer.app.web.commons.plugin.PluginMaster;
 
+import cn.wizzer.framework.ig.RedisIdGenerator;
 import com.rabbitmq.client.*;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.crypto.RandomNumberGenerator;
@@ -17,6 +18,7 @@ import org.nutz.dao.Sqls;
 import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
+import org.nutz.el.opt.custom.CustomMake;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
@@ -67,6 +69,8 @@ public class Setup implements org.nutz.mvc.Setup {
             // 检查一下Ehcache CacheManager 是否正常
             CacheManager cacheManager = ioc.get(CacheManager.class);
             log.debug("Ehcache CacheManager = " + cacheManager);
+            // 初始化redis实现的id生成器
+            CustomMake.me().register("ig", ioc.get(RedisIdGenerator.class));
             log.info("\n _  _ _   _ _____ ______      ___  __\n" +
                     "| \\| | | | |_   _|_  /\\ \\    / / |/ /\n" +
                     "| .` | |_| | | |  / /  \\ \\/\\/ /| ' < \n" +
