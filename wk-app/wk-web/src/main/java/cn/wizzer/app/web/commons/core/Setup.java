@@ -8,6 +8,7 @@ import cn.wizzer.app.web.commons.plugin.PluginMaster;
 import cn.wizzer.framework.ig.RedisIdGenerator;
 import com.rabbitmq.client.*;
 import net.sf.ehcache.CacheManager;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -15,10 +16,15 @@ import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
+import org.nutz.dao.entity.Entity;
+import org.nutz.dao.entity.Record;
+import org.nutz.dao.entity.annotation.Table;
 import org.nutz.dao.impl.FileSqlManager;
+import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
 import org.nutz.el.opt.custom.CustomMake;
+import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
@@ -32,7 +38,9 @@ import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
+import org.nutz.resource.Scans;
 import org.quartz.Scheduler;
+import redis.clients.jedis.Jedis;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +62,8 @@ public class Setup implements org.nutz.mvc.Setup {
             }
             Ioc ioc = config.getIoc();
             Dao dao = ioc.get(Dao.class);
+            // 初始化redis实现的id生成器
+            CustomMake.me().register("ig", ioc.get(RedisIdGenerator.class));
             // 初始化数据表
             initSysData(config, dao);
             // 初始化系统变量
@@ -66,11 +76,11 @@ public class Setup implements org.nutz.mvc.Setup {
             initSysPlugin(config, dao);
             // 初始化rabbitmq
             //initRabbit(config, dao);
+            // 初始化ig缓存
+            //initRedisIg(ioc.get(JedisAgent.class), dao);
             // 检查一下Ehcache CacheManager 是否正常
             CacheManager cacheManager = ioc.get(CacheManager.class);
             log.debug("Ehcache CacheManager = " + cacheManager);
-            // 初始化redis实现的id生成器
-            CustomMake.me().register("ig", ioc.get(RedisIdGenerator.class));
             log.info("\n _  _ _   _ _____ ______      ___  __\n" +
                     "| \\| | | | |_   _|_  /\\ \\    / / |/ /\n" +
                     "| .` | |_| | | |  / /  \\ \\/\\/ /| ' < \n" +
@@ -78,6 +88,37 @@ public class Setup implements org.nutz.mvc.Setup {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 当项目启动的时候把表主键加载到redis缓存中
+     */
+    private void initRedisIg(JedisAgent jedisAgent, Dao dao) {
+        long a = System.currentTimeMillis();
+        try (Jedis jedis = jedisAgent.getResource()) {
+            for (Class<?> klass : Scans.me().scanPackage("cn.wizzer.app")) {
+                if (klass.getAnnotation(Table.class) != null) {
+                    Entity<?> en = dao.getEntity(klass);
+                    String tableName = en.getTableName();
+                    String key = tableName.replaceAll("_", "").toUpperCase();
+                    if (key.length() > 22) {
+                        key = key.substring(0, 22);
+                    } else if (key.length() < 22) {
+                        key = Strings.alignLeft(key, 22, 'A');
+                    }
+                    List<Record> list = dao.query(tableName, Cnd.NEW().desc("opAt"), new Pager().setPageSize(1).setPageNumber(1));
+                    if (list.size() > 0) {
+                        String id = Strings.sNull(list.get(0).get("id"));
+                        String val = jedis.get(key);
+                        if (id.startsWith(key) && Strings.isBlank(val)) {
+                            jedis.set("aebiz-ig:" + key, String.valueOf(NumberUtils.toLong(id.substring(22), 1)));
+                        }
+                    }
+                }
+            }
+        }
+        long b = System.currentTimeMillis();
+        log.info("init redis ig time::" + (b - a) + "ms");
     }
 
     /**
@@ -196,8 +237,8 @@ public class Setup implements org.nutz.mvc.Setup {
         if (0 == dao.count(Sys_task.class)) {
             //执行Quartz SQL脚本
             String dbType = dao.getJdbcExpert().getDatabaseType();
-            log.debug("dbType:::"+dbType);
-            FileSqlManager fmq = new FileSqlManager("quartz/" + dbType.toLowerCase()+".sql");
+            log.debug("dbType:::" + dbType);
+            FileSqlManager fmq = new FileSqlManager("quartz/" + dbType.toLowerCase() + ".sql");
             List<Sql> sqlListq = fmq.createCombo(fmq.keys());
             Sql[] sqlsq = sqlListq.toArray(new Sql[sqlListq.size()]);
             for (Sql sql : sqlsq) {
