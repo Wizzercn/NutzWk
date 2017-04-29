@@ -24,7 +24,7 @@ public class RedisIdGenerator implements IdGenerator {
     public String next(String tableName) {
         String key = tableName.replaceAll("_", "").toUpperCase();
         if (key.length() > 22) {
-            key = key.substring(22);
+            key = key.substring(0, 22);
         } else if (key.length() < 22) {
             key = Strings.alignLeft(key, 22, 'A');
         }
