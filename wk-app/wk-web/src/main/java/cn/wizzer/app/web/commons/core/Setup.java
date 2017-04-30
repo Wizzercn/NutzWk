@@ -111,7 +111,7 @@ public class Setup implements org.nutz.mvc.Setup {
                         String id = Strings.sNull(list.get(0).get("id"));
                         String val = jedis.get(key);
                         if (id.startsWith(key) && Strings.isBlank(val)) {
-                            jedis.set("aebiz-ig:" + key, String.valueOf(NumberUtils.toLong(id.substring(22), 1)));
+                            jedis.set("ig:" + key, String.valueOf(NumberUtils.toLong(id.substring(22), 1)));
                         }
                     }
                 }
