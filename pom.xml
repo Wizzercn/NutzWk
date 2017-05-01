@@ -17,7 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jetty-version>9.4.2.v20170220</jetty-version>
-        <nutz-version>1.r.61-SNAPSHOT</nutz-version>
+        <nutz-version>1.r.62-SNAPSHOT</nutz-version>
     </properties>
     <developers>
         <developer>
@@ -428,4 +428,10 @@
             </plugin>
         </plugins>
     </build>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>nutzcn-snapshots</id>
+            <url>https://jfrog.nutz.cn/artifactory/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
