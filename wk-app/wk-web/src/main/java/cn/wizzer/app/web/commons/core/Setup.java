@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by wizzer on 2016/6/21.
@@ -100,19 +101,12 @@ public class Setup implements org.nutz.mvc.Setup {
                 if (klass.getAnnotation(Table.class) != null) {
                     Entity<?> en = dao.getEntity(klass);
                     String tableName = en.getTableName();
-                    String key = tableName.replaceAll("_", "").toUpperCase();
-                    if (key.length() > 22) {
-                        key = key.substring(0, 22);
-                    } else if (key.length() < 22) {
-                        key = Strings.alignLeft(key, 22, 'A');
-                    }
                     if (en.getNameField() != null && "id".equalsIgnoreCase(en.getNameField().getColumnName())) {
-                        List<Record> list = dao.query(tableName, Cnd.where("id", "like", key + "%").desc("id"), new Pager().setPageSize(1).setPageNumber(1));
+                        List<Record> list = dao.query(tableName, Cnd.NEW().desc("id"), new Pager().setPageSize(1).setPageNumber(1));
                         if (list.size() > 0) {
                             String id = Strings.sNull(list.get(0).get("id"));
-                            String val = jedis.get(key);
-                            if (id.startsWith(key) && Strings.isBlank(val)) {
-                                jedis.set("ig:" + key, String.valueOf(NumberUtils.toLong(id.substring(22), 1)));
+                            if (Strings.isMatch(Pattern.compile("^.+[\\d]{16}$"), id) && Strings.isBlank(jedis.get(en.getTableName().toLowerCase()))) {
+                                jedis.set("ig:" + en.getTableName().toLowerCase(), String.valueOf(NumberUtils.toLong(id.substring(id.length() - 10, id.length()), 1)));
                             }
                         }
                     }

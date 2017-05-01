@@ -1,11 +1,13 @@
 package cn.wizzer.framework.ig;
 
+import cn.wizzer.framework.util.DateUtil;
 import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import redis.clients.jedis.Jedis;
 
+import java.util.Date;
 import java.util.List;
 
 @IocBean
@@ -21,21 +23,19 @@ public class RedisIdGenerator implements IdGenerator {
         this.jedisAgent = jedisAgent;
     }
 
-    public String next(String tableName) {
-        String key = tableName.replaceAll("_", "").toUpperCase();
-        if (key.length() > 22) {
-            key = key.substring(0, 22);
-        } else if (key.length() < 22) {
-            key = Strings.alignLeft(key, 22, 'A');
+    public String next(String tableName, String prefix) {
+        String key = prefix.toUpperCase();
+        if (key.length() > 16) {
+            key = key.substring(0, 16);
         }
         try (Jedis jedis = jedisAgent.getResource()) {
-            String id = String.valueOf(jedis.incr("ig:" + key));
-            return key + Strings.alignRight(id, 10, '0');
+            String id = String.valueOf(jedis.incr("ig:" + tableName.toUpperCase()));
+            return key + DateUtil.format(new Date(), "yyyyMM") + Strings.alignRight(id, 10, '0');
         }
     }
 
     public Object run(List<Object> fetchParam) {
-        return next((String) fetchParam.get(0));
+        return next((String) fetchParam.get(0), (String) fetchParam.get(1));
     }
 
     public String fetchSelf() {
