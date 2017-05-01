@@ -106,12 +106,14 @@ public class Setup implements org.nutz.mvc.Setup {
                     } else if (key.length() < 22) {
                         key = Strings.alignLeft(key, 22, 'A');
                     }
-                    List<Record> list = dao.query(tableName, Cnd.NEW().desc("opAt"), new Pager().setPageSize(1).setPageNumber(1));
-                    if (list.size() > 0) {
-                        String id = Strings.sNull(list.get(0).get("id"));
-                        String val = jedis.get(key);
-                        if (id.startsWith(key) && Strings.isBlank(val)) {
-                            jedis.set("ig:" + key, String.valueOf(NumberUtils.toLong(id.substring(22), 1)));
+                    if (en.getNameField() != null && "id".equalsIgnoreCase(en.getNameField().getColumnName())) {
+                        List<Record> list = dao.query(tableName, Cnd.where("id", "like", key + "%").desc("id"), new Pager().setPageSize(1).setPageNumber(1));
+                        if (list.size() > 0) {
+                            String id = Strings.sNull(list.get(0).get("id"));
+                            String val = jedis.get(key);
+                            if (id.startsWith(key) && Strings.isBlank(val)) {
+                                jedis.set("ig:" + key, String.valueOf(NumberUtils.toLong(id.substring(22), 1)));
+                            }
                         }
                     }
                 }
