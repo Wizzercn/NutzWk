@@ -104,10 +104,12 @@ public class Setup implements org.nutz.mvc.Setup {
                     if (en.getNameField() != null && "id".equalsIgnoreCase(en.getNameField().getColumnName())) {
                         List<Record> list = dao.query(tableName, Cnd.NEW().desc("id"), new Pager().setPageSize(1).setPageNumber(1));
                         if (list.size() > 0) {
-                            String id = Strings.sNull(list.get(0).get("id"));
-                            String ym = id.substring(id.length() - 16, id.length() - 10);
-                            if (Strings.isMatch(Pattern.compile("^.+[\\d]{16}$"), id) && Strings.isBlank(jedis.get("ig:" + en.getTableName().toLowerCase() + ym))) {
-                                jedis.set("ig:" + en.getTableName().toLowerCase(), String.valueOf(NumberUtils.toLong(id.substring(id.length() - 10, id.length()), 1)));
+                            String id = list.get(0).getString("id");
+                            if (Strings.isMatch(Pattern.compile("^.*[\\d]{16}$"), id)) {
+                                String ym = id.substring(id.length() - 16, id.length() - 10);
+                                if (Strings.isBlank(jedis.get("ig:" + en.getTableName().toUpperCase() + ym))) {
+                                    jedis.set("ig:" + en.getTableName().toUpperCase()+ ym, String.valueOf(NumberUtils.toLong(id.substring(id.length() - 10, id.length()), 1)));
+                                }
                             }
                         }
                     }
