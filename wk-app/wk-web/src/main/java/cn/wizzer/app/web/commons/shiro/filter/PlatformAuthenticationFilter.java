@@ -42,7 +42,6 @@ public class PlatformAuthenticationFilter extends FormAuthenticationFilter imple
             RSAPrivateKey platformPrivateKey = (RSAPrivateKey) request.getSession().getAttribute("platformPrivateKey");
             if (platformPrivateKey != null) {
                 password = RSAUtil.decryptByPrivateKey(password, platformPrivateKey);
-                SecurityUtils.getSubject().getSession(true).removeAttribute("platformPrivateKey");
             }
         } catch (Exception e) {
             e.printStackTrace();
