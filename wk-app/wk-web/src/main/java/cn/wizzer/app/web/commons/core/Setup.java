@@ -105,7 +105,8 @@ public class Setup implements org.nutz.mvc.Setup {
                         List<Record> list = dao.query(tableName, Cnd.NEW().desc("id"), new Pager().setPageSize(1).setPageNumber(1));
                         if (list.size() > 0) {
                             String id = Strings.sNull(list.get(0).get("id"));
-                            if (Strings.isMatch(Pattern.compile("^.+[\\d]{16}$"), id) && Strings.isBlank(jedis.get(en.getTableName().toLowerCase()))) {
+                            String ym = id.substring(id.length() - 16, id.length() - 10);
+                            if (Strings.isMatch(Pattern.compile("^.+[\\d]{16}$"), id) && Strings.isBlank(jedis.get("ig:" + en.getTableName().toLowerCase() + ym))) {
                                 jedis.set("ig:" + en.getTableName().toLowerCase(), String.valueOf(NumberUtils.toLong(id.substring(id.length() - 10, id.length()), 1)));
                             }
                         }
