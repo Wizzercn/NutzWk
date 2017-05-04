@@ -28,6 +28,7 @@ import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.json.Json;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Files;
@@ -78,7 +79,7 @@ public class Setup implements org.nutz.mvc.Setup {
             // 初始化rabbitmq
             //initRabbit(config, dao);
             // 初始化ig缓存
-            //initRedisIg(ioc.get(JedisAgent.class), dao);
+            //initRedisIg(ioc.get(JedisAgent.class), ioc.get(PropertiesProxy.class, "conf"), dao);
             // 检查一下Ehcache CacheManager 是否正常
             CacheManager cacheManager = ioc.get(CacheManager.class);
             log.debug("Ehcache CacheManager = " + cacheManager);
@@ -94,23 +95,28 @@ public class Setup implements org.nutz.mvc.Setup {
     /**
      * 当项目启动的时候把表主键加载到redis缓存中
      */
-    private void initRedisIg(JedisAgent jedisAgent, Dao dao) {
+    private void initRedisIg(JedisAgent jedisAgent, PropertiesProxy conf, Dao dao) {
         long a = System.currentTimeMillis();
         try (Jedis jedis = jedisAgent.getResource()) {
-            for (Class<?> klass : Scans.me().scanPackage("cn.wizzer.app")) {
-                if (klass.getAnnotation(Table.class) != null) {
-                    Entity<?> en = dao.getEntity(klass);
-                    String tableName = en.getTableName();
-                    if (en.getNameField() != null && "id".equalsIgnoreCase(en.getNameField().getColumnName())) {
-                        List<Record> list = dao.query(tableName, Cnd.NEW().desc("id"), new Pager().setPageSize(1).setPageNumber(1));
-                        if (list.size() > 0) {
-                            String id = list.get(0).getString("id");
-                            if (Strings.isMatch(Pattern.compile("^.*[\\d]{16}$"), id)) {
-                                String ym = id.substring(id.length() - 16, id.length() - 10);
-                                if (Strings.isBlank(jedis.get("ig:" + en.getTableName().toUpperCase() + ym))) {
-                                    jedis.set("ig:" + en.getTableName().toUpperCase()+ ym, String.valueOf(NumberUtils.toLong(id.substring(id.length() - 10, id.length()), 1)));
-                                }
-                            }
+            Sql sql;
+            if ("mysql".equalsIgnoreCase(dao.getJdbcExpert().getDatabaseType())) {
+                sql = Sqls.create("SELECT table_name FROM information_schema.columns WHERE table_schema='" + conf.get("db.name", "") + "' AND column_name='id'");
+            } else {
+                //oracle mssql该怎么写呢,等你来添加...
+                log.info("wait for you ...");
+                return;
+            }
+            sql.setCallback(Sqls.callback.strs());
+            dao.execute(sql);
+            List<String> tableNameList = sql.getList(String.class);
+            for (String tableName : tableNameList) {
+                List<Record> list = dao.query(tableName, Cnd.NEW().desc("id"), new Pager().setPageSize(1).setPageNumber(1));
+                if (list.size() > 0) {
+                    String id = list.get(0).getString("id");
+                    if (Strings.isMatch(Pattern.compile("^.*[\\d]{16}$"), id)) {
+                        String ym = id.substring(id.length() - 16, id.length() - 10);
+                        if (Strings.isBlank(jedis.get("ig:" + tableName.toUpperCase() + ym))) {
+                            jedis.set("ig:" + tableName.toUpperCase() + ym, String.valueOf(NumberUtils.toLong(id.substring(id.length() - 10, id.length()), 1)));
                         }
                     }
                 }
