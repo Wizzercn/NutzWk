@@ -421,10 +421,11 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
 
     /**
      * 获取全部数据
+     *
      * @return
      */
     public List<T> query() {
-        return dao().query(getEntityClass(),null);
+        return dao().query(getEntityClass(), null);
     }
 
     /**
@@ -581,7 +582,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         pageNumber = getPageNumber(pageNumber);
         pageSize = getPageSize(pageSize);
         Pager pager = this.dao().createPager(pageNumber, pageSize);
-        List<T> list = Daos.ext(this.dao(), FieldFilter.create(this.getEntityClass(), fieldName)).query(this.getEntityClass(), cnd);
+        List<T> list = Daos.ext(this.dao(), FieldFilter.create(this.getEntityClass(), fieldName)).query(this.getEntityClass(), cnd, pager);
         pager.setRecordCount(this.dao().count(this.getEntityClass(), cnd));
         return new Pagination(pageNumber, pageSize, pager.getRecordCount(), list);
     }
