@@ -6,7 +6,7 @@ layout("/layouts/platform.html"){
 #set($base = '${base}')
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="$base${table.UriPrefix}" id="goBack" data-pjax><i class="ti-angle-left"></i>${msg['globals.button.back']}</a>
+        <a class="btn btn-primary navbar-btn" href="$base${table.UriPrefix}" id="goBack" data-pjax><i class="ti-angle-left"></i>返回</a>
     </div>
 </header>
 
