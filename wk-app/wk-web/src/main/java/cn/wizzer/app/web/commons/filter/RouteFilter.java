@@ -2,6 +2,7 @@ package cn.wizzer.app.web.commons.filter;
 
 import cn.wizzer.app.sys.modules.models.Sys_route;
 import cn.wizzer.app.web.commons.base.Globals;
+import org.nutz.lang.Strings;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,7 @@ public class RouteFilter implements Filter {
         HttpServletResponse res2 = (HttpServletResponse) res;
         res2.setCharacterEncoding("utf-8");
         req2.setCharacterEncoding("utf-8");
-        Sys_route route = Globals.RouteMap.get(req2.getRequestURI().replace(Globals.AppBase, ""));
+        Sys_route route = Globals.RouteMap.get(Strings.sNull(req2.getRequestURI()).replace(Globals.AppBase, ""));
         if (route != null) {
             if ("show".equals(route.getType())) {
                 res2.sendRedirect(route.getToUrl());
