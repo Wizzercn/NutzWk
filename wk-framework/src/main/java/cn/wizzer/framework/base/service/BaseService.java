@@ -97,6 +97,10 @@ public interface BaseService<T> {
 
     List<T> query();
 
+    List<T> query(Condition cnd, String linkName);
+
+    List<T> query(String linkName);
+
     String getSubPath(String tableName, String cloName, String value);
 
     int count(Sql sql);

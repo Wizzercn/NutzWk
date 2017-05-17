@@ -419,6 +419,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         return dao().query(getEntityClass(), cnd);
     }
 
+
     /**
      * 获取全部数据
      *
@@ -426,6 +427,30 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      */
     public List<T> query() {
         return dao().query(getEntityClass(), null);
+    }
+
+
+    /**
+     * @param cnd      查询条件
+     * @param linkName 关联字段，支持正则 ^(a|b)$
+     * @return
+     */
+    public List<T> query(Condition cnd, String linkName) {
+        List<T> list = this.dao().query(this.getEntityClass(), cnd);
+        if (!Strings.isBlank(linkName)) {
+            this.dao().fetchLinks(list, linkName);
+        }
+        return list;
+    }
+
+    /**
+     * 获取全部数据
+     *
+     * @param linkName 关联字段，支持正则 ^(a|b)$
+     * @return
+     */
+    public List<T> query(String linkName) {
+        return this.query(null, linkName);
     }
 
     /**
