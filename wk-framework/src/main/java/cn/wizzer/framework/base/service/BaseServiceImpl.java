@@ -453,6 +453,34 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         return this.query(null, linkName);
     }
 
+
+    /**
+     * 分页关联字段查询
+     *
+     * @param cnd
+     * @param linkName
+     * @param pager
+     * @return
+     */
+    public List<T> query(Condition cnd, String linkName, Pager pager) {
+        List<T> list = this.dao().query(this.getEntityClass(), cnd, pager);
+        if (!Strings.isBlank(linkName)) {
+            this.dao().fetchLinks(list, linkName);
+        }
+        return list;
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param cnd   查询条件
+     * @param pager 分页对象
+     * @return
+     */
+    public List<T> query(Condition cnd, Pager pager) {
+        return dao().query(getEntityClass(), cnd, pager);
+    }
+
     /**
      * 计算子节点ID
      *

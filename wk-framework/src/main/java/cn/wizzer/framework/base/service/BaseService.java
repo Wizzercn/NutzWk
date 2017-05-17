@@ -8,6 +8,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.Condition;
 import org.nutz.dao.Dao;
 import org.nutz.dao.entity.Record;
+import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.lang.util.NutMap;
 
@@ -100,6 +101,10 @@ public interface BaseService<T> {
     List<T> query(Condition cnd, String linkName);
 
     List<T> query(String linkName);
+
+    List<T> query(Condition cnd, String linkName, Pager pager);
+
+    List<T> query(Condition cnd, Pager pager);
 
     String getSubPath(String tableName, String cloName, String value);
 
