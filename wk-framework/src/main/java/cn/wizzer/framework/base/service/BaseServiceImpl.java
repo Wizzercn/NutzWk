@@ -457,9 +457,9 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     /**
      * 分页关联字段查询
      *
-     * @param cnd
-     * @param linkName
-     * @param pager
+     * @param cnd 查询条件
+     * @param linkName 关联字段，支持正则 ^(a|b)$
+     * @param pager 分页对象
      * @return
      */
     public List<T> query(Condition cnd, String linkName, Pager pager) {
