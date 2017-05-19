@@ -11,6 +11,8 @@ https://nutzwk.wizzer.cn/                 NutzWk v3.x、v4.x
 
 https://vue.wizzer.cn                     NutzWk v3.x-vue
 
+https://pan.baidu.com/s/1i5kO37f          NutzWk 开发培训视频
+
 # 前言
 
 项目源于2010年，那时老东家还在使用Jsp和Struts1，需要手动创建并释放连接池、需要配置XML请求路径和类映射关系、要支持刚刚兴起的JSON非常痛苦等等的原因，开始选择适用“快速开发、功能丰富、扩展性强、性能优越”等技术要求的框架产品，讨厌Spring的繁杂配置、Hibernate及Mybatis的繁琐，讨厌一切让开发变得低效和繁杂的技术，这和Nutz的设计理念不谋而合。
