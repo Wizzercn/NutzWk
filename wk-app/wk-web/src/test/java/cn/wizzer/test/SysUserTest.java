@@ -37,5 +37,6 @@ public class SysUserTest extends TestBase {
         Sys_user dbuser = ioc.get(Dao.class).insert(user);
         assertTrue(dbuser != null);
         assertTrue(!dbuser.isDisabled());
+
     }
 }

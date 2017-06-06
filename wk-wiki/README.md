@@ -38,4 +38,5 @@
   - [06.04 **Activiti**](https://github.com/nutzam/nutzmore/tree/master/nutz-integration-activiti)
   - [06.05 **热插拔插件化**](https://github.com/nutzam/nutzmore/tree/master/nutz-plugins-hotplug)
   - [06.06 **方法缓存**](https://github.com/nutzam/nutzmore/tree/master/nutz-integration-jcache)
+  - [06.07 **微信支付**](06.Other/06.07.wxpay.md)
 - [07 **Nutz 官方文档**](http://nutzam.com/core/nutz_preface.html)
