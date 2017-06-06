@@ -4,6 +4,7 @@ import cn.wizzer.app.sys.modules.models.Sys_config;
 import cn.wizzer.app.sys.modules.models.Sys_route;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
+import org.nutz.weixin.impl.WxApi2Impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,8 @@ public class Globals {
     public static Map<String, String> MyConfig = new HashMap<>();
     //自定义路由
     public static Map<String, Sys_route> RouteMap = new HashMap<>();
+    //微信map
+    public static Map<String, WxApi2Impl> WxMap=new HashMap<>();
 
     public static void initSysConfig(Dao dao) {
         Globals.MyConfig.clear();

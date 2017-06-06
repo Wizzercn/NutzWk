@@ -1,5 +1,6 @@
 package cn.wizzer.app.web.modules.controllers.platform.wx;
 
+import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
@@ -69,6 +70,7 @@ public class WxConfigController {
     public Object editDo(@Param("..") Wx_config conf, HttpServletRequest req) {
         try {
             wxConfigService.updateIgnoreNull(conf);
+            Globals.WxMap.remove(conf.getId());
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -83,6 +85,7 @@ public class WxConfigController {
         try {
             req.setAttribute("appname", wxConfigService.fetch(id).getAppname());
             wxConfigService.delete(id);
+            Globals.WxMap.remove(id);
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
