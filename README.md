@@ -123,14 +123,8 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 
 # 关于
 
-本项目完全开源，商用也是免费的。
+*   本项目完全开源，商用完全免费
+*   欢迎打赏，以资鼓励
 
-欢迎 “打赏” 以资鼓励，服务器续费及开发动力来源于你们的支持~~感谢~
+![打赏](pay.jpg)
 
-打赏地址：https://nutz.cn/pay/bc
-
-![打赏](apay.png)
-
-或支付宝扫码：
-
-![支付宝](alipay.png)
