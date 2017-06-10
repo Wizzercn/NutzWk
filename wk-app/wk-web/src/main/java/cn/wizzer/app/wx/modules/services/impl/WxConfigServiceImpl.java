@@ -21,7 +21,7 @@ public class WxConfigServiceImpl extends BaseServiceImpl<Wx_config> implements W
     }
 
     public synchronized WxApi2 getWxApi2(String wxid) {
-        WxApi2Impl wxApi2 = Globals.WxMap.get(wxid);//如果是集群部署请改成redis实现
+        WxApi2Impl wxApi2 = Globals.WxMap.get(wxid);
         if (wxApi2 == null) {
             Wx_config appInfo = this.fetch(Cnd.where("id", "=", wxid));
 //            RedisAccessTokenStore redisAccessTokenStore = new RedisAccessTokenStore();//如果是集群部署请启用RedisAccessTokenStore
