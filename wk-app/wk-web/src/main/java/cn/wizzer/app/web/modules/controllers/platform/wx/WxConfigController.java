@@ -7,10 +7,13 @@ import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
+import cn.wizzer.framework.rabbit.RabbitMessage;
+import cn.wizzer.framework.rabbit.RabbitProducer;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -27,7 +30,8 @@ public class WxConfigController {
     private static final Log log = Logs.get();
     @Inject
     private WxConfigService wxConfigService;
-
+    @Inject
+    private RabbitProducer rabbitProducer;
 
     @At("")
     @Ok("beetl:/platform/wx/account/index.html")
@@ -70,7 +74,13 @@ public class WxConfigController {
     public Object editDo(@Param("..") Wx_config conf, HttpServletRequest req) {
         try {
             wxConfigService.updateIgnoreNull(conf);
-            Globals.WxMap.remove(conf.getId());
+            Globals.WxMap.clear();
+            if (Globals.RabbitMQEnabled) {
+                String exchange = "fanoutExchange";
+                String routeKey = "wxtoken";
+                RabbitMessage msg = new RabbitMessage(exchange, routeKey, new NutMap());
+                rabbitProducer.sendMessage(msg);
+            }
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -85,7 +95,13 @@ public class WxConfigController {
         try {
             req.setAttribute("appname", wxConfigService.fetch(id).getAppname());
             wxConfigService.delete(id);
-            Globals.WxMap.remove(id);
+            Globals.WxMap.clear();
+            if (Globals.RabbitMQEnabled) {
+                String exchange = "fanoutExchange";
+                String routeKey = "wxtoken";
+                RabbitMessage msg = new RabbitMessage(exchange, routeKey, new NutMap());
+                rabbitProducer.sendMessage(msg);
+            }
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");

@@ -167,6 +167,9 @@ public class Setup implements org.nutz.mvc.Setup {
                                         case "sysroute":
                                             Globals.initRoute(dao);
                                             break;
+                                        case "wxtoken":
+                                            Globals.WxMap.clear();
+                                            break;
                                         default:
                                             break;
                                     }
