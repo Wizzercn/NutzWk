@@ -11,7 +11,7 @@
         <evo-inflector-version>1.0.1</evo-inflector-version>
         <velocity-version>1.7</velocity-version>
         <commons-cli-version>1.2</commons-cli-version>
-        <nutz-version>1.r.60</nutz-version>
+        <nutz-version>1.r.62-SNAPSHOT</nutz-version>
     </properties>
     <dependencies>
         <dependency>
