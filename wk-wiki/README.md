@@ -37,6 +37,6 @@
   - [06.03 **Dubbo**](https://github.com/nutzam/nutzmore/tree/master/nutz-integration-dubbo)
   - [06.04 **Activiti**](https://github.com/nutzam/nutzmore/tree/master/nutz-integration-activiti)
   - [06.05 **热插拔插件化**](https://github.com/nutzam/nutzmore/tree/master/nutz-plugins-hotplug)
-  - [06.06 **方法缓存**](https://github.com/nutzam/nutzmore/tree/master/nutz-integration-jcache)
+  - [06.06 **方法缓存**](06.Other/06.06.wkcache.md)
   - [06.07 **微信支付**](06.Other/06.07.wxpay.md)
 - [07 **Nutz 官方文档**](http://nutzam.com/core/nutz_preface.html)
