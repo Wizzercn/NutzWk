@@ -86,6 +86,40 @@ public class StringUtil {
     }
 
     /**
+     * 从seesion获取Member uid
+     *
+     * @return
+     */
+    public static String getMemberUid() {
+        try {
+            HttpServletRequest request = Mvcs.getReq();
+            if (request != null) {
+                return Strings.sNull(request.getSession(true).getAttribute("member_uid"));
+            }
+        } catch (Exception e) {
+
+        }
+        return "";
+    }
+
+    /**
+     * 从seesion获取Member用户名
+     *
+     * @return
+     */
+    public static String getMemberUsername() {
+        try {
+            HttpServletRequest request = Mvcs.getReq();
+            if (request != null) {
+                return Strings.sNull(request.getSession(true).getAttribute("member_username"));
+            }
+        } catch (Exception e) {
+
+        }
+        return "";
+    }
+
+    /**
      * 计算MD5密码
      *
      * @param loginname
