@@ -3,8 +3,7 @@ package cn.wizzer.framework.page;
 import java.util.List;
 
 public class Pagination extends SimplePage implements java.io.Serializable {
-
-	private static final long serialVersionUID = -1585539529849523194L;
+	private static final long serialVersionUID = 1L;
 
 	public Pagination() {
 	}
