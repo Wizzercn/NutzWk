@@ -171,4 +171,5 @@ public class SimplePage implements java.io.Serializable, Paginable {
 
     int minPage = pageNo - (int) Math.floor((pageSize - 1) / 2.0D);
     int maxPage = pageNo + (int) Math.ceil((pageSize - 1) / 2.0D);
+    int totalPage = getTotalPage();
 }
