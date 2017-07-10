@@ -3,10 +3,7 @@ package cn.wizzer.framework.base.service;
 import cn.wizzer.framework.page.Pagination;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import org.nutz.dao.Chain;
-import org.nutz.dao.Cnd;
-import org.nutz.dao.Condition;
-import org.nutz.dao.Dao;
+import org.nutz.dao.*;
 import org.nutz.dao.entity.Record;
 import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
@@ -46,6 +43,10 @@ public interface BaseService<T> {
 
     T insert(T obj);
 
+    T insertOrUpdate(T obj);
+
+    T insertOrUpdate(T obj, FieldFilter insertFieldFilter, FieldFilter updateFieldFilter);
+
     void insert(String tableName, Chain chain);
 
     T fastInsert(T obj);
@@ -57,6 +58,12 @@ public interface BaseService<T> {
     int update(Chain chain, Condition cnd);
 
     int update(String tableName, Chain chain, Condition cnd);
+
+    int updateWithVersion(Object obj);
+
+    int updateWithVersion(Object obj, FieldFilter filter);
+
+    int updateAndIncrIfMatch(Object obj, FieldFilter fieldFilter, String fieldName);
 
     int getMaxId();
 

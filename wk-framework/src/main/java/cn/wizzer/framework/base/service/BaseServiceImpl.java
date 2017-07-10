@@ -162,6 +162,29 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         return this.dao().insert(obj);
     }
 
+
+    /**
+     * 插入或修改对象
+     *
+     * @param obj
+     * @return
+     */
+    public T insertOrUpdate(T obj) {
+        return this.dao().insertOrUpdate(obj);
+    }
+
+    /**
+     * 根据对象的主键(@Id/@Name/@Pk)先查询, 如果存在就更新, 不存在就插入
+     *
+     * @param obj               对象
+     * @param insertFieldFilter 插入时的字段过滤, 可以是null
+     * @param updateFieldFilter 更新时的字段过滤,可以是null
+     * @return 原对象
+     */
+    public T insertOrUpdate(T obj, FieldFilter insertFieldFilter, FieldFilter updateFieldFilter) {
+        return this.dao().insertOrUpdate(obj, insertFieldFilter, updateFieldFilter);
+    }
+
     /**
      * 自由的向一个数据表插入一条数据
      *
@@ -223,6 +246,44 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      */
     public int update(String tableName, Chain chain, Condition cnd) {
         return this.dao().update(tableName, chain, cnd);
+    }
+
+
+    /**
+     * 基于版本的更新，版本不一样无法更新到数据
+     *
+     * @param obj 需要更新的对象, 必须有version属性
+     * @return 若更新成功, 大于0, 否则小于0
+     */
+    public int updateWithVersion(Object obj) {
+        return this.dao().updateWithVersion(obj);
+    }
+
+    /**
+     * 基于版本的更新，版本不一样无法更新到数据
+     *
+     * @param obj         需要更新的对象, 必须有version属性
+     * @param fieldFilter 需要过滤的字段设置
+     * @return 若更新成功, 大于0, 否则小于0
+     */
+    public int updateWithVersion(Object obj, FieldFilter fieldFilter) {
+        return this.dao().updateWithVersion(obj, fieldFilter);
+    }
+
+    /**
+     * 乐观锁, 以特定字段的值作为限制条件,更新对象,并自增该字段.
+     * <p/>
+     * 执行的sql如下:
+     * <p/>
+     * <code>update t_user set age=30, city="广州", version=version+1 where name="wendal" and version=124;</code>
+     *
+     * @param obj         需要更新的对象, 必须带@Id/@Name/@Pk中的其中一种.
+     * @param fieldFilter 需要过滤的属性. 若设置了哪些字段不更新,那务必确保过滤掉fieldName的字段
+     * @param fieldName   参考字段的Java属性名.默认是"version",可以是任意数值字段
+     * @return 若更新成功, 返回值大于0, 否则小于等于0
+     */
+    public int updateAndIncrIfMatch(Object obj, FieldFilter fieldFilter, String fieldName) {
+        return this.dao().updateAndIncrIfMatch(obj, fieldFilter, fieldName);
     }
 
     /**
@@ -457,9 +518,9 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     /**
      * 分页关联字段查询
      *
-     * @param cnd 查询条件
+     * @param cnd      查询条件
      * @param linkName 关联字段，支持正则 ^(a|b)$
-     * @param pager 分页对象
+     * @param pager    分页对象
      * @return
      */
     public List<T> query(Condition cnd, String linkName, Pager pager) {
