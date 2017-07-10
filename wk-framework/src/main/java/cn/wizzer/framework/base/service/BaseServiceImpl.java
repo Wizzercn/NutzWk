@@ -158,10 +158,23 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      *            注意：如果是集合，数组或者 Map，所有的对象必须类型相同，否则可能会出错
      * @return 插入后的对象
      */
-    public T insert(T obj) {
+    public <T> T insert(T obj) {
         return this.dao().insert(obj);
     }
 
+    /**
+     * 将一个对象按FieldFilter过滤后,插入到一个数据源。
+     * <p/>
+     * <code>dao.insert(pet, FieldFilter.create(Pet.class, FieldMatcher.create(false)));</code>
+     *
+     * @param obj    要被插入的对象
+     * @param filter 字段过滤器, 其中FieldMatcher.isIgnoreId生效
+     * @return 插入后的对象
+     * @see org.nutz.dao.Dao#insert(Object)
+     */
+    public <T> T insert(T obj, FieldFilter filter) {
+        return this.dao().insert(obj, filter);
+    }
 
     /**
      * 插入或修改对象
@@ -169,7 +182,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param obj
      * @return
      */
-    public T insertOrUpdate(T obj) {
+    public <T> T insertOrUpdate(T obj) {
         return this.dao().insertOrUpdate(obj);
     }
 
@@ -181,7 +194,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param updateFieldFilter 更新时的字段过滤,可以是null
      * @return 原对象
      */
-    public T insertOrUpdate(T obj, FieldFilter insertFieldFilter, FieldFilter updateFieldFilter) {
+    public <T> T insertOrUpdate(T obj, FieldFilter insertFieldFilter, FieldFilter updateFieldFilter) {
         return this.dao().insertOrUpdate(obj, insertFieldFilter, updateFieldFilter);
     }
 
@@ -201,8 +214,50 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param obj
      * @return
      */
-    public T fastInsert(T obj) {
+    public <T> T fastInsert(T obj) {
         return this.dao().fastInsert(obj);
+    }
+
+    /**
+     * 将对象插入数据库同时，也将符合一个正则表达式的所有关联字段关联的对象统统插入相应的数据库
+     * <p>
+     * 关于关联字段更多信息，请参看 '@One' | '@Many' | '@ManyMany' 更多的描述
+     *
+     * @param obj   数据对象
+     * @param regex 正则表达式，描述了什么样的关联字段将被关注。如果为 null，则表示全部的关联字段都会被插入
+     * @return 数据对象本身
+     * @see org.nutz.dao.entity.annotation.One
+     * @see org.nutz.dao.entity.annotation.Many
+     * @see org.nutz.dao.entity.annotation.ManyMany
+     */
+    public <T> T insertWith(T obj, String regex) {
+        return this.dao().insertWith(obj, regex);
+    }
+
+    /**
+     * 根据一个正则表达式，仅将对象所有的关联字段插入到数据库中，并不包括对象本身
+     *
+     * @param obj   数据对象
+     * @param regex 正则表达式，描述了什么样的关联字段将被关注。如果为 null，则表示全部的关联字段都会被插入
+     * @return 数据对象本身
+     * @see org.nutz.dao.entity.annotation.One
+     * @see org.nutz.dao.entity.annotation.Many
+     * @see org.nutz.dao.entity.annotation.ManyMany
+     */
+    public <T> T insertLinks(T obj, String regex) {
+        return this.dao().insertLinks(obj, regex);
+    }
+
+    /**
+     * 将对象的一个或者多个，多对多的关联信息，插入数据表
+     *
+     * @param obj   对象
+     * @param regex 正则表达式，描述了那种多对多关联字段将被执行该操作
+     * @return 对象自身
+     * @see org.nutz.dao.entity.annotation.ManyMany
+     */
+    public <T> T insertRelation(T obj, String regex) {
+        return this.dao().insertRelation(obj, regex);
     }
 
     /**
@@ -248,6 +303,53 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         return this.dao().update(tableName, chain, cnd);
     }
 
+    /**
+     * 将对象更新的同时，也将符合一个正则表达式的所有关联字段关联的对象统统更新
+     * <p>
+     * 关于关联字段更多信息，请参看 '@One' | '@Many' | '@ManyMany' 更多的描述
+     *
+     * @param obj   数据对象
+     * @param regex 正则表达式，描述了什么样的关联字段将被关注。如果为 null，则表示全部的关联字段都会被更新
+     * @return 数据对象本身
+     * @see org.nutz.dao.entity.annotation.One
+     * @see org.nutz.dao.entity.annotation.Many
+     * @see org.nutz.dao.entity.annotation.ManyMany
+     */
+    public <T> T updateWith(T obj, String regex) {
+        return this.dao().updateWith(obj, regex);
+    }
+
+    /**
+     * 根据一个正则表达式，仅更新对象所有的关联字段，并不包括对象本身
+     *
+     * @param obj   数据对象
+     * @param regex 正则表达式，描述了什么样的关联字段将被关注。如果为 null，则表示全部的关联字段都会被更新
+     * @return 数据对象本身
+     * @see org.nutz.dao.entity.annotation.One
+     * @see org.nutz.dao.entity.annotation.Many
+     * @see org.nutz.dao.entity.annotation.ManyMany
+     */
+    public <T> T updateLinks(T obj, String regex) {
+        return this.dao().updateLinks(obj, regex);
+    }
+
+    /**
+     * 多对多关联是通过一个中间表将两条数据表记录关联起来。
+     * <p>
+     * 而这个中间表可能还有其他的字段，比如描述关联的权重等
+     * <p>
+     * 这个操作可以让你一次更新某一个对象中多个多对多关联的数据
+     *
+     * @param classOfT 对象类型
+     * @param regex    正则表达式，描述了那种多对多关联字段将被执行该操作
+     * @param chain    针对中间关联表的名值链。
+     * @param cnd      针对中间关联表的 WHERE 条件
+     * @return 共有多少条数据被更新
+     * @see org.nutz.dao.entity.annotation.ManyMany
+     */
+    public int updateRelation(Class<?> classOfT, String regex, Chain chain, Condition cnd) {
+        return this.dao().updateRelation(classOfT, regex, chain, cnd);
+    }
 
     /**
      * 基于版本的更新，版本不一样无法更新到数据

@@ -41,15 +41,23 @@ public interface BaseService<T> {
 
     boolean exists(Object... pks);
 
-    T insert(T obj);
+    <T> T insert(T obj);
 
-    T insertOrUpdate(T obj);
+    <T> T insert(T obj, FieldFilter filter);
 
-    T insertOrUpdate(T obj, FieldFilter insertFieldFilter, FieldFilter updateFieldFilter);
+    <T> T insertOrUpdate(T obj);
+
+    <T> T insertOrUpdate(T obj, FieldFilter insertFieldFilter, FieldFilter updateFieldFilter);
 
     void insert(String tableName, Chain chain);
 
-    T fastInsert(T obj);
+    <T> T fastInsert(T obj);
+
+    <T> T insertWith(T obj, String regex);
+
+    <T> T insertLinks(T obj, String regex);
+
+    <T> T insertRelation(T obj, String regex);
 
     int update(Object obj);
 
@@ -58,6 +66,12 @@ public interface BaseService<T> {
     int update(Chain chain, Condition cnd);
 
     int update(String tableName, Chain chain, Condition cnd);
+
+    <T> T updateWith(T obj, String regex);
+
+    <T> T updateLinks(T obj, String regex);
+
+    int updateRelation(Class<?> classOfT, String regex, Chain chain, Condition cnd);
 
     int updateWithVersion(Object obj);
 
