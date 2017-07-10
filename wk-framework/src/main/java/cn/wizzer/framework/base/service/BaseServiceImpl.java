@@ -177,10 +177,11 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
-     * 插入或修改对象
+     * 根据对象的主键(@Id/@Name/@Pk)先查询, 如果存在就更新, 不存在就插入
      *
      * @param obj
-     * @return
+     *            对象
+     * @return 原对象
      */
     public <T> T insertOrUpdate(T obj) {
         return this.dao().insertOrUpdate(obj);
