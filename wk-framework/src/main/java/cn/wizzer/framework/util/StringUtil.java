@@ -22,35 +22,6 @@ import java.util.regex.Pattern;
  */
 @IocBean
 public class StringUtil {
-
-    private static final Pattern IPV4_PATTERN =
-            Pattern.compile(
-                    "^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
-
-    private static final Pattern IPV6_STD_PATTERN =
-            Pattern.compile(
-                    "^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
-
-    private static final Pattern IPV6_HEX_COMPRESSED_PATTERN =
-            Pattern.compile(
-                    "^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$");
-
-    public static boolean isIPv4Address(final String input) {
-        return IPV4_PATTERN.matcher(input).matches();
-    }
-
-    public static boolean isIPv6StdAddress(final String input) {
-        return IPV6_STD_PATTERN.matcher(input).matches();
-    }
-
-    public static boolean isIPv6HexCompressedAddress(final String input) {
-        return IPV6_HEX_COMPRESSED_PATTERN.matcher(input).matches();
-    }
-
-    public static boolean isIPv6Address(final String input) {
-        return isIPv6StdAddress(input) || isIPv6HexCompressedAddress(input);
-    }
-
     /**
      * 从seesion获取uid
      *
@@ -180,19 +151,7 @@ public class StringUtil {
     public static String getRemoteAddr() {
         HttpServletRequest request = Mvcs.getReq();
         if (request == null) return "";
-        String remoteAddr = request.getHeader("X-Real-IP");
-        if (Strings.isNotBlank(remoteAddr)) {
-            remoteAddr = request.getHeader("X-Forwarded-For");
-        } else if (Strings.isNotBlank(remoteAddr)) {
-            remoteAddr = request.getHeader("Proxy-Client-IP");
-        } else if (Strings.isNotBlank(remoteAddr)) {
-            remoteAddr = request.getHeader("WL-Proxy-Client-IP");
-        }
-        String ip = remoteAddr != null ? remoteAddr : Strings.sNull(request.getRemoteAddr());
-        if (isIPv4Address(ip) || isIPv6Address(ip)) {
-            return ip;
-        }
-        return "";
+        return Lang.getIP(request);
     }
 
     /**
