@@ -58,6 +58,8 @@ import java.util.regex.Pattern;
  */
 public class Setup implements org.nutz.mvc.Setup {
     private static final Log log = Logs.get();
+    private static Connection rabbitmq_conn;
+    private static Channel rabbitmq_channel;
 
     public void init(NutConfig config) {
         try {
@@ -137,17 +139,17 @@ public class Setup implements org.nutz.mvc.Setup {
             String queue = R.UU32(), topicQueue = "topicQueue";
             ConnectionFactory factory = config.getIoc().get(ConnectionFactory.class, "rabbitmq_cf");
             log.debug("RabbitMQ :::" + factory.getHost());
-            Connection conn = factory.newConnection();
-            Channel channel = conn.createChannel();
-            channel.queueDeclare(queue, true, true, false, null);
-            channel.queueDeclare(topicQueue, true, false, false, null);
-            channel.exchangeDeclare("topicExchange", BuiltinExchangeType.TOPIC, true);
-            channel.exchangeDeclare("fanoutExchange", BuiltinExchangeType.FANOUT, true);
-            channel.queueBind(queue, "fanoutExchange", "");
-            channel.queueBind(queue, "topicExchange", "topic.*");
+            rabbitmq_conn = factory.newConnection();
+            rabbitmq_channel = rabbitmq_conn.createChannel();
+            rabbitmq_channel.queueDeclare(queue, true, true, false, null);
+            rabbitmq_channel.queueDeclare(topicQueue, true, false, false, null);
+            rabbitmq_channel.exchangeDeclare("topicExchange", BuiltinExchangeType.TOPIC, true);
+            rabbitmq_channel.exchangeDeclare("fanoutExchange", BuiltinExchangeType.FANOUT, true);
+            rabbitmq_channel.queueBind(queue, "fanoutExchange", "");
+            rabbitmq_channel.queueBind(queue, "topicExchange", "topic.*");
             //添加一个消费者,当系统参数/自定义路由修改时,重新初始化每个tomcat或jetty实例里的全局变量
-            channel.basicConsume(queue, false, "myConsumerTag",
-                    new DefaultConsumer(channel) {
+            rabbitmq_channel.basicConsume(queue, false, "myConsumerTag",
+                    new DefaultConsumer(rabbitmq_channel) {
                         @Override
                         public void handleDelivery(String consumerTag,
                                                    Envelope envelope,
@@ -179,7 +181,7 @@ public class Setup implements org.nutz.mvc.Setup {
                                     break;
                             }
                             // (process the message components here ...)
-                            channel.basicAck(deliveryTag, false);
+                            rabbitmq_channel.basicAck(deliveryTag, false);
                         }
                     });
             Globals.RabbitMQEnabled = true;
@@ -937,6 +939,14 @@ public class Setup implements org.nutz.mvc.Setup {
     }
 
     public void destroy(NutConfig config) {
+        try {
+            if (rabbitmq_channel != null)
+                rabbitmq_channel.close();
+            if (rabbitmq_conn != null)
+                rabbitmq_conn.close();
+        } catch (Exception e) {
+
+        }
         // 非mysql数据库,或多webapp共享mysql驱动的话,以下语句删掉
         try {
             Mirror.me(Class.forName("com.mysql.jdbc.AbandonedConnectionCleanupThread")).invoke(null, "shutdown");
