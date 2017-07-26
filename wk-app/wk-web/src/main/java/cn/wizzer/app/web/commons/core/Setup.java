@@ -138,7 +138,7 @@ public class Setup implements org.nutz.mvc.Setup {
         try {
             String queue = R.UU32(), topicQueue = "topicQueue";
             ConnectionFactory factory = config.getIoc().get(ConnectionFactory.class, "rabbitmq_cf");
-            log.debug("RabbitMQ :::" + factory.getHost());
+            log.debug("RabbitMQ:::" + factory.getHost());
             rabbitmq_conn = factory.newConnection();
             rabbitmq_channel = rabbitmq_conn.createChannel();
             rabbitmq_channel.queueDeclare(queue, true, true, false, null);
@@ -146,9 +146,8 @@ public class Setup implements org.nutz.mvc.Setup {
             rabbitmq_channel.exchangeDeclare("topicExchange", BuiltinExchangeType.TOPIC, true);
             rabbitmq_channel.exchangeDeclare("fanoutExchange", BuiltinExchangeType.FANOUT, true);
             rabbitmq_channel.queueBind(queue, "fanoutExchange", "");
-            rabbitmq_channel.queueBind(queue, "topicExchange", "topic.*");
-            //添加一个消费者,当系统参数/自定义路由修改时,重新初始化每个tomcat或jetty实例里的全局变量
-            rabbitmq_channel.basicConsume(queue, false, "myConsumerTag",
+            rabbitmq_channel.queueBind(topicQueue, "topicExchange", "topic.#");
+            rabbitmq_channel.basicConsume(queue, false, "myConsumerTagFanout",
                     new DefaultConsumer(rabbitmq_channel) {
                         @Override
                         public void handleDelivery(String consumerTag,
@@ -159,11 +158,9 @@ public class Setup implements org.nutz.mvc.Setup {
                             String routingKey = envelope.getRoutingKey();
                             String exchange = envelope.getExchange();
                             NutMap params = Lang.fromBytes(body, NutMap.class);
-                            log.debug("RabbitMQ exchange=" + exchange + ",routingKey=" + routingKey + ",params=" + Json.toJson(params));
+                            log.debug("RabbitMQ fanoutExchange=" + exchange + ",routingKey=" + routingKey + ",params=" + Json.toJson(params));
                             long deliveryTag = envelope.getDeliveryTag();
                             switch (exchange) {
-                                case "topicExchange"://主题模式,只需一个消费者消费
-                                    break;
                                 case "fanoutExchange"://广播模式,每个消费者都会消费
                                     switch (routingKey) {
                                         case "sysconfig":
@@ -176,6 +173,32 @@ public class Setup implements org.nutz.mvc.Setup {
                                             Globals.WxMap.clear();
                                             break;
                                         default:
+                                            break;
+                                    }
+                                    break;
+                            }
+                            // (process the message components here ...)
+                            rabbitmq_channel.basicAck(deliveryTag, false);
+                        }
+                    });
+            rabbitmq_channel.basicConsume(topicQueue, false, "myConsumerTagTopic",
+                    new DefaultConsumer(rabbitmq_channel) {
+                        @Override
+                        public void handleDelivery(String consumerTag,
+                                                   Envelope envelope,
+                                                   AMQP.BasicProperties properties,
+                                                   byte[] body)
+                                throws IOException {
+                            String routingKey = envelope.getRoutingKey();
+                            String exchange = envelope.getExchange();
+                            NutMap params = Lang.fromBytes(body, NutMap.class);
+                            log.debug("RabbitMQ topicExchange=" + exchange + ",routingKey=" + routingKey + ",params=" + Json.toJson(params));
+                            long deliveryTag = envelope.getDeliveryTag();
+                            switch (exchange) {
+                                case "topicExchange"://主题模式,只需一个消费者消费
+                                    switch (routingKey) {
+                                        case "topic.test.me":
+                                            log.debug("topic.test.me.......");
                                             break;
                                     }
                                     break;
