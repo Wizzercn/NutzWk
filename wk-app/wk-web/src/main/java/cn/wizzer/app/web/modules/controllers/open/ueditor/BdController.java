@@ -5,9 +5,12 @@ import cn.wizzer.framework.util.DateUtil;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
+import org.nutz.lang.Encoding;
 import org.nutz.lang.Files;
+import org.nutz.lang.Streams;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.impl.AdaptorErrorContext;
 import org.nutz.mvc.upload.TempFile;
@@ -15,6 +18,8 @@ import org.nutz.mvc.upload.UploadAdaptor;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Date;
 
 /**
@@ -26,7 +31,9 @@ public class BdController {
     @At
     @Ok("json")
     public Object index(@Param("action") String action, HttpServletRequest req) {
-        return Json.fromJson(Files.read(Globals.AppRoot + "/assets/plugins/ueditor/nutz/config.json").replace("$base", Globals.AppBase));
+        InputStream ins = Mvcs.getServletContext().getResourceAsStream("/assets/plugins/ueditor/nutz/config.json");
+        String json = Streams.readAndClose(new InputStreamReader(ins, Encoding.CHARSET_UTF8));
+        return Json.fromJson(json.replace("$base", Globals.AppBase));
     }
 
 
