@@ -3,6 +3,7 @@ package cn.wizzer.app.web.modules.controllers.platform.sys;
 import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.models.Sys_role;
 import cn.wizzer.app.sys.modules.models.Sys_unit;
+import cn.wizzer.app.sys.modules.models.Sys_user;
 import cn.wizzer.app.sys.modules.services.SysMenuService;
 import cn.wizzer.app.sys.modules.services.SysRoleService;
 import cn.wizzer.app.sys.modules.services.SysUnitService;
@@ -11,11 +12,13 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
+import cn.wizzer.framework.util.ShiroUtil;
 import cn.wizzer.framework.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
+import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
@@ -46,6 +49,8 @@ public class SysRoleController {
     private SysUnitService unitService;
     @Inject
     private SysRoleService roleService;
+    @Inject
+    private ShiroUtil shiroUtil;
 
     @At("")
     @Ok("beetl:/platform/sys/role/index.html")
@@ -58,7 +63,21 @@ public class SysRoleController {
     @Ok("beetl:/platform/sys/role/add.html")
     @RequiresPermissions("sys.manager.role")
     public Object add(@Param("unitid") String unitid, HttpServletRequest req) {
-        List<Sys_menu> list = menuService.query(Cnd.orderBy().asc("location").asc("path"));
+        List<Sys_menu> list = new ArrayList<>();
+        if (shiroUtil.hasRole("sysadmin")) {
+            list = menuService.query(Cnd.orderBy().asc("location").asc("path"));
+        } else {
+            Sql sql = Sqls.create("SELECT roleId FROM sys_user_role WHERE userId=@userId");
+            sql.setParam("userId", StringUtil.getUid());
+            sql.setCallback(Sqls.callback.strs());
+            menuService.dao().execute(sql);
+            List<String> ids = sql.getList(String.class);
+            Sql sql1 = Sqls.create("SELECT a.* FROM sys_menu a,sys_role_menu b WHERE a.id=b.menuId AND b.roleId in (@ids)");
+            sql1.setParam("ids", ids.toArray());
+            sql1.setEntity(menuService.dao().getEntity(Sys_menu.class));
+            sql1.setCallback(Sqls.callback.entities());
+            list = menuService.dao().execute(sql1).getList(Sys_menu.class);
+        }
         List<Sys_menu> datas = roleService.getDatas();
         List<NutMap> menus = new ArrayList<>();
         for (Sys_menu menu : list) {
@@ -138,7 +157,21 @@ public class SysRoleController {
     @RequiresPermissions("sys.manager.role")
     public Object editMenu(String roleId, HttpServletRequest req) {
         StringBuilder roleMenuIds = new StringBuilder();
-        List<Sys_menu> list = menuService.query(Cnd.orderBy().asc("location").asc("path"));
+        List<Sys_menu> list = new ArrayList<>();
+        if (shiroUtil.hasRole("sysadmin")) {
+            list = menuService.query(Cnd.orderBy().asc("location").asc("path"));
+        } else {
+            Sql sql = Sqls.create("SELECT roleId FROM sys_user_role WHERE userId=@userId");
+            sql.setParam("userId", StringUtil.getUid());
+            sql.setCallback(Sqls.callback.strs());
+            menuService.dao().execute(sql);
+            List<String> ids = sql.getList(String.class);
+            Sql sql1 = Sqls.create("SELECT a.* FROM sys_menu a,sys_role_menu b WHERE a.id=b.menuId AND b.roleId in (@ids)");
+            sql1.setParam("ids", ids.toArray());
+            sql1.setEntity(menuService.dao().getEntity(Sys_menu.class));
+            sql1.setCallback(Sqls.callback.entities());
+            list = menuService.dao().execute(sql1).getList(Sys_menu.class);
+        }
         List<Sys_menu> datas = roleService.getDatas();
         List<Sys_menu> roleMenu = roleService.getMenusAndButtons(roleId);
         for (Sys_menu m : roleMenu) {
@@ -301,14 +334,24 @@ public class SysRoleController {
     @Ok("json")
     @RequiresPermissions("sys.manager.role")
     public Object tree(@Param("pid") String pid) {
-        List<Sys_unit> list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
+        List<Sys_unit> list = new ArrayList<>();
         List<Map<String, Object>> tree = new ArrayList<>();
         Map<String, Object> obj = new HashMap<>();
-        if (Strings.isBlank(pid)) {
-            obj.put("id", "root");
-            obj.put("text", "系统角色");
-            obj.put("children", false);
-            tree.add(obj);
+        if (shiroUtil.hasRole("sysadmin")) {
+            list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
+            if (Strings.isBlank(pid)) {
+                obj.put("id", "root");
+                obj.put("text", "系统角色");
+                obj.put("children", false);
+                tree.add(obj);
+            }
+        } else {
+            Sys_user user = (Sys_user) shiroUtil.getPrincipal();
+            if (user != null && Strings.isBlank(pid)) {
+                list = unitService.query(Cnd.where("id", "=", user.getUnitid()).asc("path"));
+            } else {
+                list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
+            }
         }
         for (Sys_unit unit : list) {
             obj = new HashMap<>();

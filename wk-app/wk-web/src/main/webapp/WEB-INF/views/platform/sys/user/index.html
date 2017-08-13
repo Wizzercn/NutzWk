@@ -17,7 +17,7 @@ layout("/layouts/platform.html"){
     <header class="header navbar bg-white shadow">
         <div class="btn-group tool-button">
             <a id="add" class="btn btn-primary navbar-btn" href="${base}/platform/sys/user/add" data-pjax><i class="ti-plus"></i> 新建用户</a>
-            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
+            <!--<button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>-->
         </div>
         <div class="pull-right offscreen-right">
             <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i
@@ -27,7 +27,7 @@ layout("/layouts/platform.html"){
     </header>
     <div class=panel-body style="padding-top: 50px;">
         <div class="table-responsive no-border">
-            <input id="unitid" type="hidden">
+            <input id="unitid" type="hidden"  value="<%if(!@shiro.hasRole('sysadmin')){%>${@shiro.getPrincipalProperty('unitid')}<%}%>">
             <table class="table table-bordered table-striped mg-t datatable">
                 <thead>
                 <tr>
@@ -178,6 +178,15 @@ layout("/layouts/platform.html"){
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
+                        var uid="${@string.getUid()}";
+                        var temp= '<li class="divider"></li>' +
+                            '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
+                            '<li class="divider"></li>' +
+                            '<li><a href="javascript:;" onclick="enableUser(\'' + row.id + '\')">启用</a></li>' +
+                            '<li><a href="javascript:;" onclick="disableUser(\'' + row.id + '\')">禁用</a></li>' ;
+                        if(uid==row.id){
+                            temp='';
+                        }
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                                 ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
                                 '<li><a href="${base}/platform/sys/user/detail/' + row.id + '" data-toggle="modal" data-target="#dialogUserDetail">基本信息</a></li>' +
@@ -185,11 +194,7 @@ layout("/layouts/platform.html"){
                                 '<li class="divider"></li>' +
                                 '<li><a href="${base}/platform/sys/user/edit/' + row.id + '" data-pjax>修改信息</a></li>' +
                                 '<li><a href="javascript:;" onclick="resetPwd(\'' + row.id + '\')">密码重置</a></li>' +
-                                '<li class="divider"></li>' +
-                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
-                                '<li class="divider"></li>' +
-                                '<li><a href="javascript:;" onclick="enableUser(\'' + row.id + '\')">启用</a></li>' +
-                                '<li><a href="javascript:;" onclick="disableUser(\'' + row.id + '\')">禁用</a></li>' +
+                                temp +
                                 '</ul></div>';
                     },
                     "targets": 4

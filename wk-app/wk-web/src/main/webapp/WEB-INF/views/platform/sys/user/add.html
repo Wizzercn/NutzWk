@@ -110,7 +110,7 @@ layout("/layouts/platform.html"){
                 data: {
                     dataType: "json",
                     url: function (node) {
-                        return node.id === "#" ? "${base}/platform/sys/unit/tree" : "${base}/platform/sys/unit/tree?pid=" + node.id
+                        return node.id === "#" ? "${base}/platform/sys/user/tree" : "${base}/platform/sys/user/tree?pid=" + node.id
                     }
                 },
                 multiple: false

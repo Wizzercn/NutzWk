@@ -17,12 +17,12 @@ layout("/layouts/platform.html"){
     <header class="header navbar bg-white shadow">
         <div class="btn-group tool-button">
             <a id="add" class="btn btn-primary navbar-btn" href="${base}/platform/sys/role/add" data-pjax><i class="ti-plus"></i> 新建角色</a>
-            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
+            <!--<button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>-->
         </div>
     </header>
     <div class=panel-body style="padding-top: 50px;">
         <div class="table-responsive no-border">
-            <input id="unitid" type="hidden">
+            <input id="unitid" type="hidden" value="<%if(!@shiro.hasRole('sysadmin')){%>${@shiro.getPrincipalProperty('unitid')}<%}%>">
             <table class="table table-bordered table-striped mg-t datatable">
                 <thead>
                 <tr>

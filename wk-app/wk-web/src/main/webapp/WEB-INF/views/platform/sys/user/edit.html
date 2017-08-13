@@ -23,7 +23,7 @@ layout("/layouts/platform.html"){
                                            value="${obj.unit.name}" data-parsley-required="true"/>
 
 			                             		<span class="input-group-btn">
-			                             			<button type="button" class="btn btn-primary" data-toggle="modal"
+			                             			<button type="button" class="btn btn-primary <%if(!@shiro.hasRole('sysadmin')){%>disabled<%}%>" data-toggle="modal"
                                                             data-target="#dialogSelectParentUnit"><i class="ti-plus"></i>选择
                                                     </button>
 			                             		</span>
@@ -107,7 +107,7 @@ layout("/layouts/platform.html"){
                 data: {
                     dataType: "json",
                     url: function (node) {
-                        return node.id === "#" ? "${base}/platform/sys/unit/tree" : "${base}/platform/sys/unit/tree?pid=" + node.id
+                        return node.id === "#" ? "${base}/platform/sys/user/tree" : "${base}/platform/sys/user/tree?pid=" + node.id
                     }
                 },
                 multiple: false

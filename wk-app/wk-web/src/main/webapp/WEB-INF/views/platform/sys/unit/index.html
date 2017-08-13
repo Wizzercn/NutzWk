@@ -40,7 +40,9 @@ layout("/layouts/platform.html"){
                                     <li><a href="${base}/platform/sys/unit/detail/${o.id}" data-toggle="modal"
                                            data-target="#dialogUnitDetail">查看</a></li>
                                     <li><a href="${base}/platform/sys/unit/edit/${o.id}" data-pjax>修改</a></li>
+                                    <%if(@shiro.getPrincipalProperty('unitid')!=o.id){%>
                                     <li><a href="javascript:;" onclick="del('${o.id}')">删除</a></li>
+                                    <%}%>
                                     <li class="divider"></li>
                                     <li><a href="${base}/platform/sys/unit/add?pid=${o.id}" data-pjax>添加子单位</a></li>
 
