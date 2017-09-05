@@ -1,0 +1,163 @@
+<%
+layout("/layouts/platform.html"){
+%>
+#set($base = '${base}')
+#set ($columSize=0)
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+        <div class="btn-group tool-button">
+            <a id="add" class="btn btn-primary navbar-btn" href="$base${table.UriPrefix}/add" data-pjax><i class="ti-plus"></i> 新增</a>
+            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
+        </div>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border">
+            <table class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                    <tr>
+#foreach ($column in $table.LabeledColumns)
+                            <th>${column.label}</th>
+#end
+                            <th>操作</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        删除后无法恢复。<br/>
+                        <br/>确定删除吗？
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取  消</button>
+                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确  定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "$base/assets/plugins/datatables/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "$base${table.UriPrefix}/data",
+                "type": "post",
+                "data": function (d) {
+
+                }
+            },
+            "order": [[0, "desc"]],
+            "columns": [
+#foreach ($column in $table.LabeledColumns)
+#set($columSize=$columSize+1)
+                    {"data": "${column.fieldName}", "bSortable": true},
+#end
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                                '<li><a href="$base${table.UriPrefix}/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">查看</a></li>' +
+                                '<li><a href="$base${table.UriPrefix}/edit/' + row.id + '" data-pjax>修改</a></li>' +
+                                '<li class="divider"></li>' +
+                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
+                                '</ul></div>';
+                    },
+                    "targets": $columSize
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    function del(id) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("$base${table.UriPrefix}/delete/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    function delCheck() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            var dialog = $("#dialogDelete");
+            dialog.modal("show");
+            dialog.find("#okDel").unbind("click");
+            dialog.find("#okDel").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("$base${table.UriPrefix}/delete", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        datatable.ajax.reload(null,false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+        } else {
+            Toast.warning("请先选择要删除的项！");
+        }
+    }
+    $(function () {
+        initDatatable();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+    });
+</script>
+<%}%>

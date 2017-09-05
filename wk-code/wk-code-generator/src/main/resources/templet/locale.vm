@@ -1,0 +1,3 @@
+#foreach($column in $table.LabeledColumns)
+${table.LocalePath}.column.${column.fieldName}=${column.Label}
+#end

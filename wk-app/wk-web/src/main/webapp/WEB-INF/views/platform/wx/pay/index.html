@@ -1,0 +1,134 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<script src="${base}/assets/plugins/jquery.qrcode.min.js"></script>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/wx/conf/account" data-pjax id="goback"><i class="ti-angle-left"></i> 返回</a>
+    </div>
+</header>
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel panel-form">
+            <div class="row mb10">
+
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" style="text-align: right">测试支付金额（单位：分）</label>
+                            <div class="col-sm-7" style="padding-bottom: 5px;">
+                                <input id="money" style="width: 150px;" type="text" class="form-control" value="1"
+                                       data-parsley-required="true"
+                                       data-parsley-type="integer">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-7" style="padding-bottom: 5px;">
+                                <button id="pay" class="btn btn-primary">支付</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-7" style="padding-bottom: 5px;">
+                                <div id="qrCode"></div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12" style="padding-bottom: 5px;">
+                                <hr/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" style="text-align: right">测试红包金额（单位：分）</label>
+                            <div class="col-sm-7" style="padding-bottom: 5px;">
+                                <input id="redpack" style="width: 150px;" type="text" class="form-control" value="1"
+                                       data-parsley-required="true"
+                                       data-parsley-type="integer">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" style="text-align: right">关注此公众号的openid</label>
+                            <div class="col-sm-7" style="padding-bottom: 5px;">
+                                <input id="openid" style="width: 250px;" type="text" class="form-control" value="oeLLCvhCWOEqX-mXMhkRJtLgvASU"
+                                       data-parsley-required="true"
+                                       data-parsley-type="integer">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-7" style="padding-bottom: 5px;">
+                                <button id="redpackBtn" class="btn btn-primary">发普通红包</button>
+                                <button id="redpackGroupBtn" class="btn btn-primary">发裂变红包</button>
+                                <button id="transfersBtn" class="btn btn-primary">向个人付款</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-7" style="padding-bottom: 5px;">
+                                <div id="redpackTip"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script language="JavaScript">
+
+    $(function () {
+        $("#pay").on("click", function () {
+            sublime.showLoadingbar($(".main-content"));
+            $.get(
+                "${base}/platform/wx/conf/account/paytest/payWxpay?money=" + $("#money").val(),
+                function (result) {
+                    if (result.code == 0) {
+                        $("#qrCode").html("");
+                        $("#qrCode").qrcode({width: 200, height: 200, text: result.data});
+                    } else {
+                        $("#qrCode").html("微信支付不可用，请使用其他支付方式");
+                    }
+                    sublime.closeLoadingbar($(".main-content"));
+                }, 'json'
+            );
+        });
+        $("#redpackBtn").on("click", function () {
+            sublime.showLoadingbar($(".main-content"));
+            $.get(
+                "${base}/platform/wx/conf/account/paytest/redpack?redpack=" + $("#redpack").val()+"&openid="+$("#openid").val(),
+                function (result) {
+                    $("#redpackTip").html(result.msg);
+                    sublime.closeLoadingbar($(".main-content"));
+                }, 'json'
+            );
+        });
+        $("#redpackGroupBtn").on("click", function () {
+            sublime.showLoadingbar($(".main-content"));
+            $.get(
+                "${base}/platform/wx/conf/account/paytest/redpackGroup?redpack=" + $("#redpack").val()+"&openid="+$("#openid").val(),
+                function (result) {
+                    $("#redpackTip").html(result.msg);
+                    sublime.closeLoadingbar($(".main-content"));
+                }, 'json'
+            );
+        });
+        $("#transfersBtn").on("click", function () {
+            sublime.showLoadingbar($(".main-content"));
+            $.get(
+                "${base}/platform/wx/conf/account/paytest/transfers?redpack=" + $("#redpack").val()+"&openid="+$("#openid").val(),
+                function (result) {
+                    $("#redpackTip").html(result.msg);
+                    sublime.closeLoadingbar($(".main-content"));
+                }, 'json'
+            );
+        });
+    });
+</script>
+
+<%}%>

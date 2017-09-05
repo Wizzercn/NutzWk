@@ -1,0 +1,90 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">${obj.username!}</a>
+                        <small>${obj.username}  [${obj.id!}]</small>
+                    </div>
+                </header>
+                <% if(@userFirstMenus.size()>0){ %>
+                <table id="menuTreeTable" class="table no-m">
+                    <thead>
+                    <tr>
+                        <th class="col-md-2 pd-l-lg">
+                            <span class="pd-l-sm ml20"></span>菜单名称
+                        </th>
+                        <th class="col-md-2">URL</th>
+                        <th class="col-md-1">权限类型</th>
+                        <th class="col-md-2">权限标识</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <%
+                    for(firstMenu in userFirstMenus) {
+                    %>
+
+                    <tr data-tt-id="${firstMenu.id}" data-tt-parent-id="${firstMenu.parentId}"
+                        data-tt-branch="${firstMenu.hasChildren}">
+                        <td><span class="pd-l-sm"></span><i class="${firstMenu.icon!} mr5"></i> ${firstMenu.name!}</td>
+                        <td>${firstMenu.href!}</td>
+                        <td><%if(firstMenu.type=='menu'){%>菜单<%}else{%>数据<%}%></td>
+                        <td>${firstMenu.permission!}</td>
+                    </tr>
+                    <%
+                    }%>
+
+                    </tbody>
+                </table>
+                <% }else{ %>
+
+                <div class="p10">
+                    <div class="alert alert-warning">
+                        此用户没有权限菜单。
+                    </div>
+                </div>
+                <% } %>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+</div>
+<script type="text/javascript">
+    var allRes = ${jsonSecondMenus!};
+    var menuTreeTable;
+    $(function () {
+        menuTreeTable = $("#menuTreeTable").treetable({
+            expandable: true,
+            onNodeExpand: function () {
+                var node = this;
+                var data = "";
+                var childs = [];
+                $.each(allRes, function (i, n) {
+                    if (n.parentId == node.id) {
+                        childs.push(n);
+                    }
+                });
+                $.each(childs, function (i, n) {
+                    var url = n.href || '';
+                    var type = '菜单';
+                    if(n.type=='data'){
+                        type = '数据';
+                    }
+                    var permission = n.permission || '';
+                    var row = "<tr data-tt-id='" + n.id + "' data-tt-parent-id='" + n.parentId + "' data-tt-branch='" + n.hasChildren + "'>";
+                    row += "<td><span class='pd-l-sm'></span><i class='" + n.icon + " mr5'></i> " + n.name + "</td>";
+                    row += "<td>" + url + "</td>";
+                    row += "<td>" + type + "</td>";
+                    row += "<td>" + permission + "</td>";
+                    row += "</tr>";
+                    data += row;
+                });
+                menuTreeTable.treetable("unloadBranch", node);
+                menuTreeTable.treetable("loadBranch", node, data);
+            }
+        });
+    });
+</script>
