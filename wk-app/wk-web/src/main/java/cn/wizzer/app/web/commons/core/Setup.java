@@ -8,6 +8,8 @@ import cn.wizzer.app.web.commons.plugin.PluginMaster;
 import cn.wizzer.framework.ig.RedisIdGenerator;
 import com.rabbitmq.client.*;
 import net.sf.ehcache.CacheManager;
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngineConfiguration;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -81,6 +83,8 @@ public class Setup implements org.nutz.mvc.Setup {
             initSysRoute(config, dao);
             // 初始化热插拔插件
             initSysPlugin(config, dao);
+            // 初始化工作流
+            ioc.get(ProcessEngine.class);
             // 初始化rabbitmq
             //initRabbit(config, dao);
             // 初始化ig缓存

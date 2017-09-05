@@ -121,6 +121,7 @@
             <artifactId>nutz-integration-activiti</artifactId>
             <version>${nutz-version}</version>
         </dependency>
+        <dependency>
             <groupId>com.vdurmont</groupId>
             <artifactId>emoji-java</artifactId>
             <version>3.2.0</version>
