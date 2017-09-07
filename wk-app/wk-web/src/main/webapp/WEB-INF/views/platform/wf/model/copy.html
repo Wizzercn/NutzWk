@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4 class="modal-title">新建模型</h4>
+    <h4 class="modal-title">复制模型</h4>
 </div>
 <div class="modal-body">
     <div class="row mb10">
@@ -9,7 +9,7 @@
                 <select id="category" class="form-control">
                     <option value="">全部分类</option>
                     <%for(o in list){%>
-                    <option value="${o.id!}">${o.name!}</option>
+                    <option value="${o.id!}" <%if(categoryId==o.id){%>selected<%}%>>${o.name!}</option>
                     <%}%>
                 </select>
             </div>
@@ -19,7 +19,7 @@
         <div class="form-group">
             <label for="name" class="col-sm-4 control-label">模型名称</label>
             <div class="col-sm-6">
-                <input id="name" type="text" class="form-control" />
+                <input id="name" type="text" value="${name!}_copy" class="form-control" />
             </div>
         </div>
     </div>
@@ -27,7 +27,7 @@
         <div class="form-group">
             <label for="key" class="col-sm-4 control-label">模型KEY</label>
             <div class="col-sm-6">
-                <input id="key" type="text" class="form-control" />
+                <input id="key" type="text"  value="${key!}_copy" class="form-control" />
 
             </div>
         </div>
@@ -37,7 +37,7 @@
             <label for="description" class="col-sm-4 control-label">模型备注</label>
 
             <div class="col-sm-6" id="">
-                <textarea id="description" class="form-control"></textarea>
+                <textarea id="description" class="form-control">${description!}</textarea>
             </div>
         </div>
     </div>
@@ -62,8 +62,15 @@
                $("#key").focus();
                return false;
            }
-           $("#dialogDetail").modal("hide");
-           window.open("${base!}/platform/wf/cfg/model/new?category="+$("#category").val()+"&name="+$("#name").val()+"&key="+$("#key").val()+"&description="+$("#description").val());
+           $.post("${base}/platform/wf/cfg/model/doCopy?modelId=${modelId!}&category="+$("#category").val()+"&name="+$("#name").val()+"&key="+$("#key").val()+"&description="+$("#description").val(), {}, function (data) {
+               if (data.code == 0) {
+                   datatable.ajax.reload(null, false);
+                   Toast.success(data.msg);
+               } else {
+                   Toast.error(data.msg);
+               }
+               $("#dialogDetail").modal("hide");
+           }, "json");
        });
     });
 </script>

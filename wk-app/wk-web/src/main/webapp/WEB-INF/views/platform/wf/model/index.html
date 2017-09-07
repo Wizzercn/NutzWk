@@ -6,7 +6,7 @@ layout("/layouts/platform.html"){
     <a class="btn btn-info navbar-btn" href="${base}/platform/wf/cfg/category" data-pjax><i class="ti-book"></i> 分类管理</a>
 
     <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/wf/cfg/model/add" data-toggle="modal" data-target="#dialogDetail"><i class="ti-plus"></i> 新建流程</a>
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/wf/cfg/model/add" data-toggle="modal" data-target="#dialogDetail"><i class="ti-plus"></i> 新建模型</a>
     </div>
     <div class="btn-group">
         <div>
@@ -19,7 +19,7 @@ layout("/layouts/platform.html"){
         </div>
     </div>
     <div class="btn-group tool-button"><input id="keyword" type="text" class="form-control"
-                                              placeholder="流程名称">
+                                              placeholder="模型名称">
     </div>
     <div class="btn-group tool-button">
         <button class="btn btn-primary navbar-btn" onclick="search()">查询</button>
@@ -60,6 +60,27 @@ layout("/layouts/platform.html"){
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
                 <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDeploy" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">部署</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        确定部署吗？ <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="okDeploy" type="button" class="btn btn-primary" data-loading-text="正在部署...">确 定</button>
             </div>
         </div>
     </div>
@@ -114,9 +135,9 @@ layout("/layouts/platform.html"){
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                             ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
                             '<li><a href="${base}/platform/wf/cfg/model/editor/modeler?modelId=' + row.id + '" target="_blank">编辑</a></li>' +
-                            '<li><a href="javascript:;" onclick="resetIt(\'' + row.id + '\')">部署</a></li>' +
-                            '<li><a href="javascript:;" onclick="resetIt(\'' + row.id + '\')">导出</a></li>' +
-                            '<li><a href="javascript:;" onclick="resetIt(\'' + row.id + '\')">复制</a></li>' +
+                            '<li><a href="javascript:;" onclick="deploy(\'' + row.id + '\')">部署</a></li>' +
+                            '<li><a href="javascript:;" onclick="exportXml(\'' + row.id + '\')">导出</a></li>' +
+                            '<li><a href="${base}/platform/wf/cfg/model/copy/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">复制</a></li>' +
                             '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
                             '</ul></div>';
                     },
@@ -131,16 +152,17 @@ layout("/layouts/platform.html"){
     function search() {
         datatable.ajax.reload();
     }
-    function resetIt(id) {
-        var dialog = $("#dialogReset");
+    function deploy(id) {
+        var dialog = $("#dialogDeploy");
         dialog.modal("show");
-        dialog.find("#okReset").unbind("click");
-        dialog.find("#okReset").bind("click", function (event) {
+        dialog.find("#okDeploy").unbind("click");
+        dialog.find("#okDeploy").bind("click", function (event) {
             var btn = $(this);
             btn.button("loading");
-            $.post("${base}/platform/sys/api/reset/" + id, {}, function (data) {
+            $.post("${base}/platform/wf/cfg/model/deploy/" + id, {}, function (data) {
                 if (data.code == 0) {
                     datatable.ajax.reload(null, false);
+                    Toast.success(data.msg);
                 } else {
                     Toast.error(data.msg);
                 }
@@ -149,6 +171,7 @@ layout("/layouts/platform.html"){
                 dialog.modal("hide");
             }, "json");
         });
+
     }
     function del(id) {
         var dialog = $("#dialogDelete");
@@ -157,7 +180,7 @@ layout("/layouts/platform.html"){
         dialog.find("#ok").bind("click", function (event) {
             var btn = $(this);
             btn.button("loading");
-            $.post("${base}/platform/sys/api/delete/" + id, {}, function (data) {
+            $.post("${base}/platform/wf/cfg/model/delete/" + id, {}, function (data) {
                 if (data.code == 0) {
                     datatable.ajax.reload(null, false);
                 } else {
@@ -169,8 +192,14 @@ layout("/layouts/platform.html"){
             }, "json");
         });
     }
+    function exportXml(id) {
+        window.open("${base}/platform/wf/cfg/model/export/" + id);
+    }
     $(function () {
         initDatatable();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
     });
 </script>
 

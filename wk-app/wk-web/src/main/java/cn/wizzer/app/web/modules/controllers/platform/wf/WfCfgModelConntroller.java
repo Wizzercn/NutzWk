@@ -1,14 +1,20 @@
 package cn.wizzer.app.web.modules.controllers.platform.wf;
 
 import cn.wizzer.app.wf.modules.services.WfCategoryService;
+import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.activiti.bpmn.converter.BpmnXMLConverter;
+import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.editor.constants.ModelDataJsonConstants;
+import org.activiti.editor.language.json.converter.BpmnJsonConverter;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ModelQuery;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -20,8 +26,11 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
+import org.nutz.json.JsonFormat;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Files;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
@@ -33,6 +42,7 @@ import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -254,5 +264,115 @@ public class WfCfgModelConntroller {
             }
         }
         return buffer.toString();
+    }
+
+    @At("/deploy/?")
+    @Ok("json")
+    public Object deploy(String modelId) {
+        try {
+            Model modelData = repositoryService.getModel(modelId);
+            ObjectNode modelNode = (ObjectNode) new ObjectMapper().readTree(repositoryService.getModelEditorSource(modelData.getId()));
+            byte[] bpmnBytes = null;
+
+            BpmnModel model = new BpmnJsonConverter().convertToBpmnModel(modelNode);
+            bpmnBytes = new BpmnXMLConverter().convertToXML(model, "utf-8");
+
+            String processName = modelData.getName() + ".bpmn20.xml";
+            Deployment deployment = repositoryService.createDeployment().name(modelData.getName()).category(modelData.getCategory()).addString(processName, new String(bpmnBytes)).deploy();
+            modelData.setDeploymentId(deployment.getId());
+            repositoryService.saveModel(modelData);
+            return Result.success("部署成功，部署ID=" + deployment.getId());
+        } catch (Exception e) {
+            return Result.error("模型部署失败：modelId=" + modelId + "\r\n" + e.getMessage());
+        }
+    }
+
+    @At("/export/?")
+    @Ok("void")
+    public void export(String modelId, HttpServletResponse response) {
+        try {
+            Model modelData = repositoryService.getModel(modelId);
+            BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
+            JsonNode editorNode = new ObjectMapper().readTree(repositoryService.getModelEditorSource(modelData.getId()));
+            BpmnModel bpmnModel = jsonConverter.convertToBpmnModel(editorNode);
+            BpmnXMLConverter xmlConverter = new BpmnXMLConverter();
+            byte[] bpmnBytes = xmlConverter.convertToXML(bpmnModel);
+
+            ByteArrayInputStream in = new ByteArrayInputStream(bpmnBytes);
+            IOUtils.copy(in, response.getOutputStream());
+            String filename = bpmnModel.getMainProcess().getId() + ".bpmn20.xml";
+            response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+            response.flushBuffer();
+        } catch (Exception e) {
+            log.error("导出model的xml文件失败：modelId=" + modelId, e);
+        }
+    }
+
+    @At("/delete/?")
+    @Ok("json")
+    public Object delete(String modelId) {
+        try {
+            Model modelData = repositoryService.getModel(modelId);
+            if (Strings.isNotBlank(modelData.getDeploymentId())) {
+                repositoryService.deleteDeployment(modelData.getDeploymentId(), true);
+            }
+            repositoryService.deleteModel(modelId);
+            return Result.success("删除成功，部署ID=" + modelId);
+        } catch (Exception e) {
+            return Result.error("删除失败：modelId=" + modelId + "\r\n" + e.getMessage());
+        }
+    }
+
+    @At("/copy/?")
+    @Ok("beetl:/platform/wf/model/copy.html")
+    @RequiresPermissions("wf.cfg.model")
+    public void copy(String modelId, HttpServletRequest req) {
+        Model modelData = repositoryService.getModel(modelId);
+        req.setAttribute("modelId", modelId);
+        req.setAttribute("categoryId", modelData.getCategory());
+        req.setAttribute("name", modelData.getName());
+        req.setAttribute("key", modelData.getKey());
+        NutMap nutMap = Json.fromJson(NutMap.class, Lang.inr(modelData.getMetaInfo()));
+        req.setAttribute("description", Strings.sNull(nutMap.getString("description")));
+        req.setAttribute("list", wfCategoryService.query(Cnd.orderBy().asc("location")));
+
+    }
+
+    @At("/doCopy")
+    @Ok("json")
+    public Object doCopy(@Param("modelId") String modelId, @Param("category") String category, @Param("name") String name, @Param("key") String key, @Param("description") String description, HttpServletRequest req) throws UnsupportedEncodingException {
+        try {
+            Model modelData = repositoryService.getModel(modelId);
+            if (modelData.getKey().equals(key)) {
+                return Result.error("复制失败：key=" + key + " 已存在！");
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            Model modelData2 = repositoryService.newModel();
+            ObjectNode modelObjectNode = objectMapper.createObjectNode();
+            modelObjectNode.put("category", category);
+            modelObjectNode.put("key", key);
+            modelObjectNode.put(ModelDataJsonConstants.MODEL_NAME, name);
+            modelObjectNode.put(ModelDataJsonConstants.MODEL_REVISION, 1);
+            description = StringUtils.defaultString(description);
+            modelObjectNode.put(ModelDataJsonConstants.MODEL_DESCRIPTION, description);
+            modelData2.setMetaInfo(modelObjectNode.toString());
+            modelData2.setKey(key);
+            modelData2.setName(name);
+            modelData2.setCategory(category);
+            modelData2.setKey(StringUtils.defaultString(key));
+            repositoryService.saveModel(modelData2);
+            NutMap nutMap = Json.fromJson(NutMap.class, Lang.inr(new String(repositoryService.getModelEditorSource(modelId), "utf-8")));
+            nutMap.put("resourceId", modelData2.getId());
+            NutMap properties = nutMap.getAs("properties", NutMap.class);
+            properties.put("process_id", key);
+            properties.put("process_namespace", category);
+            properties.put("name", name);
+            properties.put("documentation", description);
+            nutMap.put("properties", properties);
+            repositoryService.addModelEditorSource(modelData2.getId(), Json.toJson(nutMap, JsonFormat.compact()).getBytes("utf-8"));
+            return Result.success("复制成功，模型ID=" + modelData2.getId());
+        } catch (Exception e) {
+            return Result.error("复制失败：modelId=" + modelId + "\r\n" + e.getMessage());
+        }
     }
 }
