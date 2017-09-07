@@ -1,0 +1,69 @@
+<div class="modal-header">
+    <h4 class="modal-title">新建流程</h4>
+</div>
+<div class="modal-body">
+    <div class="row mb10">
+        <div class="form-group">
+            <label for="category" class="col-sm-4 control-label">请选择分类</label>
+            <div class="col-sm-6" >
+                <select id="category" class="form-control">
+                    <option value="">全部分类</option>
+                    <%for(o in list){%>
+                    <option value="${o.id!}">${o.name!}</option>
+                    <%}%>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row mb10">
+        <div class="form-group">
+            <label for="name" class="col-sm-4 control-label">流程名称</label>
+            <div class="col-sm-6">
+                <input id="name" type="text" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row mb10">
+        <div class="form-group">
+            <label for="key" class="col-sm-4 control-label">流程KEY</label>
+            <div class="col-sm-6">
+                <input id="key" type="text" class="form-control" />
+
+            </div>
+        </div>
+    </div>
+    <div class="row mb10">
+        <div class="form-group">
+            <label for="description" class="col-sm-4 control-label">流程备注</label>
+
+            <div class="col-sm-6" id="">
+                <textarea id="description" class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button id="nextOK" type="button" class="btn btn-primary" data-loading-text="下一步...">下一步</button>
+</div>
+<script language="JavaScript">
+    $(function () {
+       $("#nextOK").on("click",function () {
+           if($("#category").val()==""){
+               Toast.warning("请选择分类");
+               return false;
+           }
+           if($("#name").val()==""){
+               Toast.warning("请填写流程名称");
+               $("#name").focus();
+               return false;
+           }
+           if($("#key").val()==""){
+               Toast.warning("请填写流程key");
+               $("#key").focus();
+               return false;
+           }
+           $("#dialogDetail").modal("hide");
+           window.open("${base!}/platform/wf/cfg/model/new?category="+$("#category").val()+"&name="+$("#name").val()+"&key="+$("#key").val()+"&description="+$("#description").val());
+       });
+    });
+</script>

@@ -12,6 +12,9 @@ layout("/layouts/platform.html"){
         <div>
             <select id="categoryId" name="categoryId" class="form-control" onchange="search()">
                 <option value="">全部分类</option>
+                <%for(o in list){%>
+                <option value="${o.id!}">${o.name!}</option>
+                <%}%>
             </select>
         </div>
     </div>
@@ -110,7 +113,7 @@ layout("/layouts/platform.html"){
                     "render": function (data, type, row) {
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                             ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                            '<li><a href="javascript:;" onclick="resetIt(\'' + row.id + '\')">编辑</a></li>' +
+                            '<li><a href="${base}/platform/wf/cfg/model/editor/modeler?modelId=' + row.id + '" target="_blank">编辑</a></li>' +
                             '<li><a href="javascript:;" onclick="resetIt(\'' + row.id + '\')">部署</a></li>' +
                             '<li><a href="javascript:;" onclick="resetIt(\'' + row.id + '\')">导出</a></li>' +
                             '<li><a href="javascript:;" onclick="resetIt(\'' + row.id + '\')">复制</a></li>' +
@@ -124,9 +127,9 @@ layout("/layouts/platform.html"){
         datatable.on('click', 'tr', function () {
             $(this).toggleClass('selected');
         });
-        $("#searchBtn").on('click', function () {
-            datatable.ajax.reload();
-        });
+    }
+    function search() {
+        datatable.ajax.reload();
     }
     function resetIt(id) {
         var dialog = $("#dialogReset");
