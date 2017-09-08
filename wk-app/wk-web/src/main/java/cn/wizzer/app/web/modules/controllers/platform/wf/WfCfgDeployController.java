@@ -1,5 +1,6 @@
 package cn.wizzer.app.web.modules.controllers.platform.wf;
 
+import cn.wizzer.app.web.commons.activiti.cmd.ProcessDefinitionDiagramCmd;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.wf.modules.models.Wf_category;
 import cn.wizzer.app.wf.modules.services.WfCategoryService;
@@ -7,10 +8,20 @@ import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import cn.wizzer.framework.util.StringUtil;
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.impl.interceptor.Command;
+import org.activiti.engine.repository.Model;
+import org.activiti.engine.repository.ModelQuery;
+import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.repository.ProcessDefinitionQuery;
+import org.apache.commons.io.IOUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
@@ -18,6 +29,8 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.List;
 
 @IocBean
@@ -26,80 +39,103 @@ public class WfCfgDeployController {
     private static final Log log = Logs.get();
     @Inject
     private WfCategoryService wfCategoryService;
+    @Inject
+    private RepositoryService repositoryService;
+    @Inject
+    private ProcessEngine processEngine;
 
     @At("")
     @Ok("beetl:/platform/wf/deploy/index.html")
     @RequiresPermissions("wf.cfg.deploy")
-    public void index() {
+    public void index(HttpServletRequest req) {
+        req.setAttribute("list", wfCategoryService.query(Cnd.orderBy().asc("location")));
     }
 
-    @At("/data")
+    @At
+    @Ok("json:full")
+    @RequiresPermissions("wf.cfg.deploy")
+    public Object data(@Param("categoryId") String categoryId, @Param("keyword") String keyword, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+        List<ProcessDefinition> list;
+        long total;
+        ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery();
+        ProcessDefinitionQuery processDefinitionQuery2;
+        if (!Strings.isEmpty(categoryId) && !Strings.isEmpty(keyword)) {
+            processDefinitionQuery2 = processDefinitionQuery.processDefinitionCategory(categoryId);
+        } else if (!Strings.isEmpty(categoryId)) {
+            processDefinitionQuery2 = processDefinitionQuery.processDefinitionCategory(categoryId);
+        } else if (!Strings.isEmpty(keyword)) {
+            processDefinitionQuery2 = processDefinitionQuery.processDefinitionNameLike(keyword);
+        } else {
+            processDefinitionQuery2 = processDefinitionQuery;
+        }
+        total = processDefinitionQuery2.count();
+        list = processDefinitionQuery2.orderByProcessDefinitionId().desc().listPage(start, length);
+        NutMap re = new NutMap();
+        re.put("recordsFiltered", total);
+        re.put("data", list);
+        re.put("draw", draw);
+        re.put("recordsTotal", length);
+        return re;
+    }
+
+    @At("/suspend/?")
     @Ok("json")
-    @RequiresPermissions("wf.cfg.category")
-    public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        return wfCategoryService.data(length, start, draw, order, columns, cnd, null);
-    }
-
-    @At("/add")
-    @Ok("beetl:/platform/wf/category/add.html")
-    @RequiresPermissions("wf.cfg.category")
-    public void add() {
-
-    }
-
-    @At("/addDo")
-    @Ok("json")
-    @RequiresPermissions("wf.cfg.category")
-    @SLog(tag = "Wf_category", msg = "${args[0].id}")
-    public Object addDo(@Param("..") Wf_category wfCategory, HttpServletRequest req) {
+    public Object suspend(String processDefinitionId) {
         try {
-            wfCategoryService.insert(wfCategory);
-            return Result.success("system.success");
+            repositoryService.suspendProcessDefinitionById(processDefinitionId,
+                    true, null);
+            return Result.success("挂起成功，processDefinitionId=" + processDefinitionId);
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error("挂起失败：processDefinitionId=" + processDefinitionId + "\r\n" + e.getMessage());
         }
     }
 
-    @At("/edit/?")
-    @Ok("beetl:/platform/wf/category/edit.html")
-    @RequiresPermissions("wf.cfg.category")
-    public void edit(String id, HttpServletRequest req) {
-        req.setAttribute("obj", wfCategoryService.fetch(id));
-    }
-
-    @At("/editDo")
+    @At("/active/?")
     @Ok("json")
-    @RequiresPermissions("wf.cfg.category")
-    @SLog(tag = "Wf_category", msg = "${args[0].id}")
-    public Object editDo(@Param("..") Wf_category wfCategory, HttpServletRequest req) {
+    public Object active(String processDefinitionId) {
         try {
-            wfCategory.setOpBy(StringUtil.getUid());
-            wfCategory.setOpAt((int) (System.currentTimeMillis() / 1000));
-            wfCategoryService.updateIgnoreNull(wfCategory);
-            return Result.success("system.success");
+            repositoryService.activateProcessDefinitionById(processDefinitionId,
+                    true, null);
+            return Result.success("激活成功，processDefinitionId=" + processDefinitionId);
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error("激活失败：processDefinitionId=" + processDefinitionId + "\r\n" + e.getMessage());
         }
     }
 
-    @At({"/delete/?", "/delete"})
+    @At("/delete/?")
     @Ok("json")
-    @RequiresPermissions("wf.cfg.category")
-    @SLog(tag = "Wf_category", msg = "${req.getAttribute('id')}")
-    public Object delete(String id, @Param("ids") String[] ids, HttpServletRequest req) {
+    public Object delete(String deployId) {
         try {
-            if (ids != null && ids.length > 0) {
-                wfCategoryService.delete(ids);
-                req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
-            } else {
-                wfCategoryService.delete(id);
-                req.setAttribute("id", id);
-            }
-            return Result.success("system.success");
+            repositoryService.deleteDeployment(deployId, true);//是否级联删除实例资源
+            return Result.success("删除成功，deployId=" + deployId);
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error("删除失败：deployId=" + deployId + "\r\n" + e.getMessage());
         }
     }
 
+    @At("/graph/?")
+    @Ok("void")
+    public void graph(String processDefinitionId,
+                      HttpServletResponse response) throws Exception {
+        Command<InputStream> cmd = new ProcessDefinitionDiagramCmd(
+                processDefinitionId);
+        InputStream is = processEngine.getManagementService().executeCommand(
+                cmd);
+        response.setContentType("image/png");
+        IOUtils.copy(is, response.getOutputStream());
+    }
+
+    @At("/xml/?")
+    @Ok("void")
+    public void xml(String processDefinitionId,
+                    HttpServletResponse response) throws Exception {
+        ProcessDefinition processDefinition = repositoryService
+                .createProcessDefinitionQuery()
+                .processDefinitionId(processDefinitionId).singleResult();
+        String resourceName = processDefinition.getResourceName();
+        InputStream resourceAsStream = repositoryService.getResourceAsStream(
+                processDefinition.getDeploymentId(), resourceName);
+        response.setContentType("text/xml;charset=UTF-8");
+        IOUtils.copy(resourceAsStream, response.getOutputStream());
+    }
 }

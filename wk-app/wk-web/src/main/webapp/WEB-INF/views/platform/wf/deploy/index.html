@@ -3,11 +3,6 @@ layout("/layouts/platform.html"){
 %>
 
 <header class="header navbar bg-white shadow">
-    <a class="btn btn-info navbar-btn" href="${base}/platform/wf/cfg/category" data-pjax><i class="ti-book"></i> 分类管理</a>
-
-    <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/wf/cfg/model/add" data-toggle="modal" data-target="#dialogDetail"><i class="ti-plus"></i> 新建模型</a>
-    </div>
     <div class="btn-group">
         <div>
             <select id="categoryId" name="categoryId" class="form-control" onchange="search()">
@@ -19,7 +14,7 @@ layout("/layouts/platform.html"){
         </div>
     </div>
     <div class="btn-group tool-button"><input id="keyword" type="text" class="form-control"
-                                              placeholder="模型名称">
+                                              placeholder="名称">
     </div>
     <div class="btn-group tool-button">
         <button class="btn btn-primary navbar-btn" onclick="search()">查询</button>
@@ -30,13 +25,11 @@ layout("/layouts/platform.html"){
         <table class="table table-bordered table-striped mg-t datatable">
             <thead>
             <tr>
-                <th>模型Id</th>
+                <th>流程定义</th>
                 <th>模型名称</th>
                 <th>模型KEY</th>
-                <th>版本</th>
-                <th>创建时间</th>
-                <th>更新时间</th>
-                <th>部署Id</th>
+                <th>部署版本</th>
+                <th>状态</th>
                 <th>操作</th>
             </tr>
             </thead>
@@ -112,7 +105,7 @@ layout("/layouts/platform.html"){
                 sublime.closeLoadingbar($(".main-content"));
             },
             "ajax": {
-                "url": "${base}/platform/wf/cfg/model/data",
+                "url": "${base}/platform/wf/cfg/deploy/data",
                 "type": "post",
                 "data": function (d) {
                     d.categoryId=$("#categoryId").val();
@@ -125,53 +118,58 @@ layout("/layouts/platform.html"){
                 {"data": "name", "bSortable": true},
                 {"data": "key", "bSortable": true},
                 {"data": "version", "bSortable": true},
-                {"data": "createTime", "bSortable": true},
-                {"data": "lastUpdateTime", "bSortable": true},
-                {"data": "deploymentId", "bSortable": true}
+                {"data": "suspensionState", "bSortable": true}
             ],
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
+                        if(data==1){
+                            return "激活 (<a  style='color: #0000cc' href='javascript:suspend(\""+row.id+"\")'>挂起</a>)";
+                        }else{
+                            return "挂起 (<a style='color: #0000cc' href='javascript:active(\""+row.id+"\")'>激活</a>)";
+                        }
+                    },
+                    "targets": 4
+                },
+                {
+                    "render": function (data, type, row) {
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
                             ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                            '<li><a href="${base}/platform/wf/cfg/model/editor/modeler?modelId=' + row.id + '" target="_blank">编辑</a></li>' +
-                            '<li><a href="javascript:;" onclick="deploy(\'' + row.id + '\')">部署</a></li>' +
-                            '<li><a href="javascript:;" onclick="exportXml(\'' + row.id + '\')">导出</a></li>' +
-                            '<li><a href="${base}/platform/wf/cfg/model/copy/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">复制</a></li>' +
-                            '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
+                            '<li><a href="${base}/platform/wf/cfg/deploy/graph/' + row.id + '" target="_blank">流程图</a></li>' +
+                            '<li><a href="${base}/platform/wf/cfg/deploy/xml/' + row.id + '" target="_blank">XML</a></li>' +
+                            '<li><a href="javascript:;" onclick="del(\'' + row.deploymentId + '\')">删除</a></li>' +
                             '</ul></div>';
                     },
-                    "targets": 7
+                    "targets": 5
                 }
             ]
         });
         datatable.on('click', 'tr', function () {
-            $(this).toggleClass('selected');
+            //$(this).toggleClass('selected');
         });
     }
     function search() {
         datatable.ajax.reload();
     }
-    function deploy(id) {
-        var dialog = $("#dialogDeploy");
-        dialog.modal("show");
-        dialog.find("#okDeploy").unbind("click");
-        dialog.find("#okDeploy").bind("click", function (event) {
-            var btn = $(this);
-            btn.button("loading");
-            $.post("${base}/platform/wf/cfg/model/deploy/" + id, {}, function (data) {
-                if (data.code == 0) {
-                    datatable.ajax.reload(null, false);
-                    Toast.success(data.msg);
-                } else {
-                    Toast.error(data.msg);
-                }
-                //重置按钮状态，关闭提示框
-                btn.button("reset");
-                dialog.modal("hide");
-            }, "json");
-        });
-
+    function suspend(id) {
+        $.post("${base}/platform/wf/cfg/deploy/suspend/" + id, {}, function (data) {
+            if (data.code == 0) {
+                datatable.ajax.reload(null, false);
+                Toast.success(data.msg);
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function active(id) {
+        $.post("${base}/platform/wf/cfg/deploy/active/" + id, {}, function (data) {
+            if (data.code == 0) {
+                datatable.ajax.reload(null, false);
+                Toast.success(data.msg);
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
     }
     function del(id) {
         var dialog = $("#dialogDelete");
@@ -180,7 +178,7 @@ layout("/layouts/platform.html"){
         dialog.find("#ok").bind("click", function (event) {
             var btn = $(this);
             btn.button("loading");
-            $.post("${base}/platform/wf/cfg/model/delete/" + id, {}, function (data) {
+            $.post("${base}/platform/wf/cfg/deploy/delete/" + id, {}, function (data) {
                 if (data.code == 0) {
                     datatable.ajax.reload(null, false);
                 } else {
@@ -191,9 +189,6 @@ layout("/layouts/platform.html"){
                 dialog.modal("hide");
             }, "json");
         });
-    }
-    function exportXml(id) {
-        window.open("${base}/platform/wf/cfg/model/export/" + id);
     }
     $(function () {
         initDatatable();

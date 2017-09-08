@@ -275,7 +275,7 @@ public class WfCfgModelConntroller {
             byte[] bpmnBytes = null;
 
             BpmnModel model = new BpmnJsonConverter().convertToBpmnModel(modelNode);
-            bpmnBytes = new BpmnXMLConverter().convertToXML(model, "utf-8");
+            bpmnBytes = new BpmnXMLConverter().convertToXML(model, "UTF-8");
 
             String processName = modelData.getName() + ".bpmn20.xml";
             Deployment deployment = repositoryService.createDeployment().name(modelData.getName()).category(modelData.getCategory()).addString(processName, new String(bpmnBytes)).deploy();
