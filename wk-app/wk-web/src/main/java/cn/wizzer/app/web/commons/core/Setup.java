@@ -114,9 +114,11 @@ public class Setup implements org.nutz.mvc.Setup {
             e.printStackTrace();
         }
     }
+
     private void initActiviti(NutConfig config) {
         log.info("Activiti Init Start...");
-        ProcessEngine processEngine=config.getIoc().get(ProcessEngine.class);
+        ProcessEngineConfigurationImpl processEngineConfiguration = config.getIoc().get(null, "processEngineSpec");
+
         // 使用系统角色及用户替换工作流的用户及用户组
         List<SessionFactory> list = new ArrayList<>();
         CustomGroupEntityManagerFactory customGroupManagerFactory = new CustomGroupEntityManagerFactory();
@@ -125,7 +127,6 @@ public class Setup implements org.nutz.mvc.Setup {
         customUserEntityManagerFactory.setUserEntityManager(new CustomUserEntityManager());
         list.add(customGroupManagerFactory);
         list.add(customUserEntityManagerFactory);
-        ProcessEngineConfigurationImpl processEngineConfiguration =(ProcessEngineConfigurationImpl)processEngine.getProcessEngineConfiguration();
         processEngineConfiguration.setCustomSessionFactories(list);
         //添加任务监听
 
@@ -146,9 +147,11 @@ public class Setup implements org.nutz.mvc.Setup {
         processEngineConfiguration.setBpmnParser(new CustomBpmnParser());
         //UUID
         processEngineConfiguration.setIdGenerator(new StrongUuidGenerator());
-        log.info("Activiti Init End.");
+        ProcessEngine processEngine = config.getIoc().get(ProcessEngine.class);
+        log.info("Activiti Init End::" + processEngine.getName());
 
     }
+
     /**
      * 当项目启动的时候把表主键加载到redis缓存中
      */
