@@ -1,6 +1,15 @@
 package cn.wizzer.app.web.commons.core;
 
 import cn.wizzer.app.sys.modules.models.*;
+import cn.wizzer.app.web.commons.activiti.ext.CustomGroupEntityManager;
+import cn.wizzer.app.web.commons.activiti.ext.CustomGroupEntityManagerFactory;
+import cn.wizzer.app.web.commons.activiti.ext.CustomUserEntityManager;
+import cn.wizzer.app.web.commons.activiti.ext.CustomUserEntityManagerFactory;
+import cn.wizzer.app.web.commons.activiti.listener.ProxyTaskListener;
+import cn.wizzer.app.web.commons.activiti.listener.ProxyUserTaskBpmnParseHandler;
+import cn.wizzer.app.web.commons.activiti.listener.TaskCategoryTaskListener;
+import cn.wizzer.app.web.commons.activiti.parser.CustomBpmnParser;
+import cn.wizzer.app.web.commons.activiti.util.StrongUuidGenerator;
 import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.plugin.IPlugin;
 import cn.wizzer.app.web.commons.plugin.PluginMaster;
@@ -10,6 +19,10 @@ import com.rabbitmq.client.*;
 import net.sf.ehcache.CacheManager;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
+import org.activiti.engine.delegate.TaskListener;
+import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.impl.interceptor.*;
+import org.activiti.engine.parse.BpmnParseHandler;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -30,6 +43,8 @@ import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
+import org.nutz.ioc.Ioc2;
+import org.nutz.ioc.ObjectProxy;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.json.Json;
 import org.nutz.lang.*;
@@ -44,15 +59,14 @@ import redis.clients.jedis.Jedis;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -84,7 +98,7 @@ public class Setup implements org.nutz.mvc.Setup {
             // 初始化热插拔插件
             initSysPlugin(config, dao);
             // 初始化工作流
-            ioc.get(ProcessEngine.class);
+            initActiviti(config);
             // 初始化rabbitmq
             //initRabbit(config, dao);
             // 初始化ig缓存
@@ -100,7 +114,41 @@ public class Setup implements org.nutz.mvc.Setup {
             e.printStackTrace();
         }
     }
+    private void initActiviti(NutConfig config) {
+        log.info("Activiti Init Start...");
+        ProcessEngine processEngine=config.getIoc().get(ProcessEngine.class);
+        // 使用系统角色及用户替换工作流的用户及用户组
+        List<SessionFactory> list = new ArrayList<>();
+        CustomGroupEntityManagerFactory customGroupManagerFactory = new CustomGroupEntityManagerFactory();
+        customGroupManagerFactory.setGroupEntityManager(new CustomGroupEntityManager());
+        CustomUserEntityManagerFactory customUserEntityManagerFactory = new CustomUserEntityManagerFactory();
+        customUserEntityManagerFactory.setUserEntityManager(new CustomUserEntityManager());
+        list.add(customGroupManagerFactory);
+        list.add(customUserEntityManagerFactory);
+        ProcessEngineConfigurationImpl processEngineConfiguration =(ProcessEngineConfigurationImpl)processEngine.getProcessEngineConfiguration();
+        processEngineConfiguration.setCustomSessionFactories(list);
+        //添加任务监听
 
+        Map<Object, Object> beans = new HashMap<>();
+        ProxyTaskListener proxyTaskListener = new ProxyTaskListener();
+        List<TaskListener> taskListeners = new ArrayList<>();
+        TaskCategoryTaskListener t1 = new TaskCategoryTaskListener();
+        taskListeners.add(t1);
+        proxyTaskListener.setTaskListeners(taskListeners);
+        beans.put("customTaskListener", proxyTaskListener);
+        processEngineConfiguration.setBeans(beans);
+        List<BpmnParseHandler> customDefaultBpmnParseHandlers = new ArrayList<>();
+        ProxyUserTaskBpmnParseHandler bpmnParseHandler = new ProxyUserTaskBpmnParseHandler();
+        bpmnParseHandler.setUseDefaultUserTaskParser(true);
+        bpmnParseHandler.setTaskListenerId("customTaskListener");
+        customDefaultBpmnParseHandlers.add(bpmnParseHandler);
+        processEngineConfiguration.setCustomDefaultBpmnParseHandlers(customDefaultBpmnParseHandlers);
+        processEngineConfiguration.setBpmnParser(new CustomBpmnParser());
+        //UUID
+        processEngineConfiguration.setIdGenerator(new StrongUuidGenerator());
+        log.info("Activiti Init End.");
+
+    }
     /**
      * 当项目启动的时候把表主键加载到redis缓存中
      */
