@@ -1,0 +1,189 @@
+<%
+layout("/layouts/platform.html"){
+%>
+
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button"><input id="keyword" type="text" class="form-control"
+                                              placeholder="流程名称">
+    </div>
+    <div class="btn-group tool-button">
+        <button class="btn btn-primary navbar-btn" onclick="search()">查询</button>
+    </div>
+</header>
+<div class=panel-body style="padding-top: 50px;">
+    <div class="table-responsive no-border">
+        <table class="table table-bordered table-striped mg-t datatable">
+            <thead>
+            <tr>
+                <th>实例Id</th>
+                <th>流程名称</th>
+                <th>流程定义</th>
+                <th>当前环节</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        删除后无法恢复，确定删除吗？ <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDeploy" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">部署</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        确定部署吗？ <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="okDeploy" type="button" class="btn btn-primary" data-loading-text="正在部署...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDetail" class="modal fade bs-modal" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/wf/cfg/flow/data",
+                "type": "post",
+                "data": function (d) {
+                    d.keyword=$("#keyword").val();
+                }
+            },
+            "order": [[0, "asc"]],
+            "columns": [
+                {"data": "processInstanceId", "bSortable": true},
+                {"data": "processDefinitionName", "bSortable": true},
+                {"data": "processDefinitionId", "bSortable": true},
+                {"data": "activityId", "bSortable": true},
+                {"data": "suspensionState", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        if(data==1){
+                            return "激活 (<a  style='color: #0000cc' href='javascript:suspend(\""+row.processInstanceId+"\")'>挂起</a>)";
+                        }else{
+                            return "挂起 (<a style='color: #0000cc' href='javascript:active(\""+row.processInstanceId+"\")'>激活</a>)";
+                        }
+                    },
+                    "targets": 4
+                },
+                {
+                    "render": function (data, type, row) {
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                            ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                            '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">历史</a></li>' +
+                            '<li><a href="javascript:;" onclick="del(\'' + row.processInstanceId + '\')">删除</a></li>' +
+                            '</ul></div>';
+                    },
+                    "targets": 5
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            //$(this).toggleClass('selected');
+        });
+    }
+    function search() {
+        datatable.ajax.reload();
+    }
+    function suspend(id) {
+        $.post("${base}/platform/wf/cfg/flow/suspend/" + id, {}, function (data) {
+            if (data.code == 0) {
+                datatable.ajax.reload(null, false);
+                Toast.success(data.msg);
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function active(id) {
+        $.post("${base}/platform/wf/cfg/flow/active/" + id, {}, function (data) {
+            if (data.code == 0) {
+                datatable.ajax.reload(null, false);
+                Toast.success(data.msg);
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    }
+    function del(id) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#ok").unbind("click");
+        dialog.find("#ok").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/wf/cfg/flow/end/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null, false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                //重置按钮状态，关闭提示框
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    $(function () {
+        initDatatable();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+    });
+</script>
+
+<%}%>

@@ -80,6 +80,7 @@ public class WfCfgDeployController {
 
     @At("/suspend/?")
     @Ok("json")
+    @RequiresPermissions("wf.cfg.flow")
     public Object suspend(String processDefinitionId) {
         try {
             repositoryService.suspendProcessDefinitionById(processDefinitionId,
@@ -92,6 +93,7 @@ public class WfCfgDeployController {
 
     @At("/active/?")
     @Ok("json")
+    @RequiresPermissions("wf.cfg.flow")
     public Object active(String processDefinitionId) {
         try {
             repositoryService.activateProcessDefinitionById(processDefinitionId,
@@ -104,6 +106,7 @@ public class WfCfgDeployController {
 
     @At("/delete/?")
     @Ok("json")
+    @RequiresPermissions("wf.cfg.flow")
     public Object delete(String deployId) {
         try {
             repositoryService.deleteDeployment(deployId, true);//是否级联删除实例资源
@@ -115,6 +118,7 @@ public class WfCfgDeployController {
 
     @At("/graph/?")
     @Ok("void")
+    @RequiresPermissions("wf.cfg.flow")
     public void graph(String processDefinitionId,
                       HttpServletResponse response) throws Exception {
         Command<InputStream> cmd = new ProcessDefinitionDiagramCmd(
@@ -127,6 +131,7 @@ public class WfCfgDeployController {
 
     @At("/xml/?")
     @Ok("void")
+    @RequiresPermissions("wf.cfg.flow")
     public void xml(String processDefinitionId,
                     HttpServletResponse response) throws Exception {
         ProcessDefinition processDefinition = repositoryService

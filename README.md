@@ -6,6 +6,8 @@ NutzWk 4.x - Activiti
 * -Dfile.encoding=UTF-8 
 * 不加可以,中文乱码别找我~~
 
+![Demo](demo.jpg)
+
 # 关于
 
 *   本项目完全开源，商用完全免费
