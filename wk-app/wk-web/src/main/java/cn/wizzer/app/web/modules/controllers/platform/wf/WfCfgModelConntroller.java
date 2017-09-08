@@ -237,7 +237,7 @@ public class WfCfgModelConntroller {
     public String getStencilset() {
         InputStream stencilsetStream = this.getClass().getClassLoader().getResourceAsStream("stencilset.json.cfg");
         try {
-            return IOUtils.toString(stencilsetStream);
+            return IOUtils.toString(stencilsetStream, "UTF-8");
         } catch (Exception e) {
             throw new ActivitiException("Error while loading stencil set", e);
         }
