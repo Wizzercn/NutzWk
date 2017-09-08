@@ -8,7 +8,6 @@
     <artifactId>wk-parent</artifactId>
     <version>4.0.1-SNAPSHOT</version>
     <modules>
-        <module>wk-framework</module>
         <module>wk-app</module>
     </modules>
     <packaging>pom</packaging>
