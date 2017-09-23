@@ -132,13 +132,27 @@ public class SysUnitController {
     public Object tree(@Param("pid") String pid) {
         List<Sys_unit> list = new ArrayList<>();
         if (shiroUtil.hasRole("sysadmin")) {
-            list = sysUnitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isBlank(pid)) {
+                cnd.and("parentId", "=", "").or("parentId", "is", null);
+            } else {
+                cnd.and("parentId", "=", pid);
+            }
+            cnd.asc("path");
+            list = sysUnitService.query(cnd);
         } else {
             Sys_user user = (Sys_user) shiroUtil.getPrincipal();
             if (user != null && Strings.isBlank(pid)) {
                 list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("path"));
             } else {
-                list = sysUnitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
+                Cnd cnd = Cnd.NEW();
+                if (Strings.isBlank(pid)) {
+                    cnd.and("parentId", "=", "").or("parentId", "is", null);
+                } else {
+                    cnd.and("parentId", "=", pid);
+                }
+                cnd.asc("path");
+                list = sysUnitService.query(cnd);
             }
         }
         List<Map<String, Object>> tree = new ArrayList<>();

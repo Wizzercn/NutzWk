@@ -338,7 +338,14 @@ public class SysRoleController {
         List<Map<String, Object>> tree = new ArrayList<>();
         Map<String, Object> obj = new HashMap<>();
         if (shiroUtil.hasRole("sysadmin")) {
-            list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isBlank(pid)) {
+                cnd.and("parentId", "=", "").or("parentId", "is", null);
+            } else {
+                cnd.and("parentId", "=", pid);
+            }
+            cnd.asc("path");
+            list = unitService.query(cnd);
             if (Strings.isBlank(pid)) {
                 obj.put("id", "root");
                 obj.put("text", "系统角色");
@@ -350,7 +357,14 @@ public class SysRoleController {
             if (user != null && Strings.isBlank(pid)) {
                 list = unitService.query(Cnd.where("id", "=", user.getUnitid()).asc("path"));
             } else {
-                list = unitService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("path"));
+                Cnd cnd = Cnd.NEW();
+                if (Strings.isBlank(pid)) {
+                    cnd.and("parentId", "=", "").or("parentId", "is", null);
+                } else {
+                    cnd.and("parentId", "=", pid);
+                }
+                cnd.asc("path");
+                list = unitService.query(cnd);
             }
         }
         for (Sys_unit unit : list) {

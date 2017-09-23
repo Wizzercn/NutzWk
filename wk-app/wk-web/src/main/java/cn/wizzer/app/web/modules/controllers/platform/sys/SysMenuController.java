@@ -154,7 +154,15 @@ public class SysMenuController {
     @Ok("json")
     @RequiresPermissions("sys.manager.menu")
     public Object tree(@Param("pid") String pid) {
-        List<Sys_menu> list = menuService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).and("type", "=", "menu").asc("location").asc("path"));
+        Cnd cnd = Cnd.NEW();
+        if (Strings.isBlank(pid)) {
+            cnd.and(Cnd.exps("parentId", "=", "").or("parentId", "is", null));
+        } else {
+            cnd.and("parentId", "=", pid);
+        }
+        cnd.and("type", "=", "menu");
+        cnd.asc("location").asc("path");
+        List<Sys_menu> list = menuService.query(cnd);
         List<Map<String, Object>> tree = new ArrayList<>();
         for (Sys_menu menu : list) {
             Map<String, Object> obj = new HashMap<>();
@@ -212,12 +220,12 @@ public class SysMenuController {
     @RequiresPermissions("sys.manager.menu.edit")
     public Object sortDo(@Param("ids") String ids, HttpServletRequest req) {
         try {
-            String[] menuIds= StringUtils.split(ids,",");
-            int i=0;
+            String[] menuIds = StringUtils.split(ids, ",");
+            int i = 0;
             menuService.dao().execute(Sqls.create("update sys_menu set location=0"));
-            for(String s:menuIds){
-                if(!Strings.isBlank(s)){
-                    menuService.update(org.nutz.dao.Chain.make("location",i),Cnd.where("id","=",s));
+            for (String s : menuIds) {
+                if (!Strings.isBlank(s)) {
+                    menuService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", s));
                     i++;
                 }
             }
