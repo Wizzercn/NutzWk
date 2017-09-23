@@ -498,7 +498,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @return
      */
     public int vDelete(String id) {
-        return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "=", id));
+        return this.dao().update(this.getEntityClass(), Chain.make("delFlag", true), Cnd.where("id", "=", id));
     }
 
     /**
@@ -508,7 +508,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @return
      */
     public int vDelete(String[] ids) {
-        return this.dao().update(this.getEntityClass(), Chain.make("delTag", true), Cnd.where("id", "in", ids));
+        return this.dao().update(this.getEntityClass(), Chain.make("delFlag", true), Cnd.where("id", "in", ids));
     }
 
     /**
