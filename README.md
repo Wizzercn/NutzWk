@@ -4,6 +4,7 @@ NutzWk 基于Nutz的开源企业级开发框架
 [![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
 [![GitHub release](https://img.shields.io/github/release/Wizzercn/NutzWk.svg)](https://github.com/Wizzercn/NutzWk/releases)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![PowerByNutz](https://img.shields.io/badge/PowerBy-Nutz-green.svg?style=plastic)](https://github.com/nutzam/nutz)
 
 在线演示地址
 ======
