@@ -18,7 +18,7 @@ https://pan.baidu.com/s/1i5kO37f          NutzWk 开发培训视频
 
 项目源于2010年，那时老东家还在使用Jsp和Struts1，需要手动创建并释放连接池、需要配置XML请求路径和类映射关系、要支持刚刚兴起的JSON非常痛苦等等的原因，开始选择适用“快速开发、功能丰富、扩展性强、性能优越”等技术要求的框架产品，讨厌Spring的繁杂配置、Hibernate及Mybatis的繁琐，讨厌一切让开发变得低效和繁杂的技术，这和Nutz的设计理念不谋而合。
 
-使用本框架开发商用项目始于2012年，先是基于NutzWk v1.0开发了CMS网站群管理系统、网络问政系统，而后分别用于交通厅网站群项目、12345市长热线项目、财政厅数据上报、羽毛球场地管理、新媒体指数等项目，3.x应用于Police大数据分析、Police视频监控平台及中科大财务处、天乐e生活等各类微信公众号项目中，经过几年的积累，使用NutzWk开发并商用的项目少则几十多则上百。因为她是开源的，不光老东家和现所在公司在用，广大网友也在用哦。
+使用本框架开发商用项目始于2012年，先是基于NutzWk v1.0开发了CMS网站群管理系统、网络问政系统，而后分别用于交通厅网站群项目、12345市长热线项目、财政厅数据上报、羽毛球场地管理、新媒体指数等项目，3.x应用于Police大数据分析、Police视频监控平台及中科大财务处、天乐e生活等各类微信公众号项目中，4.x应用于B2C商城、B2B2C产品、物联网、xx医院药物闭环APP等项目，经过几年的积累，使用NutzWk开发并商用的项目少则几十多则上百。因为她是开源的，不光老东家和现所在公司在用，广大网友也在用哦。
 
 我们有强大的后援 —— Nutz 社区支持  https://nutz.cn  及 Nutz 使用手册 https://nutzam.com/core/nutz_preface.html
 
@@ -69,7 +69,7 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 *   支持动作链配置(想加过滤器So easy)
 *   支持注解式日志(@SLog注解自动记录日志)
 *   支持自定义路由(显性转发或隐性转发)
-*   支持class或jar插件热插拔(单机部署模式)
+*   支持class或jar插件热插拔(单机部署模式)
 *   支持API Token及应用管理(结合Nodejs一键生成API DOC)
 *   后台管理界面采用Pjax+Bootstrap
 *   系统模块(单位、角色、用户、菜单等完整的权限体系)
@@ -108,10 +108,10 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 
 
 ## NutzWk 4.x 代码生成器安装使用:
-*   IDEA Settings --> Plugins --> Install plugin from disk --> wk-code-ideaplugin.jar
-*   创建实体类,必须有@Table,若字段需生成到模板页面则需加 @Comment 字段备注
-*   编译wk-web项目,使其打包发布至 target/ 目录
-*   在实体类上鼠标右击,Code(Alt+Insert/Mouse Right) --> Generate --> wk mvc
+*   IDEA Settings --> Plugins --> Install plugin from disk --> wk-code-ideaplugin.jar
+*   创建实体类,必须有@Table,若字段需生成到模板页面则需加 @Comment 字段备注(注意命名规范和大小写)
+*   编译wk-web项目,使其打包发布至 target/ 目录(目的是让代码生成器可读取到class文件)
+*   在实体类java文件里鼠标右击,或IDEA Code(Alt+Insert/Mouse Right) --> Generate --> wk mvc
 
 ![IDEA插件截图](wk-code/wk-code-ideaplugin/demo.png)
 
