@@ -47,6 +47,9 @@ public class EntityDescLoader extends Loader {
             if (className.contains(".Model")||className.contains(".em")) {
                 continue;
             }
+            if (className.contains("$")) {
+                continue;
+            }
             Class<?> modelClass = Class.forName(className);
             Mirror<?> mirror = Mirror.me(modelClass);
             Table tableAnno = mirror.getAnnotation(Table.class);
