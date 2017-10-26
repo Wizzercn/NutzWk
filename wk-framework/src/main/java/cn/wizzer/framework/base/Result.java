@@ -75,6 +75,19 @@ public class Result {
     public static Result error() {
         return new Result(1, "globals.result.error", null);
     }
+    
+    
+    public int getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public Object getData() {
+        return data;
+    }
 
     @Override
     public String toString() {
