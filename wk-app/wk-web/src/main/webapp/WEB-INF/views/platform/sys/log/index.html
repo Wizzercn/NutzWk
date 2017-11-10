@@ -5,11 +5,12 @@ layout("/layouts/platform.html"){
 <header class="header-control">
     <script language="JavaScript" type="text/javascript"
             src="${base}/assets/plugins/My97DatePicker/WdatePicker.js"></script>
-    <div class="btn-group">
+    <div class="btn-group" style="padding-left: 10px;">
         <select id="type" class="form-control" onchange="search()">
             <option value="">全部日志</option>
             <option value="api">接口日志</option>
             <option value="platform">系统日志</option>
+            <option value="info">其他日志</option>
         </select>
     </div>
     <div class="btn-group tool-button">
