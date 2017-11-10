@@ -2,15 +2,16 @@ package cn.wizzer.app.sys.modules.models;
 
 import cn.wizzer.framework.base.model.BaseModel;
 import cn.wizzer.framework.util.StringUtil;
-import org.apache.shiro.SecurityUtils;
 import org.nutz.dao.entity.annotation.*;
+import org.nutz.lang.Lang;
+import org.nutz.mvc.Mvcs;
 
 import java.io.Serializable;
 
 /**
  * Created by wizzer on 2016/6/21.
  */
-@Table("sys_log")
+@Table("sys_log_${month}")
 public class Sys_log extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
@@ -51,6 +52,16 @@ public class Sys_log extends BaseModel implements Serializable {
     @Comment("日志内容")
     @ColDefine(type = ColType.TEXT)
     private String msg;
+
+    @Column
+    @Comment("请求结果")
+    @ColDefine(type = ColType.TEXT)
+    private String param;
+
+    @Column
+    @Comment("执行结果")
+    @ColDefine(type = ColType.TEXT)
+    private String result;
 
     public long getId() {
         return id;
@@ -108,10 +119,26 @@ public class Sys_log extends BaseModel implements Serializable {
         this.msg = msg;
     }
 
-    public static Sys_log c(String type, String tag, String msg, String source) {
+    public String getParam() {
+        return param;
+    }
+
+    public void setParam(String param) {
+        this.param = param;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public static Sys_log c(String type, String tag, String source, String msg, String param, String result) {
         Sys_log sysLog = new Sys_log();
-        if (type == null || tag == null || msg == null) {
-            throw new RuntimeException("type/tag/msg can't null");
+        if (type == null || tag == null) {
+            throw new RuntimeException("type/tag can't null");
         }
         if (source == null) {
             StackTraceElement[] tmp = Thread.currentThread().getStackTrace();
@@ -122,16 +149,19 @@ public class Sys_log extends BaseModel implements Serializable {
             }
 
         }
-        sysLog.type = type;
-        sysLog.tag = tag;
-        sysLog.src = source;
-        sysLog.msg = msg;
-        sysLog.ip = StringUtil.getRemoteAddr();
-        String uid = StringUtil.getUid();
-        String username = StringUtil.getUsername();
-        sysLog.setOpBy(uid);
+        sysLog.setType(type);
+        sysLog.setTag(tag);
+        sysLog.setSrc(source);
+        sysLog.setMsg(msg);
+        sysLog.setParam(param);
+        sysLog.setResult(result);
+        if (Mvcs.getReq() != null) {
+            sysLog.setIp(Lang.getIP(Mvcs.getReq()));
+        }
+        sysLog.setOpBy(StringUtil.getUid());
         sysLog.setOpAt((int) (System.currentTimeMillis() / 1000));
-        sysLog.username = username;
+        sysLog.setDelFlag(false);
+        sysLog.setUsername(StringUtil.getUsername());
         return sysLog;
     }
 }

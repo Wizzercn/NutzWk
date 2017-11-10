@@ -93,11 +93,6 @@
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
-            <artifactId>nutz-plugins-views</artifactId>
-            <version>${nutz-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.nutz</groupId>
             <artifactId>nutzwx</artifactId>
             <version>${nutz-version}</version>
         </dependency>
@@ -440,8 +435,8 @@
     </build>
     <distributionManagement>
         <snapshotRepository>
-            <id>nutzcn-snapshots</id>
-            <url>https://jfrog.nutz.cn/artifactory/snapshots/</url>
-        </snapshotRepository>
+        <id>nutzcn-snapshots</id>
+        <url>https://jfrog.nutz.cn/artifactory/snapshots/</url>
+    </snapshotRepository>
     </distributionManagement>
 </project>

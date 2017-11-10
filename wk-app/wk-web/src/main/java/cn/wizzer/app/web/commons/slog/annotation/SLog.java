@@ -7,15 +7,34 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 public @interface SLog {
+    String type() default "platform";
+    /**
+     * 标签
+     *
+     * @return
+     */
     String tag();
 
-    String msg();
+    String msg() default "";
 
-    boolean before() default false;
+    /**
+     * 是否记录传递参数
+     *
+     * @return 消息模板
+     */
+    boolean param() default false;
 
-    boolean after() default true;
+    /**
+     * 记录执行结果
+     *
+     * @return 消息模板
+     */
+    boolean result() default false;
 
-    boolean error() default false;
-
+    /**
+     * 是否异步执行,默认为true
+     *
+     * @return true, 如果需要异步执行
+     */
     boolean async() default true;
 }
