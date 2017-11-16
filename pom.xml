@@ -17,7 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jetty-version>9.4.2.v20170220</jetty-version>
-        <nutz-version>1.r.63-SNAPSHOT</nutz-version>
+        <nutz-version>1.r.65-SNAPSHOT</nutz-version>
     </properties>
     <developers>
         <developer>
@@ -145,11 +145,6 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.apiclub.tool</groupId>
-            <artifactId>simplecaptcha</artifactId>
-            <version>1.2.2</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>

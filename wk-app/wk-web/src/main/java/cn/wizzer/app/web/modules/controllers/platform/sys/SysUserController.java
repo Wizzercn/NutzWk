@@ -25,6 +25,7 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.lang.Strings;
+import org.nutz.lang.random.R;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -122,10 +123,11 @@ public class SysUserController {
             Sys_user user = userService.fetch(id);
             RandomNumberGenerator rng = new SecureRandomNumberGenerator();
             String salt = rng.nextBytes().toBase64();
-            String hashedPasswordBase64 = new Sha256Hash("ET922", salt, 1024).toBase64();
+            String pwd = R.captchaNumber(6);
+            String hashedPasswordBase64 = new Sha256Hash(pwd, salt, 1024).toBase64();
             userService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", id));
             req.setAttribute("loginname", user.getLoginname());
-            return Result.success("system.success", "ET922");
+            return Result.success("system.success", pwd);
         } catch (Exception e) {
             return Result.error("system.error");
         }

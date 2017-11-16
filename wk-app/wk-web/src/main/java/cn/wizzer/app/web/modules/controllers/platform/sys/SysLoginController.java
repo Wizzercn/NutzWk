@@ -1,6 +1,5 @@
 package cn.wizzer.app.web.modules.controllers.platform.sys;
 
-import cn.apiclub.captcha.Captcha;
 import cn.wizzer.app.sys.modules.models.Sys_log;
 import cn.wizzer.app.sys.modules.models.Sys_user;
 import cn.wizzer.app.sys.modules.services.SysUserService;
@@ -23,9 +22,11 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
+import org.nutz.img.Images;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.lang.random.R;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -230,14 +231,8 @@ public class SysLoginController {
             w = 200;
             h = 60;
         }
-        Captcha captcha = new Captcha.Builder(w, h)
-                .addText()
-//								.addBackground(new GradiatedBackgroundProducer())
-//								.addNoise(new StraightLineNoiseProducer()).addBorder()
-//								.gimp(new FishEyeGimpyRenderer())
-                .build();
-        String text = captcha.getAnswer();
+        String text = R.captchaNumber(6);
         session.setAttribute("platformCaptcha", text);
-        return captcha.getImage();
+        return Images.createCaptcha(text, w, h, null, null, null);
     }
 }
