@@ -11,7 +11,7 @@
     </listener>
     <filter>
         <filter-name>ShiroFilter</filter-name>
-        <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
+        <filter-class>cn.wizzer.framework.shiro.ShiroFilter2</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>ShiroFilter</filter-name>
