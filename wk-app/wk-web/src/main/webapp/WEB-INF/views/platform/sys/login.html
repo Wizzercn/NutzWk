@@ -142,6 +142,12 @@
     var key =  bodyRSA();
     $(document).ready(function () {
         $("#year").html(new Date().getFullYear());
+        $('#password').on('keypress',function(event){
+            if(event.keyCode == 13){
+                $("#password").val(encryptedString(key, $("#password").val().split("").reverse().join("")));
+                $("#loginForm").submit();
+            }
+        });
         $("#login").on("click",function () {
             $("#password").val(encryptedString(key,$("#password").val().split("").reverse().join("")));
             $("#loginForm").submit();
