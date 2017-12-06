@@ -235,7 +235,7 @@ public class SysRoleController {
     @At
     @Ok("json:full")
     @RequiresPermissions("sys.manager.role")
-    public Object userData(@Param("roleid") String roleid, @Param("loginname") String loginname, @Param("nickname") String nickname, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+    public Object userData(@Param("roleid") String roleid, @Param("loginname") String loginname, @Param("username") String username, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
         String sql = "SELECT a.* FROM sys_user a,sys_user_role b WHERE a.id=b.userId ";
         if (!Strings.isBlank(roleid)) {
             sql += " and b.roleId='" + roleid + "'";
@@ -243,8 +243,8 @@ public class SysRoleController {
         if (!Strings.isBlank(loginname)) {
             sql += " and a.loginname like '%" + loginname + "%'";
         }
-        if (!Strings.isBlank(nickname)) {
-            sql += " and a.nickname like '%" + nickname + "%'";
+        if (!Strings.isBlank(username)) {
+            sql += " and a.username like '%" + username + "%'";
         }
         String s = sql;
         if (order != null && order.size() > 0) {
@@ -272,7 +272,7 @@ public class SysRoleController {
             sql += " and a.id NOT IN(SELECT b.userId FROM sys_user_role b WHERE b.roleId='" + roleid + "')";
         }
         if (!Strings.isBlank(name)) {
-            sql += " and (a.loginname like '%" + name + "%' or a.nickname like '%" + name + "%') ";
+            sql += " and (a.loginname like '%" + name + "%' or a.username like '%" + name + "%') ";
         }
         String s = sql;
         if (order != null && order.size() > 0) {
