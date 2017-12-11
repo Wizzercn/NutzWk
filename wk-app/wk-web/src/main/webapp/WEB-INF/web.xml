@@ -63,8 +63,19 @@
         <servlet-name>DruidStatView</servlet-name>
         <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
         <init-param>
-            <param-name>allow</param-name>
-            <param-value>127.0.0.1</param-value>
+            <!-- 允许清空统计数据 -->
+            <param-name>resetEnable</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <!-- 用户名 -->
+            <param-name>loginUsername</param-name>
+            <param-value>wizzer</param-value>
+        </init-param>
+        <init-param>
+            <!-- 密码 -->
+            <param-name>loginPassword</param-name>
+            <param-value>wizzer</param-value>
         </init-param>
         <init-param>
             <param-name>exclusions</param-name>
