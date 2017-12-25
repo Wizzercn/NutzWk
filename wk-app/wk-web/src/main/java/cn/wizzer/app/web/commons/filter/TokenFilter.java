@@ -22,9 +22,9 @@ public class TokenFilter implements ActionFilter {
     private SysApiService apiService= Mvcs.ctx().getDefaultIoc().get(SysApiServiceImpl.class);
 
     public View match(ActionContext context) {
-        String appId = Strings.sNull(context.getRequest().getParameter("appId"));
+        String appid = Strings.sNull(context.getRequest().getParameter("appid"));
         String token = Strings.sNull(context.getRequest().getParameter("token"));
-        if (!apiService.verifyToken(appId, token)) {
+        if (!apiService.verifyToken(appid, token)) {
             return new UTF8JsonView(JsonFormat.compact()).setData(Result.error(-1,"token invalid"));
         }
         return null;

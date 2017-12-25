@@ -35,12 +35,12 @@ public class TokenController {
      * @apiGroup Token
      * @apiVersion 1.0.0
      * @apiPermission anyone
-     * @apiParam {String}	appId 					appId
-     * @apiParam {String}	sign 				appId+appSecret+yyyyMMddHH 计算出的MD5值
+     * @apiParam {String}	appid 					appid
+     * @apiParam {String}	sign 				appid+appSecret+yyyyMMddHH 计算出的MD5值
      * @apiParamExample {json} 示例
      * POST /open/api/token
      * {
-     * "appId": "appId",
+     * "appid": "appid",
      * "sign": "sign"
      * }
      * @apiSuccess {number} code 			         code
@@ -72,9 +72,9 @@ public class TokenController {
     @AdaptBy(type = JsonAdaptor.class)
     public Object get(@Param("..") NutMap map) {
         try {
-            Sys_api api = apiService.fetch(Cnd.where("appId", "=", map.getString("appid", "")));
+            Sys_api api = apiService.fetch(Cnd.where("appid", "=", map.getString("appid", "")));
             if (api == null)
-                return Result.error("appId error");
+                return Result.error("appid error");
             if (!Lang.md5(map.getString("appid", "") + api.getAppSecret() + DateUtil.format(new Date(), "yyyyMMddHH")).equalsIgnoreCase(map.getString("sign", "")))
                 return Result.error("sign error");
             NutMap resmap = new NutMap();
