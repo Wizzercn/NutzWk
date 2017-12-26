@@ -142,12 +142,12 @@ public class SLogService implements Runnable {
                     boolean async,
                     Object[] args, Object re, Method method, Object obj,
                     Throwable e) {
-        String _param = null;
-        String _result = null;
-        if (param) {
+        String _param = "";
+        String _result = "";
+        if (param && args != null) {
             _param = Json.toJson(args);
         }
-        if (result) {
+        if (result && re != null) {
             _result = Json.toJson(re);
         }
         log(type, tag, source, msg, async, _param, _result);
