@@ -203,11 +203,12 @@ public class ColumnDescriptor {
         if ("enum".equalsIgnoreCase(dataType)) {
             return getUpperJavaFieldName();
         }
-        Class<?> type = typeMapping.get(dataType);
-        if (type != null) {
-            return type.getName();
+        if (dataType != null) {
+            Class<?> type = typeMapping.get(dataType.toLowerCase());
+            if (type != null) {
+                return type.getName();
+            }
         }
-
         return String.class.getName();
     }
 
