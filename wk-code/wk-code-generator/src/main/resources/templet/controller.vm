@@ -108,11 +108,17 @@ public class ${table.ControllerClassName}{
     @Ok("beetl:/${table.ViewBasePath}/detail.html")
     @RequiresPermissions("${table.Permissions}")
 	public void detail(${table.pkType} id, HttpServletRequest req) {
+        #if( ${table.pkType}  ==  "Integer")
+if (id!=null&&id>0) {
+            req.setAttribute("obj", ${table.ServiceInstanceName}.fetch(id));
+        }else{
+            req.setAttribute("obj", null);
+        }#else
 		if (!Strings.isBlank(id)) {
             req.setAttribute("obj", ${table.ServiceInstanceName}.fetch(id));
 		}else{
             req.setAttribute("obj", null);
-        }
-    }
+        }#end
+}
 
 }
