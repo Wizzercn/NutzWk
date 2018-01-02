@@ -119,7 +119,8 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 *   [@wendal](https://github.com/wendal) (代码贡献者,技术大牛,Nutz主要作者,无所不知且乐于助人)
 *   [@rekoe](https://github.com/Rekoe) (代码贡献者)
 *   [@enilu](https://github.com/enilu) (代码生成器及IDEA插件贡献者)
-*   [@loyalove](https://github.com/loyalove)(Vue代码贡献者)
+*   [@loyalove](https://github.com/loyalove) (Vue代码贡献者)
+*   [@threefish](https://github.com/threefish) (控制类快速定位模板页面IDEA插件贡献值)
 *   以及交流群里热心的小伙伴们~
 
 # 关于
