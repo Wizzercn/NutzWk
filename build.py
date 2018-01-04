@@ -7,7 +7,7 @@ if os.path.exists("dst"):
    shutil.rmtree("dst")
 os.makedirs("dst")
 
-subprocess.call("mvn clean install -Dmaven.test.skip=true -U -fn", shell=True, cwd=fname)
+subprocess.call("mvn clean install -Dmaven.test.skip=true -U -fn", shell=True)
 
 # 逐个插件模块进行编译
 for fname in os.listdir(os.getcwd()):
