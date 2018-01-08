@@ -27,7 +27,8 @@ public class SysRoleService extends Service<Sys_role> {
 
     public List<Sys_menu> getMenusAndButtons(String roleId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and" +
-                " b.roleId=@roleId and a.disabled=0 order by a.location ASC,a.path asc");
+                " b.roleId=@roleId and a.disabled=@f order by a.location ASC,a.path asc");
+        sql.params().set("f",false);
         sql.params().set("roleId", roleId);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
@@ -38,7 +39,8 @@ public class SysRoleService extends Service<Sys_role> {
 
     public List<Sys_menu> getDatas(String roleId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and" +
-                " b.roleId=@roleId and a.type='data' and a.disabled=0 order by a.location ASC,a.path asc");
+                " b.roleId=@roleId and a.type='data' and a.disabled=@f order by a.location ASC,a.path asc");
+        sql.params().set("f",false);
         sql.params().set("roleId", roleId);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);

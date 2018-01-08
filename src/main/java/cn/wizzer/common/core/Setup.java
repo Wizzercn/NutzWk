@@ -78,7 +78,7 @@ public class Setup implements org.nutz.mvc.Setup {
     private void initSysPlugin(NutConfig config, Dao dao) {
         try {
             PluginMaster pluginMaster = config.getIoc().get(PluginMaster.class);
-            List<Sys_plugin> list = dao.query(Sys_plugin.class, Cnd.where("disabled", "=", 0));
+            List<Sys_plugin> list = dao.query(Sys_plugin.class, Cnd.where("disabled", "=", false));
             for (Sys_plugin sysPlugin : list) {
                 String name = sysPlugin.getPath().substring(sysPlugin.getPath().indexOf(".")).toLowerCase();
                 File file = new File(Globals.AppRoot + sysPlugin.getPath());
@@ -139,7 +139,7 @@ public class Setup implements org.nutz.mvc.Setup {
             task.setNote("微信号：wizzer | 欢迎发送红包以示支持，多谢。。");
             dao.insert(task);
         }
-        List<Sys_task> taskList = dao.query(Sys_task.class, Cnd.where("disabled", "=", 0));
+        List<Sys_task> taskList = dao.query(Sys_task.class, Cnd.where("disabled", "=", false));
         for (Sys_task sysTask : taskList) {
             try {
                 QuartzJob qj = new QuartzJob();

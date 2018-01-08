@@ -36,7 +36,7 @@ public class CmsController {
     public Object channel(String channelId, HttpServletRequest req) {
         req.setAttribute("channelId", channelId);
         req.setAttribute("site", cmsSiteService.fetch("site"));
-        return cmsChannelService.query(Cnd.where("disabled", "=", 0).asc("location"));
+        return cmsChannelService.query(Cnd.where("disabled", "=", false).asc("location"));
     }
 
     @At("/list/?")

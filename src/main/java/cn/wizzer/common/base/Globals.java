@@ -60,7 +60,7 @@ public class Globals {
         if (Globals.RouteMap == null) {
             Globals.RouteMap = new HashMap<>();
         } else Globals.RouteMap.clear();
-        List<Sys_route> routeList = dao.query(Sys_route.class, Cnd.where("disabled", "=", 0));
+        List<Sys_route> routeList = dao.query(Sys_route.class, Cnd.where("disabled", "=", false));
         for (Sys_route route : routeList) {
             RouteMap.put(route.getUrl(), route);
         }
