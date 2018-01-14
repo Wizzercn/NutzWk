@@ -28,24 +28,16 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 
 # 版本说明
 
-*   NutzWk v4.x 模块化版本(统一提供代码生成器及IDEA可视化插件)
-*   NutzWk v3.x 单应用版本(CMS+微信+系统+权限+常用功能封装 beetl/velocity)
+*   NutzWk v4.x 模块化版本(分支名:modular,统一提供代码生成器及IDEA可视化插件)
+*   NutzWk v3.x 单应用版本(分支名:bootstrap-3.3.x,CMS+微信+系统+权限+常用功能封装 beetl/velocity)
 *   NutzWk v2.0 试验版(不建议使用)
-*   NutzWk v1.0 传统版(velocity 支持IE6)
+*   NutzWk v1.0 传统版(分支名:original,velocity 支持IE6)
 
 如果您的项目面对的客户比较念旧，可以选用v1.0版本，因为她使用EasyUI以及支持IE6；
 
 如果您的项目需要快速开发，并习惯通过负载均衡方式提升性能，可以选用v3.x版本，她采用Bootstrap+JQuery+Json开发；
 
 如果您的项目有大数据及大并发、分布式部署等需求，那么您可以选用v4.x版本，她在v3.x基础上拆分模块并接口化；
-
-## NutzWk v4.x主分支
-
-https://github.com/Wizzercn/NutzWk/tree/modular   模块化支持分布式部署
-
-## NutzWk v3.x主分支
-
-https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发, 功能与v4.x同步升级
 
 # 本版说明(v4.x)
 
@@ -90,7 +82,7 @@ https://github.com/Wizzercn/NutzWk/tree/bootstrap-3.3.x   单应用快速开发
 
 >wk-app
 
-   >>wk-web               (v3.x后台功能)
+   >>wk-web               (后台代码)
 
    >>wk-dubbo              (dubbo示例)
       >>>wk-dubbo-api       (dubbo API)
