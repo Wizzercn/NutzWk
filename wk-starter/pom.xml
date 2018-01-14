@@ -8,52 +8,12 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-web</artifactId>
-			<version>1.r.61-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.ow2.asm</groupId>
-					<artifactId>asm-commons</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>javax.annotation</groupId>
-					<artifactId>javax.annotation-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.glassfish.web</groupId>
-					<artifactId>javax.servlet.jsp</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-jsp</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.glassfish</groupId>
-					<artifactId>javax.el</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.jetty.aggregate</groupId>
-					<artifactId>jetty-all</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.ow2.asm</groupId>
-					<artifactId>asm</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-webapp</artifactId>
-			<version>9.4.2.v20170220</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty.websocket</groupId>
-			<artifactId>javax-websocket-server-impl</artifactId>
-			<version>9.4.2.v20170220</version>
+			<version>1.r.65-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz</artifactId>
-			<version>1.r.61-SNAPSHOT</version>
+			<version>1.r.65-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
