@@ -31,7 +31,7 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 *   NutzWk v4.x 模块化版本(分支名:modular,统一提供代码生成器及IDEA可视化插件)
 *   NutzWk v3.x 单应用版本(分支名:bootstrap-3.3.x,CMS+微信+系统+权限+常用功能封装 beetl/velocity)
 *   NutzWk v2.0 试验版(不建议使用)
-*   NutzWk v1.0 传统版(分支名:original,velocity 支持IE6)
+*   NutzWk v1.0 传统版(分支名:master,velocity 支持IE6)
 
 如果您的项目面对的客户比较念旧，可以选用v1.0版本，因为她使用EasyUI以及支持IE6；
 
