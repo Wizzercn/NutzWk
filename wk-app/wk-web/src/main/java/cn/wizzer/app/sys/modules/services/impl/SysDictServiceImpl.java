@@ -18,9 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 
-/**
- * Created by mac on 2017/1/19.
- */
 @IocBean(args = {"refer:dao"})
 public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements SysDictService {
     public SysDictServiceImpl(Dao dao) {

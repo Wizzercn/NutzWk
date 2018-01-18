@@ -6,9 +6,6 @@ import cn.wizzer.framework.base.service.BaseService;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by 王怀先 on 2017/1/19.
- */
 public interface SysDictService extends BaseService<Sys_dict> {
     String getNameByCode(String code);
     String getNameById(String id);
