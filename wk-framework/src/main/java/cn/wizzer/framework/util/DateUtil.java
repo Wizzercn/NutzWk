@@ -2,6 +2,7 @@ package cn.wizzer.framework.util;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Times;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -95,7 +96,21 @@ public class DateUtil {
      */
     public static int getTime(String date) {
         try {
-            return (int) (sdf.parse(date).getTime() / 1000);
+            return (int) (Times.parse(sdf, date).getTime() / 1000);
+        } catch (ParseException e) {
+            return 0;
+        }
+    }
+
+    /**
+     * 通过字符串时间获取时间戳
+     *
+     * @param date
+     * @return
+     */
+    public static int getTime(SimpleDateFormat sdf, String date) {
+        try {
+            return (int) (Times.parse(sdf, date).getTime() / 1000);
         } catch (ParseException e) {
             return 0;
         }
