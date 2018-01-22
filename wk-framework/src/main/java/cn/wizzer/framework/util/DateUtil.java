@@ -89,11 +89,12 @@ public class DateUtil {
     }
 
     /**
-     * 通过字符串时间获取时间戳
+     * 通过字符串时间获取时间戳 nutzwk5.0改为long
      *
      * @param date
      * @return
      */
+    @Deprecated
     public static int getTime(String date) {
         try {
             return (int) (Times.parse(sdf, date).getTime() / 1000);
@@ -103,11 +104,12 @@ public class DateUtil {
     }
 
     /**
-     * 通过字符串时间获取时间戳
+     * 通过字符串时间获取时间戳 nutzwk5.0改为long
      *
      * @param date
      * @return
      */
+    @Deprecated
     public static int getTime(SimpleDateFormat sdf, String date) {
         try {
             return (int) (Times.parse(sdf, date).getTime() / 1000);
