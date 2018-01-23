@@ -94,7 +94,6 @@ public class DateUtil {
      * @param date
      * @return
      */
-    @Deprecated
     public static int getTime(String date) {
         try {
             return (int) (Times.parse(sdf, date).getTime() / 1000);
@@ -109,7 +108,6 @@ public class DateUtil {
      * @param date
      * @return
      */
-    @Deprecated
     public static int getTime(SimpleDateFormat sdf, String date) {
         try {
             return (int) (Times.parse(sdf, date).getTime() / 1000);
