@@ -36,7 +36,7 @@ public class ${table.ControllerClassName}{
     }
 
     @At("/data")
-    @Ok("json")
+    @Ok("json:full")
     @RequiresPermissions("${table.Permissions}")
     public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
 		Cnd cnd = Cnd.NEW();
