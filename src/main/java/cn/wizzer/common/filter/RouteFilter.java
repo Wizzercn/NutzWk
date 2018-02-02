@@ -23,6 +23,10 @@ public class RouteFilter implements Filter {
         HttpServletResponse res2 = (HttpServletResponse) res;
         res2.setCharacterEncoding("utf-8");
         req2.setCharacterEncoding("utf-8");
+		if (req2.getRequestURI() == null) {
+			chain.doFilter(req2, res2);
+			return;
+		}
         Sys_route route = Globals.RouteMap.get(req2.getRequestURI().replace(Globals.AppBase, ""));
         if (route != null) {
             if ("show".equals(route.getType())) {

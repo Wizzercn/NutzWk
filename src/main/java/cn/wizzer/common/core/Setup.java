@@ -1,21 +1,24 @@
 package cn.wizzer.common.core;
 
-import cn.wizzer.common.base.Globals;
-import cn.wizzer.common.plugin.IPlugin;
-import cn.wizzer.common.plugin.PluginMaster;
-import cn.wizzer.modules.models.sys.*;
-import net.sf.ehcache.CacheManager;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
+import org.nutz.dao.ConnCallback;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
-import org.nutz.integration.jedis.RedisService;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
@@ -25,13 +28,20 @@ import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
-import org.nutz.plugins.cache.impl.lcache.LCacheManager;
-import org.nutz.plugins.cache.impl.redis.RedisCache;
 import org.quartz.Scheduler;
 
-import java.io.File;
-import java.nio.charset.Charset;
-import java.util.*;
+import cn.wizzer.common.base.Globals;
+import cn.wizzer.common.plugin.IPlugin;
+import cn.wizzer.common.plugin.PluginMaster;
+import cn.wizzer.modules.models.sys.Sys_config;
+import cn.wizzer.modules.models.sys.Sys_menu;
+import cn.wizzer.modules.models.sys.Sys_plugin;
+import cn.wizzer.modules.models.sys.Sys_role;
+import cn.wizzer.modules.models.sys.Sys_route;
+import cn.wizzer.modules.models.sys.Sys_task;
+import cn.wizzer.modules.models.sys.Sys_unit;
+import cn.wizzer.modules.models.sys.Sys_user;
+import net.sf.ehcache.CacheManager;
 
 /**
  * Created by wizzer on 2016/6/21.
@@ -126,6 +136,70 @@ public class Setup implements org.nutz.mvc.Setup {
      * @param dao
      */
     private void initSysTask(NutConfig config, Dao dao) {
+        try {
+            dao.query("SYS_QRTZ_LOCKS", null);
+        }
+        catch (Throwable e) {
+            e.printStackTrace();
+        }
+        if (true) {
+            String path = "tables_mysql_innodb.sql";
+            switch (dao.meta().getType()) {
+            case ORACLE:
+                path = "tables_oracle.sql";
+                break;
+            case PSQL:
+                path = "tables_postgres.sql";
+                break;
+            case SQLSERVER:
+                path = "tables_sqlServer.sql";
+                break;
+            default:
+                break;
+            }
+            try {
+                String _path = path;
+                dao.run(new ConnCallback() {
+                    public void invoke(Connection conn) throws Exception {
+                        InputStreamReader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("db_quartz/" + _path));
+                        BufferedReader br = new BufferedReader(reader);
+                        StringBuilder sb = new StringBuilder();
+                        while (br.ready()) {
+                            String line = br.readLine();
+                            if (line == null)
+                                break;
+                            if (Strings.isBlank(line))
+                                continue;
+                            if (line.startsWith("#"))
+                                continue;
+                            if (line.startsWith("--"))
+                                continue;
+                            line = line.trim();
+                            sb.append(" ").append(line.toUpperCase());
+                            if (line.endsWith(";")) {
+                                sb.setLength(sb.length() - 1);
+                                log.info("Quartz SQL= " + sb.toString());
+                                try {
+                                    conn.prepareStatement(sb.toString()).execute();
+                                }
+                                catch (Throwable e) {
+                                }
+                                
+                                sb.setLength(0);
+                            }
+                        }
+                        if (sb.length() > 0) {
+                            sb.setLength(sb.length() - 1);
+                            log.info("Quartz SQL= " + sb.toString());
+                            conn.prepareStatement(sb.toString()).execute();
+                        }
+                    }
+                });
+            }
+            catch (Exception e) {
+                log.info("fuck!!!", e);
+            }
+        }
         QuartzManager quartzManager = config.getIoc().get(QuartzManager.class);
         quartzManager.clear();
         if (0 == dao.count(Sys_task.class)) {

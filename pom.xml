@@ -41,7 +41,17 @@
     </developers>
     <repositories>
         <repository>
-            <id>ossrh</id>
+            <id>nutzcn-libs-release</id>
+            <url>https://jfrog.nutz.cn/artifactory/libs-release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>nutzcn-snapshots</id>
             <url>https://jfrog.nutz.cn/artifactory/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
@@ -58,6 +68,11 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ojdbc6</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>ojdbc6</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -117,6 +132,11 @@
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
+            <version>2.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz-jobs</artifactId>
             <version>2.2.3</version>
         </dependency>
         <dependency>
