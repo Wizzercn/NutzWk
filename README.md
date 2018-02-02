@@ -75,9 +75,10 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 *   修改数据库连接 wk-app/wk-web/src/main/resources/config/custom/db.properties
 *   项目使用Maven构建，IDEA/Eclipse直接打开，等待包下载完毕
 *   启动wk-web项目时自动建表
-*   http://127.0.0.1/sysadmin
+*   http://127.0.0.1:你的端口/部署路径/sysadmin
 *   用户名：superadmin 密码：1
 
+若非mysql数据库,请修改quartz.properties 中org.quartz.jobStore.driverDelegateClass的值
 ## NutzWk 4.x 代码结构:
 
 >wk-app
