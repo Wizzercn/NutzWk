@@ -53,13 +53,14 @@ NutzWk 3.x 新特性：
 使用说明：
 *   创建空的数据库
 *   修改数据库连接 src/main/resources/config/custom/db.properties
-*   修改quartz的数据库类型 src/main/resources/quartz.properties里面的org.quartz.jobStore.driverDelegateClass
 *   项目使用Maven构建，IDEA/Eclipse直接打开，等待包下载完毕
 *   启动时自动建表
 *   http://127.0.0.1/sysadmin 若部署在非根路径,请加上ContextPath
 *   用户名：superadmin  密码：1
 
 若下载jar失败,请查阅 http://nutzam.com/core/basic/maven.html
+
+若非mysql数据库,请修改quartz的数据库类型 src/main/resources/quartz.properties 里面的org.quartz.jobStore.driverDelegateClass
 
 代码生成器【IDEA插件】
 ======
