@@ -136,13 +136,7 @@ public class Setup implements org.nutz.mvc.Setup {
      * @param dao
      */
     private void initSysTask(NutConfig config, Dao dao) {
-        try {
-            dao.query("SYS_QRTZ_LOCKS", null);
-        }
-        catch (Throwable e) {
-            e.printStackTrace();
-        }
-        if (true) {
+        if (!dao.exists("SYS_QRTZ_LOCKS")) {
             String path = "tables_mysql_innodb.sql";
             switch (dao.meta().getType()) {
             case ORACLE:
