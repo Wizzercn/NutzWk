@@ -191,7 +191,7 @@ public class Setup implements org.nutz.mvc.Setup {
                 });
             }
             catch (Exception e) {
-                log.info("fuck!!!", e);
+                log.info("love!!!", e);
             }
         }
         QuartzManager quartzManager = config.getIoc().get(QuartzManager.class);
