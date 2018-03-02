@@ -19,7 +19,7 @@ layout("/layouts/platform.html"){
                             <label for="url" class="col-sm-2 control-label">URL</label>
 
                             <div id="url" class="col-sm-8" style="padding-top: 10px;">
-                                http://${AppDomain!}${base!}/open/weixin/api/${obj.id!}
+                                ${AppDomain!}${base!}/open/weixin/api/${obj.id!}
                             </div>
                         </div>
                         <div class="form-group">
@@ -129,7 +129,7 @@ layout("/layouts/platform.html"){
                     <div class="form-group">
                         <label class="col-sm-3 control-label">请在微信后台添加支付授权目录</label>
                         <div class="col-sm-7" style="padding-bottom: 5px;">
-                            http://${AppDomain!}${base!}/open/pay/
+                            ${AppDomain!}${base!}/open/pay/
                         </div>
                     </div>
                 </div>

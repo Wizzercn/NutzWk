@@ -206,7 +206,7 @@ layout("/layouts/platform.html"){
         return decodeURIComponent(str);
     }
     function getUrl2(url){
-        var str="http://${AppDomain!}${base!}/public/wx/wechat/${wxid!}/oauth?goto_url=$s";
+        var str="${AppDomain!}${base!}/public/wx/wechat/${wxid!}/oauth?goto_url=$s";
         return str.replace("$s",url);
     }
     function seeUrl2(url){

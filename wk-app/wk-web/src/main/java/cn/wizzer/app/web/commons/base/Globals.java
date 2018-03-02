@@ -23,7 +23,7 @@ public class Globals {
     //项目短名称
     public static String AppShrotName = "NutzWk";
     //项目域名
-    public static String AppDomain = "127.0.0.1";
+    public static String AppDomain = "http://127.0.0.1";
     //文件上传路径
     public static String AppUploadPath = "/upload";
     // 是否启用了队列

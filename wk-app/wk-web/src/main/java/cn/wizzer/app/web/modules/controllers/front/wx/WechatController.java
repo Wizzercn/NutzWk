@@ -45,7 +45,7 @@ public class WechatController {
         session.setAttribute("wechat_goto_url", goto_url);
         if (!Strings.isBlank(wxid)) {
             Wx_config config = wxConfigService.fetch(wxid);
-            String back_url = "http://" + Globals.AppDomain + "/public/wx/wechat/" + wxid + "/back";
+            String back_url = Globals.AppDomain + "/public/wx/wechat/" + wxid + "/back";
             String redirect_uri = URLEncoder.encode(back_url, "utf-8");
             log.debug("redirect_uri::" + redirect_uri);
             String state = "wechat";

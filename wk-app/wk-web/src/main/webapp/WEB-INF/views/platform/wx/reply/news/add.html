@@ -89,7 +89,7 @@ layout("/layouts/platform.html"){
                 if (data.code == 0) {
                     Toast.success(data.msg);
                     $("#img").html("<img src='" + data.data + "' style='width:150px;height:95px;'>");
-                    $("#picUrl").val('http://${AppDomain}${base}'+data.data);
+                    $("#picUrl").val('${AppDomain}${base}'+data.data);
                 } else {
                     clearFile();
                     Toast.error(data.msg);

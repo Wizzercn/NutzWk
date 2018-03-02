@@ -61,7 +61,7 @@
                 $.each(chks, function (i, n) {
                     str+= n.id;
                 });
-                $("#url").val("http://${AppDomain}${base}/public/wx/cms/channel/"+str);
+                $("#url").val("${AppDomain}${base}/public/wx/cms/channel/"+str);
                 $("#dialogSelect").modal("hide");
             }else{
                 Toast.warning("请先选择内容！");
@@ -76,7 +76,7 @@
                 $.each(chks, function (i, n) {
                     str+= n.id;
                 });
-                $("#url").val("http://${AppDomain}${base}/public/wx/cms/article/"+str);
+                $("#url").val("${AppDomain}${base}/public/wx/cms/article/"+str);
                 $("#dialogSelect").modal("hide");
             }else{
                 Toast.warning("请先选择内容！");

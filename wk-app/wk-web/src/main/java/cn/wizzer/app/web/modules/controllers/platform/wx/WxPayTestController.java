@@ -60,7 +60,7 @@ public class WxPayTestController {
             order.setOut_trade_no(DateUtil.format(new Date(), "yyyyMMddHHmmss"));
             order.setTotal_fee(money);
             order.setSpbill_create_ip(Lang.getIP(req));
-            order.setNotify_url("http://" + Globals.AppDomain + "/open/pay/wx/back/sendNotify");//支付结果回调通知地址
+            order.setNotify_url(Globals.AppDomain + "/open/pay/wx/back/sendNotify");//支付结果回调通知地址
             order.setTrade_type("NATIVE");
             order.setProduct_id("Test");//NATIVE时填写
             NutMap resp = wxApi2.pay_unifiedorder(payinfo.getString("wxpay_key"), order);
