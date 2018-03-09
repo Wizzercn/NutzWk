@@ -85,7 +85,7 @@ public class Generator {
         String modelPackageName = "models";
         String _loader = "entity";
 
-        String outputDir = "src/main/java";
+        String outputDir = "src/main";
         boolean force = false;
         String baseUri = "/";
         String types[] = {"all"};
@@ -147,6 +147,7 @@ public class Generator {
 
             if (commandLine.hasOption("o")) {
                 outputDir = commandLine.getOptionValue("o");
+                outputDir =  outputDir + "/src/main";
             }
             if (commandLine.hasOption("u")) {
                 baseUri = commandLine.getOptionValue("u");
@@ -175,7 +176,6 @@ public class Generator {
         Loader loader = (Loader) Mirror.me(Lang.loadClassQuite("cn.wizzer.commons.code." + Strings.upperFirst(_loader) + "DescLoader")).born();
         Map<String, TableDescriptor> tables = loader.loadTables(ioc,
                 basePackageName,
-                outputDir,
                 basePath,
                 baseUri,
                 servicePackageName,
@@ -215,9 +215,9 @@ public class Generator {
                     if (!hasLocale(types)) {
                         viewpath = "view_notlocale";
                     }
-                    generateViews(force, viewpath, table, generator, pages);
+                    generateViews(outputDir, force, viewpath, table, generator, pages);
                 } else if (type.equals("locale")) {
-                    generateLocales(force, table, generator);
+                    generateLocales(outputDir, force, table, generator);
                 } else {
                     if (loader instanceof EntityDescLoader && type.equals("model")) {
                         continue;
@@ -241,7 +241,8 @@ public class Generator {
                         packageName = servicePackageName;
                         packagePath = (packageName + ".impl").replace('.', '/');
                     }
-                    File file = new File(outputDir, packagePath + "/" + className + ".java");
+                    log.debug("outputDir::" + outputDir);
+                    File file = new File(outputDir + "/java", packagePath + "/" + className + ".java");
                     log.debug("generate " + file.getName());
                     generator.generate(packageName, templatePath, file, force);
                 }
@@ -269,13 +270,13 @@ public class Generator {
         return false;
     }
 
-    private static void generateLocales(boolean force,
+    private static void generateLocales(String outputDir, boolean force,
                                         TableDescriptor table,
                                         Generator generator)
             throws IOException {
 
         String templatePath = "templet/locale.vm";
-        File file = new File("src/main/resources/locales/zh_CN/"
+        File file = new File(outputDir + "/resources/locales/zh_CN/"
                 + table.getModelName()
                 + "/"
                 + table.getModelSubName()
@@ -285,7 +286,7 @@ public class Generator {
 
     }
 
-    private static void generateViews(boolean force, String viewpath,
+    private static void generateViews(String outputDir, boolean force, String viewpath,
                                       TableDescriptor table,
                                       Generator generator,
                                       String[] pages)
@@ -293,7 +294,7 @@ public class Generator {
 
         for (String view : pages) {
             String templatePath = "templet/" + viewpath + "/" + view + ".html.vm";
-            File file = new File("src/main/webapp/WEB-INF/views/"
+            File file = new File(outputDir + "/webapp/WEB-INF/views/"
                     + table.getViewBasePath()
                     + "/"
                     + view

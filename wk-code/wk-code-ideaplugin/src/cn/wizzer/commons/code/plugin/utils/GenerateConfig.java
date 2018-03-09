@@ -11,6 +11,7 @@ public class GenerateConfig {
     private boolean conroller;
     private boolean view;
     private boolean locale;
+    private String baseModelPath;
     private String basePath;
     private String baseUri;
     private String basePackage;
@@ -52,6 +53,14 @@ public class GenerateConfig {
 
     public void setView(boolean view) {
         this.view = view;
+    }
+
+    public String getBaseModelPath() {
+        return baseModelPath;
+    }
+
+    public void setBaseModelPath(String baseModelPath) {
+        this.baseModelPath = baseModelPath;
     }
 
     public String getBasePath() {

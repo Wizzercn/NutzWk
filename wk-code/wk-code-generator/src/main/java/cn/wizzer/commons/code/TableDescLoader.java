@@ -21,12 +21,12 @@ import java.util.Map;
  * 根据数据库结构生成model,service,controller,views
  * Created by wizzer on 2017/1/23.
  */
-public class TableDescLoader extends Loader{
+public class TableDescLoader extends Loader {
 
 
     @Override
-    public   Map<String, TableDescriptor> loadTables(Ioc ioc,
-                                                     String basePackageName,String outputDir, String basePath, String baseUri,String servPackageName,String modPackageName) throws SQLException {
+    public Map<String, TableDescriptor> loadTables(Ioc ioc,
+                                                   String basePackageName, String basePath, String baseUri, String servPackageName, String modPackageName) throws SQLException {
 
 
         DataSource ds = ioc.get(DataSource.class);
@@ -72,7 +72,7 @@ public class TableDescLoader extends Loader{
         dao.execute(tableSchemaSql);
 
 
-        List<Map> columns =tableSchemaSql.getList(Map.class);
+        List<Map> columns = tableSchemaSql.getList(Map.class);
 
         Map<String, TableDescriptor> tables = new HashMap<String, TableDescriptor>();
         for (Map<String, Object> columnInfo : columns) {
@@ -80,7 +80,7 @@ public class TableDescLoader extends Loader{
 
             ColumnDescriptor column = new ColumnDescriptor();
             column.columnName = (String) columnInfo.get("COLUMN_NAME");
-            if("opAt".equals(column.columnName)||"opBy".equals(column.columnName)||"delFlag".equals(column.columnName)){
+            if ("opAt".equals(column.columnName) || "opBy".equals(column.columnName) || "delFlag".equals(column.columnName)) {
                 continue;
             }
             column.setDefaultValue(columnInfo.get("COLUMN_DEFAULT"));
@@ -94,10 +94,10 @@ public class TableDescLoader extends Loader{
 
             TableDescriptor table = tables.get(tableName);
             if (table == null) {
-                table = new TableDescriptor(tableName,null, basePackageName, baseUri,servPackageName,modPackageName);
+                table = new TableDescriptor(tableName, null, basePackageName, baseUri, servPackageName, modPackageName);
                 tables.put(tableName, table);
             }
-            if(column.primary){
+            if (column.primary) {
                 table.setPkType(column.getSimpleJavaTypeName());
             }
             table.addColumn(column);
@@ -127,7 +127,7 @@ public class TableDescLoader extends Loader{
         dao.execute(infomationSchemaSql);
 
 
-        List<Map> tableInfos =infomationSchemaSql.getList(Map.class);
+        List<Map> tableInfos = infomationSchemaSql.getList(Map.class);
 
         for (Map<String, Object> tableInfo : tableInfos) {
             String tableName = (String) tableInfo.get("TABLE_NAME");

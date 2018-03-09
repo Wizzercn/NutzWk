@@ -60,7 +60,8 @@ public class GeneratorAction extends AnAction {
         String entityClassName = rootClass.getName();
         StringBuilder programArgs = new StringBuilder();
         programArgs.append("-i ").append(entityClassName).append(" -u ").append(generateConfig.getBaseUri())
-                .append(" -b ").append(generateConfig.getBasePath())
+                .append(" -b ").append(generateConfig.getBaseModelPath())
+                .append(" -o ").append(project.getBasePath()+"/"+generateConfig.getBasePath())
                 .append(" -p ").append(generateConfig.getBasePackage()).append(generateConfig.isForce() ? " -f" : "")
                 .append(generateConfig.getPages().length() > 1 ? (" -v " + generateConfig.getPages()) : "")
                 .append(" -mod ").append(generateConfig.getModelPakName())
@@ -94,9 +95,12 @@ public class GeneratorAction extends AnAction {
 //            return;
 //        }
         if (!generateConfig.getBasePath().isEmpty()) {
-            appConfig.WORKING_DIRECTORY = project.getBasePath() + "/" + generateConfig.getBasePath();
+            appConfig.WORKING_DIRECTORY = project.getBasePath() + "/" + generateConfig.getBaseModelPath();
         }
-
+        System.out.println("project.getBasePath()::"+project.getBasePath());
+        System.out.println("generateConfig.getBaseModelPath()::"+generateConfig.getBaseModelPath());
+        System.out.println("generateConfig.getBasePath()::"+generateConfig.getBasePath());
+        System.out.println("appConfig.WORKING_DIRECTORY::"+appConfig.WORKING_DIRECTORY);
         Module[] modules = ModuleManager.getInstance(project).getModules();
         appConfig.setModule(modules[0]);
         RunnerAndConfigurationSettings configuration = runManager.createConfiguration(appConfig, appConfig.getFactory());

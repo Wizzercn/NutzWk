@@ -30,10 +30,12 @@ public class ConfigDialog extends DialogWrapper {
     private JBCheckBox localeCheckBox;
 
     private JBCheckBox forceCheckBox;
+    private JBLabel baseModelPathLabel;
     private JBLabel basePathLabel;
     private JBLabel baseUriLabel;
     private JBLabel basePackageLabel;
     private JBTextField basePathTextField;
+    private JBTextField baseModelPathTextField;
     private JBTextField baseUriTextField;
     private JBTextField basePackageTextField;
 
@@ -85,10 +87,12 @@ public class ConfigDialog extends DialogWrapper {
         localeCheckBox = new JBCheckBox("locales", true);
 
         forceCheckBox = new JBCheckBox("replace", false);
+        baseModelPathTextField = new JBTextField("wk-app/wk-web");
         basePathTextField = new JBTextField("wk-app/wk-web");
         baseUriTextField = new JBTextField(baseUri);
         basePackageTextField = new JBTextField(basePackage);
-        basePathLabel = new JBLabel("base Path:");
+        baseModelPathLabel = new JBLabel("base model Path:");
+        basePathLabel = new JBLabel("base out Path:");
         baseUriLabel = new JBLabel("base Uri:");
         basePackageLabel = new JBLabel("base Package:");
 
@@ -137,6 +141,8 @@ public class ConfigDialog extends DialogWrapper {
             return null;
         }
         final VerticalBox root = new VerticalBox();
+        root.add(baseModelPathLabel);
+        root.add(baseModelPathTextField);
         root.add(basePathLabel);
         root.add(basePathTextField);
         root.add(baseUriLabel);
@@ -183,6 +189,7 @@ public class ConfigDialog extends DialogWrapper {
     public GenerateConfig getGenerateConfig() {
         GenerateConfig config = new GenerateConfig();
         config.setBasePackage(basePackage);
+        config.setBaseModelPath(baseModelPathTextField.getText().trim());
         config.setBasePath(basePathTextField.getText().trim());
         config.setBaseUri(baseUriTextField.getText().trim());
         config.setConroller(controllerCheckBox.isSelected());

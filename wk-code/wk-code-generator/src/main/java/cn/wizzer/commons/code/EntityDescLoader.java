@@ -25,7 +25,7 @@ public class EntityDescLoader extends Loader {
     private static final Log log = Logs.get();
 
     @Override
-    public Map<String, TableDescriptor> loadTables(Ioc ioc, String basePackageName, String outputDir, String basePath, String baseUri, String servPackageName, String modPackageName) throws Exception {
+    public Map<String, TableDescriptor> loadTables(Ioc ioc, String basePackageName, String basePath, String baseUri, String servPackageName, String modPackageName) throws Exception {
         String packageName = modPackageName;
         String filePath = packageName.replaceAll("\\.", "\\/");
         URL url = Loader.class.getClassLoader().getResource(filePath);
@@ -44,7 +44,7 @@ public class EntityDescLoader extends Loader {
         for (File file : files) {
             String fileName = file.getName().split("\\.")[0];
             String className = packageName + "." + fileName;
-            if (className.contains(".Model")||className.contains(".em")) {
+            if (className.contains(".Model") || className.contains(".em")) {
                 continue;
             }
             if (className.contains("$")) {
