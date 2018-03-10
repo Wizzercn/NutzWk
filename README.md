@@ -43,18 +43,30 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 
 ## NutzWk 4.x 运行环境：
 
-*   JDK 8
-*   Tomcat 8.x + / Jetty 9.x +
-*   Maven 3.3.x +
+*   JDK 8 162+
+*   Tomcat 8.5.28 + / Jetty 9.4 +
+*   Maven 3.5.x +
 
-## NutzWk 4.x 新特性：
+## NutzWk 4.x 技术选型：
 
-*   模块化可自由拆分(Dubbo/RSF自由选择)
+*   核心框架：Nutz、Nutz MVC、Nutz Dao、Nutzboot
+*   安全框架：Apache Shiro
+*   任务调度：Quartz
+*   数据库连接池：Druid 
+*   支持数据库：MySql、Oracle、SqlServer、达梦 
+*   缓存框架：Redis、Ehcache
+*   消息队列：Rabbitmq
+*   扩展功能：分布式-Dubbo、WebSocket-Nutz、方法缓存-Wkcache、搜索引擎-Elasticsearch、工作流-Activiti等
+*   前端框架：Bootstrap+JQuery
+
+## NutzWk 4.x 特性：
+
+*   模块化可自由拆分(分布式框架Dubbo/RSF/feign自由选择)
 *   集成Shiro权限框架(支持二级缓存)
-*   集成Ehcache缓存(Shiro一级缓存)
-*   集成Redis(支持Redis集群模式切换)
-*   集成Email服务(仅供选择)
-*   集成Quartz定时任务(集群部署咨询作者)
+*   集成Ehcache缓存(Shiro的一级缓存)
+*   集成Redis(支持Redis集群/单机模式切换)
+*   集成Email服务
+*   集成Quartz定时任务且支持集群
 *   集成Beetl/Velocity模板引擎
 *   支持语言国际化(直接写汉字不需要Unicode转换)
 *   支持注解式事务(基于强大的@Aop注解)
@@ -79,26 +91,6 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 *   用户名：superadmin 密码：1
 
 若非mysql数据库,请修改quartz.properties 中org.quartz.jobStore.driverDelegateClass的值
-## NutzWk 4.x 代码结构:
-
->wk-app
-
-   >>wk-web               (后台代码)
-
-   >>wk-dubbo              (dubbo示例)
-      >>>wk-dubbo-api       (dubbo API)
-      >>>wk-dubbo-provider  (dubbo Provider)
-
->wk-code
-
-   >>wk-code-generator    (代码生成器)
-
-   >>wk-code-ideaplugin   (IDEA插件)
-
->wk-framework            (基础框架)
-
->wk-wiki                (开发指南)
-
 
 ## NutzWk 4.x 代码生成器安装使用:
 *   IDEA Settings --> Plugins --> Install plugin from disk --> wk-code-ideaplugin.jar
@@ -120,6 +112,8 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 
 *   本项目完全开源，商用完全免费
 *   欢迎打赏，以资鼓励
+
+![后台截图](demo.png)
 
 ![打赏](pay.jpg)
 
