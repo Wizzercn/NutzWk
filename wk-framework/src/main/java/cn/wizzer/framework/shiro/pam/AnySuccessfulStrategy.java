@@ -23,7 +23,6 @@ import cn.wizzer.framework.shiro.exception.CaptchaIncorrectException;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.pam.AbstractAuthenticationStrategy;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.util.CollectionUtils;
 import org.nutz.lang.Lang;
 
 import java.util.Collection;
@@ -50,7 +49,7 @@ public class AnySuccessfulStrategy extends AbstractAuthenticationStrategy {
      * realm be used.
      */
     protected AuthenticationInfo merge(AuthenticationInfo info, AuthenticationInfo aggregate) {
-        if (aggregate != null && !CollectionUtils.isEmpty(aggregate.getPrincipals())) {
+        if (aggregate != null && !Lang.isEmpty(aggregate.getPrincipals())) {
             return aggregate;
         }
         return info != null ? info : aggregate;
