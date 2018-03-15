@@ -6,11 +6,7 @@
 
     <groupId>cn.wizzer</groupId>
     <artifactId>wk-wiki</artifactId>
-    <version>4.0.1-SNAPSHOT</version>
-    <modules>
-        <module>wk-framework</module>
-        <module>wk-app</module>
-    </modules>
+    <version>5.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>NutzWk</name>
     <url>http://www.wizzer.cn</url>

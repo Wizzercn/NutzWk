@@ -12,7 +12,6 @@ https://nutzwk.wizzer.cn/                 NutzWk v3.x、v4.x
 
 https://vue.wizzer.cn                     NutzWk v3.x-vue
 
-https://pan.baidu.com/s/1i5kO37f          NutzWk 开发培训视频
 
 # 前言
 
@@ -28,26 +27,21 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 
 # 版本说明
 
-*   NutzWk v4.x 模块化版本(分支名:modular,统一提供代码生成器及IDEA可视化插件)
+*   NutzWk v5.x 微服务版本(分支名:nutzboot,微服务分布式版本)
+*   NutzWk v4.x 模块化版本(分支名:modular,统一提供代码生成器及IDEA可视化插件,,可拆模块用dubbo等分布式技术)
 *   NutzWk v3.x 单应用版本(分支名:bootstrap-3.3.x,CMS+微信+系统+权限+常用功能封装 beetl/velocity)
 *   NutzWk v2.0 试验版(不建议使用)
 *   NutzWk v1.0 传统版(分支名:master,velocity 支持IE6)
 
-如果您的项目面对的客户比较念旧，可以选用v1.0版本，因为她使用EasyUI以及支持IE6；
+# 本版说明(v5.x)
 
-如果您的项目需要快速开发，并习惯通过负载均衡方式提升性能，可以选用v3.x版本，她采用Bootstrap+JQuery+Json开发；
-
-如果您的项目有大数据及大并发、分布式部署等需求，那么您可以选用v4.x版本，她在v3.x基础上拆分模块并接口化；
-
-# 本版说明(v4.x)
-
-## NutzWk 4.x 运行环境：
+## NutzWk 5.x 运行环境：
 
 *   JDK 8 162+
 *   Tomcat 8.5.28 + / Jetty 9.4 +
 *   Maven 3.5.x +
 
-## NutzWk 4.x 技术选型：
+## NutzWk 5.x 技术选型：
 
 *   核心框架：Nutz、Nutz MVC、Nutz Dao、Nutzboot
 *   安全框架：Apache Shiro
@@ -59,9 +53,9 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 *   扩展功能：分布式-Dubbo、WebSocket-Nutz、方法缓存-Wkcache、搜索引擎-Elasticsearch、工作流-Activiti等
 *   前端框架：Bootstrap+JQuery
 
-## NutzWk 4.x 特性：
+## NutzWk 5.x 特性：
 
-*   模块化可自由拆分(分布式框架Dubbo/RSF/feign自由选择)
+*   微服务分布式(feign+-eureka)
 *   集成Shiro权限框架(支持二级缓存)
 *   集成Ehcache缓存(Shiro的一级缓存)
 *   集成Redis(支持Redis集群/单机模式切换)
@@ -81,7 +75,7 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 *   微信模块(支持多公众号、微信支付等功能)
 
 
-## NutzWk 4.x 使用说明：
+## NutzWk 5.x 使用说明(等待更新)：
 
 *   创建空的数据库
 *   修改数据库连接 wk-app/wk-web/src/main/resources/config/custom/db.properties
@@ -92,7 +86,7 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 
 若非mysql数据库,请修改quartz.properties 中org.quartz.jobStore.driverDelegateClass的值
 
-## NutzWk 4.x 代码生成器安装使用:
+## NutzWk 5x 代码生成器安装使用(等待更新):
 *   IDEA Settings --> Plugins --> Install plugin from disk --> wk-code-ideaplugin.jar
 *   创建实体类,必须有@Table,若字段需生成到模板页面则需加 @Comment 字段备注(注意命名规范和大小写)
 *   编译wk-web项目,使其打包发布至 target/ 目录(目的是让代码生成器可读取到class文件)
