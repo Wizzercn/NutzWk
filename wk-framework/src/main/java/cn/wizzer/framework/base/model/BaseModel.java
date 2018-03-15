@@ -6,6 +6,7 @@ import org.nutz.dao.entity.annotation.*;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 import org.nutz.lang.Strings;
+import org.nutz.lang.Times;
 import org.nutz.lang.random.R;
 
 import java.io.Serializable;
@@ -25,7 +26,7 @@ public abstract class BaseModel implements Serializable {
     @Comment("操作时间")
     @Prev(els = @EL("$me.now()"))
     @ColDefine(type = ColType.INT)
-    private Integer opAt;
+    private Long opAt;
 
     @Column
     @Comment("删除标记")
@@ -41,8 +42,8 @@ public abstract class BaseModel implements Serializable {
         return false;
     }
 
-    public Integer now() {
-        return (int) (System.currentTimeMillis() / 1000);
+    public Long now() {
+        return Times.getTS();
     }
 
     public String uid() {
@@ -64,11 +65,11 @@ public abstract class BaseModel implements Serializable {
         this.opBy = opBy;
     }
 
-    public Integer getOpAt() {
+    public Long getOpAt() {
         return opAt;
     }
 
-    public void setOpAt(Integer opAt) {
+    public void setOpAt(Long opAt) {
         this.opAt = opAt;
     }
 

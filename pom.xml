@@ -10,6 +10,7 @@
     <modules>
         <module>wk-framework</module>
         <module>wk-app</module>
+        <module>wk-wiki</module>
     </modules>
     <packaging>pom</packaging>
     <name>NutzWk</name>

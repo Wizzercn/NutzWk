@@ -11,6 +11,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>wk-web</module>
+        <module>wk-model</module>
+        <module>wk-nb-sys</module>
     </modules>
     <groupId>cn.wizzer.app</groupId>
     <artifactId>wk-app</artifactId>
