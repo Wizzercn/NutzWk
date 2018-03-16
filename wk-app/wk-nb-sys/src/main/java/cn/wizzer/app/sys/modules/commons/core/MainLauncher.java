@@ -1,9 +1,6 @@
-package cn.wizzer.app.sys;
+package cn.wizzer.app.sys.modules.commons.core;
 
 import cn.wizzer.app.sys.modules.models.*;
-import org.apache.shiro.crypto.RandomNumberGenerator;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.boot.NbApp;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Dao;
@@ -35,7 +32,9 @@ public class MainLauncher {
     private Dao dao;
 
     public static void main(String[] args) throws Exception {
-        new NbApp().setPrintProcDoc(true).run();
+        NbApp nb = new NbApp().setArgs(args).setPrintProcDoc(true);
+        nb.getAppContext().setMainPackage("cn.wizzer");
+        nb.run();
     }
 
     public void init() {
@@ -551,6 +550,53 @@ public class MainLauncher {
             menu.setParentId(d.getId());
             menu.setType("data");
             Sys_menu d3 = dao.insert(menu);
+            //行政区划
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("000100020002");
+            menu.setName("行政区划");
+            menu.setAliasName("Area");
+            menu.setLocation(0);
+            menu.setHref("/platform/sys/area");
+            menu.setTarget("data-pjax");
+            menu.setIsShow(true);
+            menu.setPermission("sys.manager.area");
+            menu.setParentId(pp1.getId());
+            menu.setType("menu");
+            Sys_menu x = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000200020001");
+            menu.setName("添加地区");
+            menu.setAliasName("Add");
+            menu.setLocation(1);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.area.add");
+            menu.setParentId(d.getId());
+            menu.setType("data");
+            Sys_menu x1 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000200020002");
+            menu.setName("修改地区");
+            menu.setAliasName("Edit");
+            menu.setLocation(2);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.area.edit");
+            menu.setParentId(d.getId());
+            menu.setType("data");
+            Sys_menu x2 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000200020003");
+            menu.setName("删除地区");
+            menu.setAliasName("Delete");
+            menu.setLocation(3);
+            menu.setIsShow(false);
+            menu.setPermission("sys.manager.area.delete");
+            menu.setParentId(d.getId());
+            menu.setType("data");
+            Sys_menu x3 = dao.insert(menu);
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
@@ -574,11 +620,11 @@ public class MainLauncher {
             user.setLoginname("superadmin");
             user.setUsername("超级管理员");
             user.setOpAt(Times.getTS());
-            RandomNumberGenerator rng = new SecureRandomNumberGenerator();
-            String salt = rng.nextBytes().toBase64();
-            String hashedPasswordBase64 = new Sha256Hash("1", salt, 1024).toBase64();
-            user.setSalt(salt);
-            user.setPassword(hashedPasswordBase64);
+            //RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+            //String hashedPasswordBase64 = new Sha256Hash("1", salt, 1024).toBase64();
+            //密码为 1
+            user.setSalt("0leLZBk90/fzGYw4vYc+Pg==");
+            user.setPassword("ADQ6Z8i8paskndt+4SsHNVJpY+5pa3NCUL2u5AG7HDk=");
             user.setLoginIp("127.0.0.1");
             user.setLoginAt(0L);
             user.setLoginCount(0);

@@ -16,12 +16,6 @@
             <artifactId>wk-framework</artifactId>
             <version>5.0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>cn.wizzer</groupId>
-            <artifactId>wk-code-generator</artifactId>
-            <version>5.0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>

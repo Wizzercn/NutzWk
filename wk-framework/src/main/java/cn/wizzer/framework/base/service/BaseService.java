@@ -127,7 +127,9 @@ public interface BaseService<T> {
 
     List<T> query(Condition cnd, Pager pager);
 
-    String getSubPath(String tableName, String cloName, String value);
+    String getSubPath(String tableName, String colName, String value);
+
+    String getParentPath(String s);
 
     int count(Sql sql);
 

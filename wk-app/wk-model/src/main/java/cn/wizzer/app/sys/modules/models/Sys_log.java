@@ -1,11 +1,7 @@
 package cn.wizzer.app.sys.modules.models;
 
 import cn.wizzer.framework.base.model.BaseModel;
-import cn.wizzer.framework.util.StringUtil;
 import org.nutz.dao.entity.annotation.*;
-import org.nutz.lang.Lang;
-import org.nutz.lang.Times;
-import org.nutz.mvc.Mvcs;
 
 import java.io.Serializable;
 
@@ -29,7 +25,7 @@ public class Sys_log extends BaseModel implements Serializable {
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String username;
 
-    @Column// aop.before aop.after aop.error
+    @Column
     @Comment("日志类型")
     @ColDefine(type = ColType.VARCHAR, width = 20)
     private String type;
@@ -136,33 +132,4 @@ public class Sys_log extends BaseModel implements Serializable {
         this.result = result;
     }
 
-    public static Sys_log c(String type, String tag, String source, String msg, String param, String result) {
-        Sys_log sysLog = new Sys_log();
-        if (type == null || tag == null) {
-            throw new RuntimeException("type/tag can't null");
-        }
-        if (source == null) {
-            StackTraceElement[] tmp = Thread.currentThread().getStackTrace();
-            if (tmp.length > 2) {
-                source = tmp[2].getClassName() + "#" + tmp[2].getMethodName();
-            } else {
-                source = "main";
-            }
-
-        }
-        sysLog.setType(type);
-        sysLog.setTag(tag);
-        sysLog.setSrc(source);
-        sysLog.setMsg(msg);
-        sysLog.setParam(param);
-        sysLog.setResult(result);
-        if (Mvcs.getReq() != null) {
-            sysLog.setIp(Lang.getIP(Mvcs.getReq()));
-        }
-        sysLog.setOpBy(StringUtil.getUid());
-        sysLog.setOpAt(Times.getTS());
-        sysLog.setDelFlag(false);
-        sysLog.setUsername(StringUtil.getUsername());
-        return sysLog;
-    }
 }

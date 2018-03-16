@@ -4,7 +4,6 @@ import cn.wizzer.framework.page.OffsetPager;
 import cn.wizzer.framework.page.Pagination;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.nutz.dao.*;
 import org.nutz.dao.entity.Record;
 import org.nutz.dao.pager.Pager;
@@ -179,8 +178,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     /**
      * 根据对象的主键(@Id/@Name/@Pk)先查询, 如果存在就更新, 不存在就插入
      *
-     * @param obj
-     *            对象
+     * @param obj 对象
      * @return 原对象
      */
     public <T> T insertOrUpdate(T obj) {
@@ -664,7 +662,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
                 String rsvalue = val + "0001";
                 if (rs != null && rs.next()) {
                     rsvalue = rs.getString(1);
-                    int newvalue = NumberUtils.toInt(rsvalue
+                    int newvalue = Integer.valueOf(rsvalue
                             .substring(rsvalue.length() - 4)) + 1;
                     rsvalue = rsvalue.substring(0, rsvalue.length() - 4)
                             + new java.text.DecimalFormat("0000")
@@ -676,6 +674,10 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         this.dao().execute(sql);
         return sql.getString();
 
+    }
+
+    public String getParentPath(String s) {
+        return !Strings.isEmpty(s) && s.length() > 4 ? s.substring(0, s.length() - 4) : "";
     }
 
     /**

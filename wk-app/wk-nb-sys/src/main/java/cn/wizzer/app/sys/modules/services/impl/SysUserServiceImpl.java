@@ -6,7 +6,6 @@ import cn.wizzer.app.sys.modules.models.Sys_user;
 import cn.wizzer.app.sys.modules.services.SysMenuService;
 import cn.wizzer.app.sys.modules.services.SysUserService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
-import cn.wizzer.framework.util.StringUtil;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -61,10 +60,10 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
         Map<String, List<Sys_menu>> secondMenus = new HashMap<>();
         for (Sys_menu menu : user.getMenus()) {
             if (menu.getPath().length() > 4) {
-                List<Sys_menu> s = secondMenus.get(StringUtil.getParentId(menu.getPath()));
+                List<Sys_menu> s = secondMenus.get(getParentPath(menu.getPath()));
                 if (s == null) s = new ArrayList<>();
                 s.add(menu);
-                secondMenus.put(StringUtil.getParentId(menu.getPath()), s);
+                secondMenus.put(getParentPath(menu.getPath()), s);
             } else if (menu.getPath().length() == 4) {
                 firstMenus.add(menu);
             }

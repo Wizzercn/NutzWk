@@ -1,13 +1,12 @@
 package cn.wizzer.framework.base.model;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.nutz.dao.entity.annotation.*;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
 import org.nutz.lang.random.R;
+import org.nutz.mvc.Mvcs;
 
 import java.io.Serializable;
 
@@ -48,10 +47,7 @@ public abstract class BaseModel implements Serializable {
 
     public String uid() {
         try {
-            Subject subject = SecurityUtils.getSubject();
-            if (subject != null) {
-                return Strings.sNull(subject.getSession(true).getAttribute("uid"));
-            }
+            return Strings.sNull(Mvcs.getActionContext().getRequest().getSession().getAttribute("platform_uid"));
         } catch (Exception e) {
         }
         return "";
