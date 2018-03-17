@@ -14,6 +14,9 @@
         <module>wk-nb-service-sys</module>
         <module>wk-nc-eureka-server</module>
         <module>wk-common</module>
+        <module>wk-nb-service-cms</module>
+        <module>wk-nb-service-wx</module>
+        <module>wk-nb-web-platform</module>
     </modules>
     <groupId>cn.wizzer.app</groupId>
     <artifactId>wk-app</artifactId>

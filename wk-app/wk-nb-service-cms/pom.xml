@@ -8,8 +8,8 @@
         <version>5.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <packaging>jar</packaging>
-    <artifactId>wk-nb-service-sys</artifactId>
+
+    <artifactId>wk-nb-service-cms</artifactId>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -122,7 +122,7 @@
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <mainClass>cn.wizzer.app.sys.modules.commons.core.DubboRpcSysMainLauncher</mainClass>
+                            <mainClass>cn.wizzer.app.cms.modules.commons.core.DubboRpcCmsMainLauncher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -147,8 +147,7 @@
                                 </transformer>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>cn.wizzer.app.sys.modules.commons.core.DubboRpcSysMainLauncher
-                                    </mainClass>
+                                    <mainClass>cn.wizzer.app.cms.modules.commons.core.DubboRpcCmsMainLauncher</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
@@ -157,5 +156,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

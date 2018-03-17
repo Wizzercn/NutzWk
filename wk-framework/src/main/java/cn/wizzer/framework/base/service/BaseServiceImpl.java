@@ -510,6 +510,26 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
+     * 根据条件进行伪删除
+     *
+     * @param cnd
+     * @return
+     */
+    public int vDelete(Condition cnd) {
+        return this.dao().update(this.getEntityClass(), Chain.make("delFlag", true), cnd);
+    }
+
+    /**
+     * 根据条件进行伪删除
+     *
+     * @param cnd
+     * @return
+     */
+    public int vDelete(String tableName, Condition cnd) {
+        return this.dao().update(tableName, Chain.make("delFlag", true), cnd);
+    }
+
+    /**
      * 通过LONG主键获取部分字段值
      *
      * @param fieldName
@@ -547,7 +567,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
-     * 通过NAME主键获取部分字段值
+     * 通过条件获取部分字段值
      *
      * @param fieldName 支持通配符 ^(a|b)$
      * @param cnd
@@ -606,7 +626,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
-     * 获取全部数据
+     * 获取表及关联表全部数据
      *
      * @param linkName 关联字段，支持正则 ^(a|b)$
      * @return
@@ -644,18 +664,18 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
-     * 计算子节点ID
+     * 计算子节点TREEID
      *
      * @param tableName
-     * @param cloName
+     * @param colName
      * @param value
      * @return
      */
-    public String getSubPath(String tableName, String cloName, String value) {
+    public String getSubPath(String tableName, String colName, String value) {
         final String val = Strings.sNull(value);
-        Sql sql = Sqls.create("select " + cloName + " from " + tableName
-                + " where " + cloName + " like '" + val + "____' order by "
-                + cloName + " desc");
+        Sql sql = Sqls.create("select " + colName + " from " + tableName
+                + " where " + colName + " like '" + val + "____' order by "
+                + colName + " desc");
         sql.setCallback(new SqlCallback() {
             public Object invoke(Connection conn, ResultSet rs, Sql sql)
                     throws SQLException {
@@ -676,8 +696,14 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
 
     }
 
-    public String getParentPath(String s) {
-        return !Strings.isEmpty(s) && s.length() > 4 ? s.substring(0, s.length() - 4) : "";
+    /**
+     * 获取TREEID父级
+     *
+     * @param path
+     * @return
+     */
+    public String getParentPath(String path) {
+        return !Strings.isEmpty(path) && path.length() > 4 ? path.substring(0, path.length() - 4) : "";
     }
 
     /**
@@ -872,7 +898,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param orders   排序
      * @param columns  字段
      * @param cnd      查询条件
-     * @param linkName 关联查询
+     * @param linkName 关联查询 支持通配符 ^(a|b)$
      * @return
      */
     public NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName) {
@@ -904,7 +930,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param orders   排序
      * @param columns  字段
      * @param cnd      查询条件
-     * @param linkName 关联查询
+     * @param linkName 关联查询 支持通配符 ^(a|b)$
      * @param subCnd   关联查询条件
      * @return
      */
@@ -932,7 +958,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
-     * DataTable Page SQL
+     * DataTable Page 自定义SQL
      *
      * @param length   页大小
      * @param start    start
@@ -955,6 +981,16 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         return re;
     }
 
+    /**
+     * DataTable Page
+     *
+     * @param length   页大小
+     * @param start    start
+     * @param draw     draw
+     * @param cnd      查询条件
+     * @param linkName 关联查询 支持通配符 ^(a|b)$
+     * @return
+     */
     public NutMap data(int length, int start, int draw, Cnd cnd, String linkName) {
         NutMap re = new NutMap();
         Pager pager = new OffsetPager(start, length);
