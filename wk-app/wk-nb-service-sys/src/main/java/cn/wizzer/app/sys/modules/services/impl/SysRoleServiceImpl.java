@@ -4,6 +4,7 @@ import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.models.Sys_role;
 import cn.wizzer.app.sys.modules.services.SysRoleService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
+import com.alibaba.dubbo.config.annotation.Service;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -21,6 +22,7 @@ import java.util.List;
  * Created by wizzer on 2016/12/22.
  */
 @IocBean(args = {"refer:dao"})
+@Service(interfaceClass=SysRoleService.class)
 public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements SysRoleService {
     public SysRoleServiceImpl(Dao dao) {
         super(dao);

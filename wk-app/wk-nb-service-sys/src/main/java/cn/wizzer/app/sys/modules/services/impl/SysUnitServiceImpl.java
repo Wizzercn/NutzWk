@@ -3,6 +3,7 @@ package cn.wizzer.app.sys.modules.services.impl;
 import cn.wizzer.app.sys.modules.models.Sys_unit;
 import cn.wizzer.app.sys.modules.services.SysUnitService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
+import com.alibaba.dubbo.config.annotation.Service;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -16,6 +17,7 @@ import org.nutz.lang.Strings;
  * Created by wizzer on 2016/12/22.
  */
 @IocBean(args = {"refer:dao"})
+@Service(interfaceClass=SysUnitService.class)
 public class SysUnitServiceImpl extends BaseServiceImpl<Sys_unit> implements SysUnitService {
     public SysUnitServiceImpl(Dao dao) {
         super(dao);

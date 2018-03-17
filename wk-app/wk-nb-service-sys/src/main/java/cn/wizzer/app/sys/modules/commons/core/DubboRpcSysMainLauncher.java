@@ -27,7 +27,7 @@ import java.util.List;
  */
 @IocBean(create = "init", depose = "depose")
 @Modules(packages = "cn.wizzer")
-public class MainLauncher {
+public class DubboRpcSysMainLauncher {
     private static final Log log = Logs.get();
 
     @Inject

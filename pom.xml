@@ -13,11 +13,10 @@
         <module>wk-wiki</module>
     </modules>
     <packaging>pom</packaging>
-    <name>NutzWk</name>
+    <name>Wk-Nb-Dubbo</name>
     <url>http://www.wizzer.cn</url>
     <properties>
         <nutzboot.version>2.2-SNAPSHOT</nutzboot.version>
-        <nutzwk.version>5.0.1-SNAPSHOT</nutzwk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <docker.image.prefix>nutzboot</docker.image.prefix>
     </properties>

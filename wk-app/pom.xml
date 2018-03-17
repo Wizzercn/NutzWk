@@ -13,6 +13,7 @@
         <module>wk-model</module>
         <module>wk-nb-service-sys</module>
         <module>wk-nc-eureka-server</module>
+        <module>wk-common</module>
     </modules>
     <groupId>cn.wizzer.app</groupId>
     <artifactId>wk-app</artifactId>

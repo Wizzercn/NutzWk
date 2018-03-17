@@ -3,6 +3,7 @@ package cn.wizzer.app.sys.modules.services.impl;
 import cn.wizzer.app.sys.modules.models.Sys_area;
 import cn.wizzer.app.sys.modules.services.SysAreaService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
+import com.alibaba.dubbo.config.annotation.Service;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -13,6 +14,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 
 @IocBean(args = {"refer:dao"})
+@Service(interfaceClass=SysAreaService.class)
 public class SysAreaServiceImpl extends BaseServiceImpl<Sys_area> implements SysAreaService {
     public SysAreaServiceImpl(Dao dao) {
         super(dao);

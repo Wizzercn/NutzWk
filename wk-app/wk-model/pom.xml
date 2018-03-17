@@ -14,7 +14,7 @@
         <dependency>
             <groupId>cn.wizzer</groupId>
             <artifactId>wk-framework</artifactId>
-            <version>5.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

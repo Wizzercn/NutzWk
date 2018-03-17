@@ -3,6 +3,7 @@ package cn.wizzer.app.sys.modules.services.impl;
 import cn.wizzer.app.sys.modules.models.Sys_dict;
 import cn.wizzer.app.sys.modules.services.SysDictService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
+import com.alibaba.dubbo.config.annotation.Service;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 
 @IocBean(args = {"refer:dao"})
+@Service(interfaceClass=SysDictService.class)
 public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements SysDictService {
     public SysDictServiceImpl(Dao dao) {
         super(dao);

@@ -17,21 +17,30 @@
         <dependency>
             <groupId>cn.wizzer</groupId>
             <artifactId>wk-framework</artifactId>
-            <version>${nutzwk.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.wizzer.app</groupId>
             <artifactId>wk-model</artifactId>
-            <version>${nutzwk.version}</version>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.wizzer.app</groupId>
+            <artifactId>wk-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
-            <artifactId>nutzboot-starter-jetty</artifactId>
+            <artifactId>nutzboot-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
-            <artifactId>nutzboot-starter-nutz-mvc</artifactId>
-            <version>${nutzboot.version}</version>
+            <artifactId>nutzboot-starter-dubbo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.101tec</groupId>
+            <artifactId>zkclient</artifactId>
+            <version>0.10</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -53,6 +62,7 @@
             <artifactId>nutzboot-starter-wkcache</artifactId>
             <version>${nutzboot.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
@@ -113,7 +123,7 @@
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <mainClass>cn.wizzer.app.sys.modules.commons.core.MainLauncher</mainClass>
+                            <mainClass>cn.wizzer.app.sys.modules.commons.core.DubboRpcSysMainLauncher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -130,12 +140,16 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/nutz/org.nutz.boot.starter.NbStarter</resource>
                                 </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>cn.wizzer.app.sys.modules.commons.core.MainLauncher</mainClass>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>cn.wizzer.app.sys.modules.commons.core.DubboRpcSysMainLauncher
+                                    </mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
