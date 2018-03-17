@@ -10,10 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
+        <module>wk-common</module>
         <module>wk-model</module>
         <module>wk-nb-service-sys</module>
-        <module>wk-nc-eureka-server</module>
-        <module>wk-common</module>
         <module>wk-nb-service-cms</module>
         <module>wk-nb-service-wx</module>
         <module>wk-nb-web-platform</module>

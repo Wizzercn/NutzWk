@@ -3,6 +3,7 @@ package cn.wizzer.app.wx.modules.services.impl;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
 import cn.wizzer.app.wx.modules.models.Wx_menu;
 import cn.wizzer.app.wx.modules.services.WxMenuService;
+import com.alibaba.dubbo.config.annotation.Service;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -13,6 +14,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 
 @IocBean(args = {"refer:dao"})
+@Service(interfaceClass=WxMenuService.class)
 public class WxMenuServiceImpl extends BaseServiceImpl<Wx_menu> implements WxMenuService {
     public WxMenuServiceImpl(Dao dao) {
         super(dao);

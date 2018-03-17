@@ -40,7 +40,7 @@
         <dependency>
             <groupId>com.101tec</groupId>
             <artifactId>zkclient</artifactId>
-            <version>0.10</version>
+            <version>${zkclient.version}</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.1.9</version>
+            <version>${druid.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba</groupId>
@@ -80,7 +80,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.46</version>
+            <version>${mysql-connector-java.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
