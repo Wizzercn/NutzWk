@@ -27,7 +27,7 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 
 # 版本说明
 
-*   NutzWk v5.x 微服务版本(分支名:nutzboot,微服务分布式版本)
+*   NutzWk v5.x 微服务版本(分支名:nutzboot-dubbo,微服务dubbo分布式版本)
 *   NutzWk v4.x 模块化版本(分支名:modular,统一提供代码生成器及IDEA可视化插件,,可拆模块用dubbo等分布式技术)
 *   NutzWk v3.x 单应用版本(分支名:bootstrap-3.3.x,CMS+微信+系统+权限+常用功能封装 beetl/velocity)
 *   NutzWk v2.0 试验版(不建议使用)
@@ -44,55 +44,24 @@ ps：这几年明显感受到国产开源项目越来越多，各种五花八门
 ## NutzWk 5.x 技术选型：
 
 *   核心框架：Nutz、Nutz MVC、Nutz Dao、Nutzboot
+*   分布式框架：Dubbo、Zookeeper
 *   安全框架：Apache Shiro
 *   任务调度：Quartz
 *   数据库连接池：Druid 
 *   支持数据库：MySql、Oracle、SqlServer、达梦 
 *   缓存框架：Redis、Ehcache
 *   消息队列：Rabbitmq
-*   扩展功能：分布式-Dubbo、WebSocket-Nutz、方法缓存-Wkcache、搜索引擎-Elasticsearch、工作流-Activiti等
+*   扩展功能：WebSocket-Nutz、方法缓存-Wkcache、搜索引擎-Elasticsearch、工作流-Activiti等
 *   前端框架：Bootstrap+JQuery
-
-## NutzWk 5.x 特性：
-
-*   微服务分布式(feign+-eureka)
-*   集成Shiro权限框架(支持二级缓存)
-*   集成Ehcache缓存(Shiro的一级缓存)
-*   集成Redis(支持Redis集群/单机模式切换)
-*   集成Email服务
-*   集成Quartz定时任务且支持集群
-*   集成Beetl/Velocity模板引擎
-*   支持语言国际化(直接写汉字不需要Unicode转换)
-*   支持注解式事务(基于强大的@Aop注解)
-*   支持动作链配置(想加过滤器So easy)
-*   支持注解式日志(@SLog注解自动记录日志)
-*   支持自定义路由(显性转发或隐性转发)
-*   支持class或jar插件热插拔(单机部署模式)
-*   支持API Token及应用管理(结合Nodejs一键生成API DOC)
-*   后台管理界面采用Pjax+Bootstrap
-*   系统模块(单位、角色、用户、菜单等完整的权限体系)
-*   CMS模块(简易的内容管理功能)
-*   微信模块(支持多公众号、微信支付等功能)
-
 
 ## NutzWk 5.x 使用说明(等待更新)：
 
-*   创建空的数据库
-*   修改数据库连接 wk-app/wk-web/src/main/resources/config/custom/db.properties
-*   项目使用Maven构建，IDEA/Eclipse直接打开，等待包下载完毕
-*   启动wk-web项目时自动建表
-*   http://127.0.0.1:你的端口/部署路径/sysadmin
-*   用户名：superadmin 密码：1
 
-若非mysql数据库,请修改quartz.properties 中org.quartz.jobStore.driverDelegateClass的值
 
 ## NutzWk 5x 代码生成器安装使用(等待更新):
-*   IDEA Settings --> Plugins --> Install plugin from disk --> wk-code-ideaplugin.jar
-*   创建实体类,必须有@Table,若字段需生成到模板页面则需加 @Comment 字段备注(注意命名规范和大小写)
-*   编译wk-web项目,使其打包发布至 target/ 目录(目的是让代码生成器可读取到class文件)
-*   在实体类java文件里鼠标右击,或IDEA Code(Alt+Insert/Mouse Right) --> Generate --> wk mvc
 
-![IDEA插件截图](wk-code/wk-code-ideaplugin/demo.png)
+
+
 
 # 鸣谢
 *   [@wendal](https://github.com/wendal) (代码贡献者,技术大牛,Nutz主要作者,无所不知且乐于助人)
