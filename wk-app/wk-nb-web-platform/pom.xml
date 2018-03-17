@@ -53,11 +53,6 @@
             <version>${nutzboot.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>dubbo</artifactId>
-            <version>2.6.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-jetty</artifactId>
             <version>${nutzboot.version}</version>
