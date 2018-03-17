@@ -1,0 +1,52 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">从模板库中添加</a>
+                    </div>
+                </header>
+                <div class="row mb10" style="text-align: center;padding-top: 10px;">
+                    <table width="80%" style="padding: 10px;">
+                        <tr style="height: 30px;">
+                            <td width="30%" align="right">模板编号：</td>
+                            <td width="70%" align="left">
+                                <input type="text" id="id" name="id" class="control-group" placeholder="填写模块库中的模板编号">
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+    <button onclick="doMoney()" id="ok" type="button" class="btn btn-primary" data-loading-text="正在提交...">确 定</button>
+</div>
+<script type="text/javascript">
+    function doMoney(){
+        if($("#id").val()==""){
+            Toast.error("模板编号");
+            $("#id").focus();
+            return false;
+        }
+        var btn = $("#ok");
+        var dialog = $("#dialogDetail");
+        btn.button("loading");
+        $.post("${base}/platform/wx/tpl/id/addDo", {id:$("#id").val(),wxid:$("#wxid").val()}, function (data) {
+        if (data.code == 0) {
+            Toast.success("获取成功");
+            dialog.modal("hide");
+            datatable.ajax.reload();
+        } else {
+            Toast.error(data.msg);
+        }
+        btn.button("reset");
+
+    }, "json");
+    }
+</script>

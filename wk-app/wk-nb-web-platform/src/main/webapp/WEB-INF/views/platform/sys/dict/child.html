@@ -1,0 +1,25 @@
+<% for(o in obj){
+%>
+<tr data-tt-id="${o.id}" data-tt-parent-id="${o.parentId}" data-tt-branch="${o.hasChildren}">
+    <td>
+        <span class="pd-l-sm"></span>${o.name!}
+    </td>
+    <td>${o.code!}</td>
+    <td>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                <i class="ti-settings"></i>
+                <span class="ti-angle-down"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="${base}/platform/sys/dict/edit/${o.id}" data-pjax>修改</a></li>
+                <li><a href="javascript:;" onclick="del('${o.id}')">删除</a></li>
+                <li class="divider"></li>
+                <li><a href="${base}/platform/sys/dict/add?pid=${o.id}" data-pjax>添加子级</a></li>
+
+            </ul>
+        </div>
+    </td>
+</tr>
+<%
+}%>

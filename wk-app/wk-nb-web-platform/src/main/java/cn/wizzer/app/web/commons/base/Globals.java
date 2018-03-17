@@ -2,8 +2,13 @@ package cn.wizzer.app.web.commons.base;
 
 import cn.wizzer.app.sys.modules.models.Sys_config;
 import cn.wizzer.app.sys.modules.models.Sys_route;
+import cn.wizzer.app.sys.modules.services.SysConfigService;
+import cn.wizzer.app.sys.modules.services.SysRouteService;
+import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.weixin.impl.WxApi2Impl;
 
 import java.util.HashMap;
@@ -13,6 +18,7 @@ import java.util.Map;
 /**
  * Created by wizzer on 2016/12/19.
  */
+@IocBean
 public class Globals {
     //项目路径
     public static String AppRoot = "";
@@ -34,10 +40,16 @@ public class Globals {
     public static Map<String, Sys_route> RouteMap = new HashMap<>();
     //微信map
     public static Map<String, WxApi2Impl> WxMap=new HashMap<>();
+    @Inject
+    @Reference
+    private static SysRouteService sysRouteService;
+    @Inject
+    @Reference
+    private static SysConfigService sysConfigService;
 
     public static void initSysConfig(Dao dao) {
         Globals.MyConfig.clear();
-        List<Sys_config> configList = dao.query(Sys_config.class, Cnd.NEW());
+        List<Sys_config> configList = sysConfigService.query();
         for (Sys_config sysConfig : configList) {
             switch (sysConfig.getConfigKey()) {
                 case "AppName":
@@ -59,9 +71,9 @@ public class Globals {
         }
     }
 
-    public static void initRoute(Dao dao) {
+    public static void initRoute() {
         Globals.RouteMap.clear();
-        List<Sys_route> routeList = dao.query(Sys_route.class, Cnd.where("disabled", "=", false));
+        List<Sys_route> routeList = sysRouteService.query(Cnd.where("disabled", "=", false));
         for (Sys_route route : routeList) {
             Globals.RouteMap.put(route.getUrl(), route);
         }

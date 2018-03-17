@@ -1,0 +1,58 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h4 class="modal-title">${msg['index.user.mode']}</h4>
+</div>
+<div class="modal-body">
+    <form id="modeForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+          action="${base}/platform/sys/user/modeDo" method="post">
+        <div class="row" style="padding-top: 10px;">
+            <div class="col-lg-12">
+                <div class="form">
+                    <div class="col-sm-8">
+                        <input name="mode" value="true" type="radio" <%if(@shiro.getPrincipalProperty('loginPjax')){%>checked<%}%>> PJAX加载方式<br>优点：占用带宽少，加载速度快；<br>缺点：不能使用前进、后退功能。
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 10px;">
+            <div class="col-lg-12">
+                <div class="form">
+                    <div class="col-sm-8">
+                        <input name="mode" value="false" type="radio" <%if(!@shiro.getPrincipalProperty('loginPjax')){%>checked<%}%>> 传统加载方式<br>优点：可以使用前进、后退功能；<br>缺点：页面会重载、刷新，占用带宽大。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">${msg['system.cancel']}</button>
+    <button type="button" id="okMode" class="btn btn-primary">${msg['system.confirm']}</button>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#okMode").on("click",function(){
+            $("#modeForm").submit();
+        });
+        $("#modeForm").ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                form.find("button:submit").text("${msg['system.submit']}");
+                form.find("button:submit").attr("disabled", "disabled");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    $('#homeDetail').modal('hide');
+                    Toast.success(data.msg);
+                    form.find("button:submit").text("${msg['system.confirm']}");
+                } else {
+                    form.find("button:submit").text("${msg['system.confirm']}");
+                    form.find("button:submit").removeAttr("disabled");
+                    Toast.error(data.msg);
+                }
+
+            }
+        });
+    });
+</script>

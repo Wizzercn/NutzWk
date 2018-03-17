@@ -1,0 +1,271 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/wx/conf/menu/index/${wxid!}" data-pjax><i
+                class="ti-angle-left"></i> 返回</a>
+    </div>
+</header>
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel">
+            <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+                  action="${base}/platform/wx/conf/menu/addDo" method="post">
+                <input id="wxid" name="wxid" type="hidden" value="${wxid!}">
+
+                <div class="row mb10 mt10">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label for="parentId" class="col-sm-2 control-label">上级菜单</label>
+
+                            <div class="col-sm-8">
+                                <select id="parentId" name="parentId" class="form-control">
+                                    <option value="">无</option>
+                                    <%
+                                    if(!isEmpty(menus)){
+                                    for(m in menus){
+                                    %>
+                                    <option value="${m.id}">${m.menuName}</option>
+                                    <%
+                                    } }%>
+                                </select>
+                                <input id="errMsg" value="false" type="hidden">
+                                <p class="help-block no-m" style="color: red;" id="_errMsg"></p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="menuName" class="col-sm-2 control-label">菜单名称</label>
+
+                            <div class="col-sm-8">
+                                <input id="menuName" name="menuName" type="text" class="form-control"
+                                       data-parsley-maxlength="20" data-parsley-required="true">
+
+                                <p class="help-block no-m">一级菜单最多4个汉字，二级菜单最多7个汉字，多出来的部分将会以“...”代替。</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="type" class="col-sm-2 control-label">菜单类型</label>
+
+                            <div id="type" class="col-sm-8 ">
+                                <div class="radio"><label><input onclick="clickRadio('')" type="radio" name="menuType" value="" checked>无</label></div>
+                                <div class="radio"><label><input onclick="clickRadio('view')" type="radio" name="menuType" value="view">链接</label></div>
+                                <div class="radio"><label><input onclick="clickRadio('click')" type="radio" name="menuType" value="click">事件</label></div>
+                                <div class="radio"><label><input onclick="clickRadio('miniprogram')" type="radio" name="menuType" value="miniprogram">小程序</label></div>
+                            </div>
+                        </div>
+                        <div id="div_url" class="form-group" style="display: none">
+                            <label for="url" class="col-sm-2 control-label">URL</label>
+
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                <input id="url" name="url" type="text" class="form-control">
+                                <span class="input-group-btn">
+                                    <a class="btn btn-primary current-time" href="${base}/platform/wx/conf/menu/cms/channel"  data-toggle="modal" data-target="#dialogSelect">选择栏目</a>
+                                    <a class="btn btn-info current-time" href="${base}/platform/wx/conf/menu/cms/article"  data-toggle="modal" data-target="#dialogSelect">选择文章</a>
+
+                                </span>
+                                </div>
+                                <input type="checkbox" id="btnUrl">网页oauth2.0
+                                <input type="checkbox" id="btnUrl2">应用oauth2.0
+                            </div>
+                        </div>
+                        <div id="div_appurl" class="form-group" style="display: none">
+                            <label for="appid" class="col-sm-2 control-label">URL</label>
+                            <div class="col-sm-8">
+                                <input id="appurl" name="appurl" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div id="div_appid" class="form-group" style="display: none">
+                            <label for="appid" class="col-sm-2 control-label">appid</label>
+                            <div class="col-sm-8">
+                                <input id="appid" name="appid" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div id="div_pagepath" class="form-group" style="display: none">
+                            <label for="pagepath" class="col-sm-2 control-label">pagepath</label>
+                            <div class="col-sm-8">
+                                 <input id="pagepath" name="pagepath" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div id="div_key" class="form-group" style="display: none">
+                            <label for="menuKey" class="col-sm-2 control-label">事件Key</label>
+
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input id="menuKey" name="menuKey" type="text" class="form-control"
+                                           data-parsley-maxlength="20">
+                  <span class="input-group-btn">
+                  <button class="btn btn-color current-time" type="button" onclick="selKeyword()">选择关键词</button>
+                  </span>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="form-group text-center">
+                        <label></label>
+
+                        <div>
+                            <button type="button" class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="正在提交..." id="submit">提 交
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+    </div>
+</div>
+<div id="dialogKeySelect" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+<div id="dialogSelect" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    var msgtype;
+    function clickRadio(type){
+        if (type == 'click') {
+            $("#div_url").hide();
+            $("#div_key").show();
+            $("#div_appurl").hide();
+            $("#div_appid").hide();
+            $("#div_pagepath").hide();
+            $("#url").val("");
+            $("#appurl").val("");
+            $("#appid").val("");
+            $("#pagepath").val("");
+        } else if (type == 'view') {
+            $("#div_key").hide();
+            $("#div_url").show();
+            $("#div_appurl").hide();
+            $("#div_appid").hide();
+            $("#div_pagepath").hide();
+            $("#key").val("");
+            $("#appurl").val("");
+            $("#appid").val("");
+            $("#pagepath").val("");
+        } else if (type == 'miniprogram') {
+            $("#div_key").hide();
+            $("#div_url").hide();
+            $("#div_appurl").show();
+            $("#div_appid").show();
+            $("#div_pagepath").show();
+            $("#key").val("");
+        } else {
+            $("#div_key").hide();
+            $("#div_url").hide();
+            $("#div_appurl").hide();
+            $("#div_appid").hide();
+            $("#div_pagepath").hide();
+            $("#key").val("");
+            $("#url").val("");
+            $("#appurl").val("");
+            $("#appid").val("");
+            $("#pagepath").val("");
+        }
+    }
+    function selKeyword(){
+        $("#dialogKeySelect").modal({
+            remote: "${base}/platform/wx/conf/menu/keyword/${wxid!}"
+        });
+    }
+    function checkDo(){
+        $.post("${base}/platform/wx/conf/menu/checkDo", {wxid:'${wxid!}',parentId:$("#parentId").val()}, function (data) {
+            if (data.code == 0) {
+                $("#errMsg").val("false");
+            } else {
+                $("#errMsg").val("true");
+            }
+            $("#_errMsg").html(data.msg);
+
+        }, "json");
+
+    }
+    function getUrl(url){
+        var str="https://open.weixin.qq.com/connect/oauth2/authorize?appid=${config.appid!}&redirect_uri=$s&response_type=code&scope=snsapi_base&state=11624317#wechat_redirect";
+        return str.replace("$s",encodeURIComponent(url));
+    }
+    function seeUrl(url){
+        var str=url.substring(url.indexOf("redirect_uri=")+13,url.indexOf("&response_type="));
+        return decodeURIComponent(str);
+    }
+    function getUrl2(url){
+        var str="${AppDomain!}${base!}/public/wx/wechat/${wxid!}/oauth?goto_url=$s";
+        return str.replace("$s",url);
+    }
+    function seeUrl2(url){
+        return url.substring(url.indexOf("goto_url=")+9);
+    }
+    $(document).ready(function () {
+        $("#btnUrl").on("click",function(){
+            if($(this).is(':checked')){
+                $("#url").val(getUrl($("#url").val()));
+            }else{
+                $("#url").val(seeUrl($("#url").val()));
+            }
+        });
+        $("#btnUrl2").on("click",function(){
+            if($(this).is(':checked')){
+                $("#url").val(getUrl2($("#url").val()));
+            }else{
+                $("#url").val(seeUrl2($("#url").val()));
+            }
+        });
+        checkDo();
+        $("#parentId").on("change",function(){
+            checkDo();
+        });
+        $("#dialogKeySelect").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+        $("#dialogSelect").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+        $("#submit").on("click",function () {
+            if($("input[type='radio']:checked").val()=="miniprogram"){
+                $("#url").val($("#appurl").val());
+            }
+            $('#addForm').submit();
+        });
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                if($("#errMsg").val()=='true')
+                {
+                    return false;
+                }
+                if($("input[type='radio']:checked").val()=="miniprogram"){
+                    $("#url").val($("#appurl").val());
+                }
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    form.resetForm();checkDo();
+                } else {
+                    Toast.error(data.msg);
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+</script>
+
+
+<%}%>

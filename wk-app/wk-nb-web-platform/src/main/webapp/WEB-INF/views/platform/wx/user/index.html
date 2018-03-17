@@ -1,0 +1,190 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <a href="${base}/platform/wx/user/index/${wxid!}" data-pjax id="_reload"></a>
+
+    <div class="btn-group" style="padding-top: 5px;">
+        <div >
+            <select id="wxid" name="wxid" class="form-control">
+                <% for(o in wxList){
+                %>
+                <option value="${o.id}" <%if(o.id==wxid){%>selected<%}%>>${o.appname}</option>
+                <%
+                } %>
+            </select>
+        </div>
+    </div>
+    <div class="pull-right">
+        <div class="btn-group tool-button">
+            <button class="btn btn-info navbar-btn" id="down"><i class="ti-import"></i> 同步会员信息</button>
+        </div>
+        <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i
+                class="fa fa-sliders"></i> 筛选
+        </button>
+    </div>
+</header>
+<div class=panel-body style="padding-top: 50px;">
+    <div class="table-responsive no-border">
+        <input id="unitid" type="hidden">
+        <table class="table table-bordered table-striped mg-t datatable">
+            <thead>
+            <tr>
+                <th>Openid</th>
+                <th>昵称</th>
+                <th>是否关注</th>
+                <th>关注时间</th>
+                <th>性别</th>
+        </table>
+    </div>
+</div>
+<div class="cd-panel from-right">
+    <header class="cd-panel-header">
+        <h4>高级筛选</h4>
+    </header>
+    <div class="cd-panel-container">
+        <div class="cd-panel-content shadow">
+            <div class="form-group">
+                <label for="nickname">昵称</label>
+                <input type="text" id="nickname" name="nickname" onclick="this.value=''" class="form-control" placeholder="昵称">
+            </div>
+            <button id="searchBtn" type="button" class="btn btn-default">查询</button>
+        </div>
+    </div>
+</div>
+<div id="dialog" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">提示</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        新配置的微信公众号，只需同步一次会员信息，确定同步吗？ <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在同步...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/wx/user/data/${wxid!}",
+                "type": "post",
+                "data": function (d) {
+                    d.nickname = $('#nickname').val();
+                }
+            },
+            "order": [[3, "desc"]],
+            "columns": [
+                {"data": "openid", "bSortable": true},
+                {"data": "nickname", "bSortable": true},
+                {"data": "subscribe", "bSortable": true},
+                {"data": "opAt", "bSortable": true},
+                {"data": "sex", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return '<img src="'+row.headimgurl+'" width="25" height="25"> '+data;
+                    },
+                    "targets": 1
+                },
+                {
+                    "render": function (data, type, row) {
+                        if(data=='1'){
+                            return '是';
+                        }
+                        if(data=='0'){
+                            return '否';
+                        }
+                    },
+                    "targets": 2
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss");
+                        }
+                        return '';
+                    },
+                    "targets": 3
+                },
+                {
+                    "render": function (data, type, row) {
+                        if(data=='1'){
+                            return '男';
+                        }
+                        if(data=='2'){
+                            return '女';
+                        }
+                        if(data=='0'){
+                            return '未知';
+                        }
+                    },
+                    "targets": 4
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    $(function () {
+        initDatatable();
+        $("#wxid").on("change",function(){
+            $("#_reload").attr("href","${base}/platform/wx/user/index/"+$(this).val());
+            $("#_reload").trigger("click");
+        });
+
+        $("#down").on("click",function(){
+            var dialog = $("#dialog");
+            dialog.modal("show");
+            dialog.find("#ok").unbind("click");
+            dialog.find("#ok").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/platform/wx/user/down/${wxid!}", {}, function (data) {
+                    //重置按钮状态，关闭提示框
+                    btn.button("reset");
+                    dialog.modal("hide");
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        datatable.ajax.reload();
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                }, "json");
+            });
+
+        });
+    });
+</script>
+
+<%}%>

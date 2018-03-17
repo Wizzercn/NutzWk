@@ -650,7 +650,13 @@ public class DubboRpcSysMainLauncher {
             }
             //菜单关联到角色
             dao.execute(Sqls.create("INSERT INTO sys_role_menu(roleId,menuId) SELECT @roleId,id FROM sys_menu").setParam("roleId", dbrole.getId()));
-
+            //初始化自定义路由
+            Sys_route route = new Sys_route();
+            route.setDisabled(false);
+            route.setUrl("/sysadmin");
+            route.setToUrl("/platform/login");
+            route.setType("hide");
+            dao.insert(route);
         }
     }
 

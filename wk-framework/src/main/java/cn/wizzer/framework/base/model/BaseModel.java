@@ -8,6 +8,7 @@ import org.nutz.lang.Times;
 import org.nutz.lang.random.R;
 import org.nutz.mvc.Mvcs;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
 /**
@@ -47,9 +48,11 @@ public abstract class BaseModel implements Serializable {
 
     public String uid() {
         try {
-            return Strings.sNull(Mvcs.getActionContext().getRequest().getSession().getAttribute("platform_uid"));
-        } catch (Exception e) {
-        }
+            HttpServletRequest request = Mvcs.getReq();
+            if (request != null) {
+                return Strings.sNull(request.getSession(true).getAttribute("platform_uid"));
+            }
+        }catch (Exception e){}
         return "";
     }
 

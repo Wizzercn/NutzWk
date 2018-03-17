@@ -1,0 +1,165 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/link/link/index/${classId!}" data-pjax><i class="ti-angle-left"></i> 返回</a>
+    </div>
+</header>
+
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel panel-form">
+            <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+                  action="${base}/platform/cms/link/link/addDo" method="post">
+                <div class="row mb10">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label for="classId" class="col-sm-2 control-label">所属分类</label>
+
+                            <div class="col-sm-8">
+                                <select id="classId" name="classId" data-parsley-required="true" class="form-control">
+                                    <option value="">请选择所属分类</option>
+                                    <%if(!isEmpty(list)){ for(o in list){
+                                    %>
+                                    <option value="${o.id}" <%if(o.id==classId){%>selected<%}%>>${o.name}</option>
+                                    <%
+                                    } }%>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="type" class="col-sm-2 control-label">链接类型</label>
+
+                            <div class="col-sm-8">
+                                <select id="type" name="type" data-parsley-required="true" class="form-control">
+                                    <option value="txt">文字</option>
+                                    <option value="img">图片</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="target" class="col-sm-2 control-label">打开方式</label>
+
+                            <div class="col-sm-8">
+                                <select id="target" name="target" data-parsley-required="true" class="form-control">
+                                    <option value="_blank">新页面打开</option>
+                                    <option value="_self">本页面打开</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">链接名称</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="name" class="form-control" name="name" data-parsley-required="true"
+                                       placeholder="链接名称">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="url" class="col-sm-2 control-label">链接地址</label>
+
+                            <div class="col-sm-8">
+                                <input type="text" id="url" class="form-control" name="url" data-parsley-required="true"
+                                       value="javascript:void(0);"
+                                       placeholder="http://">
+                            </div>
+                        </div>
+                        <div id="div_picurl" class="form-group" style="display: none">
+                            <label for="picurl" class="col-sm-2 control-label">上传图片</label>
+
+                            <div class="col-sm-8">
+                                <div id="queue"></div>
+                                <div>
+                                    <input id="file_upload" name="file_upload" type="file" multiple="false">
+                                </div>
+                                <div id="img" style="padding: 5px;"></div>
+                                <input type="hidden" id="picurl" name="picurl">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="form-group text-center">
+                        <label></label>
+
+                        <div>
+                            <button class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="正在提交...">提 交</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+    </div>
+</div>
+<script language="JavaScript">
+    function clearFile() {
+        $("#img").html("");
+        $("#queue").val("");
+        $("#picurl").val("");
+    }
+    $(document).ready(function () {
+        $("#type").on("change",function(){
+            var v=$(this).val();
+            if('img'==v){
+                $("#div_picurl").show();
+            }else{
+                $("#div_picurl").hide();
+                clearFile();
+            }
+        });
+        $('#file_upload').uploadifive({
+            'auto': true,
+            'multi': false,
+            'width': '100%',
+            'height': '35',
+            'buttonText': '请选择图片',
+            'fileType': 'image/jpg,image/jpeg,image/png',
+            'fileSizeLimit': 1024,
+            'queueSizeLimit': 1,
+            'formData': {},
+            'queueID': 'queue',
+            'uploadScript': '${base}/open/file/upload/image',
+            'onUploadComplete': function (file, data) {
+                data = JSON.parse(data);
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    $("#img").html("<img src='" + data.data + "' style='width:150px;height:95px;'>");
+                    $("#picurl").val(data.data);
+                } else {
+                    clearFile();
+                    Toast.error(data.msg);
+                }
+            },
+            'onDrop': function (file, fileDropCount) {
+                clearFile();
+            },
+            'onClearQueue': function (queue) {
+                clearFile();
+            },
+            'onCancel': function () {
+                clearFile();
+            }
+        });
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                form.find("button:submit").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    //form.resetForm();
+                } else {
+                    Toast.error(data.msg);
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+</script>
+
+<%}%>

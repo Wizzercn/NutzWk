@@ -1,0 +1,146 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <a href="${base}/platform/wx/msg/mass/${wxid!}" data-pjax id="_reload"></a>
+    <a class="btn btn-primary navbar-btn" href="${base}/platform/wx/msg/mass/news/${wxid!}" data-pjax><i class="ti-book"></i> 素材管理</a>
+    <div class="btn-group" style="padding-top: 5px;">
+        <div >
+            <select id="wxid" name="wxid" class="form-control">
+                <% for(o in wxList){
+                %>
+                <option value="${o.id}" <%if(o.id==wxid){%>selected<%}%>>${o.appname}</option>
+                <%
+                } %>
+            </select>
+        </div>
+    </div>
+    <div class="pull-right">
+        <div class="btn-group tool-button">
+            <a class="btn btn-info navbar-btn" href="${base}/platform/wx/msg/mass/send/${wxid!}" data-pjax><i class="ti-export"></i> 群发消息</a>
+        </div>
+    </div>
+</header>
+<div class=panel-body style="padding-top: 50px;">
+    <div class="table-responsive no-border">
+        <input id="unitid" type="hidden">
+        <table class="table table-bordered table-striped mg-t datatable">
+            <thead>
+            <tr>
+                <th>群发名称</th>
+                <th>发送类型</th>
+                <th>发送范围</th>
+                <th>发送状态</th>
+                <th>发送时间</th>
+                <th>操作</th>
+        </table>
+    </div>
+</div>
+<div id="dialogDetail" class="modal fade bs-modal" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/wx/msg/mass/massData/${wxid!}",
+                "type": "post",
+                "data": function (d) {
+                }
+            },
+            "order": [[4, "desc"]],
+            "columns": [
+                {"data": "name", "bSortable": true},
+                {"data": "type", "bSortable": true},
+                {"data": "scope", "bSortable": true},
+                {"data": "status", "bSortable": true},
+                {"data": "opAt", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        if (data=='text') {
+                            return '文本';
+                        }
+                        return '图文';
+                    },
+                    "targets": 1
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data=='all') {
+                            return '全部会员';
+                        }
+                        return '会员列表';
+                    },
+                    "targets": 2
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data==1) {
+                            return '发送成功';
+                        }
+                        return '发送失败';
+                    },
+                    "targets": 3
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss");
+                        }
+                        return '';
+                    },
+                    "targets": 4
+                },
+                {
+                    "render": function (data, type, row) {
+                        var str='<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">';
+                        str+= '<li><a href="${base}/platform/wx/msg/mass/sendDetail/' + row.id + '"  data-toggle="modal" data-target="#dialogDetail">查看</a></li>' +
+                                '</ul></div>';
+                        return str;
+                    },
+                    "targets": 5
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    $(function () {
+        initDatatable();
+        $("#wxid").on("change",function(){
+            $("#_reload").attr("href","${base}/platform/wx/msg/mass/"+$(this).val());
+            $("#_reload").trigger("click");
+        });
+        $("#dialogDetail").on("hidden.bs.modal", function() {
+            $(this).removeData("bs.modal");
+        });
+    });
+</script>
+
+<%}%>
