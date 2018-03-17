@@ -1,4 +1,4 @@
-package cn.wizzer.app.sys.modules.commons.core;
+package cn.wizzer.app.sys.commons.core;
 
 import cn.wizzer.app.sys.modules.models.*;
 import org.nutz.boot.NbApp;

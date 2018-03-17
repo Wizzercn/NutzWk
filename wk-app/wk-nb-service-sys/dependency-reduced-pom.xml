@@ -35,7 +35,7 @@
           <archive>
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <mainClass>cn.wizzer.app.sys.modules.commons.core.DubboRpcSysMainLauncher</mainClass>
+              <mainClass>cn.wizzer.app.sys.commons.core.DubboRpcSysMainLauncher</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -56,7 +56,7 @@
                   <resource>META-INF/nutz/org.nutz.boot.starter.NbStarter</resource>
                 </transformer>
                 <transformer>
-                  <mainClass>cn.wizzer.app.sys.modules.commons.core.DubboRpcSysMainLauncher</mainClass>
+                  <mainClass>cn.wizzer.app.sys.commons.core.DubboRpcSysMainLauncher</mainClass>
                 </transformer>
               </transformers>
             </configuration>

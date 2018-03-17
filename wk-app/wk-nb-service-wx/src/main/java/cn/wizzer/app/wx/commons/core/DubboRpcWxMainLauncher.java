@@ -1,4 +1,4 @@
-package cn.wizzer.app.cms.modules.commons.core;
+package cn.wizzer.app.wx.commons.core;
 
 import org.nutz.boot.NbApp;
 import org.nutz.dao.Dao;
@@ -19,7 +19,7 @@ import java.util.Enumeration;
  */
 @IocBean(create = "init", depose = "depose")
 @Modules(packages = "cn.wizzer")
-public class DubboRpcCmsMainLauncher {
+public class DubboRpcWxMainLauncher {
     private static final Log log = Logs.get();
 
     @Inject
@@ -34,10 +34,10 @@ public class DubboRpcCmsMainLauncher {
     public void init() {
         //通过POJO类创建表结构
         try {
-            Daos.createTablesInPackage(dao, "cn.wizzer.app.cms", false);
+            Daos.createTablesInPackage(dao, "cn.wizzer.app.wx", false);
             if (log.isDebugEnabled()) {
                 //通过POJO类修改表结构
-                Daos.migration(dao, "cn.wizzer.app.cms", true, false);
+                Daos.migration(dao, "cn.wizzer.app.wx", true, false);
             }
         } catch (Exception e) {
         }

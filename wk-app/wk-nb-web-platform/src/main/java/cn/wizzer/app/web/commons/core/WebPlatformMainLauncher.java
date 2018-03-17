@@ -1,25 +1,32 @@
-package cn.wizzer.app.wx.modules.commons.core;
+package cn.wizzer.app.web.commons.core;
 
 import org.nutz.boot.NbApp;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Dao;
+import org.nutz.dao.Sqls;
+import org.nutz.dao.impl.FileSqlManager;
+import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Mirror;
+import org.nutz.lang.Times;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.Modules;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 /**
- * Created by wizzer on 2018/3/17.
+ * Created by wizzer on 2018/3/16.
  */
 @IocBean(create = "init", depose = "depose")
 @Modules(packages = "cn.wizzer")
-public class DubboRpcWxMainLauncher {
+public class WebPlatformMainLauncher {
     private static final Log log = Logs.get();
 
     @Inject
@@ -34,10 +41,10 @@ public class DubboRpcWxMainLauncher {
     public void init() {
         //通过POJO类创建表结构
         try {
-            Daos.createTablesInPackage(dao, "cn.wizzer.app.wx", false);
+            Daos.createTablesInPackage(dao, "cn.wizzer.app.sys", false);
             if (log.isDebugEnabled()) {
                 //通过POJO类修改表结构
-                Daos.migration(dao, "cn.wizzer.app.wx", true, false);
+                Daos.migration(dao, "cn.wizzer.app.sys", true, false);
             }
         } catch (Exception e) {
         }
