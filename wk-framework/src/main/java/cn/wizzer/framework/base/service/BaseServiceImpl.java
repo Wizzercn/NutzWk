@@ -954,4 +954,18 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         re.put("recordsTotal", length);
         return re;
     }
+
+    public NutMap data(int length, int start, int draw, Cnd cnd, String linkName) {
+        NutMap re = new NutMap();
+        Pager pager = new OffsetPager(start, length);
+        re.put("recordsFiltered", this.dao().count(this.getEntityClass(), cnd));
+        List<?> list = this.dao().query(this.getEntityClass(), cnd, pager);
+        if (!Strings.isBlank(linkName)) {
+            this.dao().fetchLinks(list, linkName);
+        }
+        re.put("data", list);
+        re.put("draw", draw);
+        re.put("recordsTotal", length);
+        return re;
+    }
 }

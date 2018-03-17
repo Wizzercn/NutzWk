@@ -156,4 +156,6 @@ public interface BaseService<T> {
     NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName, Cnd subCnd);
 
     NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql);
+
+    NutMap data(int length, int start, int draw, Cnd cnd, String linkName);
 }

@@ -14,6 +14,7 @@ import org.nutz.lang.Mirror;
 import org.nutz.lang.Times;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.annotation.Modules;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -25,6 +26,7 @@ import java.util.List;
  * Created by wizzer on 2018/3/16.
  */
 @IocBean(create = "init", depose = "depose")
+@Modules(packages = "cn.wizzer")
 public class MainLauncher {
     private static final Log log = Logs.get();
 

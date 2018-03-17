@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <artifactId>wk-nb-sys</artifactId>
+    <artifactId>wk-nb-service-sys</artifactId>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -25,14 +25,8 @@
             <version>${nutzwk.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>23.0</version>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutzboot-starter-jetty</artifactId>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
