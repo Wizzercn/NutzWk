@@ -53,7 +53,6 @@ public class WebPlatformMainLauncher {
     }
 
     public void init() {
-
         //注册主键生成器
         CustomMake.me().register("ig", ioc.get(RedisIdGenerator.class));
     }

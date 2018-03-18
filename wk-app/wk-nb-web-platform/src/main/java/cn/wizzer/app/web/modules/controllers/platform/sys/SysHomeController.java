@@ -35,7 +35,6 @@ public class SysHomeController {
     @RequiresAuthentication
     public void home() {
         //SecurityUtils.getSubject().getSession().setTimeout(1000);
-        log.debug(Json.toJson(SecurityUtils.getSubject().getPrincipal()));
     }
 
     @At

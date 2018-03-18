@@ -19,7 +19,7 @@ public class StringUtil {
      *
      * @return
      */
-    public static String getUid() {
+    public static String getPlatformUid() {
         try {
             HttpServletRequest request = Mvcs.getReq();
             if (request != null) {
@@ -36,7 +36,7 @@ public class StringUtil {
      *
      * @return
      */
-    public static String getLoginname() {
+    public static String getPlatformLoginname() {
         try {
             HttpServletRequest request = Mvcs.getReq();
             if (request != null) {
@@ -53,7 +53,7 @@ public class StringUtil {
      *
      * @return
      */
-    public static String getUsername() {
+    public static String getPlatformUsername() {
         try {
             HttpServletRequest request = Mvcs.getReq();
             if (request != null) {

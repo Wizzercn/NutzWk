@@ -171,10 +171,10 @@ public class SLogService implements Runnable {
         if (Mvcs.getReq() != null) {
             sysLog.setIp(Lang.getIP(Mvcs.getReq()));
         }
-        sysLog.setOpBy(StringUtil.getUid());
+        sysLog.setOpBy(StringUtil.getPlatformUid());
         sysLog.setOpAt(Times.getTS());
         sysLog.setDelFlag(false);
-        sysLog.setUsername(StringUtil.getUsername());
+        sysLog.setUsername(StringUtil.getPlatformUsername());
         return sysLog;
     }
 }
