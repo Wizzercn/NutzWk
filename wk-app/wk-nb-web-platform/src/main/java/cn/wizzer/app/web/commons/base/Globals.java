@@ -6,7 +6,6 @@ import cn.wizzer.app.sys.modules.services.SysConfigService;
 import cn.wizzer.app.sys.modules.services.SysRouteService;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.dao.Cnd;
-import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.weixin.impl.WxApi2Impl;
@@ -18,7 +17,7 @@ import java.util.Map;
 /**
  * Created by wizzer on 2016/12/19.
  */
-@IocBean
+@IocBean(create = "init")
 public class Globals {
     //项目路径
     public static String AppRoot = "";
@@ -39,16 +38,21 @@ public class Globals {
     //自定义路由
     public static Map<String, Sys_route> RouteMap = new HashMap<>();
     //微信map
-    public static Map<String, WxApi2Impl> WxMap=new HashMap<>();
-    public static Map<String, Object> ObjMap=new HashMap<>();
+    public static Map<String, WxApi2Impl> WxMap = new HashMap<>();
+    public static Map<String, Object> ObjMap = new HashMap<>();
     @Inject
     @Reference
-    private static SysRouteService sysRouteService;
+    private SysConfigService sysConfigService;
     @Inject
     @Reference
-    private static SysConfigService sysConfigService;
+    private SysRouteService sysRouteService;
 
-    public static void initSysConfig(Dao dao) {
+    public void init() {
+        initSysConfig(sysConfigService);
+        initRoute(sysRouteService);
+    }
+
+    public static void initSysConfig(SysConfigService sysConfigService) {
         Globals.MyConfig.clear();
         List<Sys_config> configList = sysConfigService.query();
         for (Sys_config sysConfig : configList) {
@@ -72,7 +76,7 @@ public class Globals {
         }
     }
 
-    public static void initRoute() {
+    public static void initRoute(SysRouteService sysRouteService) {
         Globals.RouteMap.clear();
         List<Sys_route> routeList = sysRouteService.query(Cnd.where("disabled", "=", false));
         for (Sys_route route : routeList) {

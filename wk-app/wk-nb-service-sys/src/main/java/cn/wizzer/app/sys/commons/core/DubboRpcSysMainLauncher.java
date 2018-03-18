@@ -498,7 +498,7 @@ public class DubboRpcSysMainLauncher {
             menu.setDisabled(false);
             menu.setPath("00010002");
             menu.setName("系统配置");
-            menu.setAliasName("");
+            menu.setAliasName("Config");
             menu.setType("menu");
             menu.setLocation(0);
             menu.setIcon("ti-pencil-alt");
