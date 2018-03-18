@@ -40,6 +40,7 @@ public class Globals {
     public static Map<String, Sys_route> RouteMap = new HashMap<>();
     //微信map
     public static Map<String, WxApi2Impl> WxMap=new HashMap<>();
+    public static Map<String, Object> ObjMap=new HashMap<>();
     @Inject
     @Reference
     private static SysRouteService sysRouteService;

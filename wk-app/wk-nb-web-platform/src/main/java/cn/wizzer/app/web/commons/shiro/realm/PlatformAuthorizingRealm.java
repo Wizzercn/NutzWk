@@ -4,6 +4,7 @@ import cn.wizzer.app.sys.modules.models.Sys_role;
 import cn.wizzer.app.sys.modules.models.Sys_user;
 import cn.wizzer.app.sys.modules.services.SysRoleService;
 import cn.wizzer.app.sys.modules.services.SysUserService;
+import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaEmptyException;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaIncorrectException;
 import cn.wizzer.app.web.commons.shiro.token.CaptchaToken;
@@ -19,14 +20,17 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.nutz.boot.AppContext;
 import org.nutz.dao.Cnd;
 import org.nutz.integration.jedis.RedisService;
+import org.nutz.ioc.Ioc;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
 
 /**
  * Created by wizzer on 2017/1/11.
@@ -39,9 +43,20 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
     private SysUserService sysUserService;
     @Inject
     @Reference
-    private SysRoleService roleService;
+    private SysRoleService sysRoleService;
     @Inject
     private RedisService redisService;
+    protected SysUserService getUserService() {
+        return sysUserService;
+    }
+
+    protected SysRoleService getRoleService() {
+        return sysRoleService;
+    }
+
+    protected RedisService getRedisService() {
+        return redisService;
+    }
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
@@ -57,20 +72,20 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
             if (Strings.isBlank(captcha)) {
                 throw Lang.makeThrow(CaptchaEmptyException.class, "Captcha is empty");
             }
-            String _captcha = redisService.get("platformCaptcha");
+            String _captcha = getRedisService().get("platformCaptcha");
             if (!authcToken.getCaptcha().equalsIgnoreCase(_captcha)) {
                 throw Lang.makeThrow(CaptchaIncorrectException.class, "Captcha is error");
             }
         }
-        Sys_user user = sysUserService.fetch(Cnd.where("loginname", "=", loginname));
+        Sys_user user = getUserService().fetch(Cnd.where("loginname", "=", loginname));
         if (Lang.isEmpty(user)) {
             throw Lang.makeThrow(UnknownAccountException.class, "Account [ %s ] not found", loginname);
         }
         if (user.isDisabled()) {
             throw Lang.makeThrow(LockedAccountException.class, "Account [ %s ] is locked.", loginname);
         }
-        sysUserService.fetchLinks(user, null);
-        sysUserService.fillMenu(user);
+        getUserService().fetchLinks(user, null);
+        getUserService().fillMenu(user);
         Session session = SecurityUtils.getSubject().getSession(true);
         session.setAttribute("platformErrCount", 0);
         session.setAttribute("platform_uid", user.getId());
@@ -89,10 +104,10 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
         Sys_user user = (Sys_user) principals.getPrimaryPrincipal();
         if (!Lang.isEmpty(user) && !user.isDisabled()) {
             SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-            info.addRoles(sysUserService.getRoleCodeList(user));
+            info.addRoles(getUserService().getRoleCodeList(user));
             for (Sys_role role : user.getRoles()) {
                 if (!role.isDisabled())
-                    info.addStringPermissions(roleService.getPermissionNameList(role));
+                    info.addStringPermissions(getRoleService().getPermissionNameList(role));
             }
             return info;
         } else {

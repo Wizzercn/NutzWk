@@ -6,6 +6,7 @@ import cn.wizzer.app.web.commons.utils.RSAUtil;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.ActionContext;
@@ -19,6 +20,7 @@ import java.security.interfaces.RSAPrivateKey;
 /**
  * Created by wizzer on 2017/1/10.
  */
+@IocBean(name = "platformAuthc")
 public class PlatformAuthenticationFilter extends FormAuthenticationFilter implements ActionFilter {
     private final static Log log= Logs.get();
     private String captchaParam = "platformCaptcha";

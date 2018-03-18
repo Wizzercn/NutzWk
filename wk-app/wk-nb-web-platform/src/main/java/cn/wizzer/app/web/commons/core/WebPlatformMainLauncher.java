@@ -1,6 +1,10 @@
 package cn.wizzer.app.web.commons.core;
 
+import cn.wizzer.app.sys.modules.services.SysRoleService;
+import cn.wizzer.app.sys.modules.services.SysUserService;
+import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.ig.RedisIdGenerator;
+import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.nutz.boot.NbApp;
 import org.nutz.dao.Cnd;
@@ -42,6 +46,12 @@ public class WebPlatformMainLauncher {
     private PropertiesProxy conf;
     @Inject
     private JedisAgent jedisAgent;
+    @Inject
+    @Reference
+    private SysUserService sysUserService;
+    @Inject
+    @Reference
+    private SysRoleService sysRoleService;
 
 
     public static void main(String[] args) throws Exception {
@@ -53,6 +63,9 @@ public class WebPlatformMainLauncher {
     public void init() {
         //注册主键生成器
         CustomMake.me().register("ig", ioc.get(RedisIdGenerator.class));
+        log.debug("aaa:"+sysUserService.query());
+        Globals.ObjMap.put("sysUserService",sysUserService);
+        Globals.ObjMap.put("sysRoleService",sysRoleService);
         //初始化自定义路由
 //        Globals.initRoute();
     }

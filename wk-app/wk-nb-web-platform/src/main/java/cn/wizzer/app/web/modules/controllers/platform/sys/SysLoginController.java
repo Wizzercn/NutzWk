@@ -194,6 +194,7 @@ public class SysLoginController {
             SecurityUtils.getSubject().getSession(true).setAttribute("platformErrCount", errCount);
             return Result.error(5, "login.error.user");
         } catch (Exception e) {
+            log.error(e.getMessage(),e);
             errCount++;
             SecurityUtils.getSubject().getSession(true).setAttribute("platformErrCount", errCount);
             return Result.error(6, "login.error.system");
