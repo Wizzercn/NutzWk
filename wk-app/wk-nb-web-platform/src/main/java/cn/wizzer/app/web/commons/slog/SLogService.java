@@ -41,46 +41,6 @@ public class SLogService implements Runnable {
     @Inject
     @Reference
     protected SysLogService sysLogService;
-    /**
-     * 按月分表的dao实例
-     */
-    protected Map<String, Dao> ymDaos = new HashMap<String, Dao>();
-
-    /**
-     * 获取按月分表的Dao实例,即当前日期的dao实例
-     *
-     * @return
-     */
-    public Dao dao() {
-        Calendar cal = Calendar.getInstance();
-        String key = String.format("%d%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1);
-        return dao(key);
-    }
-
-    /**
-     * 获取特定月份的Dao实例
-     *
-     * @param key
-     * @return
-     */
-    public Dao dao(String key) {
-        Dao dao = ymDaos.get(key);
-        if (dao == null) {
-            synchronized (this) {
-                dao = ymDaos.get(key);
-                if (dao == null) {
-                    dao = Daos.ext(sysLogService.dao(), key);
-                    dao.create(Sys_log.class, false);
-                    ymDaos.put(key, dao);
-                    try {
-                        Daos.migration(dao, Sys_log.class, true, false);
-                    } catch (Throwable e) {
-                    }
-                }
-            }
-        }
-        return dao;
-    }
 
     /**
      * 异步插入日志
@@ -106,7 +66,7 @@ public class SLogService implements Runnable {
      */
     public void sync(Sys_log syslog) {
         try {
-            dao().fastInsert(syslog);
+            sysLogService.fastInsertSysLog(syslog);
         } catch (Throwable e) {
             log.info("insert syslog sync fail", e);
         }

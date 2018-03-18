@@ -13,5 +13,5 @@ import java.util.List;
  * Created by wizzer on 2016/12/22.
  */
 public interface SysLogService extends BaseService<Sys_log> {
-
+    void fastInsertSysLog(Sys_log syslog);
 }
