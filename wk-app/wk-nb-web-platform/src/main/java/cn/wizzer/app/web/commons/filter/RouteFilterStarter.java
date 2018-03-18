@@ -50,20 +50,10 @@ public class RouteFilterStarter implements WebFilterFace {
     }
 
     public Map<String, String> getInitParameters() {
-        Map<String, String> params = new HashMap<>();
-        params.put("modules", NbMainModule.class.getName());
-        if (conf.has("nutz.mvc.ignore")) {
-        	params.put("ignore", conf.get("nutz.mvc.ignore"));
-        }
-        StringBuilder sb = new StringBuilder();
-        for (WebServletFace face : appContext.getBeans(WebServletFace.class)) {
-            sb.append(',').append(face.getPathSpec());
-        }
-        params.put("exclusions", conf.get("nutz.mvc.exclusions", "") + sb);
-        return params;
+        return new HashMap<>();
     }
 
     public int getOrder() {
-        return 99;
+        return 11;
     }
 }
