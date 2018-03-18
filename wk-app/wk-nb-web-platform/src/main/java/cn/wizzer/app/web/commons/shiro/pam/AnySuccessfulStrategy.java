@@ -5,10 +5,12 @@ import cn.wizzer.app.web.commons.shiro.exception.CaptchaIncorrectException;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.pam.AbstractAuthenticationStrategy;
 import org.apache.shiro.realm.Realm;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 
 import java.util.Collection;
 
+@IocBean(name = "authenticationStrategy")
 public class AnySuccessfulStrategy extends AbstractAuthenticationStrategy {
 
     /**

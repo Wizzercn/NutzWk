@@ -13,6 +13,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.CacheManager;
@@ -35,7 +36,7 @@ import org.nutz.mvc.Mvcs;
 /**
  * Created by wizzer on 2017/1/11.
  */
-@IocBean
+@IocBean(name = "platformRealm")
 public class PlatformAuthorizingRealm extends AuthorizingRealm {
     private static final Log log = Logs.get();
     @Inject
@@ -91,7 +92,7 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
         session.setAttribute("platform_uid", user.getId());
         session.setAttribute("platform_username", user.getUsername());
         session.setAttribute("platform_loginname", user.getLoginname());
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), getName());
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(),ByteSource.Util.bytes(user.getSalt()), getName());
         info.setCredentialsSalt(ByteSource.Util.bytes(user.getSalt()));
         return info;
     }
@@ -116,12 +117,17 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
     }
 
     public PlatformAuthorizingRealm() {
-        this(null, null);
+        this(null,null);
     }
 
     public PlatformAuthorizingRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
         super(cacheManager, matcher);
+        HashedCredentialsMatcher hashedCredentialsMatcher=new HashedCredentialsMatcher();
+        hashedCredentialsMatcher.setHashAlgorithmName("SHA-256");
+        hashedCredentialsMatcher.setHashIterations(2);
+        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
         setAuthenticationTokenClass(CaptchaToken.class);
+        setCredentialsMatcher(hashedCredentialsMatcher);
     }
 
     public PlatformAuthorizingRealm(CacheManager cacheManager) {
@@ -131,4 +137,5 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
     public PlatformAuthorizingRealm(CredentialsMatcher matcher) {
         this(null, matcher);
     }
+
 }

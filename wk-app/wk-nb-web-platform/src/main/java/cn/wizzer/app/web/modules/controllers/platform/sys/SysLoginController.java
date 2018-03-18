@@ -153,7 +153,7 @@ public class SysLoginController {
     @At("/doLogin")
     @Ok("json")
     @Filters(@By(type = PlatformAuthenticationFilter.class))
-    public Object doLogin(@Attr("loginToken") AuthenticationToken token, HttpServletRequest req, HttpSession session) {
+    public Object doLogin(@Attr("platformLoginToken") AuthenticationToken token, HttpServletRequest req, HttpSession session) {
         int errCount = 0;
         try {
             //输错三次显示验证码窗口
@@ -186,10 +186,12 @@ public class SysLoginController {
         } catch (LockedAccountException e) {
             return Result.error(3, "login.error.locked");
         } catch (UnknownAccountException e) {
+            log.error(e.getMessage(),e);
             errCount++;
             SecurityUtils.getSubject().getSession(true).setAttribute("platformErrCount", errCount);
             return Result.error(4, "login.error.user");
         } catch (AuthenticationException e) {
+            log.error(e.getMessage(),e);
             errCount++;
             SecurityUtils.getSubject().getSession(true).setAttribute("platformErrCount", errCount);
             return Result.error(5, "login.error.user");
@@ -238,7 +240,7 @@ public class SysLoginController {
             w = 200;
             h = 60;
         }
-        String text = R.captchaNumber(6);
+        String text = R.captchaNumber(4);
         redisService.set("platformCaptcha:"+session.getId(), text);
         redisService.expire("platformCaptcha:"+session.getId(), 300);
         return Images.createCaptcha(text, w, h, null, null, null);

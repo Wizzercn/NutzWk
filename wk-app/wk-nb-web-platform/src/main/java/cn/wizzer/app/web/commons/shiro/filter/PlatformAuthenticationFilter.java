@@ -53,7 +53,7 @@ public class PlatformAuthenticationFilter extends FormAuthenticationFilter imple
     public View match(ActionContext actionContext) {
         HttpServletRequest request = actionContext.getRequest();
         AuthenticationToken authenticationToken = createToken(request);
-        request.setAttribute("loginToken", authenticationToken);
+        request.setAttribute("platformLoginToken", authenticationToken);
         return null;
     }
 }

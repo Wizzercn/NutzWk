@@ -6,6 +6,11 @@ import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.ig.RedisIdGenerator;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
 import org.nutz.boot.NbApp;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -21,6 +26,7 @@ import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.lang.random.R;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -53,22 +59,29 @@ public class WebPlatformMainLauncher {
     @Reference
     private SysRoleService sysRoleService;
 
-
     public static void main(String[] args) throws Exception {
+        String s = R.UU32();
+        String newPassword = new Sha256Hash("1",ByteSource.Util.bytes(s), 2).toHex();
+        log.debug("ssss::"+s);
+        log.debug("newPassword::"+newPassword);
         NbApp nb = new NbApp().setArgs(args).setPrintProcDoc(true);
         nb.getAppContext().setMainPackage("cn.wizzer");
         nb.run();
+
+
     }
 
     public void init() {
+
+
         //注册主键生成器
         CustomMake.me().register("ig", ioc.get(RedisIdGenerator.class));
-        log.debug("aaa:"+sysUserService.query());
-        Globals.ObjMap.put("sysUserService",sysUserService);
-        Globals.ObjMap.put("sysRoleService",sysRoleService);
+        Globals.ObjMap.put("sysUserService", sysUserService);
+        Globals.ObjMap.put("sysRoleService", sysRoleService);
         //初始化自定义路由
 //        Globals.initRoute();
     }
+
     /**
      * 当项目启动的时候把表主键加载到redis缓存中
      */
