@@ -86,7 +86,7 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
             throw Lang.makeThrow(LockedAccountException.class, "Account [ %s ] is locked.", loginname);
         }
         getUserService().fetchLinks(user, null);
-        getUserService().fillMenu(user);
+        user=getUserService().fillMenu(user);
         Session session = SecurityUtils.getSubject().getSession(true);
         session.setAttribute("platformErrCount", 0);
         session.setAttribute("platform_uid", user.getId());

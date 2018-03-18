@@ -55,7 +55,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      * 获取用户菜单
      * @param user
      */
-    public void fillMenu(Sys_user user) {
+    public Sys_user fillMenu(Sys_user user) {
         user.setMenus(getMenus(user.getId()));
         //计算左侧菜单
         List<Sys_menu> firstMenus = new ArrayList<>();
@@ -75,6 +75,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
         if (!Strings.isBlank(user.getCustomMenu())) {
             user.setCustomMenus(sysMenuService.query(Cnd.where("id", "in", user.getCustomMenu().split(","))));
         }
+        return user;
     }
 
     /**

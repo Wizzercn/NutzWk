@@ -35,7 +35,7 @@ public interface SysUserService extends BaseService<Sys_user> {
      * 绑定菜单到用户
      * @param user
      */
-    void fillMenu(Sys_user user);
+    Sys_user fillMenu(Sys_user user);
 
     /**
      * 通过用户ID删除用户
