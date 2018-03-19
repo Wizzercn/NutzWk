@@ -54,7 +54,7 @@ public class DubboRpcSysMainLauncher {
             //初始化配置表
             Sys_config conf = new Sys_config();
             conf.setConfigKey("AppName");
-            conf.setConfigValue("NutzWk");
+            conf.setConfigValue("NutzWk-NB");
             conf.setNote("系统名称");
             dao.insert(conf);
             conf = new Sys_config();

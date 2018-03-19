@@ -1,6 +1,7 @@
 package cn.wizzer.app.web.commons.core;
 
 import cn.wizzer.app.web.commons.base.Globals;
+import cn.wizzer.app.web.commons.ext.pubsub.WebPubSub;
 import cn.wizzer.app.web.commons.ig.RedisIdGenerator;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.nutz.boot.NbApp;
@@ -44,7 +45,9 @@ public class WebPlatformMainLauncher {
     @Inject
     private JedisAgent jedisAgent;
     @Inject
-    private Globals globals;//注入一下为了初始化数据
+    private Globals globals;//注入一下为了初始化
+    @Inject
+    private WebPubSub webPubSub;//注入一下为了初始化
 
     public static void main(String[] args) throws Exception {
         NbApp nb = new NbApp().setArgs(args).setPrintProcDoc(true);
