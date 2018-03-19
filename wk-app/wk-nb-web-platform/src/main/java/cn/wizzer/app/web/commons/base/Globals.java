@@ -8,7 +8,6 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.weixin.impl.WxApi2Impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +29,9 @@ public class Globals {
     //项目域名
     public static String AppDomain = "http://127.0.0.1";
     //文件上传路径
-    public static String AppUploadPath = "/upload";
+    public static String AppUploadPath = "D://upload";
+    //文件上传路径
+    public static String AppUploadBase = "/upload";
     // 是否启用了队列
     public static boolean RabbitMQEnabled = false;
     //系统自定义参数
@@ -38,8 +39,6 @@ public class Globals {
     //自定义路由
     public static Map<String, Sys_route> RouteMap = new HashMap<>();
     //微信map
-    public static Map<String, WxApi2Impl> WxMap = new HashMap<>();
-    public static Map<String, Object> ObjMap = new HashMap<>();
     @Inject
     @Reference
     private SysConfigService sysConfigService;
@@ -68,6 +67,9 @@ public class Globals {
                     break;
                 case "AppUploadPath":
                     Globals.AppUploadPath = sysConfig.getConfigValue();
+                    break;
+                case "AppUploadBase":
+                    Globals.AppUploadBase = sysConfig.getConfigValue();
                     break;
                 default:
                     Globals.MyConfig.put(sysConfig.getConfigKey(), sysConfig.getConfigValue());

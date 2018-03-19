@@ -3,11 +3,19 @@ layout("/layouts/platform.html"){
 %>
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/channel/add" data-pjax><i class="ti-plus"></i>新建栏目</a>
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/channel/add/${siteid}" data-pjax><i class="ti-plus"></i>新建栏目</a>
+    </div>
+    <div class="btn-group tool-button">
+        <a id="goto" style="display: none" href="${base}/platform/cms/channel/${siteid}" data-pjax></a>
+        <select id="siteid" class="form-control" onchange="goto()">
+            <%for(o in siteList){%>
+            <option value="${o.id}" <%if(o.id==siteid){%>selected<%}%>>${o.site_name}</option>
+            <%}%>
+        </select>
     </div>
     <div class="pull-right">
         <div class="btn-group tool-button">
-            <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/channel/sort" data-pjax><i class="ti-share"></i> 栏目排序</a>
+            <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/channel/sort/${siteid}" data-pjax><i class="ti-share"></i> 栏目排序</a>
         </div>
     </div>
 </header>
@@ -21,6 +29,7 @@ layout("/layouts/platform.html"){
                         <th class="col-md-2 pd-l-lg">
                             <span class="pd-l-sm ml20"></span>栏目名称
                         </th>
+                        <th class="col-md-1">栏目标识</th>
                         <th class="col-md-1">栏目类型</th>
                         <th class="col-md-1">URL</th>
                         <th class="col-md-1">打开方式</th>
@@ -35,6 +44,7 @@ layout("/layouts/platform.html"){
                         <td>
                             <span class="pd-l-sm"></span> ${obj.name!}
                         </td>
+                        <td>${obj.code!}</td>
                         <td><%if(obj.type=="article"){%>文章<%}%><%if(obj.type=="photo"){%>相册<%}%></td>
                         <td>${obj.url!}</td>
                         <td>${obj.target!}</td>
@@ -49,7 +59,7 @@ layout("/layouts/platform.html"){
                                     <li><a href="${base}/platform/cms/channel/edit/${obj.id!}" data-pjax>修改</a></li>
                                     <li><a href="javascript:;" onclick="del('${obj.id!}')">删除</a></li>
                                     <li class="divider"></li>
-                                    <li><a href="${base}/platform/cms/channel/add?pid=${obj.id!}" data-pjax>添加子栏目</a></li>
+                                    <li><a href="${base}/platform/cms/channel/add/${siteid}?pid=${obj.id!}" data-pjax>添加子栏目</a></li>
                                     <li class="divider"></li>
                                     <li><a href="javascript:;" onclick="enableRole('${obj.id!}')">启用</a></li>
                                     <li><a href="javascript:;" onclick="disableRole('${obj.id!}')">禁用</a></li>
@@ -107,6 +117,10 @@ layout("/layouts/platform.html"){
 </div>
 <script>
     var treeTable;
+    function goto() {
+        $("#goto").attr("href","${base}/platform/cms/channel/"+$("#siteid").val());
+        $("#goto").trigger("click");
+    }
     $(function () {
         $("#dialogDetail").on("hidden.bs.modal", function() {
             $(this).removeData("bs.modal");

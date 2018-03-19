@@ -66,12 +66,12 @@ public class Cms_article extends BaseModel implements Serializable {
 
     @Column
     @Comment("发布时间")
-    @ColDefine(type = ColType.INT)
+    @ColDefine(type = ColType.INT, width = 9)
     private Long publishAt;
 
     @Column
     @Comment("截至时间")
-    @ColDefine(type = ColType.INT)
+    @ColDefine(type = ColType.INT, width = 9)
     private Long endAt;
 
     @Column

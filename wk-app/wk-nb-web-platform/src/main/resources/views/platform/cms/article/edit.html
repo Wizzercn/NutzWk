@@ -1,11 +1,13 @@
 <%
 layout("/layouts/platform.html"){
 %>
+<script language="JavaScript" type="text/javascript"
+        src="${base}/assets/plugins/My97DatePicker/WdatePicker.js"></script>
 <script src="${base!}/assets/plugins/ueditor/ueditor.config.js"></script>
 <script src="${base!}/assets/plugins/ueditor/ueditor.all.min.js"></script>
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/article" data-pjax><i class="ti-angle-left"></i> 返回</a>
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/article/${siteid}?channelId=${obj.channelId!}" data-pjax><i class="ti-angle-left"></i> 返回</a>
     </div>
     <div class="pull-right">
         <div class="btn-group tool-button">
@@ -17,11 +19,12 @@ layout("/layouts/platform.html"){
 <div class="content-wrap">
     <div class="wrapper" style="min-height:500px;height: 100%;">
         <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
-              action="${base}/platform/cms/article/editDo" method="post">
-                <input id="id" name="id" value="${obj.id!}" type="hidden">
+              style="max-width: 99%;"  action="${base}/platform/cms/article/editDo" method="post">
+            <input id="id" name="id" value="${obj.id!}" type="hidden">
+            <input id="siteid" name="siteid" value="${obj.siteid!}" type="hidden">
                         <div class="col-lg-12">
                             <div class="form-group has-feedback">
-                                <label for="channelId" class="col-sm-2 control-label">所属栏目</label>
+                                <label for="channelId" class="col-sm-2 control-label">所属栏目<span style="color: red;"> * </span></label>
 
                                 <div class="col-sm-8">
                                     <div class="input-group">
@@ -38,11 +41,19 @@ layout("/layouts/platform.html"){
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="title" class="col-sm-2 control-label">文章标题</label>
+                                <label for="title" class="col-sm-2 control-label">文章标题<span style="color: red;"> * </span></label>
 
                                 <div class="col-sm-8">
                                     <input type="text" id="title" class="form-control" name="title" data-parsley-required="true"
                                            value="${obj.title!}" placeholder="文章标题">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="url" class="col-sm-2 control-label">URL</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="url" class="form-control" name="url"
+                                           value="${obj.url!}" placeholder="默认不用填写">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -61,14 +72,22 @@ layout("/layouts/platform.html"){
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="at" class="col-sm-2 control-label">发布时间</label>
-
-                                <div class="col-sm-8 input-group date form_datetime " style="padding-left: 16px;padding-right: 16px;" data-date="1979-09-16T05:25:07Z" data-date-format="dd MM yyyy - HH:ii p" data-link-field="at">
-                                    <input type="text" size="16" readonly class="form-control" value="${@date.getDate(obj.publishAt)}" data-parsley-required="true">
-                                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                                    <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                                <label for="beginDate" class="col-sm-2 control-label">发布时间</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group date form_datetime " style="width:150px;float:left;padding-right: 5px"
+                                         data-date-format="dd MM yyyy" data-link-field="beginDate">
+                                        <input class="form-control" type='text'
+                                               id="beginDate" name="beginDate" value='${@date.getDate(obj.publishAt,"yyyy-MM-dd")}'
+                                               onFocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'%y-%M-%d\'}'})"/>
+                                    </div>
+                                    <div style="width:20px;float:left;padding-left: 5px;padding-top: 5px;">至</div>
+                                    <div class="input-group date form_datetime " style="width:150px;float:left;padding-left: 5px;padding-right: 5px"
+                                         data-date-format="dd MM yyyy" data-link-field="endDate">
+                                        <input class="form-control" type='text'
+                                               id='endDate' name='endDate' value='${@date.getDate(obj.endAt,"yyyy-MM-dd")}'
+                                               onFocus="WdatePicker({minDate:'#F{$dp.$D(\'beginDate\')||\'-01\'}'})"/>
+                                    </div>
                                 </div>
-                                <input type="hidden" id="at" name="at" value="${@date.getDate(obj.publishAt)}" />
                             </div>
                             <div class="form-group">
                                 <label for="disabled" class="col-sm-2 control-label">取消发布</label>
@@ -164,17 +183,6 @@ layout("/layouts/platform.html"){
             ue.render('content');
         },500);
         myForm.init();
-        $('.form_datetime').datetimepicker({
-            language:  'zh-CN',
-            format:'yyyy-mm-dd hh:ii:ss',
-            weekStart: 1,
-            todayBtn:  1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            forceParse: 0,
-            showMeridian: 1
-        });
         initTreeView();
         $('#file_upload').uploadifive({
             'auto': true,

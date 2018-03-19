@@ -4,6 +4,7 @@
     <td>
         <span class="pd-l-sm"></span>${o.name!}
     </td>
+    <td>${o.code!}</td>
     <td><%if(o.type=="article"){%>文章<%}%><%if(o.type=="photo"){%>相册<%}%></td>
     <td>${o.url!}</td>
     <td>${o.target!}</td>
@@ -18,7 +19,7 @@
                 <li><a href="${base}/platform/cms/channel/edit/${o.id!}" data-pjax>修改</a></li>
                 <li><a href="javascript:;" onclick="del('${o.id!}')">删除</a></li>
                 <li class="divider"></li>
-                <li><a href="${base}/platform/cms/channel/add?pid=${o.id!}" data-pjax>添加子栏目</a></li>
+                <li><a href="${base}/platform/cms/channel/add/${o.siteid}?pid=${o.id!}" data-pjax>添加子栏目</a></li>
                 <li class="divider"></li>
                 <li><a href="javascript:;" onclick="enableRole('${o.id!}')">启用</a></li>
                 <li><a href="javascript:;" onclick="disableRole('${o.id!}')">禁用</a></li>

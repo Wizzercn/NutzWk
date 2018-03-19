@@ -43,13 +43,6 @@ public class DubboRpcCmsMainLauncher {
             }
         } catch (Exception e) {
         }
-        if (0 == dao.count(Cms_site.class)) {
-            Cms_site site = new Cms_site();
-            site.setId("site");
-            site.setSite_name("Demo");
-            site.setSite_domain("https://wizzer.cn");
-            dao.insert(site);
-        }
     }
 
     public void depose() {

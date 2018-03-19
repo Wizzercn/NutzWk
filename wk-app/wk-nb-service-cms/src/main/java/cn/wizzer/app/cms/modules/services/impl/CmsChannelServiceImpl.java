@@ -12,9 +12,15 @@ import org.nutz.dao.Sqls;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.plugins.wkcache.annotation.CacheDefaults;
+import org.nutz.plugins.wkcache.annotation.CacheRemoveAll;
+import org.nutz.plugins.wkcache.annotation.CacheResult;
+
+import java.util.List;
 
 @IocBean(args = {"refer:dao"})
 @Service(interfaceClass=CmsChannelService.class)
+@CacheDefaults(cacheName = "cms_channel")
 public class CmsChannelServiceImpl extends BaseServiceImpl<Cms_channel> implements CmsChannelService {
     public CmsChannelServiceImpl(Dao dao) {
         super(dao);
@@ -56,5 +62,38 @@ public class CmsChannelServiceImpl extends BaseServiceImpl<Cms_channel> implemen
                 dao().execute(Sqls.create("update cms_channel set hasChildren=0 where id=@pid").setParam("pid", channel.getParentId()));
             }
         }
+    }
+
+    @CacheResult
+    public Cms_channel getChannel(String id, String code) {
+        if (Strings.isNotBlank(code)) {
+            return this.fetch(Cnd.where("code", "=", code).and("disabled","=",false));
+        }
+        return this.fetch(id);
+    }
+
+    @CacheResult
+    public boolean hasChannel(String code) {
+        return this.count(Cnd.where("code", "=", code).and("disabled","=",false)) > 0;
+    }
+
+
+    @CacheResult
+    public List<Cms_channel> listChannel(String parentId, String parentCode) {
+        Cnd cnd = Cnd.NEW();
+        if (Strings.isNotBlank(parentCode)) {
+            Cms_channel channel = this.fetch(Cnd.where("code", "=", parentCode));
+            if (channel != null)
+                cnd.and("parentId", "=", channel.getId()).and("disabled", "=", false);
+        } else {
+            cnd.and("parentId", "=", Strings.sNull(parentId)).and("disabled", "=", false);
+        }
+        cnd.asc("location");
+        return this.query(cnd);
+    }
+
+    @CacheRemoveAll
+    public void clearCache() {
+
     }
 }

@@ -62,7 +62,7 @@ public class Sys_user extends BaseModel implements Serializable {
 
     @Column
     @Comment("登陆时间")
-    @ColDefine(type = ColType.INT)
+    @ColDefine(type = ColType.INT, width = 9)
     private Long loginAt;
 
     @Column

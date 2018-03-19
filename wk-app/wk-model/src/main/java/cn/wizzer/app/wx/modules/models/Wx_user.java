@@ -45,7 +45,7 @@ public class Wx_user extends BaseModel implements Serializable {
 
     @Column
     @Comment("关注时间")
-    @ColDefine(type = ColType.INT)
+    @ColDefine(type = ColType.INT, width = 9)
     private Long subscribeAt;
 
     @Column

@@ -44,7 +44,7 @@ public class Sys_task extends BaseModel implements Serializable {
 
     @Column
     @Comment("执行时间")
-    @ColDefine(type = ColType.INT)
+    @ColDefine(type = ColType.INT, width = 9)
     private Long exeAt;
 
     @Column
