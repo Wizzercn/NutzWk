@@ -98,6 +98,7 @@ public class WxUserController {
             });
             return Result.success("system.success");
         } catch (Exception e) {
+            log.error(e.getMessage(),e);
             return Result.error("system.error");
         }
     }

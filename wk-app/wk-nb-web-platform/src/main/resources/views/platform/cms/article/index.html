@@ -6,7 +6,7 @@ layout("/layouts/platform.html"){
         <p class="navbar-text"><i class="fa fa-sitemap mr5"></i> 栏目列表</p>
         <p>
             <a id="goto" style="display: none" href="${base}/platform/cms/article/${siteid}" data-pjax></a>
-            <select id="siteid" style="padding-left: 20px;margin-top: 15px;" onchange="goto()">
+            <select id="siteid" style="padding-left: 10px;margin-top: 15px;" onchange="goto()">
                 <%for(o in siteList){%>
                 <option value="${o.id}"
                 <%if(o.id==siteid){%>selected<%}%>>${o.site_name}</option>
@@ -16,8 +16,8 @@ layout("/layouts/platform.html"){
     </header>
     <div class="content-wrap no-p">
         <div class="wrapper2">
-            <div class="m5" style="padding-top: 50px;">
-                <div id="jsTreeUnit"></div>
+            <div class="m5">
+                <div id="jsTree"></div>
             </div>
         </div>
     </div>

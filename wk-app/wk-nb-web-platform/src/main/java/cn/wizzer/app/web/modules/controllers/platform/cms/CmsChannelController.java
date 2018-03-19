@@ -155,11 +155,11 @@ public class CmsChannelController {
         }
     }
 
-    @At
+    @At("/tree/?")
     @Ok("json")
     @RequiresPermissions("cms.content.channel")
-    public Object tree(@Param("pid") String pid) {
-        List<Cms_channel> list = cmsChannelService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).asc("location").asc("path"));
+    public Object tree(String siteid, @Param("pid") String pid) {
+        List<Cms_channel> list = cmsChannelService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).and("siteid", "=", siteid).asc("location").asc("path"));
         List<Map<String, Object>> tree = new ArrayList<>();
         for (Cms_channel channel : list) {
             Map<String, Object> obj = new HashMap<>();
@@ -204,11 +204,11 @@ public class CmsChannelController {
     @At("/sortDo/?")
     @Ok("json")
     @RequiresPermissions("cms.content.channel.sort")
-    public Object sortDo(String siteid, @Param("ids") String ids, HttpServletRequest req) {
+    public Object sortDo(String siteid,@Param("ids") String ids, HttpServletRequest req) {
         try {
             String[] menuIds = StringUtils.split(ids, ",");
             int i = 0;
-            cmsChannelService.dao().execute(Sqls.create("update cms_channel set location=0 where siteid=@siteid").setParam("siteid", siteid));
+            cmsChannelService.dao().execute(Sqls.create("update cms_channel set location=0 where siteid=@siteid").setParam("siteid",siteid));
             for (String s : menuIds) {
                 if (!Strings.isBlank(s)) {
                     cmsChannelService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", s));

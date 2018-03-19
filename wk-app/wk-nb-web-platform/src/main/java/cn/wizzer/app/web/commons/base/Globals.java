@@ -8,6 +8,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.weixin.impl.WxApi2Impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,7 @@ public class Globals {
     //自定义路由
     public static Map<String, Sys_route> RouteMap = new HashMap<>();
     //微信map
+    public static Map<String, WxApi2Impl> WxMap = new HashMap<>();
     @Inject
     @Reference
     private SysConfigService sysConfigService;
@@ -84,5 +86,9 @@ public class Globals {
         for (Sys_route route : routeList) {
             Globals.RouteMap.put(route.getUrl(), route);
         }
+    }
+
+    public static void initWx() {
+        Globals.WxMap.clear();
     }
 }

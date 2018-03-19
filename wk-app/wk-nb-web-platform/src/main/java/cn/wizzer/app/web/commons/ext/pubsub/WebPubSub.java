@@ -49,6 +49,9 @@ public class WebPubSub implements PubSub {
             case "sys_route":
                 Globals.initRoute(sysRouteService);
                 break;
+            case "sys_wx":
+                Globals.initWx();
+                break;
         }
     }
 }

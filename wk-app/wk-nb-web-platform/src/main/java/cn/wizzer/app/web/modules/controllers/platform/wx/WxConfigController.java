@@ -10,6 +10,7 @@ import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
+import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
@@ -32,7 +33,7 @@ public class WxConfigController {
     @Reference
     private WxConfigService wxConfigService;
     @Inject
-    private WxService wxService;
+    private PubSubService pubSubService;
 
     @At("")
     @Ok("beetl:/platform/wx/account/index.html")
@@ -75,7 +76,7 @@ public class WxConfigController {
     public Object editDo(@Param("..") Wx_config conf, HttpServletRequest req) {
         try {
             wxConfigService.updateIgnoreNull(conf);
-            wxService.delete(conf.getId());
+            pubSubService.fire("nutzwk:web:platform", "sys_wx");
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -90,7 +91,7 @@ public class WxConfigController {
         try {
             req.setAttribute("appname", wxConfigService.fetch(id).getAppname());
             wxConfigService.delete(id);
-            wxService.delete(id);
+            pubSubService.fire("nutzwk:web:platform", "sys_wx");
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
