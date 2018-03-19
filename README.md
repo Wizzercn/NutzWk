@@ -69,8 +69,8 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 *   [@enilu](https://github.com/enilu) (代码生成器及IDEA插件贡献者)
 *   [@loyalove](https://github.com/loyalove) (Vue代码贡献者)
 *   [@threefish](https://github.com/threefish) (控制类快速定位模板页面IDEA插件贡献值)
-*   以及交流群里热心的小伙伴们~
-*    QQ交流群: 68428921
+*   以及交流群里热心的小伙伴们~ QQ交流群: 68428921
+
 
 # 关于
 
