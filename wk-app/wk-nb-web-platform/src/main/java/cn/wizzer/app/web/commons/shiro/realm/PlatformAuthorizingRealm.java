@@ -124,7 +124,7 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
         super(cacheManager, matcher);
         HashedCredentialsMatcher hashedCredentialsMatcher=new HashedCredentialsMatcher();
         hashedCredentialsMatcher.setHashAlgorithmName("SHA-256");
-        hashedCredentialsMatcher.setHashIterations(2);
+        hashedCredentialsMatcher.setHashIterations(1024);
         hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
         setAuthenticationTokenClass(CaptchaToken.class);
         setCredentialsMatcher(hashedCredentialsMatcher);
