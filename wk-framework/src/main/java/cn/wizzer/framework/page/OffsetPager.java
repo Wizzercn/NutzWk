@@ -2,13 +2,15 @@ package cn.wizzer.framework.page;
 
 import org.nutz.dao.pager.Pager;
 
+import java.io.Serializable;
+
 /**
  * 指定偏移量及大小的Pager, 这样就不会受限于原生Pager的offset=(pageNumber-1)*pageSize
  *
  * @author wendal
  */
 
-public class OffsetPager extends Pager {
+public class OffsetPager extends Pager implements Serializable {
 
     private static final long serialVersionUID = -1385308131663113162L;
 

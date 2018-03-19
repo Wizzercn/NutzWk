@@ -62,9 +62,9 @@ public class SysLoginController {
     @Filters
     public String login(HttpServletRequest req, HttpSession session) {
         Subject subject = SecurityUtils.getSubject();
-        if (subject.isAuthenticated()) {
-            return "redirect:/platform/home";
-        } else {
+//        if (subject.isAuthenticated()) {
+//            return "redirect:/platform/home";
+//        } else {
             try {
                 HashMap<String, Object> map = RSAUtil.getKeys();
                 //生成公钥和私钥
@@ -83,7 +83,7 @@ public class SysLoginController {
             }
             return "beetl:/platform/sys/login.html";
 
-        }
+//        }
     }
 
     @At("/noPermission")

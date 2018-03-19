@@ -8,7 +8,7 @@
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181" />
  
-    <dubbo:protocol name="dubbo" port="20888" />
+    <dubbo:protocol name="dubbo" port="55555" />
 
     <dubbo:annotation package="cn.wizzer.app" />
     <!-- 提供哪些接口给消费者调用 -->

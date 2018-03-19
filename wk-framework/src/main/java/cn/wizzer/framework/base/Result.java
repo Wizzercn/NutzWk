@@ -5,10 +5,13 @@ import org.nutz.json.JsonFormat;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.Mvcs;
 
+import java.io.Serializable;
+
 /**
  * Created by wizzer on 2016/12/21.
  */
-public class Result {
+public class Result implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private int code;
     private String msg;

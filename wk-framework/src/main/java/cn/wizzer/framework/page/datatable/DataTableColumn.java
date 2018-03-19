@@ -1,9 +1,13 @@
 package cn.wizzer.framework.page.datatable;
 
+import java.io.Serializable;
+
 /**
  * Created by wizzer on 2016/6/27.
  */
-public class DataTableColumn {
+public class DataTableColumn implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     protected String data;
     protected String name;
     protected boolean searchable;
