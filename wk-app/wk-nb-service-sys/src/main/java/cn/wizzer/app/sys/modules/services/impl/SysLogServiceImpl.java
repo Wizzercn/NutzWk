@@ -6,6 +6,7 @@ import cn.wizzer.framework.base.service.BaseServiceImpl;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Service;
+import org.nutz.aop.interceptor.async.Async;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.util.Daos;
@@ -68,6 +69,7 @@ public class SysLogServiceImpl extends BaseServiceImpl<Sys_log> implements SysLo
         return dao;
     }
 
+    @Async
     public void fastInsertSysLog(Sys_log syslog) {
         logDao().fastInsert(syslog);
     }
