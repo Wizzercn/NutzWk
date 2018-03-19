@@ -14,10 +14,10 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 # 版本说明
 
-*   NutzWk v5.x 微服务版本(分支名:[nutzboot-dubbo](tree/nutzboot-dubbo),微服务dubbo分布式版本)
-*   NutzWk v4.x 模块化版本(分支名:[modular](tree/modular),统一提供代码生成器及IDEA可视化插件)
-*   NutzWk v3.x 单应用版本(分支名:[bootstrap-3.3.x](tree/bootstrap-3.3.x),CMS+微信+系统+权限+常用功能封装 beetl/velocity)
-*   NutzWk v1.0 传统版(分支名:[master](tree/master),velocity 支持IE6)
+*   NutzWk v5.x 微服务版本(分支名:[nutzboot-dubbo](/tree/nutzboot-dubbo),微服务dubbo分布式版本)
+*   NutzWk v4.x 模块化版本(分支名:[modular](/tree/modular),统一提供代码生成器及IDEA可视化插件)
+*   NutzWk v3.x 单应用版本(分支名:[bootstrap-3.3.x](/tree/bootstrap-3.3.x),CMS+微信+系统+权限+常用功能封装 beetl/velocity)
+*   NutzWk v1.0 传统版(分支名:[master](/tree/master),velocity 支持IE6)
 
 
 # 本版说明(v5.x)
@@ -60,6 +60,7 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 *   MySql 创建名为 nutzwk_nb 的空数据库,在每个NB项目启动时会自动建表,同时初始化数据
 *   wk-nb-service-sys为第一启动项目,然后启动其他NB项目,最后启动wk-nb-web-platform
 *   运行参数 -Dnutz.profiles.active=prod 可让NB项目加载 application-prod.properties 配置文件
+*   正常启动后访问 http://127.0.0.1:8080/sysadmin 用户名 superadmin 密码 1
 
 
 # 鸣谢
