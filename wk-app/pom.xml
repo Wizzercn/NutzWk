@@ -17,7 +17,6 @@
         <module>wk-nb-service-wx</module>
         <module>wk-nb-web-platform</module>
         <module>wk-nb-task</module>
-        <module>wk-nb-file</module>
     </modules>
     <groupId>cn.wizzer.app</groupId>
     <artifactId>wk-app</artifactId>

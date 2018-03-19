@@ -58,6 +58,7 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 *   确保 MySql、Redis、Zookeeper 默认配置并已启动好
 *   MySql 创建名为 nutzwk_nb 的空数据库,在每个NB项目启动时会自动建表,同时初始化数据
+*   IDEA 找到每个NB项目下的 ***MainLauncher 类运行,或编译成jar包直接运行
 *   wk-nb-service-sys为第一启动项目,然后启动其他NB项目,最后启动wk-nb-web-platform
 *   运行参数 -Dnutz.profiles.active=prod 可让NB项目加载 application-prod.properties 配置文件
 *   正常启动后访问 http://127.0.0.1:8080/sysadmin 用户名 superadmin 密码 1
