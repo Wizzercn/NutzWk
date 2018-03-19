@@ -78,13 +78,13 @@ public class SysRoleController {
             Sql sql = Sqls.create("SELECT roleId FROM sys_user_role WHERE userId=@userId");
             sql.setParam("userId", StringUtil.getPlatformUid());
             sql.setCallback(Sqls.callback.strs());
-            sysMenuService.dao().execute(sql);
+            sysMenuService.execute(sql);
             List<String> ids = sql.getList(String.class);
             Sql sql1 = Sqls.create("SELECT a.* FROM sys_menu a,sys_role_menu b WHERE a.id=b.menuId AND b.roleId in (@ids)");
             sql1.setParam("ids", ids.toArray());
-            sql1.setEntity(sysMenuService.dao().getEntity(Sys_menu.class));
+            sql1.setEntity(sysMenuService.getEntity(Sys_menu.class));
             sql1.setCallback(Sqls.callback.entities());
-            list = sysMenuService.dao().execute(sql1).getList(Sys_menu.class);
+            list = sysMenuService.execute(sql1).getList(Sys_menu.class);
         }
         List<Sys_menu> datas = sysRoleService.getDatas();
         List<NutMap> menus = new ArrayList<>();
@@ -172,13 +172,13 @@ public class SysRoleController {
             Sql sql = Sqls.create("SELECT roleId FROM sys_user_role WHERE userId=@userId");
             sql.setParam("userId", StringUtil.getPlatformUid());
             sql.setCallback(Sqls.callback.strs());
-            sysMenuService.dao().execute(sql);
+            sysMenuService.execute(sql);
             List<String> ids = sql.getList(String.class);
             Sql sql1 = Sqls.create("SELECT a.* FROM sys_menu a,sys_role_menu b WHERE a.id=b.menuId AND b.roleId in (@ids)");
             sql1.setParam("ids", ids.toArray());
-            sql1.setEntity(sysMenuService.dao().getEntity(Sys_menu.class));
+            sql1.setEntity(sysMenuService.getEntity(Sys_menu.class));
             sql1.setCallback(Sqls.callback.entities());
-            list = sysMenuService.dao().execute(sql1).getList(Sys_menu.class);
+            list = sysMenuService.execute(sql1).getList(Sys_menu.class);
         }
         List<Sys_menu> datas = sysRoleService.getDatas();
         List<Sys_menu> roleMenu = sysRoleService.getMenusAndButtons(roleId);
@@ -219,7 +219,7 @@ public class SysRoleController {
     public Object editMenuDo(@Param("menuIds") String menuIds, @Param("roleid") String roleid, HttpServletRequest req) {
         try {
             String[] ids = StringUtils.split(menuIds, ",");
-            sysRoleService.dao().clear("sys_role_menu", Cnd.where("roleid", "=", roleid));
+            sysRoleService.clear("sys_role_menu", Cnd.where("roleid", "=", roleid));
             for (String s : ids) {
                 if (!Strings.isEmpty(s)) {
                     sysRoleService.insert("sys_role_menu", org.nutz.dao.Chain.make("roleId", roleid).add("menuId", s));
@@ -299,7 +299,7 @@ public class SysRoleController {
     public Object delUser(@Param("menuIds") String menuIds, @Param("roleid") String roleid, HttpServletRequest req) {
         try {
             String[] ids = StringUtils.split(menuIds, ",");
-            sysRoleService.dao().clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleid));
+            sysRoleService.clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleid));
             Sys_role role = sysRoleService.fetch(roleid);
             req.setAttribute("name", role.getName());
             return Result.success("system.success");

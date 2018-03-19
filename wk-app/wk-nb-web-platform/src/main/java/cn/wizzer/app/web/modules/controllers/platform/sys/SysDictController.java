@@ -156,7 +156,7 @@ public class SysDictController {
         try {
             String[] menuIds= StringUtils.split(ids, ",");
             int i=0;
-            dictService.dao().execute(Sqls.create("update sys_dict set location=0"));
+            dictService.execute(Sqls.create("update sys_dict set location=0"));
             for(String s:menuIds){
                 if(!Strings.isBlank(s)){
                     dictService.update(org.nutz.dao.Chain.make("location",i),Cnd.where("id","=",s));

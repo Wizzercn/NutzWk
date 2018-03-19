@@ -4,6 +4,7 @@ import cn.wizzer.framework.page.Pagination;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import org.nutz.dao.*;
+import org.nutz.dao.entity.Entity;
 import org.nutz.dao.entity.Record;
 import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
@@ -18,6 +19,14 @@ import java.util.Map;
 public interface BaseService<T> {
 
     Dao dao();
+
+    /**
+     * 获取实体类
+     * @param var1
+     * @param <T>
+     * @return
+     */
+    <T> Entity<T> getEntity(Class<T> var1);
 
     /**
      * 统计符合条件的对象表条数
@@ -50,6 +59,14 @@ public interface BaseService<T> {
      * @return
      */
     int count(String tableName);
+
+    /**
+     * 自定义SQL统计
+     *
+     * @param sql
+     * @return
+     */
+    int count(Sql sql);
 
     /**
      * 通过数字型主键查询对象
@@ -540,13 +557,13 @@ public interface BaseService<T> {
      */
     String getParentPath(String path);
 
+
     /**
-     * 自定义SQL统计
-     *
+     * 执行一条自定义SQL
      * @param sql
      * @return
      */
-    int count(Sql sql);
+    Sql execute(Sql sql);
 
     /**
      * 自定义SQL返回Record记录集，Record是个MAP但不区分大小写

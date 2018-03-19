@@ -221,7 +221,7 @@ public class SysMenuController {
         try {
             String[] menuIds = StringUtils.split(ids, ",");
             int i = 0;
-            sysMenuService.dao().execute(Sqls.create("update sys_menu set location=0"));
+            sysMenuService.execute(Sqls.create("update sys_menu set location=0"));
             for (String s : menuIds) {
                 if (!Strings.isBlank(s)) {
                     sysMenuService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", s));

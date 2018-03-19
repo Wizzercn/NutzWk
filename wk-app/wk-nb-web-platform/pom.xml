@@ -17,6 +17,7 @@
         <bcprov-jdk16.version>140</bcprov-jdk16.version>
         <emoji-java.veision>4.0.0</emoji-java.veision>
         <jsoup.veision>1.11.2</jsoup.veision>
+        <pinyin4j.veision>2.5.1</pinyin4j.veision>
     </properties>
     <dependencies>
         <dependency>
@@ -98,6 +99,11 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup.veision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.belerweb</groupId>
+            <artifactId>pinyin4j</artifactId>
+            <version>${pinyin4j.veision}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

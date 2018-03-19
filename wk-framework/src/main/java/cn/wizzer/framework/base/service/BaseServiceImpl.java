@@ -5,6 +5,7 @@ import cn.wizzer.framework.page.Pagination;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
 import org.nutz.dao.*;
+import org.nutz.dao.entity.Entity;
 import org.nutz.dao.entity.Record;
 import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
@@ -30,6 +31,10 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
 
     public BaseServiceImpl(Dao dao) {
         super(dao);
+    }
+
+    public <T> Entity<T> getEntity(Class<T> var1) {
+        return this.getEntity(var1);
     }
 
     /**
@@ -70,6 +75,27 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      */
     public int count(String tableName) {
         return this.dao().count(tableName);
+    }
+
+    /**
+     * 自定义SQL统计
+     *
+     * @param sql
+     * @return
+     */
+    public int count(Sql sql) {
+        sql.setCallback(new SqlCallback() {
+            public Object invoke(Connection conn, ResultSet rs, Sql sql)
+                    throws SQLException {
+                int rsvalue = 0;
+                if (rs != null && rs.next()) {
+                    rsvalue = rs.getInt(1);
+                }
+                return rsvalue;
+            }
+        });
+        this.dao().execute(sql);
+        return sql.getInt();
     }
 
     /**
@@ -707,24 +733,13 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
-     * 自定义SQL统计
+     * 执行自定义SQL
      *
      * @param sql
      * @return
      */
-    public int count(Sql sql) {
-        sql.setCallback(new SqlCallback() {
-            public Object invoke(Connection conn, ResultSet rs, Sql sql)
-                    throws SQLException {
-                int rsvalue = 0;
-                if (rs != null && rs.next()) {
-                    rsvalue = rs.getInt(1);
-                }
-                return rsvalue;
-            }
-        });
-        this.dao().execute(sql);
-        return sql.getInt();
+    public Sql execute(Sql sql) {
+        return this.dao().execute(sql);
     }
 
     /**

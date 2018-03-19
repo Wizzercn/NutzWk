@@ -178,7 +178,7 @@ layout("/layouts/platform.html"){
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
-                        var uid="${@string.getUid()}";
+                        var uid="${@string.getPlatformUid()}";
                         var temp= '<li class="divider"></li>' +
                             '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
                             '<li class="divider"></li>' +
