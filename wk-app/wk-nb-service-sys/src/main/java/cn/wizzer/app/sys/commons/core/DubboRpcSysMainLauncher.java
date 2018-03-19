@@ -623,9 +623,9 @@ public class DubboRpcSysMainLauncher {
             user.setUsername("超级管理员");
             user.setOpAt(Times.getTS());
             //String slat=R.UU32();
-            //new Sha256Hash("1",ByteSource.Util.bytes(s), 2).toHex();
-            user.setSalt("2bm56187doic3q1d6nc3ikq5up");
-            user.setPassword("0f46ccedb43adaf59ffbcdda2831027a74e8985f8c0bb668a4ef3fd2b939fa7f");
+            //new Sha256Hash("1",ByteSource.Util.bytes(s), 1024).toHex();
+            user.setSalt("r5tdr01s7uglfokpsdmtu15602");
+            user.setPassword("1bba9287ebc50b766bff84273d11ccefaa7a8da95d078960f05f116e9d970fb0");
             user.setLoginIp("127.0.0.1");
             user.setLoginAt(0L);
             user.setLoginCount(0);

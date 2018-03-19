@@ -3,13 +3,18 @@ package cn.wizzer.app.sys.modules.services.impl;
 import cn.wizzer.app.sys.modules.models.Sys_log;
 import cn.wizzer.app.sys.modules.services.SysLogService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
+import cn.wizzer.framework.page.datatable.DataTableColumn;
+import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Service;
+import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.util.Daos;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.util.NutMap;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -65,5 +70,13 @@ public class SysLogServiceImpl extends BaseServiceImpl<Sys_log> implements SysLo
 
     public void fastInsertSysLog(Sys_log syslog) {
         logDao().fastInsert(syslog);
+    }
+
+    public NutMap logData(String tableName, int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName) {
+        if (logDao(tableName).exists(Sys_log.class)) {
+            SysLogService sysLogService2 = new SysLogServiceImpl(logDao(tableName));
+            return sysLogService2.data(length, start, draw, orders, columns, cnd, null);
+        } else
+            return this.data(length, start, draw, orders, columns, cnd, null);
     }
 }
