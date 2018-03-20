@@ -17,6 +17,7 @@ public class Cms_article extends BaseModel implements Serializable {
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Prev(els = {@EL("uuid()")})
+    //@Prev(els = {@EL("ig(view.tableName,'')")}) 主键生成器示例
     private String id;
 
     @Column

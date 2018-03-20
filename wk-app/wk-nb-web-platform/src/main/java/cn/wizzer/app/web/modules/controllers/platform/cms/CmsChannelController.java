@@ -51,12 +51,12 @@ public class CmsChannelController {
             siteid = siteList.get(0).getId();
         }
         Cnd cnd = Cnd.NEW();
-        cnd.and("siteid", "=", siteid);
+        cnd.and("siteid", "=", Strings.sNull(siteid));
         cnd.and(Cnd.exps("parentId", "=", "").or("parentId", "is", null));
         cnd.asc("location").asc("path");
         req.setAttribute("list", cmsChannelService.query(cnd));
         req.setAttribute("siteList", siteList);
-        req.setAttribute("siteid", siteid);
+        req.setAttribute("siteid", Strings.sNull(siteid));
     }
 
     @At("/add/?")
