@@ -58,7 +58,7 @@ public class TaskMainLauncher {
     }
 
     public void init() {
-        if (0 == sysTaskService.count()) {
+        if (!dao.exists("sys_qrtz_triggers")) {
             //执行Quartz SQL脚本
             String dbType = dao.getJdbcExpert().getDatabaseType();
             log.debug("dbType:::" + dbType);
@@ -68,6 +68,8 @@ public class TaskMainLauncher {
             for (Sql sql : sqlsq) {
                 dao.execute(sql);
             }
+        }
+        if (0 == sysTaskService.count()) {
             //定时任务示例
             Sys_task task = new Sys_task();
             task.setDisabled(true);
