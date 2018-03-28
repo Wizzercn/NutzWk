@@ -30,4 +30,9 @@ public interface TaskPlatformService {
      * @return
      */
     boolean delete(String jobName,String jobGroup);
+
+    /**
+     * 清除所有任务
+     */
+    void clear();
 }

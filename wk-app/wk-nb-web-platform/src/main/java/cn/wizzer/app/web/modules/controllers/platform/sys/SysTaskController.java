@@ -13,7 +13,9 @@ import org.nutz.dao.Cnd;
 import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Times;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
@@ -63,7 +65,15 @@ public class SysTaskController {
         try {
             sysTaskService.insert(task);
             //通过redis通知后台任务执行初始化
-            pubSubService.fire("nutzwk:task:platform", "sys_task");
+            NutMap map = NutMap.NEW();
+            map.addv("method", "add");
+            map.addv("jobName", task.getId());
+            map.addv("jobGroup", task.getId());
+            map.addv("className", task.getJobClass());
+            map.addv("cron", task.getCron());
+            map.addv("comment", task.getNote());
+            map.addv("dataMap", task.getData());
+            pubSubService.fire("nutzwk:task:platform", Json.toJson(map));
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -81,13 +91,21 @@ public class SysTaskController {
     @Ok("json")
     @SLog(tag = "修改任务", msg = "任务名:${args[0].name}")
     @RequiresPermissions("sys.manager.task.edit")
-    public Object editDo(@Param("..") Sys_task sysTask, HttpServletRequest req) {
+    public Object editDo(@Param("..") Sys_task task, HttpServletRequest req) {
         try {
-            sysTask.setOpBy(StringUtil.getPlatformUid());
-            sysTask.setOpAt(Times.getTS());
-            sysTaskService.updateIgnoreNull(sysTask);
+            task.setOpBy(StringUtil.getPlatformUid());
+            task.setOpAt(Times.getTS());
+            sysTaskService.updateIgnoreNull(task);
             //通过redis通知后台任务执行初始化
-            pubSubService.fire("nutzwk:task:platform", "sys_task");
+            NutMap map = NutMap.NEW();
+            map.addv("method", "update");
+            map.addv("jobName", task.getId());
+            map.addv("jobGroup", task.getId());
+            map.addv("className", task.getJobClass());
+            map.addv("cron", task.getCron());
+            map.addv("comment", task.getNote());
+            map.addv("dataMap", task.getData());
+            pubSubService.fire("nutzwk:task:platform", Json.toJson(map));
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -102,14 +120,34 @@ public class SysTaskController {
     public Object delete(String id, @Param("ids") String[] ids, HttpServletRequest req) {
         try {
             if (ids != null && ids.length > 0) {
+                List<Sys_task> taskList = sysTaskService.query(Cnd.where("id", "in", ids));
+                for (Sys_task sysTask : taskList) {
+                    try {
+                        NutMap map = NutMap.NEW();
+                        map.addv("method", "delete");
+                        map.addv("jobName", sysTask.getId());
+                        map.addv("jobGroup", sysTask.getId());
+                        pubSubService.fire("nutzwk:task:platform", Json.toJson(map));
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                    }
+                }
                 sysTaskService.delete(ids);
                 req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
             } else {
+                Sys_task sysTask = sysTaskService.fetch(id);
+                try {
+                    NutMap map = NutMap.NEW();
+                    map.addv("method", "delete");
+                    map.addv("jobName", sysTask.getId());
+                    map.addv("jobGroup", sysTask.getId());
+                    pubSubService.fire("nutzwk:task:platform", Json.toJson(map));
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
                 sysTaskService.delete(id);
                 req.setAttribute("id", id);
             }
-            //通过redis通知后台任务执行初始化
-            pubSubService.fire("nutzwk:task:platform", "sys_task");
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -126,7 +164,15 @@ public class SysTaskController {
             req.setAttribute("name", sysTask.getName());
             sysTaskService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", id));
             //通过redis通知后台任务执行初始化
-            pubSubService.fire("nutzwk:task:platform", "sys_task");
+            NutMap map = NutMap.NEW();
+            map.addv("method", "enable");
+            map.addv("jobName", sysTask.getId());
+            map.addv("jobGroup", sysTask.getId());
+            map.addv("className", sysTask.getJobClass());
+            map.addv("cron", sysTask.getCron());
+            map.addv("comment", sysTask.getNote());
+            map.addv("dataMap", sysTask.getData());
+            pubSubService.fire("nutzwk:task:platform", Json.toJson(map));
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -143,7 +189,11 @@ public class SysTaskController {
             req.setAttribute("name", sysTask.getName());
             sysTaskService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", id));
             //通过redis通知后台任务执行初始化
-            pubSubService.fire("nutzwk:task:platform", "sys_task");
+            NutMap map = NutMap.NEW();
+            map.addv("method", "disable");
+            map.addv("jobName", sysTask.getId());
+            map.addv("jobGroup", sysTask.getId());
+            pubSubService.fire("nutzwk:task:platform", Json.toJson(map));
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");

@@ -60,4 +60,11 @@ public class TaskPlatformServiceImpl implements TaskPlatformService {
         qj.setJobGroup(jobGroup);
         return quartzManager.delete(qj);
     }
+
+    /**
+     * 清除任务
+     */
+    public void clear(){
+        quartzManager.clear();
+    }
 }
