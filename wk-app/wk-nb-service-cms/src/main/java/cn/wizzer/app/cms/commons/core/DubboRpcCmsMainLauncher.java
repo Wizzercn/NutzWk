@@ -56,11 +56,16 @@ public class DubboRpcCmsMainLauncher {
         //通过POJO类创建表结构
         try {
             Daos.createTablesInPackage(dao, "cn.wizzer.app.cms", false);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        try {
             if (log.isDebugEnabled()) {
                 //通过POJO类修改表结构
                 Daos.migration(dao, "cn.wizzer.app.cms", true, false);
             }
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
         //初始化主键值到redis
         initRedisIg();

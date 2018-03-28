@@ -43,11 +43,16 @@ public class DubboRpcSysMainLauncher {
         //通过POJO类创建表结构
         try {
             Daos.createTablesInPackage(dao, "cn.wizzer.app.sys", false);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        try {
             if (log.isDebugEnabled()) {
                 //通过POJO类修改表结构
                 Daos.migration(dao, "cn.wizzer.app.sys", true, false);
             }
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
         // 若必要的数据表不存在，则初始化数据库
         if (0 == dao.count(Sys_user.class)) {
