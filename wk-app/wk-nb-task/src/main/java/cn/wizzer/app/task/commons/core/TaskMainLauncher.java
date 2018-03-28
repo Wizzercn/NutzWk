@@ -3,16 +3,13 @@ package cn.wizzer.app.task.commons.core;
 import cn.wizzer.app.sys.modules.models.Sys_task;
 import cn.wizzer.app.sys.modules.services.SysTaskService;
 import cn.wizzer.app.task.commons.base.Globals;
-import cn.wizzer.app.task.commons.ext.pubsub.TaskPubSub;
 import cn.wizzer.app.task.modules.services.TaskPlatformService;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.boot.NbApp;
-import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.integration.jedis.JedisAgent;
-import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -37,8 +34,6 @@ import java.util.List;
 @Modules(packages = "cn.wizzer")
 public class TaskMainLauncher {
     private static final Log log = Logs.get();
-    @Inject
-    private TaskPubSub taskPubSub;
     @Inject
     private TaskPlatformService taskPlatformService;
     @Inject
