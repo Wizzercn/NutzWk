@@ -9,7 +9,6 @@ import org.nutz.boot.NbApp;
 import org.nutz.dao.Dao;
 import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.sql.Sql;
-import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -43,8 +42,6 @@ public class TaskMainLauncher {
     private Ioc ioc;
     @Inject
     private Dao dao;
-    @Inject
-    private JedisAgent jedisAgent;
 
     public static void main(String[] args) throws Exception {
         NbApp nb = new NbApp().setArgs(args).setPrintProcDoc(true);
