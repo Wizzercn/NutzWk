@@ -5,12 +5,11 @@ import cn.wizzer.app.sys.modules.services.SysMenuService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
@@ -33,8 +32,7 @@ import java.util.Map;
 @At("/platform/sys/menu")
 public class SysMenuController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private SysMenuService sysMenuService;
 
     @At("")

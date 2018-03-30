@@ -7,7 +7,7 @@ import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.app.wx.modules.services.WxTplIdService;
 import cn.wizzer.app.wx.modules.services.WxTplLogService;
 import cn.wizzer.app.wx.modules.services.WxUserService;
-import com.alibaba.dubbo.config.annotation.Reference;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -23,17 +23,13 @@ import java.util.Map;
  */
 @IocBean
 public class TplService {
-    @Inject
-    @Reference
+    @RpcInject
     private WxTplIdService wxTplIdService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxUserService wxUserService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxTplLogService wxTplLogService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
     @Inject
     private WxService wxService;

@@ -1,7 +1,6 @@
 package cn.wizzer.app.task.modules.services.impl;
 
 import cn.wizzer.app.task.modules.services.TaskPlatformService;
-import com.alibaba.dubbo.config.annotation.Service;
 import org.nutz.integration.quartz.QuartzJob;
 import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -12,7 +11,6 @@ import org.quartz.JobKey;
  * Created by wizzer on 2018/3/19.
  */
 @IocBean
-@Service(interfaceClass = TaskPlatformService.class)
 public class TaskPlatformServiceImpl implements TaskPlatformService {
     @Inject
     private QuartzManager quartzManager;

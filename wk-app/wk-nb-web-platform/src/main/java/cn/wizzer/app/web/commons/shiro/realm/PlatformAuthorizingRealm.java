@@ -4,11 +4,9 @@ import cn.wizzer.app.sys.modules.models.Sys_role;
 import cn.wizzer.app.sys.modules.models.Sys_user;
 import cn.wizzer.app.sys.modules.services.SysRoleService;
 import cn.wizzer.app.sys.modules.services.SysUserService;
-import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaEmptyException;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaIncorrectException;
 import cn.wizzer.app.web.commons.shiro.token.CaptchaToken;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -21,17 +19,15 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
-import org.nutz.boot.AppContext;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.integration.jedis.RedisService;
-import org.nutz.ioc.Ioc;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Mvcs;
 
 /**
  * Created by wizzer on 2017/1/11.
@@ -39,11 +35,9 @@ import org.nutz.mvc.Mvcs;
 @IocBean(name = "platformRealm")
 public class PlatformAuthorizingRealm extends AuthorizingRealm {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private SysUserService sysUserService;
-    @Inject
-    @Reference
+    @RpcInject
     private SysRoleService sysRoleService;
     @Inject
     private RedisService redisService;

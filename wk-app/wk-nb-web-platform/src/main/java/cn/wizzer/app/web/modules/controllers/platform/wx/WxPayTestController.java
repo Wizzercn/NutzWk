@@ -6,8 +6,8 @@ import cn.wizzer.app.web.commons.utils.DateUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.framework.base.Result;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -20,7 +20,10 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
-import org.nutz.weixin.bean.*;
+import org.nutz.weixin.bean.WxPayRedPack;
+import org.nutz.weixin.bean.WxPayRedPackGroup;
+import org.nutz.weixin.bean.WxPayTransfers;
+import org.nutz.weixin.bean.WxPayUnifiedOrder;
 import org.nutz.weixin.spi.WxApi2;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,8 +38,7 @@ import java.util.Date;
 @At("/platform/wx/conf/account/paytest")
 public class WxPayTestController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
     @Inject
     private WxService wxService;

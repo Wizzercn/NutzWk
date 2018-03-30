@@ -14,9 +14,9 @@ import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
@@ -45,17 +45,13 @@ import java.util.Map;
 @At("/platform/sys/role")
 public class SysRoleController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private SysUserService sysUserService;
-    @Inject
-    @Reference
+    @RpcInject
     private SysMenuService sysMenuService;
-    @Inject
-    @Reference
+    @RpcInject
     private SysUnitService sysUnitService;
-    @Inject
-    @Reference
+    @RpcInject
     private SysRoleService sysRoleService;
     @Inject
     private ShiroUtil shiroUtil;

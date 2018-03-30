@@ -2,13 +2,12 @@ package cn.wizzer.app.web.modules.controllers.platform.sys;
 
 import cn.wizzer.app.sys.modules.models.Sys_config;
 import cn.wizzer.app.sys.modules.services.SysConfigService;
-import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -29,8 +28,7 @@ import java.util.List;
 @At("/platform/sys/conf")
 public class SysConfController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private SysConfigService sysConfigService;
     @Inject
     private PubSubService pubSubService;

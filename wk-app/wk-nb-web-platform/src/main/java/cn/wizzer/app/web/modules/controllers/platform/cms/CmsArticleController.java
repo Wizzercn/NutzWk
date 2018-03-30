@@ -11,10 +11,10 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -42,14 +42,11 @@ import java.util.Map;
 @At("/platform/cms/article")
 public class CmsArticleController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private CmsArticleService cmsArticleService;
-    @Inject
-    @Reference
+    @RpcInject
     private CmsChannelService cmsChannelService;
-    @Inject
-    @Reference
+    @RpcInject
     private CmsSiteService cmsSiteService;
 
     @At(value = {"", "/?"})

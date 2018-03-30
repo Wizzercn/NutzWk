@@ -13,9 +13,9 @@ import cn.wizzer.app.wx.modules.services.WxMassService;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -44,17 +44,13 @@ import java.util.List;
 @At("/platform/wx/msg/mass")
 public class WxMassController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private WxMassService wxMassService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxMassSendService wxMassSendService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxMassNewsService wxMassNewsService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
     @Inject
     private WxService wxService;

@@ -3,7 +3,7 @@ package cn.wizzer.app.web.commons.ext.pubsub;
 import cn.wizzer.app.sys.modules.services.SysConfigService;
 import cn.wizzer.app.sys.modules.services.SysRouteService;
 import cn.wizzer.app.web.commons.base.Globals;
-import com.alibaba.dubbo.config.annotation.Reference;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.integration.jedis.pubsub.PubSub;
 import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.Ioc;
@@ -22,11 +22,9 @@ public class WebPubSub implements PubSub {
     private static final Log log = Logs.get();
     @Inject
     protected PubSubService pubSubService;
-    @Inject
-    @Reference
+    @RpcInject
     protected SysConfigService sysConfigService;
-    @Inject
-    @Reference
+    @RpcInject
     protected SysRouteService sysRouteService;
 
     @Inject("refer:$ioc")

@@ -11,12 +11,11 @@ import cn.wizzer.app.wx.modules.services.WxReplyTxtService;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
@@ -35,17 +34,13 @@ import java.util.List;
 @At("/platform/wx/reply/conf")
 public class WxReplyController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private WxReplyTxtService wxReplyTxtService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxReplyNewsService wxReplyNewsService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxReplyService wxReplyService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
 
     @At("/?")

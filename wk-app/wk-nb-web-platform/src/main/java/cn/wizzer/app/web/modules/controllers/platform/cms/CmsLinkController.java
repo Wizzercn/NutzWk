@@ -8,17 +8,19 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.util.StringUtils;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.adaptor.WhaleAdaptor;
-import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.AdaptBy;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -30,11 +32,9 @@ import java.util.List;
 @At("/platform/cms/link/link")
 public class CmsLinkController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private CmsLinkClassService cmsLinkClassService;
-    @Inject
-    @Reference
+    @RpcInject
     private CmsLinkService cmsLinkService;
 
     @At({"", "/index/","/index/?"})

@@ -9,15 +9,17 @@ import cn.wizzer.app.wx.modules.services.WxTplIdService;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
 import org.nutz.weixin.spi.WxApi2;
 import org.nutz.weixin.spi.WxResp;
 
@@ -28,11 +30,9 @@ import java.util.List;
 @At("/platform/wx/tpl/id")
 public class WxTplIdController {
 	private static final Log log = Logs.get();
-	@Inject
-	@Reference
+	@RpcInject
 	private WxTplIdService wxTplIdService;
-	@Inject
-	@Reference
+	@RpcInject
 	private WxConfigService wxConfigService;
 	@Inject
 	private WxService wxService;

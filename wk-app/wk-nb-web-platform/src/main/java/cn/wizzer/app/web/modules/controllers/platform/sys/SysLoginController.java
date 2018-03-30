@@ -9,7 +9,6 @@ import cn.wizzer.app.web.commons.shiro.filter.PlatformAuthenticationFilter;
 import cn.wizzer.app.web.commons.slog.SLogService;
 import cn.wizzer.app.web.commons.utils.RSAUtil;
 import cn.wizzer.framework.base.Result;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -20,6 +19,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.img.Images;
@@ -49,8 +49,7 @@ import java.util.HashMap;
 @Ok("json:{locked:'password|createAt',ignoreNull:true}") // 忽略password和createAt属性,忽略空属性的json输出
 public class SysLoginController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private SysUserService sysUserService;
     @Inject
     private SLogService sLogService;

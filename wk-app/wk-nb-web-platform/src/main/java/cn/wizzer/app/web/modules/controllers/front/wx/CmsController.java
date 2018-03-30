@@ -5,9 +5,8 @@ import cn.wizzer.app.cms.modules.services.CmsChannelService;
 import cn.wizzer.app.cms.modules.services.CmsSiteService;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.framework.base.Result;
-import com.alibaba.dubbo.config.annotation.Reference;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
@@ -25,17 +24,13 @@ import javax.servlet.http.HttpSession;
 @At("/public/wx/cms")
 public class CmsController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
-    @Inject
-    @Reference
+    @RpcInject
     private CmsSiteService cmsSiteService;
-    @Inject
-    @Reference
+    @RpcInject
     private CmsChannelService cmsChannelService;
-    @Inject
-    @Reference
+    @RpcInject
     private CmsArticleService cmsArticleService;
 
     @At({"/channel/?", "/channel/"})

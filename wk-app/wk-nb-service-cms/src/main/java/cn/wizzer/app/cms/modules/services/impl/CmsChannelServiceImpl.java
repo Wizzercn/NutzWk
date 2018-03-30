@@ -1,9 +1,8 @@
 package cn.wizzer.app.cms.modules.services.impl;
 
-import cn.wizzer.framework.base.service.BaseServiceImpl;
 import cn.wizzer.app.cms.modules.models.Cms_channel;
 import cn.wizzer.app.cms.modules.services.CmsChannelService;
-import com.alibaba.dubbo.config.annotation.Service;
+import cn.wizzer.framework.base.service.BaseServiceImpl;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -19,7 +18,6 @@ import org.nutz.plugins.wkcache.annotation.CacheResult;
 import java.util.List;
 
 @IocBean(args = {"refer:dao"})
-@Service(interfaceClass=CmsChannelService.class)
 @CacheDefaults(cacheName = "cms_channel")
 public class CmsChannelServiceImpl extends BaseServiceImpl<Cms_channel> implements CmsChannelService {
     public CmsChannelServiceImpl(Dao dao) {

@@ -6,8 +6,8 @@ import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_user;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.app.wx.modules.services.WxUserService;
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.vdurmont.emoji.EmojiParser;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.http.Http;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -36,11 +36,9 @@ import java.net.URLEncoder;
 @At("/public/wx/wechat")
 public class WechatController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxUserService wxUserService;
     @Inject
     private WxService wxService;

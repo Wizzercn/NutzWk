@@ -5,17 +5,14 @@ import cn.wizzer.app.sys.modules.services.SysDictService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
-import org.nutz.log.Log;
-import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
@@ -32,9 +29,7 @@ import java.util.Map;
 @IocBean
 @At("/platform/sys/dict")
 public class SysDictController {
-    private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private SysDictService dictService;
 
     @At("")

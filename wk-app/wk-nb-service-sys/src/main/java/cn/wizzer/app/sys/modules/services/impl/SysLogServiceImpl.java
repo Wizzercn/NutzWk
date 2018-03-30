@@ -5,7 +5,6 @@ import cn.wizzer.app.sys.modules.services.SysLogService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Service;
 import org.nutz.aop.interceptor.async.Async;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -22,7 +21,6 @@ import java.util.Map;
  * Created by wizzer on 2016/12/22.
  */
 @IocBean(args = {"refer:dao"})
-@Service(interfaceClass = SysLogService.class)
 public class SysLogServiceImpl extends BaseServiceImpl<Sys_log> implements SysLogService {
     public SysLogServiceImpl(Dao dao) {
         super(dao);

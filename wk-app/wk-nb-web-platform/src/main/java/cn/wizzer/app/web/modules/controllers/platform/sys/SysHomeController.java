@@ -3,17 +3,16 @@ package cn.wizzer.app.web.modules.controllers.platform.sys;
 import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.services.SysMenuService;
 import cn.wizzer.app.web.commons.base.Globals;
-import com.alibaba.dubbo.config.annotation.Reference;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -26,8 +25,7 @@ import java.util.List;
 @At("/platform/home")
 public class SysHomeController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private SysMenuService menuService;
 
     @At("")

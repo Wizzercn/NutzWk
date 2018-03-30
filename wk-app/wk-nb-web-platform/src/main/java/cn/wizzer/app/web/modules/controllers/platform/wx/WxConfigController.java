@@ -1,14 +1,13 @@
 package cn.wizzer.app.web.modules.controllers.platform.wx;
 
-import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -29,8 +28,7 @@ import java.util.List;
 @At("/platform/wx/conf/account")
 public class WxConfigController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
     @Inject
     private PubSubService pubSubService;

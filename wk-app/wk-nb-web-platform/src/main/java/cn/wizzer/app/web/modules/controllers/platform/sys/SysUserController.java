@@ -12,15 +12,13 @@ import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.crypto.RandomNumberGenerator;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ByteSource;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -48,14 +46,11 @@ import java.util.Map;
 @At("/platform/sys/user")
 public class SysUserController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private SysUserService sysUserService;
-    @Inject
-    @Reference
+    @RpcInject
     private SysMenuService sysMenuService;
-    @Inject
-    @Reference
+    @RpcInject
     private SysUnitService sysUnitService;
     @Inject
     private ShiroUtil shiroUtil;

@@ -3,8 +3,8 @@ package cn.wizzer.app.web.modules.controllers.open.ueditor;
 import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
@@ -29,8 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 @At("/open/ueditor/wx")
 public class WxController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
     @Inject
     private WxService wxService;

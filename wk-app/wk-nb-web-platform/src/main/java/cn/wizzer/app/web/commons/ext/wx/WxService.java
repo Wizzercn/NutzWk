@@ -3,7 +3,7 @@ package cn.wizzer.app.web.commons.ext.wx;
 import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
-import com.alibaba.dubbo.config.annotation.Reference;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -20,8 +20,7 @@ import redis.clients.jedis.JedisPool;
 @IocBean
 public class WxService {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
     @Inject
     private JedisPool jedisPool;

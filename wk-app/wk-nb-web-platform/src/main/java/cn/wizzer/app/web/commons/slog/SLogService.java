@@ -3,11 +3,8 @@ package cn.wizzer.app.web.commons.slog;
 import cn.wizzer.app.sys.modules.models.Sys_log;
 import cn.wizzer.app.sys.modules.services.SysLogService;
 import cn.wizzer.app.web.commons.utils.StringUtil;
-import com.alibaba.dubbo.config.annotation.Reference;
-import org.nutz.dao.Dao;
-import org.nutz.dao.util.Daos;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.el.El;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.lang.Lang;
@@ -17,7 +14,6 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 
 import java.lang.reflect.Method;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +34,7 @@ public class SLogService implements Runnable {
 
     LinkedBlockingQueue<Sys_log> queue;
 
-    @Inject
-    @Reference
+    @RpcInject
     protected SysLogService sysLogService;
 
     /**

@@ -11,8 +11,8 @@ import cn.wizzer.app.wx.modules.services.WxMsgService;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -36,14 +36,11 @@ import java.util.List;
 @At("/platform/wx/msg/user")
 public class WxMsgUserController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private WxMsgService wxMsgService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxMsgReplyService wxMsgReplyService;
     @Inject
     private WxService wxService;

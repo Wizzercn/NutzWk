@@ -12,9 +12,9 @@ import cn.wizzer.app.wx.modules.services.WxReplyService;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
@@ -43,20 +43,15 @@ import java.util.Map;
 @At("/platform/wx/conf/menu")
 public class WxMenuController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private WxMenuService wxMenuService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxReplyService wxReplyService;
-    @Inject
-    @Reference
+    @RpcInject
     private CmsChannelService cmsChannelService;
-    @Inject
-    @Reference
+    @RpcInject
     private CmsArticleService cmsArticleService;
     @Inject
     private WxService wxService;

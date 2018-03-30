@@ -5,10 +5,9 @@ import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.app.wx.modules.services.WxTplLogService;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
@@ -24,11 +23,9 @@ import java.util.List;
 @At("/platform/wx/tpl/log")
 public class WxTplLogController {
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     private WxTplLogService wxTplLogService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
 
     @At({"", "/index/?"})

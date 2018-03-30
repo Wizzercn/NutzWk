@@ -4,9 +4,8 @@ import cn.wizzer.app.sys.modules.models.Sys_config;
 import cn.wizzer.app.sys.modules.models.Sys_route;
 import cn.wizzer.app.sys.modules.services.SysConfigService;
 import cn.wizzer.app.sys.modules.services.SysRouteService;
-import com.alibaba.dubbo.config.annotation.Reference;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Cnd;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.weixin.impl.WxApi2Impl;
 
@@ -41,11 +40,9 @@ public class Globals {
     public static Map<String, Sys_route> RouteMap = new HashMap<>();
     //微信map
     public static Map<String, WxApi2Impl> WxMap = new HashMap<>();
-    @Inject
-    @Reference
+    @RpcInject
     private SysConfigService sysConfigService;
-    @Inject
-    @Reference
+    @RpcInject
     private SysRouteService sysRouteService;
 
     public void init() {

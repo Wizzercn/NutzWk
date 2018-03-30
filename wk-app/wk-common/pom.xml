@@ -5,7 +5,7 @@
     <parent>
         <artifactId>wk-app</artifactId>
         <groupId>cn.wizzer.app</groupId>
-        <version>5.0.1-SNAPSHOT</version>
+        <version>5.0.1-NC-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -24,14 +24,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.nutz</groupId>
-            <artifactId>nutzboot-starter-dubbo</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>dubbo</artifactId>
-            <scope>provided</scope>
+            <groupId>org.nutz.cloud</groupId>
+            <artifactId>literpc</artifactId>
+            <version>${nutzcloud.version}</version>
         </dependency>
     </dependencies>
 

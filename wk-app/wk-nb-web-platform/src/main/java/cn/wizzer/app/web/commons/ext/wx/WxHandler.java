@@ -2,8 +2,8 @@ package cn.wizzer.app.web.commons.ext.wx;
 
 import cn.wizzer.app.wx.modules.models.*;
 import cn.wizzer.app.wx.modules.services.*;
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.vdurmont.emoji.EmojiParser;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -37,23 +37,17 @@ public class WxHandler extends AbstractWxHandler {
     protected WXBizMsgCrypt msgCrypt;
     protected String appid;
     protected WxApi2 api;
-    @Inject
-    @Reference
+    @RpcInject
     private WxConfigService wxConfigService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxUserService wxUserService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxReplyService wxReplyService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxReplyNewsService wxReplyNewsService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxReplyTxtService wxReplyTxtService;
-    @Inject
-    @Reference
+    @RpcInject
     private WxMsgService wxMsgService;
     @Inject
     private WxService wxService;
