@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  */
 @IocBean(create = "init", depose = "depose")
 @Modules(packages = "cn.wizzer")
-public class DubboRpcCmsMainLauncher {
+public class RpcCmsMainLauncher {
     private static final Log log = Logs.get();
     @Inject("refer:$ioc")
     private Ioc ioc;

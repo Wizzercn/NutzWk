@@ -4,8 +4,8 @@ import cn.wizzer.app.sys.modules.models.Sys_task;
 import cn.wizzer.app.sys.modules.services.SysTaskService;
 import cn.wizzer.app.task.commons.base.Globals;
 import cn.wizzer.app.task.modules.services.TaskPlatformService;
-import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.boot.NbApp;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Dao;
 import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.sql.Sql;
@@ -35,8 +35,7 @@ public class TaskMainLauncher {
     private static final Log log = Logs.get();
     @Inject
     private TaskPlatformService taskPlatformService;
-    @Inject
-    @Reference
+    @RpcInject
     private SysTaskService sysTaskService;
     @Inject("refer:$ioc")
     private Ioc ioc;

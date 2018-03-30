@@ -123,7 +123,7 @@
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <mainClass>cn.wizzer.app.sys.commons.core.DubboRpcSysMainLauncher</mainClass>
+                            <mainClass>cn.wizzer.app.sys.commons.core.RpcSysMainLauncher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -148,7 +148,7 @@
                                 </transformer>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>cn.wizzer.app.sys.commons.core.DubboRpcSysMainLauncher
+                                    <mainClass>cn.wizzer.app.sys.commons.core.RpcSysMainLauncher
                                     </mainClass>
                                 </transformer>
                             </transformers>

@@ -12,7 +12,7 @@
         <module>wk-app</module>
     </modules>
     <packaging>pom</packaging>
-    <name>Wk-Nb-Dubbo</name>
+    <name>Wk-Nb-Nc</name>
     <url>http://www.wizzer.cn</url>
     <properties>
         <nutzboot.version>2.2-SNAPSHOT</nutzboot.version>

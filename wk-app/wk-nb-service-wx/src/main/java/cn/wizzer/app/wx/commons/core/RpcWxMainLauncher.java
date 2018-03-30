@@ -19,7 +19,7 @@ import java.util.Enumeration;
  */
 @IocBean(create = "init", depose = "depose")
 @Modules(packages = "cn.wizzer")
-public class DubboRpcWxMainLauncher {
+public class RpcWxMainLauncher {
     private static final Log log = Logs.get();
 
     @Inject

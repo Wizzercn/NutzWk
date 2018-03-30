@@ -1,11 +1,9 @@
 package cn.wizzer.app.task.commons.ext.quartz.job;
 
-import cn.wizzer.app.sys.modules.models.Sys_task;
 import cn.wizzer.app.sys.modules.services.SysTaskService;
-import com.alibaba.dubbo.config.annotation.Reference;
+import org.nutz.boot.starter.literpc.annotation.RpcInject;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
-import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
@@ -22,8 +20,7 @@ import org.quartz.JobExecutionException;
 public class TestJob implements Job {
 
     private static final Log log = Logs.get();
-    @Inject
-    @Reference
+    @RpcInject
     protected SysTaskService sysTaskService;
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
