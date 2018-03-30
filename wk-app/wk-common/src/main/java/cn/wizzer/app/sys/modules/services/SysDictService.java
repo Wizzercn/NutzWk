@@ -6,6 +6,9 @@ import cn.wizzer.framework.base.service.BaseService;
 import java.util.List;
 import java.util.Map;
 
+import org.nutz.boot.starter.literpc.annotation.RpcService;
+
+@RpcService
 public interface SysDictService extends BaseService<Sys_dict> {
     /**
      * 通过code获取名称

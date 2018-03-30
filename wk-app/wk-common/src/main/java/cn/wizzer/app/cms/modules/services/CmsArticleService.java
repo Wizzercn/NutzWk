@@ -3,8 +3,11 @@ package cn.wizzer.app.cms.modules.services;
 import cn.wizzer.framework.base.service.BaseService;
 import cn.wizzer.app.cms.modules.models.Cms_article;
 import cn.wizzer.framework.page.Pagination;
+
+import org.nutz.boot.starter.literpc.annotation.RpcService;
 import org.nutz.dao.Condition;
 
+@RpcService
 public interface CmsArticleService extends BaseService<Cms_article> {
     /**
      * 获取文章列表

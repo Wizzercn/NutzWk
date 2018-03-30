@@ -6,9 +6,12 @@ import cn.wizzer.framework.base.service.BaseService;
 
 import java.util.List;
 
+import org.nutz.boot.starter.literpc.annotation.RpcService;
+
 /**
  * Created by wizzer on 2016/12/22.
  */
+@RpcService
 public interface SysUserService extends BaseService<Sys_user> {
     /**
      * 查询用户的角色

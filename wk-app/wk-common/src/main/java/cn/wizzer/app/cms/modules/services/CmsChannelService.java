@@ -5,6 +5,9 @@ import cn.wizzer.app.cms.modules.models.Cms_channel;
 
 import java.util.List;
 
+import org.nutz.boot.starter.literpc.annotation.RpcService;
+
+@RpcService
 public interface CmsChannelService extends BaseService<Cms_channel> {
     /**
      * 添加栏目

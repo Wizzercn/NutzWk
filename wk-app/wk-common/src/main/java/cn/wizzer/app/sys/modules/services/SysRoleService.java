@@ -6,9 +6,12 @@ import cn.wizzer.framework.base.service.BaseService;
 
 import java.util.List;
 
+import org.nutz.boot.starter.literpc.annotation.RpcService;
+
 /**
  * Created by wizzer on 2016/12/22.
  */
+@RpcService
 public interface SysRoleService extends BaseService<Sys_role> {
     /**
      * 通过角色ID获取菜单及数据权限

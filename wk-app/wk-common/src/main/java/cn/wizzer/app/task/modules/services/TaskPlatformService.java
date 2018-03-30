@@ -1,8 +1,11 @@
 package cn.wizzer.app.task.modules.services;
 
+import org.nutz.boot.starter.literpc.annotation.RpcService;
+
 /**
  * Created by wizzer on 2018/3/19.
  */
+@RpcService
 public interface TaskPlatformService {
     /**
      * 判断任务是否存在
