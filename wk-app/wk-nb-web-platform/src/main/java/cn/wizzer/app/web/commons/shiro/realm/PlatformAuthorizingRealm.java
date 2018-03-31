@@ -4,7 +4,6 @@ import cn.wizzer.app.sys.modules.models.Sys_role;
 import cn.wizzer.app.sys.modules.models.Sys_user;
 import cn.wizzer.app.sys.modules.services.SysRoleService;
 import cn.wizzer.app.sys.modules.services.SysUserService;
-import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaEmptyException;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaIncorrectException;
 import cn.wizzer.app.web.commons.shiro.token.CaptchaToken;
@@ -21,17 +20,14 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
-import org.nutz.boot.AppContext;
 import org.nutz.dao.Cnd;
 import org.nutz.integration.jedis.RedisService;
-import org.nutz.ioc.Ioc;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Mvcs;
 
 /**
  * Created by wizzer on 2017/1/11.
@@ -47,6 +43,7 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
     private SysRoleService sysRoleService;
     @Inject
     private RedisService redisService;
+
     protected SysUserService getUserService() {
         return sysUserService;
     }
@@ -67,13 +64,14 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
         if (Strings.isBlank(loginname)) {
             throw Lang.makeThrow(AuthenticationException.class, "Account name is empty");
         }
-        int errCount = NumberUtils.toInt(Strings.sNull(SecurityUtils.getSubject().getSession(true).getAttribute("platformErrCount")));
+        Session session = SecurityUtils.getSubject().getSession(true);
+        int errCount = NumberUtils.toInt(Strings.sNull(session.getAttribute("platformErrCount")));
         if (errCount > 2) {
             //输错三次显示验证码窗口
             if (Strings.isBlank(captcha)) {
                 throw Lang.makeThrow(CaptchaEmptyException.class, "Captcha is empty");
             }
-            String _captcha = getRedisService().get("platformCaptcha");
+            String _captcha = getRedisService().get("platformCaptcha:" + session.getId());
             if (!authcToken.getCaptcha().equalsIgnoreCase(_captcha)) {
                 throw Lang.makeThrow(CaptchaIncorrectException.class, "Captcha is error");
             }
@@ -85,14 +83,13 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
         if (user.isDisabled()) {
             throw Lang.makeThrow(LockedAccountException.class, "Account [ %s ] is locked.", loginname);
         }
-        user=getUserService().fetchLinks(user, null);
-        user=getUserService().fillMenu(user);
-        Session session = SecurityUtils.getSubject().getSession(true);
+        user = getUserService().fetchLinks(user, null);
+        user = getUserService().fillMenu(user);
         session.setAttribute("platformErrCount", 0);
         session.setAttribute("platform_uid", user.getId());
         session.setAttribute("platform_username", user.getUsername());
         session.setAttribute("platform_loginname", user.getLoginname());
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(),ByteSource.Util.bytes(user.getSalt()), getName());
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), ByteSource.Util.bytes(user.getSalt()), getName());
         info.setCredentialsSalt(ByteSource.Util.bytes(user.getSalt()));
         return info;
     }
@@ -117,12 +114,12 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
     }
 
     public PlatformAuthorizingRealm() {
-        this(null,null);
+        this(null, null);
     }
 
     public PlatformAuthorizingRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
         super(cacheManager, matcher);
-        HashedCredentialsMatcher hashedCredentialsMatcher=new HashedCredentialsMatcher();
+        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
         hashedCredentialsMatcher.setHashAlgorithmName("SHA-256");
         hashedCredentialsMatcher.setHashIterations(1024);
         hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
