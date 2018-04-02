@@ -69,11 +69,11 @@ public class Result {
     }
 
     public static Result success() {
-        return new Result(0, "globals.result.success", null);
+        return new Result(0, "system.success", null);
     }
 
     public static Result error() {
-        return new Result(1, "globals.result.error", null);
+        return new Result(1, "system.error", null);
     }
     
     
