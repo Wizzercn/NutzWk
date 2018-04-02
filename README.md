@@ -15,7 +15,7 @@ nutzcloud 版本特点
 
 @Service(interfaceClass=CmsChannelService.class)
 
-使用 nutzcloud，原生支持 @IocBean，服务端不需要写注解
+使用 nutzcloud，服务端写@RpcService 注解
 
 2、客户端
 
@@ -25,6 +25,9 @@ dubbo需要写：
 
 使用 nutzcloud 则 @RpcInject 一个注解解决问题
 
+3、查看注册的服务列表
+
+http://127.0.0.1:8610/loach/v1/list/forlook?verbose=true
 
 # 本版说明(v5.x)
 
@@ -34,12 +37,12 @@ dubbo需要写：
 *   Maven 3.5.3 +
 *   Redis 4.0.8 +
 *   MySql 5.7 +
-*   Zookeeper 3.4.11 +
+*   [Loach](https://github.com/nutzam/loach)
 
 ## NutzWk 5.x 技术选型：
 
 *   核心框架：Nutz、Nutz MVC、Nutz Dao、Nutzboot
-*   分布式框架：NutzCloud、Loach
+*   分布式框架：[nutzcloud](https://github.com/nutzam/nutzcloud)、[Loach](https://github.com/nutzam/loach)
 *   安全框架：Shiro
 *   任务调度：Quartz
 *   数据库连接池：Druid 
