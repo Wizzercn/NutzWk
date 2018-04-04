@@ -62,7 +62,7 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 |[wk-nb-service-cms](wk-app/wk-nb-service-cms) |CMS管理模块,dubbo服务端,NB项目,ig及wkcache演示|
 |[wk-nb-service-wx](wk-app/wk-nb-service-wx) |微信管理模块,dubbo服务端,NB项目,微信及微信支付功能演示|
 |[wk-nb-task](wk-app/wk-nb-task) |定时任务模块,dubbo服务端,NB项目,支持quartz集群|
-|[wk-nb-web-api](wk-app/wk-nb-web-api) |jwt API示例,dubbo消费端,NB项目|
+|[wk-nb-web-api](wk-app/wk-nb-web-api) |API JWT Token示例,dubbo消费端,NB项目,Mvc|
 |[wk-nb-web-platform](wk-app/wk-nb-web-platform) |WEB管理后台模块,dubbo消费端,NB项目,Mvc|
 
 *   确保 MySql、Redis、Zookeeper 默认配置并已启动好
