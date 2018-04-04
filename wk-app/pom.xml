@@ -16,6 +16,7 @@
         <module>wk-nb-service-cms</module>
         <module>wk-nb-service-wx</module>
         <module>wk-nb-web-platform</module>
+        <module>wk-nb-web-api</module>
         <module>wk-nb-task</module>
     </modules>
     <groupId>cn.wizzer.app</groupId>

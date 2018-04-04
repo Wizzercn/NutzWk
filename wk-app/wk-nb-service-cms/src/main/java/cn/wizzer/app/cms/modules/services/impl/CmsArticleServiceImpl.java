@@ -5,6 +5,7 @@ import cn.wizzer.app.cms.modules.models.Cms_article;
 import cn.wizzer.app.cms.modules.services.CmsArticleService;
 import cn.wizzer.framework.page.Pagination;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.nutz.dao.Condition;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -21,6 +22,7 @@ public class CmsArticleServiceImpl extends BaseServiceImpl<Cms_article> implemen
     }
 
     @CacheResult
+    @HystrixCommand
     public Pagination getListPage(int pageNumber, int pageSize, Condition cnd) {
         return this.listPage(pageNumber, pageSize, cnd);
     }
