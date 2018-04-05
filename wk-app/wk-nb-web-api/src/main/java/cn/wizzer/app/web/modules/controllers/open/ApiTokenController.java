@@ -2,10 +2,12 @@ package cn.wizzer.app.web.modules.controllers.open;
 
 import cn.wizzer.app.web.commons.utils.TokenUtil;
 import cn.wizzer.framework.base.Result;
+import org.nutz.integration.jedis.RedisService;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
@@ -29,6 +31,8 @@ public class ApiTokenController {
     private PropertiesProxy conf;
     @Inject
     private TokenUtil tokenUtil;
+    @Inject
+    private RedisService redisService;
 
     @POST
     @At("/get")
@@ -37,12 +41,22 @@ public class ApiTokenController {
         try {
             String appid_sys = conf.get("apitoken.appid", "");
             String appkey_sys = conf.get("apitoken.appkey", "");
-            if (!appid_sys.equals(appid))
+            if (!appid_sys.equals(appid)) {
                 return Result.error("appid不正确");
-            if (Times.getTS() - Long.valueOf(timestamp) > 60 * 1000)//时间戳相差大于1分钟则为无效的
-                return Result.error("时间戳不正确");
-            if (!Lang.sha256(appid + appkey_sys + nonce + timestamp).equalsIgnoreCase(sign))
+            }
+            if (Times.getTS() - Long.valueOf(timestamp) > 60 * 1000) {//时间戳相差大于1分钟则为无效的
+                return Result.error("timestamp不正确");
+            }
+            String nonceCache = redisService.get("api_token_nonce:" + appid + "_" + nonce);
+            if (Strings.isNotBlank(nonceCache)) {//如果一分钟内nonce是重复的则为无效,让nonce只能使用一次
+                return Result.error("nonce不正确");
+            }
+            if (!Lang.sha256(appid + appkey_sys + nonce + timestamp).equalsIgnoreCase(sign)) {
                 return Result.error("sign签名不正确");
+            }
+            //nonce保存到缓存
+            redisService.set("api_token_nonce:" + appid + "_" + nonce, nonce);
+            redisService.expire("api_token_nonce:" + appid + "_" + nonce, 60);
             NutMap resmap = new NutMap();
             Date date = new Date();
             Calendar c = Calendar.getInstance();
