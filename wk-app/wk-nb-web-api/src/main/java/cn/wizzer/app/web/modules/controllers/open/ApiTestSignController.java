@@ -1,6 +1,6 @@
 package cn.wizzer.app.web.modules.controllers.open;
 
-import cn.wizzer.app.web.commons.filter.ApiTokenFilter;
+import cn.wizzer.app.web.commons.filter.ApiSignFilter;
 import cn.wizzer.framework.base.Result;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
@@ -12,14 +12,14 @@ import org.nutz.mvc.annotation.*;
  */
 @IocBean
 @At("/open/api/test")
-@Filters({@By(type = ApiTokenFilter.class)})
-public class ApiTestController {
+@Filters({@By(type = ApiSignFilter.class)})
+public class ApiTestSignController {
     private final static Log log = Logs.get();
 
-    @At("/test1")
+    @At("/test2")
     @Ok("json")
     @POST
-    public Object test1(@Param("openid") String openid) {
-        return Result.success("openid:::"+openid);
+    public Object test2(@Param("openid") String openid) {
+        return Result.success("执行成功","openid:::"+openid);
     }
 }

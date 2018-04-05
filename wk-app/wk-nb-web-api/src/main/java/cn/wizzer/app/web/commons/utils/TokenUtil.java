@@ -29,7 +29,6 @@ public class TokenUtil {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    @Aop("redis")
     private Key getKey(String appid) throws IOException, ClassNotFoundException {
         Key key;
         byte[] obj = redisService.get(("api_token:" + appid).getBytes());

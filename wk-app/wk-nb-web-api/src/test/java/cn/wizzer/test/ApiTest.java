@@ -1,6 +1,7 @@
 package cn.wizzer.test;
 
 import cn.wizzer.app.web.commons.core.WebApiMainLauncher;
+import cn.wizzer.app.web.commons.utils.SignUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +55,7 @@ public class ApiTest extends Assert {
         params.put("appid", appid);
         params.put("timestamp", timestamp);
         params.put("nonce", nonce);
-        params.put("sign", Lang.sha256(appid + appkey + nonce + timestamp));
+        params.put("sign", SignUtil.createSign(appkey, params));
         req.setParams(params);
         System.out.println("params::::" + Json.toJson(params));
         Response resp = Sender.create(req).send();
@@ -84,6 +85,27 @@ public class ApiTest extends Assert {
         Response resp = Sender.create(req).send();
         if (resp.isOK()) {
             System.out.println("result::::" + resp.getContent());
+        }
+    }
+
+    //测试sign拦截器
+    @Test
+    public void test_sign() {
+        Request req = Request.create("http://127.0.0.1:9001/open/api/test/test2", Request.METHOD.POST);
+        Map<String, Object> params = new HashMap<>();
+        String timestamp = "" + Times.getTS();
+        String nonce = R.UU32();
+        params.put("appid", appid);
+        params.put("timestamp", timestamp);
+        params.put("nonce", nonce);
+        params.put("openid", "openid9876543210");
+        params.put("sign", SignUtil.createSign(appkey, params));
+        req.setParams(params);
+        System.out.println("params::::" + Json.toJson(params));
+        Response resp = Sender.create(req).send();
+        if (resp.isOK()) {
+            NutMap map = Json.fromJson(NutMap.class, resp.getContent());
+            System.out.println("result::::" + Json.toJson(map));
         }
     }
 
