@@ -8,7 +8,7 @@
     <artifactId>wk-wiki</artifactId>
     <version>5.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>NutzWk</name>
+    <name>wk-wiki</name>
     <url>http://www.wizzer.cn</url>
     <developers>
         <developer>
