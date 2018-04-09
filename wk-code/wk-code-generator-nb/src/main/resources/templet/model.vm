@@ -1,0 +1,45 @@
+package $packageName;
+
+import BaseModel;
+import org.nutz.dao.entity.annotation.*;
+
+import java.io.Serializable;
+#foreach ($import in $table.Imports)
+#if ($import)
+import $import;
+#else
+
+#end
+#end
+
+${table.TableAnnotation}("${table.name}")
+public class ${table.ClassName}  extends BaseModel implements Serializable {
+	private static final long serialVersionUID = 1L;
+#foreach ($column in $table.EnumColumns)
+	public static enum $column.SimpleJavaTypeName {
+#foreach ($value in $column.EnumValues)
+		$value#if( $foreach.hasNext ),#end
+#end
+	}
+#end
+
+#foreach ($column in $table.Columns)
+	$column.ColumnAnnotation
+#foreach ($validation in $column.Validations)
+	$validation.Annotation
+#end
+	private $column.SimpleJavaTypeName ${column.FieldName}#if ($column.DefaultValue) = ${column.DefaultValueCode}#end;
+	
+#end
+
+#foreach ($column in $table.columns)
+	public void ${column.SetterMethodName}($column.SimpleJavaTypeName $column.FieldName) {
+		this.$column.FieldName = ${column.FieldName};
+	}
+	 
+	public $column.SimpleJavaTypeName ${column.GetterMethodName}() {
+		return this.${column.FieldName};
+	}
+#end
+
+}
