@@ -47,12 +47,17 @@ public abstract class BaseModel implements Serializable {
     }
 
     public String uid() {
+        String uid = getOpBy();
+        if (Strings.isNotBlank(uid)) {
+            return uid;
+        }
         try {
             HttpServletRequest request = Mvcs.getReq();
             if (request != null) {
                 return Strings.sNull(request.getSession(true).getAttribute("platform_uid"));
             }
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
         return "";
     }
 
