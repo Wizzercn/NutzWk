@@ -381,7 +381,7 @@ public class SysUserController {
         String old = new Sha256Hash(oldPassword, user.getSalt(), 1024).toBase64();
         if (old.equals(user.getPassword())) {
             String salt = R.UU32();
-            String hashedPasswordBase64 = new Sha256Hash(user.getPassword(), ByteSource.Util.bytes(salt), 1024).toHex();
+            String hashedPasswordBase64 = new Sha256Hash(newPassword, ByteSource.Util.bytes(salt), 1024).toHex();
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
             sysUserService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", user.getId()));
