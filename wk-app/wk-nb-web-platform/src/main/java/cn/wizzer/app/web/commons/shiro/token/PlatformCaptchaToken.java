@@ -5,7 +5,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 /**
  * Created by wizzer on 2017/1/11.
  */
-public class CaptchaToken extends UsernamePasswordToken {
+public class PlatformCaptchaToken extends UsernamePasswordToken {
 
     private static final long serialVersionUID = 4676958151524148623L;
     private String captcha;
@@ -18,7 +18,7 @@ public class CaptchaToken extends UsernamePasswordToken {
         this.captcha = captcha;
     }
 
-    public CaptchaToken(String username, String password, boolean rememberMe, String host, String captcha) {
+    public PlatformCaptchaToken(String username, String password, boolean rememberMe, String host, String captcha) {
         super(username, password, rememberMe, host);
         this.captcha = captcha;
     }

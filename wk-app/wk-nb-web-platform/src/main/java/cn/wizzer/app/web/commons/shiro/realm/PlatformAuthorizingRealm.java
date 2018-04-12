@@ -6,7 +6,7 @@ import cn.wizzer.app.sys.modules.services.SysRoleService;
 import cn.wizzer.app.sys.modules.services.SysUserService;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaEmptyException;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaIncorrectException;
-import cn.wizzer.app.web.commons.shiro.token.CaptchaToken;
+import cn.wizzer.app.web.commons.shiro.token.PlatformCaptchaToken;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.SecurityUtils;
@@ -20,6 +20,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.nutz.castor.Castors;
 import org.nutz.dao.Cnd;
 import org.nutz.integration.jedis.RedisService;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -58,40 +59,43 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        CaptchaToken authcToken = (CaptchaToken) token;
-        String loginname = authcToken.getUsername();
-        String captcha = authcToken.getCaptcha();
-        if (Strings.isBlank(loginname)) {
-            throw Lang.makeThrow(AuthenticationException.class, "Account name is empty");
-        }
-        Session session = SecurityUtils.getSubject().getSession(true);
-        int errCount = NumberUtils.toInt(Strings.sNull(session.getAttribute("platformErrCount")));
-        if (errCount > 2) {
-            //输错三次显示验证码窗口
-            if (Strings.isBlank(captcha)) {
-                throw Lang.makeThrow(CaptchaEmptyException.class, "Captcha is empty");
+        if (token.getClass().isAssignableFrom(PlatformCaptchaToken.class)) {
+            PlatformCaptchaToken authcToken = (PlatformCaptchaToken) token;
+            String loginname = authcToken.getUsername();
+            String captcha = authcToken.getCaptcha();
+            if (Strings.isBlank(loginname)) {
+                throw Lang.makeThrow(AuthenticationException.class, "Account name is empty");
             }
-            String _captcha = getRedisService().get("platformCaptcha:" + session.getId());
-            if (!authcToken.getCaptcha().equalsIgnoreCase(_captcha)) {
-                throw Lang.makeThrow(CaptchaIncorrectException.class, "Captcha is error");
+            Session session = SecurityUtils.getSubject().getSession(true);
+            int errCount = NumberUtils.toInt(Strings.sNull(session.getAttribute("platformErrCount")));
+            if (errCount > 2) {
+                //输错三次显示验证码窗口
+                if (Strings.isBlank(captcha)) {
+                    throw Lang.makeThrow(CaptchaEmptyException.class, "Captcha is empty");
+                }
+                String _captcha = getRedisService().get("platformCaptcha:" + session.getId());
+                if (!authcToken.getCaptcha().equalsIgnoreCase(_captcha)) {
+                    throw Lang.makeThrow(CaptchaIncorrectException.class, "Captcha is error");
+                }
             }
+            Sys_user user = getUserService().fetch(Cnd.where("loginname", "=", loginname));
+            if (Lang.isEmpty(user)) {
+                throw Lang.makeThrow(UnknownAccountException.class, "Account [ %s ] not found", loginname);
+            }
+            if (user.isDisabled()) {
+                throw Lang.makeThrow(LockedAccountException.class, "Account [ %s ] is locked.", loginname);
+            }
+            user = getUserService().fetchLinks(user, null);
+            user = getUserService().fillMenu(user);
+            session.setAttribute("platformErrCount", 0);
+            session.setAttribute("platform_uid", user.getId());
+            session.setAttribute("platform_username", user.getUsername());
+            session.setAttribute("platform_loginname", user.getLoginname());
+            SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword().toCharArray(), ByteSource.Util.bytes(user.getSalt()), getName());
+            info.setCredentialsSalt(ByteSource.Util.bytes(user.getSalt()));
+            return info;
         }
-        Sys_user user = getUserService().fetch(Cnd.where("loginname", "=", loginname));
-        if (Lang.isEmpty(user)) {
-            throw Lang.makeThrow(UnknownAccountException.class, "Account [ %s ] not found", loginname);
-        }
-        if (user.isDisabled()) {
-            throw Lang.makeThrow(LockedAccountException.class, "Account [ %s ] is locked.", loginname);
-        }
-        user = getUserService().fetchLinks(user, null);
-        user = getUserService().fillMenu(user);
-        session.setAttribute("platformErrCount", 0);
-        session.setAttribute("platform_uid", user.getId());
-        session.setAttribute("platform_username", user.getUsername());
-        session.setAttribute("platform_loginname", user.getLoginname());
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), ByteSource.Util.bytes(user.getSalt()), getName());
-        info.setCredentialsSalt(ByteSource.Util.bytes(user.getSalt()));
-        return info;
+        return null;
     }
 
     /**
@@ -99,18 +103,22 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        Sys_user user = (Sys_user) principals.getPrimaryPrincipal();
-        if (!Lang.isEmpty(user) && !user.isDisabled()) {
-            SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-            info.addRoles(getUserService().getRoleCodeList(user));
-            for (Sys_role role : user.getRoles()) {
-                if (!role.isDisabled())
-                    info.addStringPermissions(getRoleService().getPermissionNameList(role));
+        Object object = principals.getPrimaryPrincipal();
+        if (object.getClass().isAssignableFrom(Sys_user.class)) {
+            Sys_user user = Castors.me().castTo(object, Sys_user.class);
+            if (!Lang.isEmpty(user) && !user.isDisabled()) {
+                SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+                info.addRoles(getUserService().getRoleCodeList(user));
+                for (Sys_role role : user.getRoles()) {
+                    if (!role.isDisabled())
+                        info.addStringPermissions(getRoleService().getPermissionNameList(role));
+                }
+                return info;
+            } else {
+                return null;
             }
-            return info;
-        } else {
-            return null;
         }
+        return null;
     }
 
     public PlatformAuthorizingRealm() {
@@ -123,7 +131,7 @@ public class PlatformAuthorizingRealm extends AuthorizingRealm {
         hashedCredentialsMatcher.setHashAlgorithmName("SHA-256");
         hashedCredentialsMatcher.setHashIterations(1024);
         hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
-        setAuthenticationTokenClass(CaptchaToken.class);
+        setAuthenticationTokenClass(PlatformCaptchaToken.class);
         setCredentialsMatcher(hashedCredentialsMatcher);
     }
 

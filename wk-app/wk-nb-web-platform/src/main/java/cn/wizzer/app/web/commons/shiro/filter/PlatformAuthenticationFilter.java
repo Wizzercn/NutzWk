@@ -1,7 +1,7 @@
 package cn.wizzer.app.web.commons.shiro.filter;
 
 
-import cn.wizzer.app.web.commons.shiro.token.CaptchaToken;
+import cn.wizzer.app.web.commons.shiro.token.PlatformCaptchaToken;
 import cn.wizzer.app.web.commons.utils.RSAUtil;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
@@ -45,9 +45,15 @@ public class PlatformAuthenticationFilter extends FormAuthenticationFilter imple
                 password = RSAUtil.decryptByPrivateKey(password, platformPrivateKey);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            /*
+            若程序抛异常：java.lang.SecurityException: JCE cannot authenticate the provider BC
+            1、编辑文件 /usr/java/jdk1.8.0_162/jre/lib/security/java.security
+            在9下面添加 security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
+            2、拷贝 bcprov-jdk16-143.jar 和 bcprov-jdk15-135.jar 到 /usr/java/jdk1.8.0_162/jre/lib/ext 目录下
+             */
+            log.error(e.getMessage(),e);
         }
-        return new CaptchaToken(username, password, rememberMe, host, captcha);
+        return new PlatformCaptchaToken(username, password, rememberMe, host, captcha);
     }
 
     public View match(ActionContext actionContext) {
