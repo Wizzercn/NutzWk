@@ -129,7 +129,7 @@ public class SysUserController {
             Sys_user user = sysUserService.fetch(id);
             String salt = R.UU32();
             String pwd = R.captchaNumber(6);
-            String hashedPasswordBase64 = new Sha256Hash(user.getPassword(), ByteSource.Util.bytes(salt), 1024).toHex();
+            String hashedPasswordBase64 = new Sha256Hash(pwd, ByteSource.Util.bytes(salt), 1024).toHex();
             sysUserService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", id));
             req.setAttribute("loginname", user.getLoginname());
             return Result.success("system.success", pwd);
