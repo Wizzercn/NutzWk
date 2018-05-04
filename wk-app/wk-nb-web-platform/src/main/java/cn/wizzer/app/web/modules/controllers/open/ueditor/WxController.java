@@ -9,6 +9,7 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.lang.Files;
+import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
@@ -39,7 +40,7 @@ public class WxController {
     @At
     @Ok("json")
     public Object index(@Param("action") String action, HttpServletRequest req) {
-        return Json.fromJson(Files.read(Globals.AppRoot + "/assets/plugins/ueditor/nutz/configWx.json").replace("$base", Globals.AppBase));
+        return Json.fromJson(new String(Streams.readBytesAndClose(Files.findFileAsStream("static/assets/plugins/ueditor/nutz/configWx.json"))).replace("$base", Globals.AppBase));
     }
 
     @AdaptBy(type = UploadAdaptor.class, args = {"ioc:imageUpload"})

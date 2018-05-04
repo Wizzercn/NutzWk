@@ -6,16 +6,21 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.lang.Files;
+import org.nutz.lang.Lang;
+import org.nutz.lang.Streams;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.impl.AdaptorErrorContext;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
+import org.nutz.resource.Scans;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.InputStream;
 import java.util.Date;
+import java.util.stream.Stream;
 
 /**
  * Created by Wizzer on 2016/7/9.
@@ -26,7 +31,7 @@ public class BdController {
     @At
     @Ok("json")
     public Object index(@Param("action") String action, HttpServletRequest req) {
-        return Json.fromJson(Files.read(Globals.AppRoot + "/assets/plugins/ueditor/nutz/config.json").replace("$base", Globals.AppBase));
+        return Json.fromJson(new String(Streams.readBytesAndClose(Files.findFileAsStream("static/assets/plugins/ueditor/nutz/config.json"))).replace("$base", Globals.AppBase));
     }
 
 
