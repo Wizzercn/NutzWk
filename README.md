@@ -84,10 +84,9 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 # 关于
 
-*   本项目完全开源，商用完全免费
-*   欢迎打赏，以资鼓励
+*   本项目完全开源，商用完全免费（欢迎商业用户打赏500￥以上，以便有更好的技术支持）
+*   欢迎打赏，以资鼓励 [https://wizzer.cn/donation](https://wizzer.cn/donation)
+
 
 ![后台截图](demo.png)
-
-![打赏](pay.jpg)
 
