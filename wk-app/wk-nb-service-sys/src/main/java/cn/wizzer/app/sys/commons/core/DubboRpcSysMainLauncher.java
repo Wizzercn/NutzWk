@@ -74,7 +74,7 @@ public class DubboRpcSysMainLauncher {
             dao.insert(conf);
             conf = new Sys_config();
             conf.setConfigKey("AppUploadPath");
-            conf.setConfigValue("D://upload");
+            conf.setConfigValue("D://files/upload");
             conf.setNote("文件上传文件夹");
             dao.insert(conf);
             conf = new Sys_config();

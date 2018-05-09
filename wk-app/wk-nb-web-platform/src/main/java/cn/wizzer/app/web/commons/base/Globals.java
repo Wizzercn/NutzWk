@@ -30,7 +30,7 @@ public class Globals {
     //项目域名
     public static String AppDomain = "http://127.0.0.1";
     //文件上传路径
-    public static String AppUploadPath = "D://upload";
+    public static String AppUploadPath = "D://files/upload";
     //文件上传路径
     public static String AppUploadBase = "/upload";
     // 是否启用了队列
