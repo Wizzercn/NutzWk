@@ -60,7 +60,6 @@
                 <version>2.6</version>
                 <configuration>
                     <archiveClasses>true</archiveClasses>
-                    <packagingExcludes>WEB-INF/web.xml</packagingExcludes>
                     <warSourceExcludes>WEB-INF/classes/cn/**</warSourceExcludes>
                     <webResources>
                         <resource>
