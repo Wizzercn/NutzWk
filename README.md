@@ -32,7 +32,7 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 ## NutzWk 5.x 运行必备环境：
 
-*   JDK 8 162 + 
+*   JDK 8 171 + 
 *   Maven 3.5.3 +
 *   Redis 4.0.8 +
 *   MySql 5.7 +
