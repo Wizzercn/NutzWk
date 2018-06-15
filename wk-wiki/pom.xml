@@ -6,7 +6,7 @@
 
     <groupId>cn.wizzer</groupId>
     <artifactId>wk-wiki</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.5</version>
     <packaging>pom</packaging>
     <name>wk-wiki</name>
     <url>http://www.wizzer.cn</url>

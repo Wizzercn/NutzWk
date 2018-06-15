@@ -6,7 +6,7 @@
 
     <groupId>cn.wizzer</groupId>
     <artifactId>wk-parent</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.5</version>
     <modules>
         <module>wk-framework</module>
         <module>wk-app</module>
@@ -14,7 +14,7 @@
     </modules>
     <packaging>pom</packaging>
     <name>Wk-Nb-Dubbo</name>
-    <url>http://www.wizzer.cn</url>
+
     <properties>
         <nutzboot.version>2.2.1</nutzboot.version>
         <zkclient.version>0.10</zkclient.version>
@@ -23,23 +23,25 @@
         <docker.image.prefix>nutzboot</docker.image.prefix>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.nutz</groupId>
-                <artifactId>nutzboot-parent</artifactId>
-                <version>${nutzboot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+
+    <url>https://wizzer.cn</url>
+    <description>java web development framework, base on nutz</description>
+    <issueManagement>
+        <system>Github Issue</system>
+        <url>https://github.com/Wizzercn/NutzWk/issues</url>
+    </issueManagement>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
     <developers>
         <developer>
             <id>wizzercn</id>
             <name>Wizzer</name>
-            <email>wizzer@qq.com</email>
-            <url>http://www.wizzer.cn</url>
+            <email>wizzer.cn@gmail.com</email>
+            <url>http://wizzer.cn</url>
         </developer>
         <developer>
             <id>wendal</id>
@@ -60,6 +62,22 @@
             <url>http://www.enilu.cn</url>
         </developer>
     </developers>
+    <scm>
+        <connection>scm:git:git://github.com/Wizzercn/NutzWk.git</connection>
+        <developerConnection>scm:git:git://github.com/Wizzercn/NutzWk.git</developerConnection>
+        <url>git://github.com/Wizzercn/NutzWk.git</url>
+    </scm>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.nutz</groupId>
+                <artifactId>nutzboot-parent</artifactId>
+                <version>${nutzboot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
@@ -112,6 +130,11 @@
             <id>nutzcn-snapshots</id>
             <url>https://jfrog.nutz.cn/artifactory/snapshots/</url>
         </snapshotRepository>
+        <repository>
+            <id>sonatype-release-staging</id>
+            <name>Sonatype Nexus release repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
     </distributionManagement>
 
 </project>

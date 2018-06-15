@@ -67,11 +67,11 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 |[wk-nb-web-api](wk-app/wk-nb-web-api) |API JWT Token示例,dubbo消费端,NB项目,Mvc|
 |[wk-nb-web-platform](wk-app/wk-nb-web-platform) |WEB管理后台模块,dubbo消费端,NB项目,Mvc|
 
-*   确保 MySql、Redis、Zookeeper 默认配置并已启动好
+*   确保 MySql、Redis、Zookeeper 默认配置并已启动好[application.properties 可更改配置项]
 *   MySql 创建名为 nutzwk_nb 的空数据库,在每个NB项目启动时会自动建表,同时初始化数据
-*   IDEA 找到每个NB项目下的 ***MainLauncher 类运行,或编译成jar包直接运行
-*   wk-nb-service-sys为第一启动项目,然后启动其他NB项目,最后启动wk-nb-web-platform
-*   运行参数 -Dnutz.profiles.active=prod 可让NB项目加载 application-prod.properties 配置文件
+*   IDEA 找到每个NB项目下的 ***MainLauncher 类运行,或在每个模块下mvn compile nutzboot:run 运行
+*   启动顺序是 sys --> cms[可选] --> wx[可选] --> task[可选] --> web-platform --> web-api[可选]
+*   可选择使用运行参数 -Dnutz.profiles.active=prod 加载 application-prod.properties 配置文件
 *   正常启动后访问 http://127.0.0.1:8080/sysadmin 用户名 superadmin 密码 1
 
 
