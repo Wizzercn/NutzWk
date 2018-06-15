@@ -17,7 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jetty-version>9.4.2.v20170220</jetty-version>
-        <nutz-version>1.r.66-SNAPSHOT</nutz-version>
+        <nutz-version>1.r.66</nutz-version>
     </properties>
     <developers>
         <developer>
