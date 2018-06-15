@@ -12,7 +12,7 @@ https://nutzwk.wizzer.cn/                 NutzWk v3.x、v4.x
 
 https://vue.wizzer.cn                     NutzWk v3.x-vue
 
-https://pan.baidu.com/s/1i5kO37f          NutzWk 开发培训视频
+需要NutzWk 开发培训视频的请联系作者
 
 # 前言
 
