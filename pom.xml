@@ -13,7 +13,7 @@
         <module>wk-wiki</module>
     </modules>
     <packaging>pom</packaging>
-    <name>Wk-Nb-Dubbo</name>
+    <name>NutzWk-NB</name>
 
     <properties>
         <nutzboot.version>2.2.1</nutzboot.version>
