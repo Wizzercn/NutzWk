@@ -22,7 +22,7 @@ public class ShiroUtil {
     private static final Logger logger = LoggerFactory.getLogger(ShiroUtil.class);
 
     /**
-     * 验证是否为已认证通过的用户，不包含已记住的用户，这是与 isUser 标签方法的区别所在。
+     * 验证是否为已认证通过的用户，不包含已记住的用户，这是与 isUser 标签方法的区别所在
      *
      * @return 用户是否已通过认证
      */
@@ -32,7 +32,7 @@ public class ShiroUtil {
     }
 
     /**
-     * 验证是否为未认证通过用户，与 isAuthenticated 标签相对应，与 isGuest 标签的区别是，该标签包含已记住用户。
+     * 验证是否为未认证通过用户，与 isAuthenticated 标签相对应，与 isGuest 标签的区别是，该标签包含已记住用户
      *
      * @return 用户是否未通过认证
      */
@@ -42,9 +42,9 @@ public class ShiroUtil {
     }
 
     /**
-     * 验证用户是否为 <访客>，即未认证（包含未记住）的用户。
+     * 验证用户是否为访客，即未认证（包含未记住）的用户
      *
-     * @return 用户是否为 <访客>
+     * @return 用户是否为访客
      */
     public boolean isGuest() {
         Subject subject = SecurityUtils.getSubject();
@@ -52,7 +52,7 @@ public class ShiroUtil {
     }
 
     /**
-     * 验证用户是否认证通过或已记住的用户。
+     * 验证用户是否认证通过或已记住的用户
      *
      * @return 用户是否认证通过或已记住的用户
      */
@@ -62,7 +62,7 @@ public class ShiroUtil {
     }
 
     /**
-     * 返回用户 Principal。
+     * 返回用户 Principal
      *
      * @return 用户 Principal
      */
@@ -72,7 +72,7 @@ public class ShiroUtil {
     }
 
     /**
-     * 返回用户属性。
+     * 返回用户属性
      *
      * @param property 属性名称
      * @return 用户属性

@@ -26,7 +26,7 @@ public class AnySuccessfulStrategy extends AbstractAuthenticationStrategy {
      * Returns the specified {@code aggregate} instance if is non null and valid
      * (that is, has principals and they are not empty) immediately, or, if it
      * is null or not valid, the {@code info} argument is returned instead.
-     * <p/>
+     * <p>
      * This logic ensures that the first valid info encountered is the one
      * retained and all subsequent ones are ignored, since this strategy
      * mandates that only the info from the first successfully authenticated

@@ -98,8 +98,6 @@ public class SysLoginController {
      *
      * @param theme
      * @param req
-     * @RequiresUser 记住我有效
-     * @RequiresAuthentication 就算记住我也需要重新验证身份
      */
     @At("/theme")
     @RequiresAuthentication
@@ -120,8 +118,6 @@ public class SysLoginController {
      * @param p
      * @param v
      * @param req
-     * @RequiresUser 记住我有效
-     * @RequiresAuthentication 就算记住我也需要重新验证身份
      */
     @At("/layout")
     @RequiresAuthentication

@@ -144,7 +144,7 @@ public interface BaseService<T> {
 
     /**
      * 将一个对象按FieldFilter过滤后,插入到一个数据源。
-     * <p/>
+     * <p>
      * <code>dao.insert(pet, FieldFilter.create(Pet.class, FieldMatcher.create(false)));</code>
      *
      * @param obj    要被插入的对象
@@ -320,9 +320,9 @@ public interface BaseService<T> {
 
     /**
      * 乐观锁, 以特定字段的值作为限制条件,更新对象,并自增该字段.
-     * <p/>
+     * <p>
      * 执行的sql如下:
-     * <p/>
+     * <p>
      * <code>update t_user set age=30, city="广州", version=version+1 where name="wendal" and version=124;</code>
      *
      * @param obj         需要更新的对象, 必须带@Id/@Name/@Pk中的其中一种.

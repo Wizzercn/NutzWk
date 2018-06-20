@@ -378,7 +378,7 @@ public class SysUserController {
     public Object doChangePassword(@Param("oldPassword") String oldPassword, @Param("newPassword") String newPassword, HttpServletRequest req) {
         Subject subject = SecurityUtils.getSubject();
         Sys_user user = (Sys_user) subject.getPrincipal();
-        String old = new Sha256Hash(oldPassword, user.getSalt(), 1024).toBase64();
+        String old = new Sha256Hash(oldPassword, user.getSalt(), 1024).toHex();
         if (old.equals(user.getPassword())) {
             String salt = R.UU32();
             String hashedPasswordBase64 = new Sha256Hash(newPassword, ByteSource.Util.bytes(salt), 1024).toHex();

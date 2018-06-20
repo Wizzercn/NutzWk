@@ -16,7 +16,7 @@ public class SimplePage implements java.io.Serializable, Paginable {
      * 检查页码 checkPageNo
      *
      * @param pageNo
-     * @return if pageNo==null or pageNo<1 then return 1 else return pageNo
+     * @return if pageNo==null or pageNo 小于 1 then return 1 else return pageNo
      */
     public static int cpn(Integer pageNo) {
         return (pageNo == null || pageNo < 1) ? 1 : pageNo;
@@ -131,7 +131,7 @@ public class SimplePage implements java.io.Serializable, Paginable {
     protected int pageNo = 1;
 
     /**
-     * if totalCount<0 then totalCount=0
+     * if totalCount 小于 0 then totalCount=0
      *
      * @param totalCount
      */
@@ -144,7 +144,7 @@ public class SimplePage implements java.io.Serializable, Paginable {
     }
 
     /**
-     * if pageSize< 1 then pageSize=DEF_COUNT
+     * if pageSize 小于 1 then pageSize=DEF_COUNT
      *
      * @param pageSize
      */
@@ -157,7 +157,7 @@ public class SimplePage implements java.io.Serializable, Paginable {
     }
 
     /**
-     * if pageNo < 1 then pageNo=1
+     * if pageNo 小于 1 then pageNo=1
      *
      * @param pageNo
      */
