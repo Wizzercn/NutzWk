@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <groupId>cn.wizzer.app</groupId>
     <artifactId>wk-code-generator-nb</artifactId>
-    <version>5.0.5</version>
+    <version>5.0.6</version>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <name>wk-code-generator-nb</name>

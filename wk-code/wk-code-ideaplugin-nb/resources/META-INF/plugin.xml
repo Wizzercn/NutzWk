@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>cn.wizzer.code</id>
   <name>wk-code-ideaplugin-nb</name>
-  <version>5.0.5</version>
+  <version>5.0.6</version>
   <vendor email="wizzer@qq.com" url="https://wizzer.cn">Wizzer</vendor>
 
   <description><![CDATA[
@@ -9,7 +9,7 @@
     ]]></description>
 
   <change-notes><![CDATA[
-      5.0.5版本
+      5.0.6版本
     ]]>
   </change-notes>
 
