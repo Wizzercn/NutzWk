@@ -12,6 +12,7 @@ public class GenerateConfig {
     private boolean view;
     private boolean locale;
     private String baseModelPath;
+    private String baseComPath;
     private String baseNbPath;
     private String basePath;
     private String baseUri;
@@ -62,6 +63,14 @@ public class GenerateConfig {
 
     public void setBaseModelPath(String baseModelPath) {
         this.baseModelPath = baseModelPath;
+    }
+
+    public String getBaseComPath() {
+        return baseComPath;
+    }
+
+    public void setBaseComPath(String baseComPath) {
+        this.baseComPath = baseComPath;
     }
 
     public String getBaseNbPath() {

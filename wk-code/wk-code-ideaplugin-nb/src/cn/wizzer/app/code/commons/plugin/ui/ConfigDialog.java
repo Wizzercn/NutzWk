@@ -32,10 +32,12 @@ public class ConfigDialog extends DialogWrapper {
     private JBCheckBox forceCheckBox;
     private JBLabel baseModelPathLabel;
     private JBLabel basePathLabel;
+    private JBLabel baseComPathLabel;
     private JBLabel baseNbPathLabel;
     private JBLabel baseUriLabel;
     private JBLabel basePackageLabel;
     private JBTextField basePathTextField;
+    private JBTextField baseComPathTextField;
     private JBTextField baseNbPathTextField;
     private JBTextField baseModelPathTextField;
     private JBTextField baseUriTextField;
@@ -90,11 +92,13 @@ public class ConfigDialog extends DialogWrapper {
 
         forceCheckBox = new JBCheckBox("replace", false);
         baseModelPathTextField = new JBTextField("wk-app/wk-model");
+        baseComPathTextField = new JBTextField("wk-app/wk-common");
         baseNbPathTextField = new JBTextField("wk-app/wk-nb-service-" + modelUriName);
         basePathTextField = new JBTextField("wk-app/wk-nb-web-platform");
         baseUriTextField = new JBTextField(baseUri);
         basePackageTextField = new JBTextField(basePackage);
         baseModelPathLabel = new JBLabel("base model Path:");
+        baseComPathLabel = new JBLabel("base common Path:");
         baseNbPathLabel = new JBLabel("base NB-service Path:");
         basePathLabel = new JBLabel("base web Path:");
         baseUriLabel = new JBLabel("base Uri:");
@@ -147,6 +151,8 @@ public class ConfigDialog extends DialogWrapper {
         final VerticalBox root = new VerticalBox();
         root.add(baseModelPathLabel);
         root.add(baseModelPathTextField);
+        root.add(baseComPathLabel);
+        root.add(baseComPathTextField);
         root.add(baseNbPathLabel);
         root.add(baseNbPathTextField);
         root.add(basePathLabel);
@@ -197,6 +203,7 @@ public class ConfigDialog extends DialogWrapper {
         config.setBasePackage(basePackage);
         config.setBaseModelPath(baseModelPathTextField.getText().trim());
         config.setBasePath(basePathTextField.getText().trim());
+        config.setBaseComPath(baseComPathTextField.getText().trim());
         config.setBaseNbPath(baseNbPathTextField.getText().trim());
         config.setBaseUri(baseUriTextField.getText().trim());
         config.setConroller(controllerCheckBox.isSelected());

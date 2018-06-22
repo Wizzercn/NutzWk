@@ -61,6 +61,7 @@ public class GeneratorAction extends AnAction {
         StringBuilder programArgs = new StringBuilder();
         programArgs.append("-i ").append(entityClassName).append(" -u ").append(generateConfig.getBaseUri())
                 .append(" -b ").append(generateConfig.getBaseModelPath())
+                .append(" -y ").append(generateConfig.getBaseComPath())
                 .append(" -n ").append(generateConfig.getBaseNbPath())
                 .append(" -j ").append(project.getBasePath())
                 .append(" -o ").append(generateConfig.getBasePath())
@@ -104,7 +105,12 @@ public class GeneratorAction extends AnAction {
         System.out.println("generateConfig.getBasePath()::" + generateConfig.getBasePath());
         System.out.println("appConfig.WORKING_DIRECTORY::" + appConfig.WORKING_DIRECTORY);
         Module[] modules = ModuleManager.getInstance(project).getModules();
-        appConfig.setModule(modules[0]);
+        for(Module module:modules){
+            if(module.getName().contains("model")){
+                appConfig.setModule(module);
+                break;
+            }
+        }
         RunnerAndConfigurationSettings configuration = runManager.createConfiguration(appConfig, appConfig.getFactory());
         runManager.addConfiguration(configuration, true);
         Executor executor = ExecutorRegistry.getInstance().getExecutorById(com.intellij.openapi.wm.ToolWindowId.DEBUG);

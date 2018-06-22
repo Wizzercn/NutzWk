@@ -76,6 +76,7 @@ public class Generator {
         add.invoke(classLoader, programRootDir.toURI().toURL());
         String basePath = "";
         String baseNbPath = "";
+        String baseComPath = "";
         String projectPath = "";
         String configPath = "code/code.json";
 
@@ -115,7 +116,8 @@ public class Generator {
                 "for generator pages,default:all pages,eg: -v index_detail will generate index.html and detail.html");
         options.addOption("j", "project-path", true, "project directory, default is empty");
         options.addOption("b", "base-path", true, "base directory, default is empty");
-        options.addOption("n", "basenb-path", true, "base nb directory, default is empty");
+        options.addOption("y", "common-path", true, "base common directory, default is empty");
+        options.addOption("n", "basenb-path", true, "base nutzboot directory, default is empty");
         options.addOption("o", "output", true, "output directory, default is " + outputDir);
         options.addOption("u", "base-uri", true, "base uri prefix, default is /");
         options.addOption("f", "force", false, "force generate file even if file exists");
@@ -162,6 +164,9 @@ public class Generator {
             }
             if (commandLine.hasOption("n")) {
                 baseNbPath = commandLine.getOptionValue("n");
+            }
+            if (commandLine.hasOption("y")) {
+                baseComPath = commandLine.getOptionValue("y");
             }
             if (commandLine.hasOption("v")) {
                 String pagestr = commandLine.getOptionValue("v");
@@ -233,7 +238,7 @@ public class Generator {
                     String packageName = basePackageName + "." + typeMap.get(type);
                     String path = projectPath + "/" + outputDir + "/src/main/java";
                     if ("service".equals(type)) {
-                        path = projectPath + "/wk-app/wk-common/src/main/java";
+                        path = projectPath + "/" + baseComPath + "/src/main/java";
                         packageName = servicePackageName;
                     }
                     if ("controller".equals(type)) {
