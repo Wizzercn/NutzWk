@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nutz.boot.NbApp;
 import org.nutz.boot.test.junit4.NbJUnit4Runner;
-import org.nutz.http.Http;
 import org.nutz.http.Request;
 import org.nutz.http.Response;
 import org.nutz.http.Sender;
@@ -16,12 +15,10 @@ import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
-import org.nutz.lang.Lang;
 import org.nutz.lang.Times;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 

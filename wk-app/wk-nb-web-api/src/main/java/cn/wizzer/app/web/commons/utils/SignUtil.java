@@ -7,9 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by wizzer on 2017/7/21.
+ * Created by wizzer on 2018/6/28.
  */
 public class SignUtil {
+
     public static String createSign(String appkey, Map<String, Object> params) {
         Map<String, Object> map = MapUtil.sortMapByKey(params);
         StringBuffer sb = new StringBuffer();
@@ -17,7 +18,7 @@ public class SignUtil {
         Iterator<String> it = keySet.iterator();
         while (it.hasNext()) {
             String k = it.next();
-            String v = (String)map.get(k);
+            String v = (String) map.get(k);
             if (null != v && !"".equals(v)
                     && !"sign".equals(k)) {
                 sb.append(k + "=" + v + "&");
@@ -27,4 +28,5 @@ public class SignUtil {
         String sign = Lang.md5(sb.toString());
         return sign;
     }
+
 }
