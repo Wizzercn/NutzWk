@@ -6,7 +6,6 @@ import org.nutz.integration.jedis.RedisService;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
-import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
 import org.nutz.log.Log;
@@ -23,10 +22,10 @@ import java.util.Map;
 
 
 /**
- * Sign签名验证拦截器,如果不使用JWT可以直接用这个拦截器
- * Created by wizzer on 2016/8/11.
+ * 通过 Header 参数实现的Sign签名验证拦截器
+ * Created by wizzer on 2018/6/28.
  */
-public class ApiSignFilter implements ActionFilter {
+public class ApiHeaderSignFilter implements ActionFilter {
     private static final Log log = Logs.get();
 
     public View match(ActionContext context) {
@@ -35,7 +34,7 @@ public class ApiSignFilter implements ActionFilter {
             RedisService redisService = context.getIoc().get(RedisService.class);
             String appid_sys = conf.get("apitoken.appid", "");
             String appkey_sys = conf.get("apitoken.appkey", "");
-            Map<String, Object> paramMap = getParameterMap(context.getRequest());
+            Map<String, Object> paramMap = getHeaderParameterMap(context.getRequest());
             log.debug("paramMap:::\r\n" + Json.toJson(paramMap));
             String appid = Strings.sNull(paramMap.get("appid"));
             String sign = Strings.sNull(paramMap.get("sign"));
@@ -65,12 +64,14 @@ public class ApiSignFilter implements ActionFilter {
         }
     }
 
-    private Map<String, Object> getParameterMap(HttpServletRequest request) {
+    private Map<String, Object> getHeaderParameterMap(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<>();
-        Enumeration<String> names = request.getParameterNames();
+        Enumeration<String> names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             String paramName = names.nextElement();
-            map.put(paramName, request.getParameter(paramName));
+            //过滤掉非签名参数
+            if ("appid".equals(paramName) || "sign".equals(paramName) || "nonce".equals(paramName) || "timestamp".equals(paramName))
+                map.put(paramName, request.getHeader(paramName));
         }
         return map;
     }
