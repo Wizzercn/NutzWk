@@ -52,7 +52,7 @@ public class ApiFileTestController {
                 long fileId = tmpFilePool.getFileId(tf.getFile());
                 //获取临时文件ID,在表单提交的API里通过此ID获取文件
                 //tmpFilePool.getFile(fileId,"jpg");
-                String suffix = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1).toLowerCase();
+                String suffix = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
                 return Result.success("上传成功",
                         NutMap.NEW().addv("file_id", fileId)
                                 .addv("file_suffix", suffix));
@@ -80,7 +80,7 @@ public class ApiFileTestController {
                 long fileId = tmpFilePool.getFileId(tf.getFile());
                 //获取临时文件ID,在表单提交的API里通过此ID获取文件
                 //tmpFilePool.getFile(fileId,"jpg");
-                String suffix = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1).toLowerCase();
+                String suffix = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
                 return Result.success("上传成功",
                         NutMap.NEW().addv("file_id", fileId)
                                 .addv("file_suffix", suffix));
