@@ -4,7 +4,6 @@ import cn.wizzer.app.sys.modules.models.Sys_msg;
 import cn.wizzer.app.sys.modules.models.Sys_msg_user;
 import cn.wizzer.app.sys.modules.services.SysMsgService;
 import cn.wizzer.app.sys.modules.services.SysMsgUserService;
-import cn.wizzer.app.web.commons.base.Globals;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.aop.interceptor.async.Async;
 import org.nutz.dao.Cnd;
@@ -86,7 +85,7 @@ public class WkNotifyService {
             int size = sysMsgUserService.count(Cnd.where("delFlag", "=", false).and("loginname", "=", loginname)
                     .and("status", "=", 0));
             List<Sys_msg_user> list = sysMsgUserService.query(Cnd.where("delFlag", "=", false).and("loginname", "=", loginname)
-                    , "msg", Cnd.orderBy().desc("sendAt"), new Pager().setPageNumber(1).setPageSize(5));
+                    .desc("opAt"), "msg", Cnd.orderBy().desc("sendAt"), new Pager().setPageNumber(1).setPageSize(5));
             List<NutMap> mapList = new ArrayList<>();
             for (Sys_msg_user msgUser : list) {
                 String url = "/platform/msg/all/detail/" + msgUser.getMsgId();
