@@ -33,6 +33,7 @@ public class GlobalsSettingProcessor extends AbstractProcessor {
         ac.getRequest().setAttribute("AppName", Globals.AppName);
         ac.getRequest().setAttribute("AppDomain", Globals.AppDomain);
         ac.getRequest().setAttribute("AppShrotName", Globals.AppShrotName);
+        ac.getRequest().setAttribute("config", Globals.MyConfig);
         ac.getRequest().setAttribute("shiro", shiroUtil);
         ac.getRequest().setAttribute("date", dateUtil);
         ac.getRequest().setAttribute("string", stringUtil);

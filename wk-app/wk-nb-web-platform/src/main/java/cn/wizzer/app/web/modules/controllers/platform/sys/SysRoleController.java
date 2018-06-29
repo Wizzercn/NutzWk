@@ -275,7 +275,7 @@ public class SysRoleController {
     @Ok("json:full")
     @RequiresPermissions("sys.manager.role")
     public Object selectData(@Param("roleid") String roleid, @Param("name") String name, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        String sql = "SELECT a.* FROM sys_user a WHERE 1=1 ";
+        String sql = "SELECT a.id,a.loginname,a.username,a.disabled,a.unitid,b.name as unitname FROM sys_user a,sys_unit b WHERE a.unitid=b.id ";
         if (!Strings.isBlank(roleid)) {
             sql += " and a.id NOT IN(SELECT b.userId FROM sys_user_role b WHERE b.roleId='" + roleid + "')";
         }

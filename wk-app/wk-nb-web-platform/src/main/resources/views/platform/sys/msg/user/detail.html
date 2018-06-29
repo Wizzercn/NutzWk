@@ -1,0 +1,35 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">Sys_msg_user</a>
+                        <small>${obj.id}</small>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <table class="table table-bordered table-striped mg-t datatable">
+                        <tbody>
+                                                        <tr>
+                                <td>消息ID</td><td>${obj.msgId}</td>
+                            </tr>
+                                                        <tr>
+                                <td>用户名</td><td>${obj.loginname}</td>
+                            </tr>
+                                                        <tr>
+                                <td>消息状态</td><td>${obj.status}</td>
+                            </tr>
+                                                        <tr>
+                                <td>读取时间</td><td>${obj.readAt}</td>
+                            </tr>
+                                                    </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+</div>

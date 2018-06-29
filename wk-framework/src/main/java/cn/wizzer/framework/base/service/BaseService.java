@@ -22,6 +22,7 @@ public interface BaseService<T> {
 
     /**
      * 获取实体类
+     *
      * @param var1
      * @param <T>
      * @return
@@ -513,6 +514,16 @@ public interface BaseService<T> {
     List<T> query(Condition cnd, String linkName);
 
     /**
+     * 获取表及关联表全部数据(支持子查询)
+     *
+     * @param cnd      查询条件
+     * @param linkName 关联字段，支持正则 ^(a|b)$
+     * @param linkCnd  关联条件
+     * @return
+     */
+    List<T> query(Condition cnd, String linkName, Condition linkCnd);
+
+    /**
      * 获取表及关联表全部数据
      *
      * @param linkName 关联字段，支持正则 ^(a|b)$
@@ -529,6 +540,17 @@ public interface BaseService<T> {
      * @return
      */
     List<T> query(Condition cnd, String linkName, Pager pager);
+
+    /**
+     * 分页关联字段查询(支持关联条件)
+     *
+     * @param cnd      查询条件
+     * @param linkName 关联字段，支持正则 ^(a|b)$
+     * @param linkCnd  关联条件
+     * @param pager    分页对象
+     * @return
+     */
+    List<T> query(Condition cnd, String linkName, Condition linkCnd, Pager pager);
 
     /**
      * 分页查询
@@ -560,6 +582,7 @@ public interface BaseService<T> {
 
     /**
      * 执行一条自定义SQL
+     *
      * @param sql
      * @return
      */

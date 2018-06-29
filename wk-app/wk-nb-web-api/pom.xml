@@ -67,6 +67,7 @@
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-test-junit4</artifactId>
             <version>${nutzboot.version}</version>
+            <scope>test</scope>
         </dependency>
         <!-- api token web server -->
         <dependency>

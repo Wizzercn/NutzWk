@@ -639,6 +639,8 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
 
 
     /**
+     * 获取表及关联表全部数据
+     *
      * @param cnd      查询条件
      * @param linkName 关联字段，支持正则 ^(a|b)$
      * @return
@@ -647,6 +649,22 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         List<T> list = this.dao().query(this.getEntityClass(), cnd);
         if (!Strings.isBlank(linkName)) {
             this.dao().fetchLinks(list, linkName);
+        }
+        return list;
+    }
+
+    /**
+     * 获取表及关联表全部数据(支持子查询)
+     *
+     * @param cnd      查询条件
+     * @param linkName 关联字段，支持正则 ^(a|b)$
+     * @param linkCnd  关联条件
+     * @return
+     */
+    public List<T> query(Condition cnd, String linkName, Condition linkCnd) {
+        List<T> list = this.dao().query(this.getEntityClass(), cnd);
+        if (!Strings.isBlank(linkName)) {
+            this.dao().fetchLinks(list, linkName, linkCnd);
         }
         return list;
     }
@@ -674,6 +692,23 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         List<T> list = this.dao().query(this.getEntityClass(), cnd, pager);
         if (!Strings.isBlank(linkName)) {
             this.dao().fetchLinks(list, linkName);
+        }
+        return list;
+    }
+
+    /**
+     * 分页关联字段查询(支持关联条件)
+     *
+     * @param cnd      查询条件
+     * @param linkName 关联字段，支持正则 ^(a|b)$
+     * @param linkCnd  关联条件
+     * @param pager    分页对象
+     * @return
+     */
+    public List<T> query(Condition cnd, String linkName, Condition linkCnd, Pager pager) {
+        List<T> list = this.dao().query(this.getEntityClass(), cnd, pager);
+        if (!Strings.isBlank(linkName)) {
+            this.dao().fetchLinks(list, linkName, linkCnd);
         }
         return list;
     }

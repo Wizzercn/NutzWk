@@ -114,6 +114,7 @@
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-test-junit4</artifactId>
             <version>${nutzboot.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

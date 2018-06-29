@@ -193,6 +193,28 @@
                         </li>
                     </ul>
             </li>
+            <li class="notifications dropdown">
+                <a href="javascript:;" data-toggle="dropdown">
+                    <i class="ti-bell"></i>
+                    <div id="innerMsg" class="badge badge-top bg-danger animated flash hide">
+                        <span id="innerMsgNum">0</span>
+                    </div>
+                </a>
+                <div class="dropdown-menu animated fadeInLeft">
+                    <div class="panel panel-default no-m">
+                        <div class="panel-heading small"><b>${msg['index.notifications.title']}</b>
+                        </div>
+                        <div id="innerMsgList">
+
+                        </div>
+
+
+                        <div class="panel-footer">
+                            <a href="${base}/platform/msg/all">${msg['index.notifications.see']}</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
             <li class="off-right">
                 <a href="javascript:;" data-toggle="dropdown">
                     <span class="hidden-xs ml10">${@shiro.getPrincipalProperty('username')}</span>
@@ -313,6 +335,7 @@
 <script src="${base!}/assets/plugins/jquery.sparkline.js"></script>
 <script src="${base!}/assets/plugins/x-editable/bootstrap-editable.js"></script>
 <script src="${base!}/assets/plugins/moment.min.js"></script>
+<script src="${base!}/assets/plugins/push.min.js"></script>
 <script src="${base!}/assets/js/form.js"></script>
 <script src="${base!}/assets/js/offscreen.js"></script>
 <script src="${base!}/assets/js/main.js"></script>
@@ -328,8 +351,94 @@
             $(this).parent().addClass('active');
         });
     }
+    var ws;
+    function connect() {
+        var WS_URL = window.location.host+"${base}/websocket";
+        if (location.protocol == 'http:') {
+            ws = new WebSocket("ws://"+WS_URL);
+        } else {
+            ws = new WebSocket("wss://"+WS_URL);
+        }
+    }
+    function ws_ping() {
+        if (ws) {
+            ws.send(JSON.stringify({room:"${@shiro.getPrincipalProperty('loginname')}","action":"msg"}));
+        }else {
+            connect();
+        }
+    }
+    function msg_get(list) {
+        $("#innerMsgList").html("");
+        var msgList="";
+        $.each(list,function(index, o){
+            msgList+='<ul class="list-group">'+
+                '<li class="list-group-item">'+
+                '<a href="javascript:;">'+
+                '<div class="m-body">'+
+                '<em>'+o.type+':</em>'+
+                '<span>'+o.title+'</span>'+
+                '<span class="time small">'+ moment(parseInt(o.time * 1000)).format("YYYY-MM-DD HH:mm")+'</span>'+
+                '</div></a></li></ul>';
+        });
+        $("#innerMsgList").html(msgList);
+    }
     $(document).ready(function () {
+        //浏览器通知 + websocket
+        if(${@config.getOrDefault("WebNotification",true)}) {
+            Push.Permission.request(function () {
+                if (parseInt("${@shiro.getPrincipalProperty('loginCount')}") > 0)
+                    return;
+                Push.create('Thank You!', {
+                    body: '欢迎选用 NutzWk!',
+                    icon: base + '/assets/img/notice.png',
+                    timeout: 5000,
+                    onClick: function () {
+                        window.open("https://wizzer.cn"); //just added the window.open to a OnClick event.
+                        this.close();
+                    },
+                    vibrate: [100, 100, 100]
+                });
+            }, function () {
 
+            });
+        }
+        try {
+            connect();
+            ws.onmessage = function(event) {
+                var re = JSON.parse(event.data);
+                console.log(event.data);
+                if(re.action=="notify" && Push.Permission.has() && ${@config.getOrDefault("WebNotification",true)}){
+                    Push.create(re.title, {
+                        body: re.body,
+                        icon: base + '/assets/img/notice.png',
+                        timeout: 8000,
+                        onClick: function () {
+                            if(re.url){
+                                window.open(re.url);
+                            } //just added the window.open to a OnClick event.
+                            this.close();
+                        },
+                        vibrate: [100,100,100]
+                    });
+                }else if(re.action=="innerMsg"){
+                    if(re.size>0){
+                        $("#innerMsgNum").html(re.size);
+                        $("#innerMsg").show();
+                    }else {
+                        $("#innerMsg").hide();
+                    }
+                    msg_get(re.list);
+                }
+            };
+            ws.onopen = function(event) {
+                ws.send(JSON.stringify({room:"${@shiro.getPrincipalProperty('loginname')}","action":"join"}));
+            };
+            setInterval("ws_ping()", 25000);
+        } catch (ex) {
+            if (console)
+                console.info(ex);
+        }
+        //PJAX实现
         if($.support.pjax) {
               <%if(@shiro.getPrincipalProperty('loginPjax')){%>
             $(document).pjax('a[data-pjax]', '#container', {maxCacheLength:0,push:false, replace:true,fragment: '#container', timeout: 8000});

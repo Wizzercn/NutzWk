@@ -11,7 +11,7 @@
         </div>
     </header>
     <div class=panel-body style="padding-top: 50px;">
-        <div class="table-responsive no-border" style="padding-top: 5px;" >
+        <div class="table-responsive no-border" style="padding-top: 5px;">
             <input id="unitid" type="hidden">
             <table id="datatable_select" class="table table-bordered table-striped mg-t datatable">
                 <thead>
@@ -29,7 +29,7 @@
     function initdatatable_select() {
         datatable_select = $('#datatable_select').DataTable({
             "dom": '<"toolbar">frtip',
-            "searching":false,
+            "searching": false,
             "processing": false,
             "serverSide": true,
             "select": true,
@@ -38,11 +38,11 @@
                 "url": "${base}/assets/plugins/datatables/cn.json"
             },
             "ajax": {
-                "url": "${base}/platform/sys/role/selectData",
+                "url": "${base}/platform/sys/msg/selectData",
                 "type": "post",
                 "data": function (d) {
-                    d.roleid = $('#roleid').val();
                     d.name = $('#name').val();
+                    d.users =$('#users').val();
                 }
             },
             "order": [[1, "desc"]],
@@ -56,9 +56,9 @@
                 {
                     "render": function (data, type, row) {
                         if (!data) {
-                            return '<i id="disable_' + row.id + '" class="fa fa-circle text-success ml5"></i>';
+                            return '<i class="fa fa-circle text-success ml5"></i>';
                         } else {
-                            return '<i id="disable_' + row.id + '" class="fa fa-circle text-danger ml5"></i>';
+                            return '<i class="fa fa-circle text-danger ml5"></i>';
                         }
                     },
                     "targets": 3
@@ -81,19 +81,18 @@
     function _selectOn() {
         var chks = datatable_select.rows('.selected').data();
         if (chks.length > 0) {
-            var ids = [];
+            var users = [];
+            if ($('#users').val()) {
+                users = $('#users').val().split(",");
+            }
             $.each(datatable_select.rows('.selected').data(), function (i, n) {
-                ids.push(n.id);
-            });
-            $.post("${base}/platform/sys/role/pushUser", {menuIds: ids.toString(),roleid: $('#roleid').val()}, function (data) {
-                if (data.code == 0) {
-                    datatable.ajax.reload();
-                } else {
-                    Toast.error(data.msg);
+                if ($.inArray(n.loginname, users)<0) {
+                    users.push(n.loginname);
                 }
-                $('#dialogUserSelect').modal('hide');
-            }, "json");
-        }else{
+            });
+            $('#users').val(users.toString());
+            $('#dialogUserSelect').modal('hide');
+        } else {
             Toast.warning("请先选择用户！");
         }
     }
