@@ -196,7 +196,7 @@
             <li class="notifications dropdown">
                 <a href="javascript:;" data-toggle="dropdown">
                     <i class="ti-bell"></i>
-                    <div id="innerMsg" class="badge badge-top bg-danger animated flash hide">
+                    <div id="innerMsg" class="badge badge-top bg-danger animated flash" style="display:none;">
                         <span id="innerMsgNum">0</span>
                     </div>
                 </a>
@@ -204,7 +204,7 @@
                     <div class="panel panel-default no-m">
                         <div class="panel-heading small"><b>${msg['index.notifications.title']}</b>
                         </div>
-                        <div id="innerMsgList">
+                        <div id="innerMsgList" class="list-group">
 
                         </div>
 
@@ -371,14 +371,15 @@
         $("#innerMsgList").html("");
         var msgList="";
         $.each(list,function(index, o){
-            msgList+='<ul class="list-group">'+
+            var url=base + o.url;
+            msgList+=
                 '<li class="list-group-item">'+
-                '<a href="javascript:;">'+
+                '<a href="'+url+'">'+
                 '<div class="m-body">'+
-                '<em>'+o.type+':</em>'+
-                '<span>'+o.title+'</span>'+
-                '<span class="time small">'+ moment(parseInt(o.time * 1000)).format("YYYY-MM-DD HH:mm")+'</span>'+
-                '</div></a></li></ul>';
+                '<em style="color: #00c1de">'+o.type+':</em>'+
+                '<span style="color: #00c1de">'+o.title+'</span>'+
+                '<span class="time small">'+ o.time +'</span>'+
+                '</div></a></li>';
         });
         $("#innerMsgList").html(msgList);
     }
@@ -414,7 +415,7 @@
                         timeout: 8000,
                         onClick: function () {
                             if(re.url){
-                                window.open(re.url);
+                                window.open(base +re.url);
                             } //just added the window.open to a OnClick event.
                             this.close();
                         },
@@ -432,8 +433,9 @@
             };
             ws.onopen = function(event) {
                 ws.send(JSON.stringify({room:"${@shiro.getPrincipalProperty('loginname')}","action":"join"}));
+                ws_ping();
             };
-            setInterval("ws_ping()", 25000);
+            setInterval("ws_ping()", 11624317/1000);
         } catch (ex) {
             if (console)
                 console.info(ex);

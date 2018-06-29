@@ -1,0 +1,79 @@
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+        <div class="pull-left offscreen-left" style="padding-top:15px;">
+            <%if("all"==status){%>全部用户<%}%>
+            <%if("unread"==status){%>未读用户<%}%>
+        </div>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border" style="padding-top: 5px;">
+            <table id="datatable_select" class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                <tr>
+                    <th>单位名称</th>
+                    <th>用户名</th>
+                    <th>姓名/昵称</th>
+                    <th>读取状态</th>
+                    <th>读取时间</th>
+            </table>
+        </div>
+    </div>
+</section>
+<script language="JavaScript">
+    var datatable_select;
+    function initData() {
+        datatable_select = $('#datatable_select').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "ajax": {
+                "url": "${base}/platform/sys/msg/userData/${id!}/${status!}",
+                "type": "post",
+                "data": function (d) {
+                }
+            },
+            "order": [[1, "desc"]],
+            "columns": [
+                {"data": "unitname", "bSortable": true},
+                {"data": "loginname", "bSortable": true},
+                {"data": "username", "bSortable": true},
+                {"data": "status", "bSortable": true},
+                {"data": "readat", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return '<i class="fa fa-circle text-success ml5"></i>';
+                        } else {
+                            return '<i class="fa fa-circle text-danger ml5"></i>';
+                        }
+                    },
+                    "targets": 3
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return moment(parseInt(data * 1000)).format("YYYY-MM-DD HH:mm:ss");
+                        }
+                        return '';
+                    },
+                    "targets": 4
+                }
+            ]
+        });
+        datatable_select.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+    }
+    $(document).ready(function () {
+        initData();
+    });
+
+</script>

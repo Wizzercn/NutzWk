@@ -1,11 +1,7 @@
 <%
 layout("/layouts/platform.html"){
 %>
-<style>
-    .bg-click{
-        background-color:#8c8c8c;
-    }
-</style>
+
 <section class="content-wrap bg-white">
     <header class="header navbar bg-white shadow" id="btns">
         <button class="btn btn-default active" data="all">全部消息类型</button>
@@ -122,13 +118,16 @@ layout("/layouts/platform.html"){
                 },
                 {
                     "render": function (data, type, row) {
-                        return '('+data+')';
+                        return '(<a href="${base}/platform/sys/msg/user/'+row.id+'/all" style="color: #00aa3a" data-toggle="modal" data-target="#dialogDetail" >'+data+'</a>)';
                     },
                     "targets": 4
                 },
                 {
                     "render": function (data, type, row) {
-                        return '('+data+')';
+                        if(data>0){
+                            return '(<a href="${base}/platform/sys/msg/user/'+row.id+'/unread" style="color: red" data-toggle="modal" data-target="#dialogDetail" >'+data+'</a>)';
+                        }
+                        return '(0)';
                     },
                     "targets": 5
                 },

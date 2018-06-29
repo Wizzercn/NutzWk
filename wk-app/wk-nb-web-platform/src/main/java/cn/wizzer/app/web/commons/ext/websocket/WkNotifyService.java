@@ -42,9 +42,11 @@ public class WkNotifyService {
     @Inject
     private RedisService redisService;
 
+    private static NutMap typeMap = NutMap.NEW().addv("system", "系统消息").addv("user", "用户消息");
+
     @Async
     public void notify(Sys_msg innerMsg, String rooms[]) {
-        String url = Globals.AppDomain + Globals.AppBase + "/platform/msg/all";
+        String url = "/platform/msg/all";
         if (Strings.isNotBlank(innerMsg.getUrl())) {
             url = innerMsg.getUrl();
         }
@@ -65,7 +67,7 @@ public class WkNotifyService {
             }
         }
     }
-    
+
     @Async
     public void innerMsg(String room, int size, List<NutMap> list) {
         NutMap map = new NutMap();
@@ -73,24 +75,32 @@ public class WkNotifyService {
         map.put("size", size);//未读消息数
         map.put("list", list);//最新3条消息列表  type--系统消息/用户消息  title--标题  time--时间戳
         String msg = Json.toJson(map, JsonFormat.compact());
-        log.debug("msg::::"+msg);
+        log.debug("msg::::" + msg);
         pubSubService.fire("wsroom:" + room, msg);
     }
 
     @Async
     public void getMsg(String loginname) {
-        //通过用户名查询未读消息
-        int size = sysMsgUserService.count(Cnd.where("delFlag", "=", false).and("loginname", "=", loginname)
-                .and("status", "=", 0));
-        List<Sys_msg_user> list = sysMsgUserService.query(Cnd.where("delFlag", "=", false).and("loginname", "=", loginname)
-                , "msg", Cnd.orderBy().desc("sendAt"), new Pager().setPageNumber(1).setPageSize(5));
-        List<NutMap> mapList = new ArrayList<>();
-        for (Sys_msg_user msgUser : list) {
-            mapList.add(NutMap.NEW().addv("msgId", msgUser.getMsgId()).addv("type", msgUser.getMsg().getType())
-                    .addv("title", msgUser.getMsg().getTitle())
-                    .addv("url", msgUser.getMsg().getUrl())
-                    .addv("time", Times.format("YYYY-MM-DD HH:mm", Times.D(msgUser.getMsg().getSendAt()))));
+        try {
+            //通过用户名查询未读消息
+            int size = sysMsgUserService.count(Cnd.where("delFlag", "=", false).and("loginname", "=", loginname)
+                    .and("status", "=", 0));
+            List<Sys_msg_user> list = sysMsgUserService.query(Cnd.where("delFlag", "=", false).and("loginname", "=", loginname)
+                    , "msg", Cnd.orderBy().desc("sendAt"), new Pager().setPageNumber(1).setPageSize(5));
+            List<NutMap> mapList = new ArrayList<>();
+            for (Sys_msg_user msgUser : list) {
+                String url = "/platform/msg/all/detail/" + msgUser.getMsgId();
+                if (Strings.isNotBlank(msgUser.getMsg().getUrl())) {
+                    url = msgUser.getMsg().getUrl();
+                }
+                mapList.add(NutMap.NEW().addv("msgId", msgUser.getMsgId()).addv("type", typeMap.getString(msgUser.getMsg().getType()))
+                        .addv("title", msgUser.getMsg().getTitle())
+                        .addv("url", url)
+                        .addv("time", Times.format("yyyy-MM-dd HH:mm", Times.D(1000 * msgUser.getMsg().getSendAt()))));
+            }
+            innerMsg(loginname, size, mapList);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
-        innerMsg(loginname, size, mapList);
     }
 }
