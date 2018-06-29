@@ -19,7 +19,6 @@ layout("/layouts/platform.html"){
                     <tr>
                             <th>消息类型</th>
                             <th>消息标题</th>
-                            <th>消息内容</th>
                             <th>发送时间</th>
                             <th>发送总用户</th>
                             <th>未读用户</th>
@@ -85,11 +84,10 @@ layout("/layouts/platform.html"){
                     d.type=type;
                 }
             },
-            "order": [[3, "desc"]],
+            "order": [[2, "desc"]],
             "columns": [
                     {"data": "type", "bSortable": true},
                     {"data": "title", "bSortable": true},
-                    {"data": "note", "bSortable": true},
                     {"data": "sendAt", "bSortable": true},
                     {"data": "all_num", "bSortable": true},
                     {"data": "unread_num", "bSortable": true}
@@ -114,13 +112,13 @@ layout("/layouts/platform.html"){
                         }
                         return '';
                     },
-                    "targets": 3
+                    "targets": 2
                 },
                 {
                     "render": function (data, type, row) {
                         return '(<a href="${base}/platform/sys/msg/user/'+row.id+'/all" style="color: #00aa3a" data-toggle="modal" data-target="#dialogDetail" >'+data+'</a>)';
                     },
-                    "targets": 4
+                    "targets": 3
                 },
                 {
                     "render": function (data, type, row) {
@@ -129,7 +127,7 @@ layout("/layouts/platform.html"){
                         }
                         return '(0)';
                     },
-                    "targets": 5
+                    "targets": 4
                 },
                 {
                     "render": function (data, type, row) {
@@ -140,7 +138,7 @@ layout("/layouts/platform.html"){
                                 '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
                                 '</ul></div>';
                     },
-                    "targets": 6
+                    "targets": 5
                 }
             ]
         });
