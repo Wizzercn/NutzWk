@@ -45,7 +45,7 @@ public class WkNotifyService {
 
     @Async
     public void notify(Sys_msg innerMsg, String rooms[]) {
-        String url = "/platform/msg/all";
+        String url = "/platform/sys/msg/user/all";
         if (Strings.isNotBlank(innerMsg.getUrl())) {
             url = innerMsg.getUrl();
         }
@@ -88,7 +88,7 @@ public class WkNotifyService {
                     .desc("opAt"), "msg", Cnd.orderBy().desc("sendAt"), new Pager().setPageNumber(1).setPageSize(5));
             List<NutMap> mapList = new ArrayList<>();
             for (Sys_msg_user msgUser : list) {
-                String url = "/platform/msg/all/detail/" + msgUser.getMsgId();
+                String url = "/platform/sys/msg/user/all/detail/" + msgUser.getMsgId();
                 if (Strings.isNotBlank(msgUser.getMsg().getUrl())) {
                     url = msgUser.getMsg().getUrl();
                 }

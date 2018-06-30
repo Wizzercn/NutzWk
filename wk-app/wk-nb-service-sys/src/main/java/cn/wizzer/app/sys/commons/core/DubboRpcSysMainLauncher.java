@@ -585,7 +585,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("全部消息");
             menu.setAliasName("All");
             menu.setLocation(0);
-            menu.setHref("/platform/msg/all");
+            menu.setHref("/platform/sys/msg/user/all");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.msg.all");
@@ -598,7 +598,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("未读消息");
             menu.setAliasName("Unread");
             menu.setLocation(1);
-            menu.setHref("/platform/msg/unread");
+            menu.setHref("/platform/sys/msg/user/unread");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.msg.unread");
@@ -611,7 +611,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("已读消息");
             menu.setAliasName("Read");
             menu.setLocation(2);
-            menu.setHref("/platform/msg/read");
+            menu.setHref("/platform/sys/msg/user/read");
             menu.setTarget("data-pjax");
             menu.setIsShow(true);
             menu.setPermission("sys.msg.read");

@@ -3,22 +3,27 @@ layout("/layouts/platform.html"){
 %>
 <section class="content-wrap bg-white">
     <header class="header navbar bg-white shadow">
-        <div class="btn-group tool-button">
-            <a id="add" class="btn btn-primary navbar-btn" href="${base}/platform/sys/msg/user/add" data-pjax><i class="ti-plus"></i> 新增</a>
-            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
+
+        <div id="btns" class="btn-group tool-button" style="padding-top: 8px;">
+            <button class="btn btn-default active" data="all">全部消息类型</button>
+            <button class="btn btn-default" data="system">系统消息</button>
+            <button class="btn btn-default" data="user">用户消息</button>
+        </div>
+        <div class="pull-right offscreen-right">
+            <button class="btn btn-danger navbar-btn" onclick="delCheck()">删除
+            </button>
         </div>
     </header>
     <div class=panel-body style="padding-top: 50px;">
         <div class="table-responsive no-border">
             <table class="table table-bordered table-striped mg-t datatable">
                 <thead>
-                    <tr>
-                            <th>消息ID</th>
-                            <th>用户名</th>
-                            <th>消息状态</th>
-                            <th>读取时间</th>
-                            <th>操作</th>
-                    </tr>
+                <tr>
+                    <th>消息标题</th>
+                    <th>通知时间</th>
+                    <th>消息类型</th>
+                    <th>已读状态</th>
+                </tr>
                 </thead>
             </table>
         </div>
@@ -40,8 +45,8 @@ layout("/layouts/platform.html"){
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取  消</button>
-                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确  定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
             </div>
         </div>
     </div>
@@ -54,10 +59,11 @@ layout("/layouts/platform.html"){
 </div>
 <script language="JavaScript">
     var datatable;
+    var type = "all";
     function initDatatable() {
         datatable = $('.datatable').DataTable({
             "dom": '<"toolbar">frtip',
-            "searching":false,
+            "searching": false,
             "processing": false,
             "serverSide": true,
             "select": true,
@@ -72,57 +78,64 @@ layout("/layouts/platform.html"){
                 sublime.closeLoadingbar($(".main-content"));
             },
             "ajax": {
-                "url": "${base}/platform/sys/msg/user/data",
+                "url": "${base}/platform/sys/msg/user/data/${status!}",
                 "type": "post",
                 "data": function (d) {
-
+                    d.type = type;
                 }
             },
             "order": [[0, "desc"]],
             "columns": [
-                    {"data": "msgId", "bSortable": true},
-                    {"data": "loginname", "bSortable": true},
-                    {"data": "status", "bSortable": true},
-                    {"data": "readAt", "bSortable": true},
+                {"data": "title", "bSortable": true},
+                {"data": "sendat", "bSortable": true},
+                {"data": "type", "bSortable": true},
+                {"data": "status", "bSortable": true}
             ],
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
-                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/platform/sys/msg/user/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">查看</a></li>' +
-                                '<li><a href="${base}/platform/sys/msg/user/edit/' + row.id + '" data-pjax>修改</a></li>' +
-                                '<li class="divider"></li>' +
-                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
-                                '</ul></div>';
+                        if (data) {
+                            return '<a data-pjax href="${base}/platform/sys/msg/user/read/detail/'+row.msgid+'" style="color: #0e78c5">'+data+'</a>';
+                        }
+                        return '';
                     },
-                    "targets": 4
+                    "targets": 0
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return moment(parseInt(data * 1000)).format("YYYY-MM-DD HH:mm:ss");
+                        }
+                        return '';
+                    },
+                    "targets": 1
+                },
+                {
+                    "render": function (data, type, row) {
+                        if ("system" == data) {
+                            return "系统消息";
+                        }
+                        if ("user" == data) {
+                            return "用户消息";
+                        }
+                        return "";
+                    },
+                    "targets": 2
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return '<i class="fa fa-circle text-success ml5"></i>';
+                        } else {
+                            return '<i class="fa fa-circle text-danger ml5"></i>';
+                        }
+                    },
+                    "targets": 3
                 }
             ]
         });
         datatable.on('click', 'tr', function () {
             $(this).toggleClass('selected');
-        });
-        $("#searchBtn").on('click', function () {
-            datatable.ajax.reload();
-        });
-    }
-    function del(id) {
-        var dialog = $("#dialogDelete");
-        dialog.modal("show");
-        dialog.find("#okDel").unbind("click");
-        dialog.find("#okDel").bind("click", function (event) {
-            var btn = $(this);
-            btn.button("loading");
-            $.post("${base}/platform/sys/msg/user/delete/" + id, {}, function (data) {
-                if (data.code == 0) {
-                    datatable.ajax.reload(null,false);
-                } else {
-                    Toast.error(data.msg);
-                }
-                btn.button("reset");
-                dialog.modal("hide");
-            }, "json");
         });
     }
     function delCheck() {
@@ -140,7 +153,7 @@ layout("/layouts/platform.html"){
                 btn.button("loading");
                 $.post("${base}/platform/sys/msg/user/delete", {ids: ids.toString()}, function (data) {
                     if (data.code == 0) {
-                        datatable.ajax.reload(null,false);
+                        datatable.ajax.reload(null, false);
                     } else {
                         Toast.error(data.msg);
                     }
@@ -153,6 +166,16 @@ layout("/layouts/platform.html"){
         }
     }
     $(function () {
+        $("#btns").find("button").each(function () {
+            $(this).on("click", function () {
+                $("#btns").find("button").each(function () {
+                    $(this).removeClass("active");
+                });
+                type = $(this).attr("data");
+                $(this).addClass("active");
+                datatable.ajax.reload();
+            });
+        });
         initDatatable();
         $("#dialogDetail").on("hidden.bs.modal", function () {
             $(this).removeData("bs.modal");
