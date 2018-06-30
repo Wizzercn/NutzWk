@@ -1013,14 +1013,44 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param length   页大小
      * @param start    start
      * @param draw     draw
-     * @param countSql 查询条件
-     * @param orderSql 排序语句
+     * @param countSql 统计查询语句
+     * @param orderSql 结果查询语句
      * @return
      */
     public NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql) {
         NutMap re = new NutMap();
         Pager pager = new OffsetPager(start, length);
         pager.setRecordCount((int) Daos.queryCount(this.dao(), countSql));// 记录数需手动设置
+        orderSql.setPager(pager);
+        orderSql.setCallback(Sqls.callback.records());
+        this.dao().execute(orderSql);
+        re.put("recordsFiltered", pager.getRecordCount());
+        re.put("data", orderSql.getList(Record.class));
+        re.put("draw", draw);
+        re.put("recordsTotal", length);
+        return re;
+    }
+
+    /**
+     * DataTable Page 自定义SQL
+     *
+     * @param length    页大小
+     * @param start     start
+     * @param draw      draw
+     * @param countSql  统计查询语句
+     * @param orderSql  结果查询语句
+     * @param countOnly 统计查询语句是否只有count()
+     * @return
+     */
+    public NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql, boolean countOnly) {
+        if (!countOnly) {
+            return this.data(length, start, draw, countSql, orderSql);
+        }
+        NutMap re = new NutMap();
+        Pager pager = new OffsetPager(start, length);
+        countSql.setCallback(Sqls.callback.integer());
+        this.dao().execute(countSql);
+        pager.setRecordCount(countSql.getInt());// 记录数需手动设置
         orderSql.setPager(pager);
         orderSql.setCallback(Sqls.callback.records());
         this.dao().execute(orderSql);

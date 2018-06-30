@@ -77,7 +77,9 @@ public class SysMsgUserController {
         }
         Sql sql = Sqls.create("SELECT b.type,b.title,b.sendat,a.* FROM sys_msg b LEFT JOIN sys_msg_user a ON b.id=a.msgid $condition");
         sql.setCondition(cnd);
-        return sysMsgUserService.data(length, start, draw, sql, sql);
+        Sql sqlCount = Sqls.create("SELECT count(*) FROM sys_msg b LEFT JOIN sys_msg_user a ON b.id=a.msgid $condition");
+        sqlCount.setCondition(cnd);
+        return sysMsgUserService.data(length, start, draw, sqlCount, sql,true);
     }
 
     @At({"/delete/?", "/delete"})

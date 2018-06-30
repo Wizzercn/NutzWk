@@ -711,12 +711,24 @@ public interface BaseService<T> {
      * @param length   页大小
      * @param start    start
      * @param draw     draw
-     * @param countSql 查询条件
-     * @param orderSql 排序语句
+     * @param countSql 统计查询语句
+     * @param orderSql 结果查询语句
      * @return
      */
     NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql);
 
+    /**
+     * DataTable Page 自定义SQL
+     *
+     * @param length    页大小
+     * @param start     start
+     * @param draw      draw
+     * @param countSql  统计查询语句
+     * @param orderSql  结果查询语句
+     * @param countOnly 统计查询语句是否只有count()
+     * @return
+     */
+    NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql, boolean countOnly);
     /**
      * DataTable Page
      *
