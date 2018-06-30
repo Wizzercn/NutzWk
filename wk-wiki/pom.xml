@@ -6,10 +6,10 @@
     <parent>
         <artifactId>wk-parent</artifactId>
         <groupId>cn.wizzer</groupId>
-        <version>5.0.6</version>
+        <version>5.0.7</version>
     </parent>
     <artifactId>wk-wiki</artifactId>
-    <version>5.0.6</version>
+    <version>5.0.7</version>
     <packaging>pom</packaging>
     <name>wk-wiki</name>
     <url>http://www.wizzer.cn</url>
