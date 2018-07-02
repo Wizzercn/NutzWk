@@ -387,7 +387,7 @@
         //浏览器通知 + websocket
         if(${@config.getOrDefault("WebNotification",true)}) {
             Push.Permission.request(function () {
-                if (parseInt("${@shiro.getPrincipalProperty('loginCount')}") > 0)
+                if (parseInt("${@shiro.getPrincipalProperty('loginCount')}") > 0 || !${@config.getOrDefault("WebNotification",true)})
                     return;
                 Push.create('Thank You!', {
                     body: '欢迎选用 NutzWk!',
