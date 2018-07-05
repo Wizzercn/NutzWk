@@ -44,7 +44,7 @@ public class Sys_user extends BaseModel implements Serializable {
     @Column
     @Comment("是否在线")
     @ColDefine(type = ColType.BOOLEAN)
-    private boolean isOnline;
+    private boolean online;
 
     @Column
     @Comment("是否禁用")
@@ -74,6 +74,11 @@ public class Sys_user extends BaseModel implements Serializable {
     @Comment("登陆次数")
     @ColDefine(type = ColType.INT)
     private Integer loginCount;
+
+    @Column
+    @Comment("登陆SessionId")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String loginSessionId;
 
     @Column
     @Comment("常用菜单")
@@ -178,11 +183,11 @@ public class Sys_user extends BaseModel implements Serializable {
     }
 
     public boolean isOnline() {
-        return isOnline;
+        return online;
     }
 
-    public void setIsOnline(boolean isOnline) {
-        this.isOnline = isOnline;
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 
     public boolean isDisabled() {
@@ -223,6 +228,14 @@ public class Sys_user extends BaseModel implements Serializable {
 
     public void setLoginCount(Integer loginCount) {
         this.loginCount = loginCount;
+    }
+
+    public String getLoginSessionId() {
+        return loginSessionId;
+    }
+
+    public void setLoginSessionId(String loginSessionId) {
+        this.loginSessionId = loginSessionId;
     }
 
     public String getCustomMenu() {

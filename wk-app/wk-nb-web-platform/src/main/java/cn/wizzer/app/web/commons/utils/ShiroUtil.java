@@ -295,4 +295,13 @@ public class ShiroUtil {
 
         return false;
     }
+
+    /**
+     * 获取当前实例sessionId
+     * @return
+     */
+    public String getSessionId(){
+        Subject subject = SecurityUtils.getSubject();
+        return (String)subject.getSession().getId();
+    }
 }

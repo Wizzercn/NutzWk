@@ -193,7 +193,7 @@ public class WxHandler extends AbstractWxHandler {
     public WxOutMsg eventUnsubscribe(WxInMsg msg) {
         Wx_user usr = wxUserService.fetch(Cnd.where("openid", "=", msg.getFromUserName()));
         if (usr != null) {
-            wxUserService.update(Chain.make("subscribe", false).add("opAt", (int) (System.currentTimeMillis() / 1000)), Cnd.where("openid", "=", msg.getFromUserName()));
+            wxUserService.update(Chain.make("subscribe", false).add("opAt", Times.getTS()), Cnd.where("openid", "=", msg.getFromUserName()));
         }
         return super.eventUnsubscribe(msg);
     }

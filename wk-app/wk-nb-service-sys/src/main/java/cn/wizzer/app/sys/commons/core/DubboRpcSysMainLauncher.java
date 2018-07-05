@@ -83,6 +83,11 @@ public class DubboRpcSysMainLauncher {
             conf.setNote("文件访问路径");
             dao.insert(conf);
             conf = new Sys_config();
+            conf.setConfigKey("SysUserSessionOnlyOne");
+            conf.setConfigValue("true");
+            conf.setNote("用户登录只允许一个Session实例(为true时退出登录会更新sys_user表在线状态)");
+            dao.insert(conf);
+            conf = new Sys_config();
             conf.setConfigKey("WebNotification");
             conf.setConfigValue("true");
             conf.setNote("启用浏览器通知");

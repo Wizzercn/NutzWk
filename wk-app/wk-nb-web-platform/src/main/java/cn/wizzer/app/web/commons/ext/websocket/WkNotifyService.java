@@ -62,7 +62,10 @@ public class WkNotifyService {
             }
         } else if ("user".equals(innerMsg.getType())) {//用户消息发送给指定在线用户
             for (String room : rooms) {
-                pubSubService.fire("wsroom:" + room, msg);
+                Set<String> keys = redisService.keys("wsroom:" + room + ":*");
+                for (String key : keys) {
+                    pubSubService.fire(key, msg);
+                }
             }
         }
     }
@@ -75,8 +78,12 @@ public class WkNotifyService {
         map.put("list", list);//最新3条消息列表  type--系统消息/用户消息  title--标题  time--时间戳
         String msg = Json.toJson(map, JsonFormat.compact());
         log.debug("msg::::" + msg);
-        pubSubService.fire("wsroom:" + room, msg);
+        Set<String> keys = redisService.keys("wsroom:" + room + ":*");
+        for (String key : keys) {
+            pubSubService.fire(key, msg);
+        }
     }
+
 
     @Async
     public void getMsg(String loginname) {
@@ -102,4 +109,21 @@ public class WkNotifyService {
             log.error(e.getMessage(), e);
         }
     }
+
+    public void offline(String loginname, String httpSessionId) {
+        NutMap map = new NutMap();
+        map.put("action", "offline");
+        map.put("title", "");
+        map.put("body", "");
+        map.put("url", "");
+        String msg = Json.toJson(map, JsonFormat.compact());
+        try {
+            pubSubService.fire("wsroom:" + loginname + ":" + httpSessionId, msg);
+            redisService.expire("wsroom:" + loginname + ":" + httpSessionId, 60 * 5);
+            log.debug("offline httpSessionId::::" + httpSessionId);
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+        }
+    }
+
 }

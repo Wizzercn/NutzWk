@@ -4,18 +4,19 @@ import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.services.SysMenuService;
 import cn.wizzer.app.web.commons.base.Globals;
 import com.alibaba.dubbo.config.annotation.Reference;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +29,14 @@ public class SysHomeController {
     private static final Log log = Logs.get();
     @Inject
     @Reference
-    private SysMenuService menuService;
+    private SysMenuService sysMenuService;
 
     @At("")
     @Ok("beetl:/platform/sys/home.html")
     @RequiresAuthentication
-    public void home() {
-        //SecurityUtils.getSubject().getSession().setTimeout(1000);
+    public void home(HttpSession session) {
+
+
     }
 
     @At
@@ -48,7 +50,7 @@ public class SysHomeController {
         }
         if (Strings.sBlank(url).indexOf("?") > 0)
             url = url.substring(0, url.indexOf("?"));
-        Sys_menu menu = menuService.fetch(Cnd.where("href", "=", url));
+        Sys_menu menu = sysMenuService.fetch(Cnd.where("href", "=", url));
         if (menu != null) {
             if (menu.getPath().length() > 8) {
                 path = menu.getPath().substring(0, 8);
@@ -99,7 +101,7 @@ public class SysHomeController {
             } else list.add(url);
             String path = "";
             String perpath = "";
-            Sys_menu menu = menuService.fetch(Cnd.where("href", "in", list).desc("href").desc("path"));
+            Sys_menu menu = sysMenuService.fetch(Cnd.where("href", "in", list).desc("href").desc("path"));
             if (menu != null) {
                 if (menu.getPath().length() > 8) {
                     path = menu.getPath().substring(0, 8);
@@ -113,8 +115,9 @@ public class SysHomeController {
             req.setAttribute("perpath", perpath);
         }
     }
-    
-    @At(value={"/", "/index"}, top=true)
+
+    @At(value = {"/", "/index"}, top = true)
     @Ok(">>:/sysadmin")
-    public void index() {}
+    public void index() {
+    }
 }

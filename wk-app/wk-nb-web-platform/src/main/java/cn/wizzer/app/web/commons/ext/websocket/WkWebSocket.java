@@ -11,7 +11,6 @@ import org.nutz.log.Logs;
 import org.nutz.plugins.mvc.websocket.AbstractWsEndpoint;
 import org.nutz.plugins.mvc.websocket.NutWsConfigurator;
 import org.nutz.plugins.mvc.websocket.WsHandler;
-import org.nutz.plugins.mvc.websocket.room.JedisRoomProvider;
 import redis.clients.jedis.Jedis;
 
 import javax.websocket.EndpointConfig;
@@ -35,21 +34,23 @@ public class WkWebSocket extends AbstractWsEndpoint implements PubSub {
 
     public void init() {
         roomPrefix = "wsroom:";
-        roomProvider = new JedisRoomProvider(jedisAgent);
+        roomProvider = new WkJedisRoomProvider(jedisAgent);
         try (Jedis jedis = jedisAgent.getResource()) {
             for (String key : jedis.keys(roomPrefix + "*")) {
+                log.debug("jedis.type(key)::::"+jedis.type(key));
                 switch (jedis.type(key)) {
                     case "none":
                         break;
                     case "set":
                         break;
-                    default:
-                        jedis.del(key);
+//                    default:
+//                        jedis.del(key);
                 }
             }
         }
         pubSubService.reg(roomPrefix + "*", this);
     }
+
 
     public void onMessage(String channel, String message) {
         if (log.isDebugEnabled())

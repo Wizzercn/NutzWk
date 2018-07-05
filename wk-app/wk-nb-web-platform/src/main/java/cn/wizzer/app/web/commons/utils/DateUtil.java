@@ -94,9 +94,9 @@ public class DateUtil {
      * @param date
      * @return
      */
-    public static int getTime(String date) {
+    public static long getTime(String date) {
         try {
-            return (int) (Times.parse(sdf, date).getTime() / 1000);
+            return Times.parse(sdf, date).getTime() / 1000;
         } catch (ParseException e) {
             return 0;
         }
@@ -108,9 +108,9 @@ public class DateUtil {
      * @param date
      * @return
      */
-    public static int getTime(SimpleDateFormat sdf, String date) {
+    public static long getTime(SimpleDateFormat sdf, String date) {
         try {
-            return (int) (Times.parse(sdf, date).getTime() / 1000);
+            return Times.parse(sdf, date).getTime() / 1000;
         } catch (ParseException e) {
             return 0;
         }

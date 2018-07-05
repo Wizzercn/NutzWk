@@ -3,6 +3,8 @@ package cn.wizzer.app.web.modules.controllers.platform.sys;
 import cn.wizzer.app.sys.modules.models.Sys_log;
 import cn.wizzer.app.sys.modules.models.Sys_user;
 import cn.wizzer.app.sys.modules.services.SysUserService;
+import cn.wizzer.app.web.commons.base.Globals;
+import cn.wizzer.app.web.commons.ext.websocket.WkNotifyService;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaEmptyException;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaIncorrectException;
 import cn.wizzer.app.web.commons.shiro.filter.PlatformAuthenticationFilter;
@@ -17,9 +19,11 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.img.Images;
@@ -56,32 +60,36 @@ public class SysLoginController {
     private SLogService sLogService;
     @Inject
     private RedisService redisService;
+    @Inject
+    private WkNotifyService wkNotifyService;
+    @Inject("refer:shiroWebSessionManager")
+    private DefaultWebSessionManager webSessionManager;
 
     @At("")
     @Ok("re")
     @Filters
     public String login(HttpServletRequest req, HttpSession session) {
-        Subject subject = SecurityUtils.getSubject();
+//        Subject subject = SecurityUtils.getSubject();
 //        if (subject.isAuthenticated()) {
 //            return "redirect:/platform/home";
 //        } else {
-            try {
-                HashMap<String, Object> map = RSAUtil.getKeys();
-                //生成公钥和私钥
-                RSAPublicKey publicKey = (RSAPublicKey) map.get("public");
-                RSAPrivateKey privateKey = (RSAPrivateKey) map.get("private");
-                //模
-                String publicKeyModulus = publicKey.getModulus().toString(16);
-                //公钥指数
-                String publicKeyExponent = publicKey.getPublicExponent().toString(16);
-                //私钥指数
-                req.setAttribute("publicKeyExponent", publicKeyExponent);
-                req.setAttribute("publicKeyModulus", publicKeyModulus);
-                session.setAttribute("platformPrivateKey", privateKey);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return "beetl:/platform/sys/login.html";
+        try {
+            HashMap<String, Object> map = RSAUtil.getKeys();
+            //生成公钥和私钥
+            RSAPublicKey publicKey = (RSAPublicKey) map.get("public");
+            RSAPrivateKey privateKey = (RSAPrivateKey) map.get("private");
+            //模
+            String publicKeyModulus = publicKey.getModulus().toString(16);
+            //公钥指数
+            String publicKeyExponent = publicKey.getPublicExponent().toString(16);
+            //私钥指数
+            req.setAttribute("publicKeyExponent", publicKeyExponent);
+            req.setAttribute("publicKeyModulus", publicKeyModulus);
+            session.setAttribute("platformPrivateKey", privateKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "beetl:/platform/sys/login.html";
 
 //        }
     }
@@ -159,8 +167,26 @@ public class SysLoginController {
             subject.login(token);
             Sys_user user = (Sys_user) subject.getPrincipal();
             int count = user.getLoginCount() == null ? 0 : user.getLoginCount();
-            sysUserService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", (int) (System.currentTimeMillis() / 1000))
-                            .add("loginCount", count + 1).add("isOnline", true)
+            //如果启用了用户唯一登录功能
+            if ("true".equals(Globals.MyConfig.getOrDefault("SysUserSessionOnlyOne", "false"))) {
+                try {
+                    Sys_user oldUser = sysUserService.fetch(Cnd.where("id", "=", user.getId()));
+                    if (oldUser != null && !Strings.sNull(oldUser.getLoginSessionId()).equals(session.getId())) {
+                        Session oldSession = webSessionManager.getSessionDAO().readSession(oldUser.getLoginSessionId());
+                        if (oldSession != null) {
+                            wkNotifyService.offline(oldUser.getLoginname(), oldUser.getLoginSessionId());//通知另外一个用户被踢下线
+                            oldSession.stop();
+                            webSessionManager.getSessionDAO().delete(oldSession);
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error(e.getMessage(),e);
+                }
+            }
+            log.debug("user.getLoginSessionId()::::"+user.getLoginSessionId());
+            log.debug("session.getId()::::"+session.getId());
+            sysUserService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", Times.getTS())
+                            .add("loginCount", count + 1).add("online", true).add("loginSessionId", session.getId())
                     , Cnd.where("id", "=", user.getId()));
             Sys_log sysLog = new Sys_log();
             sysLog.setType("info");
@@ -182,17 +208,17 @@ public class SysLoginController {
         } catch (LockedAccountException e) {
             return Result.error(3, "login.error.locked");
         } catch (UnknownAccountException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             errCount++;
             SecurityUtils.getSubject().getSession(true).setAttribute("platformErrCount", errCount);
             return Result.error(4, "login.error.user");
         } catch (AuthenticationException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             errCount++;
             SecurityUtils.getSubject().getSession(true).setAttribute("platformErrCount", errCount);
             return Result.error(5, "login.error.user");
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             errCount++;
             SecurityUtils.getSubject().getSession(true).setAttribute("platformErrCount", errCount);
             return Result.error(6, "login.error.system");
@@ -204,7 +230,7 @@ public class SysLoginController {
      */
     @At
     @Ok(">>:/platform/login")
-    public void logout(HttpSession session,HttpServletRequest req) {
+    public void logout(HttpSession session, HttpServletRequest req) {
         try {
             Subject currentUser = SecurityUtils.getSubject();
             Sys_user user = (Sys_user) currentUser.getPrincipal();
@@ -220,7 +246,6 @@ public class SysLoginController {
                 sysLog.setOpAt(Times.getTS());
                 sysLog.setUsername(user.getUsername());
                 sLogService.async(sysLog);
-                sysUserService.update(Chain.make("isOnline", false), Cnd.where("id", "=", user.getId()));
             }
         } catch (SessionException ise) {
             log.debug("Encountered session exception during logout.  This can generally safely be ignored.", ise);
@@ -237,8 +262,8 @@ public class SysLoginController {
             h = 60;
         }
         String text = R.captchaNumber(4);
-        redisService.set("platformCaptcha:"+session.getId(), text);
-        redisService.expire("platformCaptcha:"+session.getId(), 300);
+        redisService.set("platformCaptcha:" + session.getId(), text);
+        redisService.expire("platformCaptcha:" + session.getId(), 300);
         return Images.createCaptcha(text, w, h, null, null, null);
     }
 }
