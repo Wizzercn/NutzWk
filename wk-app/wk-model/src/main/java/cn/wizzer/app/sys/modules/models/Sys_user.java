@@ -77,7 +77,7 @@ public class Sys_user extends BaseModel implements Serializable {
 
     @Column
     @Comment("登陆SessionId")
-    @ColDefine(type = ColType.VARCHAR, width = 255)
+    @ColDefine(type = ColType.VARCHAR, width = 50)
     private String loginSessionId;
 
     @Column

@@ -460,7 +460,6 @@
             ws.onopen = function(event) {
                 ws.send(JSON.stringify({room:"${@shiro.getPrincipalProperty('loginname')}:${@shiro.getSessionId()}","action":"join"}));
                 ws_ping();
-                //console.log("sessionId::"+"${@shiro.getSessionId()}");
             };
             setInterval("ws_ping()", (11624317/1000)*2);
             //以下判断是否关闭浏览器,不兼容ie8,9,10

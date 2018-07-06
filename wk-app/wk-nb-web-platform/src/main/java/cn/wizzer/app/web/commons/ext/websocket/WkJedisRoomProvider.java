@@ -28,14 +28,14 @@ public class WkJedisRoomProvider implements WsRoomProvider {
     public void join(String room, String wsid) {
         try (Jedis jedis = jedisAgent.getResource()) {
             jedis.sadd(room, wsid);
-            jedis.expire(room,3600*24);//每次加入的时候时间有效期重置?
+            jedis.expire(room,3600*2);//每次加入的时候时间有效期重置?
         }
     }
 
     public void left(String room, String wsid) {
         try (Jedis jedis = jedisAgent.getResource()) {
-            jedis.srem(room, wsid);
-            jedis.expire(room,60*5);
+            //jedis.srem(room, wsid);
+            jedis.expire(room,60*3);
         }
     }
 }

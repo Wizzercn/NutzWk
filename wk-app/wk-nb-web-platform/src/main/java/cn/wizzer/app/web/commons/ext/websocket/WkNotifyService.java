@@ -110,6 +110,7 @@ public class WkNotifyService {
         }
     }
 
+    @Async
     public void offline(String loginname, String httpSessionId) {
         NutMap map = new NutMap();
         map.put("action", "offline");
@@ -119,7 +120,17 @@ public class WkNotifyService {
         String msg = Json.toJson(map, JsonFormat.compact());
         try {
             pubSubService.fire("wsroom:" + loginname + ":" + httpSessionId, msg);
-            redisService.expire("wsroom:" + loginname + ":" + httpSessionId, 60 * 5);
+            redisService.expire("wsroom:" + loginname + ":" + httpSessionId, 60 * 3);
+            log.debug("offline httpSessionId::::" + httpSessionId);
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+        }
+    }
+
+    @Async
+    public void offlineNoMsg(String loginname, String httpSessionId) {
+        try {
+            redisService.expire("wsroom:" + loginname + ":" + httpSessionId, 60 * 3);
             log.debug("offline httpSessionId::::" + httpSessionId);
         }catch (Exception e){
             log.error(e.getMessage(),e);
