@@ -121,7 +121,6 @@ public class WkNotifyService {
         try {
             pubSubService.fire("wsroom:" + loginname + ":" + httpSessionId, msg);
             redisService.expire("wsroom:" + loginname + ":" + httpSessionId, 60 * 3);
-            log.debug("offline httpSessionId::::" + httpSessionId);
         }catch (Exception e){
             log.error(e.getMessage(),e);
         }
@@ -131,7 +130,6 @@ public class WkNotifyService {
     public void offlineNoMsg(String loginname, String httpSessionId) {
         try {
             redisService.expire("wsroom:" + loginname + ":" + httpSessionId, 60 * 3);
-            log.debug("offline httpSessionId::::" + httpSessionId);
         }catch (Exception e){
             log.error(e.getMessage(),e);
         }

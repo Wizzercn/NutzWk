@@ -180,11 +180,9 @@ public class SysLoginController {
                         }
                     }
                 } catch (Exception e) {
-                    log.error(e.getMessage(),e);
+
                 }
             }
-            log.debug("user.getLoginSessionId()::::"+user.getLoginSessionId());
-            log.debug("session.getId()::::"+session.getId());
             sysUserService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", Times.getTS())
                             .add("loginCount", count + 1).add("online", true).add("loginSessionId", session.getId())
                     , Cnd.where("id", "=", user.getId()));

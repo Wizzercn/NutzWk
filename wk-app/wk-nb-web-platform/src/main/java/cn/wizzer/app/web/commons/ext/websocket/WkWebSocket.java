@@ -37,7 +37,6 @@ public class WkWebSocket extends AbstractWsEndpoint implements PubSub {
         roomProvider = new WkJedisRoomProvider(jedisAgent);
         try (Jedis jedis = jedisAgent.getResource()) {
             for (String key : jedis.keys(roomPrefix + "*")) {
-                log.debug("jedis.type(key)::::"+jedis.type(key));
                 switch (jedis.type(key)) {
                     case "none":
                         break;
