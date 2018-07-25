@@ -82,7 +82,7 @@ public class SysRoleController {
             List<String> ids = sql.getList(String.class);
             Sql sql1 = Sqls.create("SELECT a.* FROM sys_menu a,sys_role_menu b WHERE a.id=b.menuId AND b.roleId in (@ids)");
             sql1.setParam("ids", ids.toArray());
-            sql1.setEntity(sysMenuService.getEntity(Sys_menu.class));
+            sql1.setEntity(sysMenuService.getEntity());
             sql1.setCallback(Sqls.callback.entities());
             list = sysMenuService.execute(sql1).getList(Sys_menu.class);
         }
@@ -176,7 +176,7 @@ public class SysRoleController {
             List<String> ids = sql.getList(String.class);
             Sql sql1 = Sqls.create("SELECT a.* FROM sys_menu a,sys_role_menu b WHERE a.id=b.menuId AND b.roleId in (@ids)");
             sql1.setParam("ids", ids.toArray());
-            sql1.setEntity(sysMenuService.getEntity(Sys_menu.class));
+            sql1.setEntity(sysMenuService.getEntity());
             sql1.setCallback(Sqls.callback.entities());
             list = sysMenuService.execute(sql1).getList(Sys_menu.class);
         }

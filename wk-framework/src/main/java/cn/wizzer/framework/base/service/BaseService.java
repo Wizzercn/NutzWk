@@ -23,8 +23,7 @@ public interface BaseService<T> {
     /**
      * 获取实体的Entity
      *
-     * @param
-     * @return
+     * @return 实体的Entity
      */
     Entity<T> getEntity();
 
