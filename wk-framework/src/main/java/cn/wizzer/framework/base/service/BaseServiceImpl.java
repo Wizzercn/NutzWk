@@ -33,8 +33,22 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         super(dao);
     }
 
-    public <T> Entity<T> getEntity(Class<T> var1) {
-        return this.getEntity(var1);
+    /**
+     * 获取实体的Entity
+     *
+     * @return 实体的Entity
+     */
+    public Entity<T> getEntity() {
+        return super.getEntity();
+    }
+
+    /**
+     * 获取实体类型
+     *
+     * @return 实体类型
+     */
+    public Class<T> getEntityClass() {
+        return super.getEntityClass();
     }
 
     /**

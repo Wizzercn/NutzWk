@@ -21,13 +21,19 @@ public interface BaseService<T> {
     Dao dao();
 
     /**
-     * 获取实体类
+     * 获取实体的Entity
      *
-     * @param var1
-     * @param <T>
+     * @param
      * @return
      */
-    <T> Entity<T> getEntity(Class<T> var1);
+    Entity<T> getEntity();
+
+    /**
+     * 获取实体类型
+     *
+     * @return 实体类型
+     */
+    Class<T> getEntityClass();
 
     /**
      * 统计符合条件的对象表条数
