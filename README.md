@@ -20,7 +20,9 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 我们有强大的后援 —— Nutz 社区支持  https://nutz.cn  及 Nutz 使用手册 https://nutzam.com/core/nutz_preface.html
 
-### QQ交流群: 24457628
+### QQ交流群
+*  1群: 68428921 (已满)
+*  2群: 24457628
 
 # 版本说明
 
