@@ -20,7 +20,7 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 我们有强大的后援 —— Nutz 社区支持  https://nutz.cn  及 Nutz 使用手册 https://nutzam.com/core/nutz_preface.html
 
-### QQ交流群: 68428921
+### QQ交流群: 24457628
 
 # 版本说明
 
@@ -42,7 +42,7 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 ## NutzWk 5.x 技术选型：
 
-*   核心框架：Nutz、Nutz MVC、Nutz Dao、Nutzboot
+*   核心框架：Nutzboot
 *   分布式框架：Dubbo、Zookeeper
 *   安全框架：Shiro
 *   任务调度：Quartz
@@ -81,7 +81,7 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 *   [@enilu](https://github.com/enilu) (代码生成器及IDEA插件贡献者)
 *   [@loyalove](https://github.com/loyalove) (Vue代码贡献者)
 *   [@threefish](https://github.com/threefish) (控制类快速定位模板页面IDEA插件贡献者)
-*   以及交流群里热心的小伙伴们~ QQ交流群: 68428921
+*   以及交流群里热心的小伙伴们~ QQ交流群: 24457628
 
 
 # 关于
