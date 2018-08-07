@@ -167,6 +167,8 @@
                     $("#verifycode").val("");
                     $("#dialogVeryCode img").attr("src", '${base!}/platform/login/captcha?_=' + new Date().getTime());
                     return $("#dialogVeryCode").modal({show: true, backdrop: 'static', keyboard: false});
+                } else if (data.code == 7) {//session失效
+                    window.location.reload();
                 } else {
                     $("#platformCaptcha").val("");
                     $("#password").val("").focus();

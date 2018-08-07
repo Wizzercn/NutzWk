@@ -160,6 +160,10 @@ public class SysLoginController {
     public Object doLogin(@Attr("platformLoginToken") AuthenticationToken token, HttpServletRequest req, HttpSession session) {
         int errCount = 0;
         try {
+            //session失效咯
+            if (token == null) {
+                return Result.error(7, "login.error.system");
+            }
             //输错三次显示验证码窗口
             errCount = NumberUtils.toInt(Strings.sNull(SecurityUtils.getSubject().getSession(true).getAttribute("platformErrCount")));
             Subject subject = SecurityUtils.getSubject();
