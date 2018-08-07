@@ -152,17 +152,32 @@ layout("/layouts/platform.html"){
 </div>
 <script language="JavaScript">
     $(document).ready(function () {
-        $("#btnWxpay").on("click",function () {
+
+
+        if($("#payInfo").val() != undefined &&$("#payInfo").val() != ''){
             var wxpay=JSON.parse($("#payInfo").val());
             if(wxpay.wxpay_mchid)$("#wxpay_mchid").val(wxpay.wxpay_mchid);
             if(wxpay.wxpay_key)$("#wxpay_key").val(wxpay.wxpay_key);
             if(wxpay.wxpay_appsecret)$("#wxpay_appsecret").val(wxpay.wxpay_appsecret);
+        }
+
+
+        $("#btnWxpay").on("click",function () {
+            try{
+                var wxpay=JSON.parse($("#payInfo").val());
+                if(wxpay.wxpay_mchid)$("#wxpay_mchid").val(wxpay.wxpay_mchid);
+                if(wxpay.wxpay_key)$("#wxpay_key").val(wxpay.wxpay_key);
+                if(wxpay.wxpay_appsecret)$("#wxpay_appsecret").val(wxpay.wxpay_appsecret);
+            }catch (e) {
+            }
+
             $("#dialogWxpay").modal();
         });
         $("#btnWx").on("click", function () {
             $("#dialogWxpay input[type=text]").each(function () {
                 $(this).val("");
             });
+            $("#payInfo").val('');
         });
         $("#save").on("click", function () {
             var wxpay = {};

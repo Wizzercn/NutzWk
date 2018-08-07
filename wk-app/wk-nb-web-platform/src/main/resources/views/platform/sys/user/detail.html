@@ -46,7 +46,7 @@
                         <i class="ti-menu mr10 text-muted"></i>
 
                         <%for(role in obj.roles){%>
-                        ${role.name}[${role.code}],
+                        ${role.name}[${role.code}] <% if(roleLP.index != obj.roles.~size) {%> , <% } %>
                         <%}%>
                     </a>
                 </div>
