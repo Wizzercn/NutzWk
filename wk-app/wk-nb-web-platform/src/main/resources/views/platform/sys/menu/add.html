@@ -196,6 +196,7 @@ layout("/layouts/platform.html"){
                     var parentName = $("#unitAddForm #parentId").val();
                     form.resetForm();
                     $("#unitAddForm #parentId").val(parentName);
+                    $("#divId").show();
                 } else {
                     Toast.error(data.msg);
                 }
