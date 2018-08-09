@@ -19,7 +19,7 @@
         <dependency>
             <groupId>cn.wizzer.app</groupId>
             <artifactId>wk-code-generator-nb</artifactId>
-            <version>5.0.6</version>
+            <version>5.0.7</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

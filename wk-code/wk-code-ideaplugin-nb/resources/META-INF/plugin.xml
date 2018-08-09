@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>cn.wizzer.code</id>
   <name>wk-code-ideaplugin-nb</name>
-  <version>5.0.6</version>
+  <version>5.0.7</version>
   <vendor email="wizzer@qq.com" url="https://wizzer.cn">Wizzer</vendor>
 
   <description>NutzWk 5.0.x Code Generator plugin</description>
