@@ -71,10 +71,12 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 *   确保 MySql、Redis、Zookeeper 默认配置并已启动好[application.properties 可更改配置项]
 *   MySql 创建名为 nutzwk_nb 的空数据库,在每个NB项目启动时会自动建表,同时初始化数据
-*   IDEA 找到每个NB项目下的 ***MainLauncher 类运行,或在每个模块下mvn compile nutzboot:run 运行
+*   项目根目录执行 `mvn clean install -Dmaven.test.skip=true`
+*   在每个NB模块下`mvn compile nutzboot:run` 或直接`mvn package nutzboot:shade` 打为可执行jar包
 *   启动顺序是 sys --> cms[可选] --> wx[可选] --> task[可选] --> web-platform --> web-api[可选]
-*   可选择使用运行参数 -Dnutz.profiles.active=prod 加载 application-prod.properties 配置文件
-*   正常启动后访问 http://127.0.0.1:8080/sysadmin 用户名 superadmin 密码 1
+*   可选择使用运行参数 `-Dnutz.profiles.active=prod` 加载 application-prod.properties 配置文件
+*   正常启动后访问 `http://127.0.0.1:8080/sysadmin` 用户名 superadmin 密码 1
+*   框架详细介绍及代码生成器的使用等内容请仔细阅读 `wk-wiki`
 
 
 # 鸣谢
