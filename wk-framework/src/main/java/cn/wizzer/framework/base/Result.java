@@ -63,6 +63,10 @@ public class Result implements Serializable {
         return new Result(0, content, data);
     }
 
+    public static Result success(Object data) {
+        return new Result(0, "system.success", data);
+    }
+
     public static Result error(int code, String content) {
         return new Result(code, content, null);
     }
@@ -78,8 +82,8 @@ public class Result implements Serializable {
     public static Result error() {
         return new Result(1, "system.error", null);
     }
-    
-    
+
+
     public int getCode() {
         return code;
     }
