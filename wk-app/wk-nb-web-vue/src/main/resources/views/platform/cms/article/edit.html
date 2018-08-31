@@ -1,0 +1,243 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<script language="JavaScript" type="text/javascript"
+        src="${base}/assets/plugins/My97DatePicker/WdatePicker.js"></script>
+<script src="${base!}/assets/plugins/ueditor/ueditor.config.js"></script>
+<script src="${base!}/assets/plugins/ueditor/ueditor.all.min.js"></script>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/article/${siteid}?channelId=${obj.channelId!}" data-pjax><i class="ti-angle-left"></i> 返回</a>
+    </div>
+    <div class="pull-right">
+        <div class="btn-group tool-button">
+            <button class="btn btn-primary navbar-btn" type="button" id="save"> 保存</button>
+        </div>
+    </div>
+</header>
+
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;height: 100%;">
+        <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+              style="max-width: 99%;"  action="${base}/platform/cms/article/editDo" method="post">
+            <input id="id" name="id" value="${obj.id!}" type="hidden">
+            <input id="siteid" name="siteid" value="${obj.siteid!}" type="hidden">
+                        <div class="col-lg-12">
+                            <div class="form-group has-feedback">
+                                <label for="channelId" class="col-sm-2 control-label">所属栏目<span style="color: red;"> * </span></label>
+
+                                <div class="col-sm-8">
+                                    <div class="input-group">
+                                        <input id="channelId" type="text" class="form-control" placeholder="请选择栏目" disabled
+                                               value="<%if(!isEmpty(channel)){%>${channel.name}<%}%>" />
+
+			                             		<span class="input-group-btn">
+			                             			<button type="button" class="btn btn-primary" data-toggle="modal"
+                                                            data-target="#dialogSelect"><i class="ti-plus"></i>选择
+                                                    </button>
+			                             		</span>
+                                    </div>
+                                    <input type="hidden" name="channelId" value="<%if(!isEmpty(channel)){%>${channel.id}<%}%>">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="title" class="col-sm-2 control-label">文章标题<span style="color: red;"> * </span></label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="title" class="form-control" name="title" data-parsley-required="true"
+                                           value="${obj.title!}" placeholder="文章标题">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="url" class="col-sm-2 control-label">URL</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="url" class="form-control" name="url"
+                                           value="${obj.url!}" placeholder="默认不用填写">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="author" class="col-sm-2 control-label">作者</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="author" class="form-control" name="author"
+                                           value="${obj.author!}" placeholder="作者">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="info" class="col-sm-2 control-label">文章简介</label>
+
+                                <div class="col-sm-8">
+                                    <textarea id="info" name="info" class="form-control" style="width:100%;height:80px;">${obj.info!}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="beginDate" class="col-sm-2 control-label">发布时间</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group date form_datetime " style="width:150px;float:left;padding-right: 5px"
+                                         data-date-format="dd MM yyyy" data-link-field="beginDate">
+                                        <input class="form-control" type='text'
+                                               id="beginDate" name="beginDate" value='${@date.getDate(obj.publishAt,"yyyy-MM-dd")}'
+                                               onFocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'%y-%M-%d\'}'})"/>
+                                    </div>
+                                    <div style="width:20px;float:left;padding-left: 5px;padding-top: 5px;">至</div>
+                                    <div class="input-group date form_datetime " style="width:150px;float:left;padding-left: 5px;padding-right: 5px"
+                                         data-date-format="dd MM yyyy" data-link-field="endDate">
+                                        <input class="form-control" type='text'
+                                               id='endDate' name='endDate' value='${@date.getDate(obj.endAt,"yyyy-MM-dd")}'
+                                               onFocus="WdatePicker({minDate:'#F{$dp.$D(\'beginDate\')||\'-01\'}'})"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="disabled" class="col-sm-2 control-label">取消发布</label>
+                                <div class="col-sm-8 switcha">
+                                    <div class="mr15">
+                                        <input type="checkbox" id="disabled" name="disabled" class="js-switch-blue" value="true" <%if(obj.disabled){%>checked<%}%>>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="picurl" class="col-sm-2 control-label">标题图</label>
+
+                                <div class="col-sm-8">
+                                    <div id="queue"></div>
+                                    <div>
+                                        <input id="file_upload" name="file_upload" type="file" multiple="false">
+                                    </div>
+                                    <div id="img" style="padding: 5px;">
+                                        <%if(!isEmpty(obj.picurl)){%>
+                                        <img src='${obj.picurl!}' style='width:150px;'>
+                                        <i class="fa fa-close" onclick="$('#picurl').val('');$('#img').html('');"></i>
+                                        <%}%>
+                                    </div>
+                                    <input type="hidden" id="picurl" name="picurl" value="${obj.picurl!}" >
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="content" class="col-sm-2 control-label">文章内容</label>
+
+                                <div class="col-sm-8">
+                                    <textarea id="content" name="content" style="width:100%;height:200px;">${obj.content!}</textarea>
+                                </div>
+                            </div>
+                        </div>
+        </form>
+    </div>
+</div>
+<div id="dialogSelect" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">选择栏目</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="jsTree" class="demo"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button type="button" class="btn btn-primary" onclick="select()">确认选择</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    function clearFile() {
+        $("#img").html("");
+        $("#queue").html("");
+        $("#picurl").val("");
+    }
+    function initTreeView() {
+        $("#jsTree").jstree({
+            plugins: ["wholerow", "json_data"],
+            core: {
+                data: {
+                    dataType: "json",
+                    url: function (node) {
+                        return node.id === "#" ? "${base}/platform/cms/channel/tree" : "${base}/platform/cms/channel/tree?pid=" + node.id
+                    }
+                },
+                multiple: false
+            }
+        }).on("dblclick.jstree", function (node) {
+            select();
+        });
+    }
+    //选择父菜单
+    function select() {
+        var tree = $.jstree.reference("#jsTree");
+        var node = tree.get_selected(true);
+        $("#addForm #channelId").val(node[0].text);
+        $("#addForm input[name='channelId']").val(node[0].id);
+        $("#dialogSelect").modal("hide");
+    }
+    var ue;
+    $(document).ready(function () {
+        setTimeout(function () {
+            ue= new baidu.editor.ui.Editor();
+            ue.render('content');
+        },500);
+        myForm.init();
+        initTreeView();
+        $('#file_upload').uploadifive({
+            'auto': true,
+            'multi': false,
+            'width': '100%',
+            'height': '35',
+            'buttonText': '请选择图片',
+            'fileType': 'image/jpg,image/jpeg,image/png',
+            'fileSizeLimit': 1024,
+            'queueSizeLimit': 1,
+            'formData': {},
+            'queueID': 'queue',
+            'uploadScript': '${base}/open/file/upload/image',
+            'onUploadComplete': function (file, data) {
+                data = JSON.parse(data);
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    $("#img").html("<img src='" + data.data + "' style='width:150px;height:95px;'>");
+                    $("#picurl").val(data.data);
+                } else {
+                    clearFile();
+                    Toast.error(data.msg);
+                }
+            },
+            'onDrop': function (file, fileDropCount) {
+                clearFile();
+            },
+            'onClearQueue': function (queue) {
+                clearFile();
+            },
+            'onCancel': function () {
+                clearFile();
+            }
+        });
+        $("#save").on("click",function(){
+            $("#footer_content").val(ue.getContent());
+            $('#addForm').submit();
+        });
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                } else {
+                    Toast.error(data.msg);
+                }
+                sublime.closeLoadingbar($(".main-content"));
+            }
+        });
+
+    });
+</script>
+
+
+<%}%>

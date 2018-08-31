@@ -1,0 +1,101 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/sys/task" data-pjax><i class="ti-angle-left"></i> 返回</a>
+    </div>
+</header>
+
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel panel-form">
+            <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+                  action="${base}/platform/sys/task/addDo" method="post">
+                <div class="row mb10">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">任务名</label>
+                            <div class="col-sm-8">
+                            <input type="text" id="name" class="form-control" name="name" data-parsley-required="true" placeholder="任务名">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobClass" class="col-sm-2 control-label">执行类</label>
+                            <div class="col-sm-8">
+                            <input type="text" id="jobClass" class="form-control" name="jobClass" data-parsley-required="true" placeholder="执行类">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="data" class="col-sm-2 control-label">执行参数(json字符串)</label>
+                            <div class="col-sm-8">
+                                <textarea id="data" name="data" class="form-control" style="width:100%;height:60px;" placeholder="json字符串"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="note" class="col-sm-2 control-label">任务说明</label>
+                            <div class="col-sm-8">
+                            <input type="text" id="note" class="form-control" name="note" data-parsley-required="true" placeholder="任务说明">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cron" class="col-sm-2 control-label">定时规则</label>
+                            <div class="col-sm-8">
+                            <input type="text" id="cron" class="form-control" name="cron" data-parsley-required="true" placeholder="定时规则">
+                                <div style="width: 400px;margin-top: 10px;" class="alert alert-warning alert-dismissable">
+                                    <strong>Cron示例：</strong>前后不要有空格<br>
+                                    &nbsp;*/5 * * * * ?  每隔5秒执行<br>
+                                    &nbsp;0 */1 * * * ?  每隔1分钟执行<br>
+                                    &nbsp;0 0 23 * * ?  每天23点执行<br>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="disabled" class="col-sm-2 control-label">是否禁用</label>
+                            <div class="col-sm-8 switcha">
+                                <div class="mr15">
+                                    <input type="checkbox" id="disabled" name="disabled" class="js-switch-blue" >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="form-group text-center">
+                        <label></label>
+
+                        <div>
+                            <button class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="正在提交...">提 交</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+<script language="JavaScript">
+    $(document).ready(function () {
+        myForm.init();
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                form.find("button:submit").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    //刷新父级菜单
+                    form.resetForm();
+                } else {
+                    Toast.error(data.msg);
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+</script>
+<%}%>
+
+

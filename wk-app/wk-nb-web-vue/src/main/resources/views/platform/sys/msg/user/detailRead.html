@@ -1,0 +1,53 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/sys/msg/user/read" data-pjax><i
+                class="ti-angle-left"></i>${msg['globals.button.back']}</a>
+    </div>
+</header>
+
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel">
+                <div class="row mb10">
+                    <div class="col-lg-12">
+                    <%if(obj!=null){%>
+                        <table class="table table-bordered table-striped mg-t ">
+                            <tbody>
+                            <tr>
+                                <td>消息类型</td><td>
+                                <%if("system"==obj.type){%>
+                                系统消息
+                                <%}%>
+                                <%if("user"==obj.type){%>
+                                用户消息
+                                <%}%>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td>消息标题</td><td>${obj.title}</td>
+                            </tr>
+                            <tr>
+                                <td>消息内容</td><td>${obj.note}</td>
+                            </tr>
+                            <tr>
+                                <td>发送时间</td><td>
+                                <%if(!isEmpty(obj.sendAt)){%>
+                                ${@date.getDate(obj.sendAt)}
+                                <%}%>
+                            </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    <%}else{%>
+                        消息不存在，或您没有阅读权限！
+                        <%}%>
+                    </div>
+                </div>
+        </section>
+    </div>
+</div>
+
+<%}%>

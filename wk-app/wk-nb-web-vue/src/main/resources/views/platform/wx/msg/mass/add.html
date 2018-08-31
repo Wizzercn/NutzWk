@@ -1,0 +1,145 @@
+<script src="${base!}/assets/plugins/ueditor/ueditor.configWx.js"></script>
+<script src="${base!}/assets/plugins/ueditor/ueditor.all.min.js"></script>
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">图文消息</a>
+                    </div>
+                </header>
+                <div class="row mb10" style="text-align: center;padding-top: 10px;">
+                    <table width="90%" style="padding: 10px;">
+                        <tr style="height: 30px;">
+                            <td width="20%" align="right"><span style="color: red">*</span>标题：</td>
+                            <td width="80%" align="left">
+                                <input type="text" id="title" name="title" class="control-group" style="width: 400px;" placeholder="最多200字" maxlength="200">
+                            </td>
+                        </tr>
+                        <tr style="height: 30px;">
+                            <td width="20%" align="right">作者：</td>
+                            <td width="80%" align="left">
+                                <input type="text" id="author" name="author" class="control-group" placeholder="最多20字" maxlength="20">
+                            </td>
+                        </tr>
+                        <tr style="height: 30px;">
+                            <td width="20%" align="right">原文地址：</td>
+                            <td width="80%" align="left">
+                                <input type="text" id="content_source_url" name="content_source_url" class="control-group" style="width: 400px;" maxlength="255">
+                            </td>
+                        </tr>
+                        <tr style="height: 30px;margin-bottom: 10px;">
+                            <td width="20%" align="right"><span style="color: red">(64k以内)*</span>缩略图：</td>
+                            <td width="80%" align="left">
+                                <div id="queue"></div>
+                                <div >
+                                    <input id="file_upload" name="file_upload" type="file" multiple="false">
+                                    <input id="thumb_media_id" name="thumb_media_id" type="hidden">
+                                </div>
+                                <div id="img">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr style="height: 30px;">
+                            <td width="20%" align="right"><span style="color: red">*</span>内容：</td>
+                            <td width="80%" align="left">
+                                <textarea id="content" name="content" style="width:100%;height:150px;"></textarea>
+                                注意：具备微信支付权限的公众号，可以使用a标签，其他公众号不能使用<br><br>
+                            </td>
+                        </tr>
+                        <tr style="height: 30px;margin-top: 10px;">
+                            <td width="20%" align="right">简述：</td>
+                            <td width="80%" align="left">
+                                <textarea id="digest" name="digest" style="width:100%;height:50px;"></textarea>
+                            </td>
+                        </tr>
+                        <tr style="height: 30px;">
+                            <td width="20%" align="right">显示封面：</td>
+                            <td width="80%" align="left">
+                                <input id="show_cover_pic" name="show_cover_pic" type="checkbox" value="1">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+    <button onclick="doSave()" id="ok" type="button" class="btn btn-primary" data-loading-text="正在提交...">确 定</button>
+</div>
+
+<script type="text/javascript">
+    function doSave(){
+        var btn = $("#ok");
+        var dialog = $("#dialogDetail");
+        var show_cover_pic=0;
+        if($("#show_cover_pic").prop("checked")){
+            show_cover_pic=1;
+        }
+        var content=UE.getEditor('content').getContent();
+        if($('#title').val()==''||$('#thumb_media_id').val()==''||content==''){
+            Toast.error("标题 & 缩略图 & 内容 不可为空");
+            return false;
+        }
+        btn.button("loading");
+        $.post("${base}/platform/wx/msg/mass/addDo", {
+                    wxid: '${wxid!}',
+                thumb_media_id:$("#thumb_media_id").val(),
+                author:$("#author").val(),
+                title:$("#title").val(),
+                content_source_url:$("#content_source_url").val(),
+                content:content,
+                digest:$("#digest").val(),
+                show_cover_pic:show_cover_pic
+    }, function (data) {
+            if (data.code == 0) {
+                Toast.success("提交成功");
+                dialog.modal("hide");
+                datatable.ajax.reload();
+            } else {
+                Toast.error(data.msg);
+            }
+            btn.button("reset");
+
+        }, "json");
+    }
+    function delImg(id){
+        $("#"+id).remove();
+        $("#thumb_media_id").val("");
+    }
+    $(function(){
+        var ue = new baidu.editor.ui.Editor();
+        ue.render('content');
+        $('#file_upload').uploadifive({
+            'auto': true,
+            'multi': true,
+            'width': '100%',
+            'height': '35',
+            'buttonText': '请选择图片',
+            'fileType': 'image/jpg,image/jpeg,image/png',
+            'fileSizeLimit': 64,
+            'queueSizeLimit': 6,
+            'formData': {},
+            'queueID': 'queue',
+            'uploadScript': '${base}/platform/wx/msg/mass/uploadThumb/${wxid!}',
+            'onUploadComplete': function (file, data) {
+                data = JSON.parse(data);
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    $("#img").html("<div id='imgId' class='divImg' style='padding: 10px;'>" + data.data +
+                            "<i style='padding-left:5px;' class='fa fa-close' onclick=\"delImg('imgId')\"></i></div>");
+                    $("#thumb_media_id").val(data.data);
+                } else {
+                    Toast.error(data.msg);
+                }
+            },
+            'onSelect' : function(queue) {
+            }
+        });
+    });
+</script>
+

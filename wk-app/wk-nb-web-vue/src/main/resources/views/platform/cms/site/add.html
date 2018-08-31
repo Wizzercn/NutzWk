@@ -1,0 +1,410 @@
+<%
+layout("/layouts/platform.html"){
+%>
+
+<header class="header navbar bg-white shadow">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/site" data-pjax><i class="ti-angle-left"></i> 返回</a>
+
+        <div class="pull-right">
+            <div class="btn-group tool-button">
+                <button class="btn btn-primary navbar-btn" type="button" id="save"> 保存</button>
+            </div>
+        </div>
+    </header>
+
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel panel-form">
+
+            <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+                style="max-width: 98%;margin-left: 10px"  action="${base}/platform/cms/site/addDo" method="post">
+
+        <div class="box-tab">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#home1" data-toggle="tab">基本信息</a>
+
+                    </li>
+                    <li><a href="#profile1" data-toggle="tab">联系方式</a>
+                    </li>
+                    <li><a href="#settings1" data-toggle="tab">SEO优化</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade active in" id="home1">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="id" class="col-sm-2 control-label"><span style="color: red;font-size: 16px;">*</span>站点编码</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="id" class="form-control" name="id" data-parsley-required="true"
+                                           value="${obj.id!}" placeholder="站点编码">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="site_name" class="col-sm-2 control-label"><span style="color: red;font-size: 16px;">*</span>站点名称</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="site_name" class="form-control" name="site_name" data-parsley-required="true"
+                                           value="${obj.site_name!}" placeholder="站点名称">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="site_domain" class="col-sm-2 control-label">域名地址</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="site_domain" class="form-control" name="site_domain"
+                                           value="${obj.site_domain!}" placeholder="http://">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="site_icp" class="col-sm-2 control-label">备案号</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="site_icp" class="form-control" name="site_icp"
+                                           value="${obj.site_icp!}" placeholder="备案号">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="site_logo" class="col-sm-2 control-label">Logo图片</label>
+
+                                <div class="col-sm-8">
+                                    <div id="queue"></div>
+                                    <div>
+                                        <input id="file_upload" name="file_upload" type="file" multiple="false">
+                                    </div>
+                                    <div id="img" style="padding: 5px;">
+                                        <%if(!isEmpty(obj.site_logo)){%>
+                                        <img src='${obj.site_logo!}' style='width:150px;'>
+                                        <i class="fa fa-close" onclick="$('#site_logo').val('');$('#img').html('');"></i>
+                                        <%}%>
+                                    </div>
+                                    <input type="hidden" id="site_logo" name="site_logo" value="${obj.site_logo!}" >
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="site_wap_logo" class="col-sm-2 control-label">手机版Logo图片</label>
+
+                                <div class="col-sm-8">
+                                    <div id="wap_queue"></div>
+                                    <div>
+                                        <input id="wap_file_upload" name="wap_file_upload" type="file" multiple="false">
+                                    </div>
+                                    <div id="img_wap" style="padding: 5px;">
+                                        <%if(!isEmpty(obj.site_wap_logo)){%>
+                                        <img src='${obj.site_wap_logo!}' style='width:150px;'>
+                                        <i class="fa fa-close" onclick="$('#site_wap_logo').val('');$('#img_wap').html('');"></i>
+                                        <%}%>
+                                    </div>
+                                    <input type="hidden" id="site_wap_logo" name="site_wap_logo" value="${obj.site_wap_logo!}" >
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="footer_content" class="col-sm-2 control-label">底部信息</label>
+
+                                <div class="col-sm-8">
+                                    <textarea id="footer_content" name="footer_content" class="form-control" style="width:100%;height:150px;">${obj.footer_content!}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="profile1">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="site_qq" class="col-sm-2 control-label">客服QQ</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="site_qq" class="form-control" name="site_qq"
+                                           placeholder="QQ"  value="${obj.site_qq!}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="site_email" class="col-sm-2 control-label">网站邮箱</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="site_email" class="form-control" name="site_email"
+                                           placeholder="网站邮箱"  value="${obj.site_email!}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="site_tel" class="col-sm-2 control-label">客服电话</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="site_tel" class="form-control" name="site_tel"
+                                           placeholder="客服电话"  value="${obj.site_tel!}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="weibo_name" class="col-sm-2 control-label">微博名称</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="weibo_name" class="form-control" name="weibo_name"
+                                           placeholder="微博名称" value="${obj.weibo_name!}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="weibo_url" class="col-sm-2 control-label">微博地址</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="weibo_url" class="form-control" name="weibo_url"
+                                           placeholder="http://" value="${obj.weibo_url!}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="weibo_qrcode" class="col-sm-2 control-label">微博二维码</label>
+
+                                <div class="col-sm-8">
+                                    <div id="queue_weibo"></div>
+                                    <div>
+                                        <input id="file_upload_weibo" name="file_upload_weibo" type="file" multiple="false">
+                                    </div>
+                                    <div id="img_weibo" style="padding: 5px;">
+                                        <%if(!isEmpty(obj.weibo_qrcode)){%>
+                                        <img src='${obj.weibo_qrcode!}' style='width:150px;height:95px;'>
+                                        <i class="fa fa-close" onclick="$('#weibo_qrcode').val('');$('#img_weibo').html('');"></i>
+
+                                        <%}%>
+                                    </div>
+                                    <input type="hidden" id="weibo_qrcode" name="weibo_qrcode" value="${obj.weibo_qrcode!}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="wechat_name" class="col-sm-2 control-label">微信名称</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="wechat_name" class="form-control" name="wechat_name"
+                                           placeholder="微信名称" value="${obj.wechat_name!}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="wechat_id" class="col-sm-2 control-label">微信帐号</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="wechat_id" class="form-control" name="wechat_id"
+                                           placeholder="微信帐号" value="${obj.wechat_id!}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="wechat_qrcode" class="col-sm-2 control-label">微信二维码</label>
+
+                                <div class="col-sm-8">
+                                    <div id="queue_wechat"></div>
+                                    <div>
+                                        <input id="file_upload_wechat" name="file_upload_wechat" type="file" multiple="false">
+                                    </div>
+                                    <div id="img_wechat" style="padding: 5px;">
+                                        <%if(!isEmpty(obj.wechat_qrcode)){%>
+                                        <img src='${obj.wechat_qrcode!}' style='width:150px;height:95px;'>
+                                        <i class="fa fa-close" onclick="$('#wechat_qrcode').val('');$('#img_wechat').html('');"></i>
+
+                                        <%}%>
+                                    </div>
+                                    <input type="hidden" id="wechat_qrcode" name="wechat_qrcode" value="${obj.wechat_qrcode!}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="settings1">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="seo_keywords" class="col-sm-2 control-label">网页关键词</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="seo_keywords" class="form-control" name="seo_keywords"
+                                           placeholder="keywords"  value="${obj.seo_keywords!}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="seo_description" class="col-sm-2 control-label">网页描述</label>
+
+                                <div class="col-sm-8">
+                                    <input type="text" id="seo_description" class="form-control" name="seo_description"
+                                           placeholder="description"  value="${obj.seo_description!}">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            </form>
+        </section>
+        </div>
+    </div>
+<script language="JavaScript">
+    function clearFile() {
+        $("#img").html("");
+        $("#queue").html("");
+        $("#site_logo").val("");
+    }
+    function clearWapFile() {
+        $("#img_wap").html("");
+        $("#wap_queue").html("");
+        $("#site_wap_logo").val("");
+    }
+    function clearFile_weibo() {
+        $("#img_weibo").html("");
+        $("#queue_weibo").html("");
+        $("#weibo_qrcode").val("");
+    }
+    function clearFile_wechat() {
+        $("#img_wechat").html("");
+        $("#queue_wechat").html("");
+        $("#wechat_qrcode").val("");
+    }
+    $(document).ready(function () {
+        $('#file_upload').uploadifive({
+            'auto': true,
+            'multi': false,
+            'width': '100%',
+            'height': '35',
+            'buttonText': '请选择图片',
+            'fileType': 'image/jpg,image/jpeg,image/png',
+            'fileSizeLimit': 1024,
+            'queueSizeLimit': 1,
+            'formData': {},
+            'queueID': 'queue',
+            'uploadScript': '${base}/open/file/upload/image',
+            'onUploadComplete': function (file, data) {
+                data = JSON.parse(data);
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    $("#img").html("<img src='" + data.data + "' style='width:150px;'>");
+                    $("#site_logo").val(data.data);
+                } else {
+                    clearFile();
+                    Toast.error(data.msg);
+                }
+            },
+            'onDrop': function (file, fileDropCount) {
+                clearFile();
+            },
+            'onClearQueue': function (queue) {
+                clearFile();
+            },
+            'onCancel': function () {
+                clearFile();
+            }
+        });
+        $('#wap_file_upload').uploadifive({
+            'auto': true,
+            'multi': false,
+            'width': '100%',
+            'height': '35',
+            'buttonText': '请选择图片',
+            'fileType': 'image/jpg,image/jpeg,image/png',
+            'fileSizeLimit': 1024,
+            'queueSizeLimit': 1,
+            'formData': {},
+            'queueID': 'wap_queue',
+            'uploadScript': '${base}/open/file/upload/image',
+            'onUploadComplete': function (file, data) {
+                data = JSON.parse(data);
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    $("#img_wap").html("<img src='" + data.data + "' style='width:150px;'>");
+                    $("#site_wap_logo").val(data.data);
+                } else {
+                    clearWapFile();
+                    Toast.error(data.msg);
+                }
+            },
+            'onDrop': function (file, fileDropCount) {
+                clearWapFile();
+            },
+            'onClearQueue': function (queue) {
+                clearWapFile();
+            },
+            'onCancel': function () {
+                clearWapFile();
+            }
+        });
+        $('#file_upload_weibo').uploadifive({
+            'auto': true,
+            'multi': false,
+            'width': '100%',
+            'height': '35',
+            'buttonText': '请选择图片',
+            'fileType': 'image/jpg,image/jpeg,image/png',
+            'fileSizeLimit': 1024,
+            'queueSizeLimit': 1,
+            'formData': {},
+            'queueID': 'queue_weibo',
+            'uploadScript': '${base}/open/file/upload/image',
+            'onUploadComplete': function (file, data) {
+                data = JSON.parse(data);
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    $("#img_weibo").html("<img src='" + data.data + "' style='width:150px;height:95px;'>");
+                    $("#weibo_qrcode").val(data.data);
+                } else {
+                    clearFile_weibo();
+                    Toast.error(data.msg);
+                }
+            },
+            'onDrop': function (file, fileDropCount) {
+                clearFile_weibo();
+            },
+            'onClearQueue': function (queue) {
+                clearFile_weibo();
+            },
+            'onCancel': function () {
+                clearFile_weibo();
+            }
+        });
+        $('#file_upload_wechat').uploadifive({
+            'auto': true,
+            'multi': false,
+            'width': '100%',
+            'height': '35',
+            'buttonText': '请选择图片',
+            'fileType': 'image/jpg,image/jpeg,image/png',
+            'fileSizeLimit': 1024,
+            'queueSizeLimit': 1,
+            'formData': {},
+            'queueID': 'queue_wechat',
+            'uploadScript': '${base}/open/file/upload/image',
+            'onUploadComplete': function (file, data) {
+                data = JSON.parse(data);
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    $("#img_wechat").html("<img src='" + data.data + "' style='width:150px;height:95px;'>");
+                    $("#wechat_qrcode").val(data.data);
+                } else {
+                    clearFile_wechat();
+                    Toast.error(data.msg);
+                }
+            },
+            'onDrop': function (file, fileDropCount) {
+                clearFile_wechat();
+            },
+            'onClearQueue': function (queue) {
+                clearFile_wechat();
+            },
+            'onCancel': function () {
+                clearFile_wechat();
+            }
+        });
+        $("#save").on("click",function(){
+//      $("#footer_content").val(ue.getContent());
+            $('#addForm').submit();
+        });
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                } else {
+                    Toast.error(data.msg);
+                }
+                sublime.closeLoadingbar($(".main-content"));
+            }
+        });
+    });
+</script>
+
+<%}%>

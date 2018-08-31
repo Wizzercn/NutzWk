@@ -1,0 +1,104 @@
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+        <div class="pull-left offscreen-left" style="padding-top:15px;">
+            <div class="form-group">
+                <input id="name" type="text" onclick="this.value='';" placeholder="请输入用户名或昵称">
+            </div>
+        </div>
+        <div class="pull-right offscreen-right btn-group tool-button">
+            <a class="btn btn-primary navbar-btn" onclick="_selectAll()">全选</a>
+            <a class="btn btn-primary navbar-btn" onclick="_selectOn()">确定</a>
+        </div>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border" style="padding-top: 5px;" >
+            <input id="unitid" type="hidden">
+            <table id="datatable_select" class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                <tr>
+                    <th>单位名称</th>
+                    <th>用户名</th>
+                    <th>姓名/昵称</th>
+                    <th>状态</th>
+            </table>
+        </div>
+    </div>
+</section>
+<script language="JavaScript">
+    var datatable_select;
+    function initdatatable_select() {
+        datatable_select = $('#datatable_select').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "ajax": {
+                "url": "${base}/platform/sys/role/selectData",
+                "type": "post",
+                "data": function (d) {
+                    d.roleid = $('#roleid').val();
+                    d.name = $('#name').val();
+                }
+            },
+            "order": [[1, "desc"]],
+            "columns": [
+                {"data": "unitname", "bSortable": true},
+                {"data": "loginname", "bSortable": true},
+                {"data": "username", "bSortable": true},
+                {"data": "disabled", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        if (!data) {
+                            return '<i id="disable_' + row.id + '" class="fa fa-circle text-success ml5"></i>';
+                        } else {
+                            return '<i id="disable_' + row.id + '" class="fa fa-circle text-danger ml5"></i>';
+                        }
+                    },
+                    "targets": 3
+                }
+            ]
+        });
+        datatable_select.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#name").on('keyup', function () {
+            datatable_select.ajax.reload();
+        });
+    }
+    function _selectAll() {
+        $("#datatable_select").find("tr").each(function () {
+            if (!$(this).hasClass('selected'))
+                $(this).addClass('selected');
+        });
+    }
+    function _selectOn() {
+        var chks = datatable_select.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable_select.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            $.post("${base}/platform/sys/role/pushUser", {menuIds: ids.toString(),roleid: $('#roleid').val()}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload();
+                } else {
+                    Toast.error(data.msg);
+                }
+                $('#dialogUserSelect').modal('hide');
+            }, "json");
+        }else{
+            Toast.warning("请先选择用户！");
+        }
+    }
+    $(document).ready(function () {
+        initdatatable_select();
+    });
+
+</script>

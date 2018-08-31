@@ -1,0 +1,46 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">站内消息</a>
+                        <small>${obj.id}</small>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <table class="table table-bordered table-striped mg-t datatable">
+                        <tbody>
+                                                        <tr>
+                                <td>消息类型</td><td>
+                                                            <%if("system"==obj.type){%>
+                                                              系统消息
+                                                            <%}%>
+                                                            <%if("user"==obj.type){%>
+                                                            用户消息
+                                                            <%}%>
+                                                        </td>
+                            </tr>
+                                                        <tr>
+                                <td>消息标题</td><td>${obj.title}</td>
+                            </tr>
+                                                        <tr>
+                                <td>消息内容</td><td>${obj.note}</td>
+                            </tr>
+                                                        <tr>
+                                <td>发送时间</td><td>
+                                                            <%if(!isEmpty(obj.sendAt)){%>
+                                                            ${@date.getDate(obj.sendAt)}
+                                                            <%}%>
+                                                        </td>
+                            </tr>
+                                                    </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+</div>

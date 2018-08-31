@@ -1,0 +1,280 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+
+        <div id="btns" class="btn-group tool-button" style="padding-top: 8px;">
+            <button class="btn btn-default active" data="all">全部消息类型</button>
+            <button class="btn btn-default" data="system">系统消息</button>
+            <button class="btn btn-default" data="user">用户消息</button>
+        </div>
+        <div class="pull-right offscreen-right">
+            <button class="btn btn-primary navbar-btn" onclick="read()">标记已读
+            </button>
+            <button class="btn btn-primary navbar-btn" onclick="readAll()">全部已读
+            </button>
+            <button class="btn btn-danger navbar-btn" onclick="delCheck()">删除
+            </button>
+        </div>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border">
+            <table class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                <tr>
+                    <th>消息标题</th>
+                    <th>通知时间</th>
+                    <th>消息类型</th>
+                    <th>已读状态</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+<div id="dialogRead" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">标记已读</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        您确定要标记选中的消息为已读吗？
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="okRead" type="button" class="btn btn-primary" data-loading-text="正在提交...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogReadAll" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">全部已读</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        您确定要标记全部消息为已读吗？
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="okReadAll" type="button" class="btn btn-primary" data-loading-text="正在提交...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        删除后无法恢复。<br/>
+                        <br/>确定删除吗？
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    var type = "all";
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/sys/msg/user/data/${status!}",
+                "type": "post",
+                "data": function (d) {
+                    d.type = type;
+                }
+            },
+            "order": [[1, "desc"]],
+            "columns": [
+                {"data": "title", "bSortable": false},
+                {"data": "sendat", "bSortable": false},
+                {"data": "type", "bSortable": false},
+                {"data": "status", "bSortable": false}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return '<a data-pjax href="${base}/platform/sys/msg/user/all/detail/'+row.msgid+'" style="color: #0e78c5">'+data+'</a>';
+                        }
+                        return '';
+                    },
+                    "targets": 0
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return moment(parseInt(data * 1000)).format("YYYY-MM-DD HH:mm:ss");
+                        }
+                        return '';
+                    },
+                    "targets": 1
+                },
+                {
+                    "render": function (data, type, row) {
+                        if ("system" == data) {
+                            return "系统消息";
+                        }
+                        if ("user" == data) {
+                            return "用户消息";
+                        }
+                        return "";
+                    },
+                    "targets": 2
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return '<i class="fa fa-circle text-success ml5"></i>';
+                        } else {
+                            return '<i class="fa fa-circle text-danger ml5"></i>';
+                        }
+                    },
+                    "targets": 3
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+    }
+    function delCheck() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            var dialog = $("#dialogDelete");
+            dialog.modal("show");
+            dialog.find("#okDel").unbind("click");
+            dialog.find("#okDel").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/platform/sys/msg/user/delete", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        datatable.ajax.reload(null, false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+        } else {
+            Toast.warning("请先选择要删除的项！");
+        }
+    }
+    function read() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            var dialog = $("#dialogRead");
+            dialog.modal("show");
+            dialog.find("#okRead").unbind("click");
+            dialog.find("#okRead").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/platform/sys/msg/user/status/read", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        datatable.ajax.reload(null, false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+        } else {
+            Toast.warning("请先选择消息！");
+        }
+    }
+    function readAll() {
+        var ids = [];
+        $.each(datatable.rows('.selected').data(), function (i, n) {
+            ids.push(n.id);
+        });
+        var dialog = $("#dialogReadAll");
+        dialog.modal("show");
+        dialog.find("#okReadAll").unbind("click");
+        dialog.find("#okReadAll").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/sys/msg/user/status/readAll", {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null, false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    $(function () {
+        $("#btns").find("button").each(function () {
+            $(this).on("click", function () {
+                $("#btns").find("button").each(function () {
+                    $(this).removeClass("active");
+                });
+                type = $(this).attr("data");
+                $(this).addClass("active");
+                datatable.ajax.reload();
+            });
+        });
+        initDatatable();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+    });
+</script>
+<%}%>

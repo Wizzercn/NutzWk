@@ -1,0 +1,130 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/wx/conf/account/add" data-pjax><i class="ti-plus"></i> 添加帐号</a>
+    </div>
+</header>
+<div class=panel-body style="padding-top: 50px;">
+    <div class="table-responsive no-border">
+        <input id="unitid" type="hidden">
+        <table class="table table-bordered table-striped mg-t datatable">
+            <thead>
+            <tr>
+                <th>公众号</th>
+                <th>Appid</th>
+                <th>Appsecret</th>
+                <th>Token</th>
+                <th>微信支付</th>
+                <th>操作</th>
+        </table>
+    </div>
+</div>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        删除后无法恢复，确定删除吗？ <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/wx/conf/account/data",
+                "type": "post",
+                "data": function (d) {
+                }
+            },
+            "order": [[0, "desc"]],
+            "columns": [
+                {"data": "appname", "bSortable": true},
+                {"data": "appid", "bSortable": true},
+                {"data": "appsecret", "bSortable": true},
+                {"data": "token", "bSortable": true},
+                {"data": "payEnabled", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        if(data)
+                            return "启用";
+                        return "禁用";
+                    },
+                    "targets": 4
+                },
+                {
+                    "render": function (data, type, row) {
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                                '<li><a href="${base}/platform/wx/conf/account/edit/' + row.id + '" data-pjax>修改</a></li>' +
+                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
+                                '</ul></div>';
+                    },
+                    "targets": 5
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    function del(id) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#ok").unbind("click");
+        dialog.find("#ok").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/wx/conf/account/delete/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                //重置按钮状态，关闭提示框
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    $(function () {
+        initDatatable();
+    });
+</script>
+
+<%}%>

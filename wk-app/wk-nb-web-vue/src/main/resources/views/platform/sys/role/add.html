@@ -1,0 +1,264 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <!-- 左按钮区 -->
+    <div class="btn-group tool-button">
+        <a id="add" class="btn btn-primary navbar-btn" href="${base}/platform/sys/role" data-pjax><i class="ti-angle-left"></i> 返回</a>
+    </div>
+    <!--<div class="pull-right">-->
+        <!--<div class="btn-group tool-button">-->
+            <!--<button class="btn btn-primary navbar-btn" onclick="complete()"><i class="ti-share"></i> 立即完成</button>-->
+        <!--</div>-->
+    <!--</div>-->
+</header>
+<div class="content-wrap">
+    <div class="wrapper">
+        <div class="row mb15">
+            <div class="col-lg-12">
+                <form id="addRoleForm" class="form-horizontal stepy" method="post" action="${base}/platform/sys/role/addDo">
+                    <input type="hidden" id="menuIds" name="menuIds"/>
+                    <input type="hidden" id="userIds" name="userIds"/>
+                    <fieldset title="第 1 步&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+                        <legend>基本信息</legend>
+                        <div class="form-group">
+                            <label for="unitName" class="col-sm-1 control-label">所属单位</label>
+
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input id="unitName" name="unitName" type="text" class="form-control" validate="true"
+                                           placeholder="请选择单位or系统角色" readonly value="<%if(!isEmpty(obj)){%>${obj.name}<%}%>"/>
+				                             		<span class="input-group-btn">
+				                             			<button type="button" class="btn btn-primary" data-toggle="modal"
+                                                                data-target="#dialogSelectUnit"><i class="ti-plus"></i> 选择
+                                                        </button>
+				                             		</span>
+                                </div>
+                                <input type="hidden" id="unitid" name="unitid" value="<%if(!isEmpty(obj)){%>${obj.id}<%}%>"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-1 control-label">角色名称</label>
+
+                            <div class="col-sm-11">
+                                <input type="text" class="form-control" id="name" name="name" validate="true" placeholder="角色名称"
+                                       maxlength="20">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="code" class="col-sm-1 control-label">权限标识</label>
+
+                            <div class="col-sm-11">
+                                <input type="text" class="form-control" id="code" name="code" validate="true" placeholder="权限标识"
+                                       maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="note" class="col-sm-1 control-label">角色说明</label>
+
+                            <div class="col-sm-11">
+                                <input type="text" class="form-control" id="note" name="note" placeholder="角色说明"
+                                       maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="disabled" class="col-sm-1 control-label">是否禁用</label>
+
+                            <div class="col-sm-11 switcha">
+                                <div class="mr15">
+                                    <input type="checkbox" id="disabled" name="disabled" class="form-control js-switch-blue"
+                                            >
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset title="第 2 步&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
+                        <legend>分配菜单权限</legend>
+                        <div class="form-group no-b">
+                            <div class="col-sm-8">
+                                <div class="panel">
+                                    <div class="panel-heading no-b">
+                                        <h5>选择<b>菜单</b></h5>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div id="jsTreeMenu"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="panel">
+                                    <div class="panel-heading no-b">
+                                        <h5>菜单<b>描述</b></h5>
+                                    </div>
+                                    <div id="menuDescript" class="panel-body">
+                                        <div class='alert alert-info'>请勾选每一个需要分配的菜单</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <button class="stepy-finish btn btn-primary pull-right" data-loading-text="正在提交...">完成</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogSelectUnit" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">选择单位</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="jsTreeUnit" class="demo"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button type="button" class="btn btn-primary" onclick="selectParentMenu()">确认选择</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    function initTreeView() {
+        $("#jsTreeUnit").jstree({
+            plugins: ["wholerow"],
+            core: {
+                data: {
+                    async: true,
+                    url: function (node) {
+                        return node.id === "#" ? "${base}/platform/sys/role/tree" : "${base}/platform/sys/role/tree?pid=" + node.id
+                    }
+                },
+                multiple: false
+            }
+        }).on("dblclick.jstree", function (node) {
+            selectParentMenu();
+        });
+    }
+    //选择父菜单
+    function selectParentMenu() {
+        var tree = $.jstree.reference("#jsTreeUnit");
+        var node = tree.get_selected(true);
+        $("#unitName").val(node[0].text);
+        $("#unitid").val(node[0].id);
+        $("#dialogSelectUnit").modal("hide");
+    }
+    $(function () {
+        var jsTreeMenu;
+        $(".stepy").stepy({
+            backLabel: "上一步",
+            nextLabel: "下一步",
+            errorImage: true,
+            block: true,
+            validate: true,
+            legend: false,
+            select: function (idx) {
+                if (idx == 2) {
+                    var unitId = $("#unitid").val();
+                    //刷新树
+                    if (!jsTreeMenu) {
+                        //$.jstree.reference("#jsTreeMenu").destroy();
+                        //初始化选择菜单树
+                        jsTreeMenu = $("#jsTreeMenu").jstree({
+                            plugins: ["wholerow", "checkbox"],
+                            core: {
+                                data: ${menus!}
+                            },
+                            checkbox: {
+                                three_state: false,
+                                cascade: 'down'
+                            }
+                        }).on("hover_node.jstree", function (e, data) {
+                            if (data.node.data)
+                                $("#menuDescript").text(data.node.data);
+                        }).on("dehover_node.jstree", function (e, data) {
+                            $("#menuDescript").html("<div class='alert alert-info'>请勾选每一个需要分配的菜单</div>");//清空菜单描述
+                        }).bind("loaded.jstree", function () {
+                            //立即加载树下所有节点
+                            //$("#jsTreeMenu").jstree("load_all");
+                        });
+                    }
+                }
+            }, finish: function(index) {
+                var tree = $.jstree.reference("#jsTreeMenu");
+                var nodes = tree.get_selected();
+                //查询所选节点的所有父节点
+                for (var i = 0; i < nodes.length; i++) {
+                    var node = nodes[i];
+                    each(node, tree, nodes);
+                }
+                $("#menuIds").val(nodes);
+
+            }
+        });
+        $(".stepy").validate({
+            errorPlacement: function (error) {
+                $(".stepy .stepy-errors").append(error)
+            },
+            rules: {
+                unitName: "required",
+                name: "required",
+                code: "required"
+            },
+            messages: {
+                unitName: {
+                    required: "必须选择单位"
+                },
+                name: {
+                    required: "角色名不能为空"
+                },
+                code: {
+                    required: "权限标识不能为空"
+                }
+            }
+        });
+        //表单ajax提交
+        $("#addRoleForm").ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                //获取选择的菜单
+                form.find("button:submit").button("loading");
+                if (form.attr("isSubmit") == undefined) {//与stepy结合使用时，要避免二次提交的问题
+                    form.attr("isSubmit", true);
+                } else {
+                    form.removeAttr("isSubmit");
+                    return false;
+                }
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success("角色增加成功！");
+                    form.resetForm();
+                    $("#menuIds").val("");
+                    //回到第一个step
+                    $(".stepy").stepy("step", 1);
+                } else {
+                    Toast.error(data.msg);
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+        initTreeView();
+        myForm.init();
+    });
+    function complete() {
+        $('#addRoleForm').submit();
+    }
+    function each(node, tree, nodes) {
+        var p = tree.get_parent(node);
+        if (p.length > 1) {
+            if (nodes&&p&&nodes.indexOf(p)<0)
+                nodes.push(p);
+            each(p, tree, nodes);
+        }
+    }
+</script>
+
+
+<%}%>

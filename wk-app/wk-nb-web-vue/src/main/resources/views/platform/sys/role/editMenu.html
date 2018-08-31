@@ -1,0 +1,103 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <!-- 左按钮区 -->
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/sys/role" data-pjax id="goback"><i class="ti-angle-left"></i> 返回</a>
+    </div>
+    <div class="pull-right">
+        <div class="btn-group tool-button">
+            <button class="btn btn-primary navbar-btn" onclick="complete()"><i class="ti-share"></i> 保存</button>
+        </div>
+    </div>
+</header>
+<div class="content-wrap">
+    <div class="wrapper" style="min-height: 500px;">
+        <div class="row mb15">
+            <div class="col-lg-12">
+                <form id="addRoleForm" class="form-horizontal stepy" method="post" action="${base}/platform/sys/role/editMenuDo">
+                    <input type="hidden" id="menuIds" name="menuIds"/>
+
+                    <div class="form-group no-b">
+                        <div class="col-sm-8">
+                            <div class="panel">
+                                <div class="panel-heading no-b">
+                                    <h5>选择<b>菜单</b></h5>
+                                </div>
+                                <div class="panel-body">
+                                    <div id="jsTreeMenu"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="panel">
+                                <div class="panel-heading no-b">
+                                    <h5>菜单<b>描述</b></h5>
+                                </div>
+                                <div id="menuDescript" class="panel-body">
+                                    <div class='alert alert-info'>请勾选每一个需要分配的菜单</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var jsTreeMenu;
+    $(function () {
+        jsTreeMenu = $("#jsTreeMenu").jstree({
+                    plugins: ["wholerow", "checkbox"],
+                    core: {
+                        data: ${menus!}
+                },
+                checkbox: {
+                    three_state: false,
+                    cascade: 'down'
+        }
+    }).on("hover_node.jstree", function (e, data) {
+        if (data.node.data)
+            $("#menuDescript").text(data.node.data);
+    }).on("dehover_node.jstree", function (e, data) {
+        $("#menuDescript").html("<div class='alert alert-info'>请勾选每一个需要分配的菜单</div>");//清空菜单描述
+    }).bind("loaded.jstree", function (e, data) {
+        //立即加载树下所有节点
+
+    });
+    });
+    function each(node, tree, nodes) {
+        var p = tree.get_parent(node);
+        if (p.length > 1) {
+            if (nodes&&p&&nodes.indexOf(p)<0)
+                nodes.push(p);
+            each(p, tree, nodes);
+        }
+    }
+    function complete() {
+        var tree = $.jstree.reference("#jsTreeMenu");
+        var ids = tree.get_selected();
+        //查询所选节点的所有父节点
+        for (var i = 0; i < ids.length; i++) {
+            var node = ids[i];
+            each(node, tree, ids);
+        }
+        if (ids.length > 0) {
+            $.post("${base}/platform/sys/role/editMenuDo", {menuIds: ids.toString(), roleid: '${obj.id}'}, function (data) {
+            if (data.code == 0) {
+                Toast.success(data.msg);
+                setTimeout(function () {
+                    $("#goback").trigger("click");
+                }, 1000);
+            } else {
+                Toast.error(data.msg);
+            }
+        }, "json");
+    } else {
+        Toast.warning("请先选择菜单！");
+    }
+    }
+</script>
+<%}%>

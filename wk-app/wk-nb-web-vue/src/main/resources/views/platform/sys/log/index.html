@@ -1,0 +1,197 @@
+<%
+layout("/layouts/platform.html"){
+%>
+
+<header class="header-control">
+    <script language="JavaScript" type="text/javascript"
+            src="${base}/assets/plugins/My97DatePicker/WdatePicker.js"></script>
+    <div class="btn-group" style="padding-left: 10px;">
+        <select id="type" class="form-control" onchange="search()">
+            <option value="">全部日志</option>
+            <option value="api">接口日志</option>
+            <option value="platform">系统日志</option>
+            <option value="info">其他日志</option>
+        </select>
+    </div>
+    <div class="btn-group tool-button">
+        <div class="input-group date form_datetime " style="width:150px;float:left;padding-left: 5px;padding-right: 5px"
+             data-date-format="dd MM yyyy" data-link-field="beginDate">
+            <input class="form-control" type='text'
+                   id="beginDate" name="beginDate" value='${today!}'
+                   onFocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'%y-%M-%d\'}'})"/>
+        </div>
+        <div class="input-group date form_datetime " style="width:150px;float:left;padding-left: 5px;padding-right: 5px"
+             data-date-format="dd MM yyyy" data-link-field="endDate">
+            <input class="form-control" type='text'
+                   id='endDate' name='endDate' value='${today!}'
+                   onFocus="var date=limitMonthDate(2);WdatePicker({minDate:'#F{$dp.$D(\'beginDate\')||\'${month!}-01\'}',maxDate:date})"/>
+        </div>
+    </div>
+    <div class="btn-group tool-button">
+        <button class="btn btn-primary navbar-btn" onclick="search()">查询</button>
+    </div>
+
+    <!--<div class="pull-right">-->
+    <!--<div class="btn-group tool-button">-->
+    <!--<button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 清空日志</button>-->
+    <!--</div>-->
+    <!--</div>-->
+</header>
+<div class=panel-body style="margin-top: 10px;">
+    <div class="table-responsive no-border">
+        <input id="unitid" type="hidden">
+        <table class="table table-bordered table-striped mg-t datatable">
+            <thead>
+            <tr>
+                <th>日志标签</th>
+                <th>日志内容</th>
+                <th>执行方法</th>
+                <th>请求参数</th>
+                <th>执行结果</th>
+                <th>操作时间</th>
+                <th>操作IP</th>
+        </table>
+    </div>
+</div>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">删除</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        删除后无法恢复，确定删除吗？ <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/sys/log/data",
+                "type": "post",
+                "data": function (d) {
+                    d.beginDate = $("#beginDate").val();
+                    d.endDate = $("#endDate").val();
+                    d.type = $("#type").val();
+                }
+            },
+            "order": [[5, "desc"]],
+            "columns": [
+                {"data": "tag", "bSortable": true, width: 80},
+                {"data": "msg", "bSortable": false},
+                {"data": "src", "bSortable": false},
+                {"data": "param", "bSortable": true},
+                {"data": "result", "bSortable": true},
+                {"data": "opAt", "bSortable": true},
+                {"data": "ip", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return data.replace("cn.wizzer.app.web.modules.controllers.platform.sys.","");
+                        }
+                        return '';
+                    },
+                    "targets": 2
+                },
+                {
+                    "render": function (data, type, row) {
+                        if (data) {
+                            return moment(parseInt(data * 1000)).format("YYYY-MM-DD HH:mm:ss");
+                        }
+                        return '';
+                    },
+                    "targets": 5
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    function search() {
+        datatable.ajax.reload();
+    }
+    //限制开始和结束时间为同一个月
+    function limitMonthDate(e) {
+        var DateString;
+        if (e == 2) {
+            var beginDate = $dp.$("beginDate").value;
+            if (beginDate != "" && beginDate != null) {
+                var limitDate = new Date(beginDate);
+                limitDate.setDate(new Date(limitDate.getFullYear(), limitDate
+                        .getMonth() + 1, 0).getDate()); //获取此月份的天数
+                DateString = limitDate.getFullYear() + '-'
+                    + (limitDate.getMonth() + 1) + '-'
+                    + limitDate.getDate();
+                return DateString;
+            }
+        }
+        if (e == 1) {
+            var endDate = $dp.$("endDate").value;
+            if (endDate != "" && endDate != null) {
+                var limitDate = new Date(endDate);
+                limitDate.setDate("1"); //设置闲置时间为月初
+                DateString = limitDate.getFullYear() + '-'
+                    + (limitDate.getMonth() + 1) + '-'
+                    + limitDate.getDate();
+                return DateString;
+            }
+        }
+
+    }
+    function delCheck() {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#ok").unbind("click");
+        dialog.find("#ok").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/sys/log/delete", {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null, false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    $(function () {
+        initDatatable();
+    });
+</script>
+
+<%}%>
