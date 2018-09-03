@@ -66,7 +66,6 @@
                             @click="showPwd">
                     </i>
                 </el-input>
-                </span>
             </el-form-item>
 
             <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"
@@ -87,8 +86,8 @@
             <br>
             <br>
             <br>
-            <social-sign/>
         </el-dialog>
+
         <el-dialog title="${msg['login.error.verifycode']}" :visible.sync="captchaVisible" @close="closeCaptchaForm"
                    append-to-body>
             <el-form :model="captchaForm" ref="captchaForm">
