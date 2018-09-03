@@ -1,534 +1,59 @@
 <!DOCTYPE html>
-<html class="signin no-js" lang="${lang!}">
+<html lang="${lang!}">
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="renderer" content="webkit">
-    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
     <meta name="description" content="${AppName!}">
     <title>${AppName!}</title>
-    <link rel="stylesheet" href="${base!}/assets/plugins/stepy/jquery.stepy.css">
-    <link rel="stylesheet" href="${base!}/assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${base!}/assets/css/font-awesome.css">
-    <link rel="stylesheet" href="${base!}/assets/css/themify-icons.css">
-    <link rel="stylesheet" href="${base!}/assets/css/animate.min.css">
-    <link rel="stylesheet" href="${base!}/assets/css/skins/palette.css">
-    <link rel="stylesheet" href="${base!}/assets/css/fonts/font.css">
-    <link rel="stylesheet" href="${base!}/assets/css/main.css">
-    <link rel="stylesheet" href="${base!}/assets/css/panel.css">
-    <link rel="stylesheet" href="${base!}/assets/plugins/jstree/themes/default/style.min.css">
-    <link rel="stylesheet" href="${base!}/assets/plugins/treetable/jquery.treetable.css">
-    <link rel="stylesheet" href="${base!}/assets/plugins/datatables/dataTables.bootstrap.css">
-    <link rel="stylesheet" href="${base!}/assets/plugins/chosen/chosen.min.css">
-    <link rel="stylesheet" href="${base!}/assets/plugins/datepicker/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" href="${base!}/assets/plugins/emoji/emoji.css">
-    <link rel="stylesheet" href="${base!}/assets/plugins/x-editable/bootstrap-editable.css">
-    <!--[if lt IE 9]>
-    <script src="${base!}/assets/js/html5shiv.js"></script>
-    <script src="${base!}/assets/js/respond.min.js"></script>
-    <script src="${base!}/assets/js/json2.js"></script>
-    <![endif]-->
-    <% if(@shiro.getPrincipalProperty('loginTheme')!=null){ %>
-    <link rel="stylesheet" href="${base!}/assets/css/skins/${@shiro.getPrincipalProperty('loginTheme')}" id="skin">
-    <% }else{ %>
-    <link rel="stylesheet" href="${base!}/assets/css/skins/palette.css" id="skin">
-    <% } %>
-    <script src="${base!}/assets/plugins/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript">
-        var base = '${base!}';
-    </script>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="${base!}/assets/platform/plugins/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/fonts/themify-icons.css">
+    <!-- import Vue before Element -->
+    <script src="${base!}/assets/platform/plugins/vue/vue.min.js"></script>
+    <!-- import JavaScript -->
+    <script src="${base!}/assets/platform/plugins/element-ui/lib/index.js"></script>
+    <script src="${base!}/assets/platform/plugins/jquery/jquery-1.11.1.min.js"></script>
 </head>
 <body>
-<div class="gallery-loader" style="background-color:transparent;">
-    <div class="loader"></div>
-</div>
-
-<div class="playground hidden-xs">
-    <div class="options">
-        <div class="pg-close ti-close"></div>
-        <div class="options-container color-options">
-            <h6>${msg['index.themes']}</h6>
-            <a onclick="sublime.changeTheme('palette.css')" href="${base!}/assets/css/skins/palette.css"
-               class="css_orange cs_color cs_1 <% if(@shiro.getPrincipalProperty('loginTheme')==null || 'palette.css' == @shiro.getPrincipalProperty('loginTheme')){ %>active<% } %>">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </a>
-            <a onclick="sublime.changeTheme('palette.2.css')" href="${base!}/assets/css/skins/palette.2.css"
-               class="css_orange cs_color cs_2 <% if('palette.2.css' == @shiro.getPrincipalProperty('loginTheme')){ %>active<% } %>">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </a>
-            <a onclick="sublime.changeTheme('palette.3.css')" href="${base!}/assets/css/skins/palette.3.css"
-               class="css_orange cs_color cs_3 <% if('palette.3.css' == @shiro.getPrincipalProperty('loginTheme')){ %>active<% } %>">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </a>
-            <!--<a onclick="sublime.changeTheme('palette.4.css')" href="${base!}/assets/css/skins/palette.4.css"-->
-               <!--class="css_orange cs_color cs_4 <% if('palette.4.css' == @shiro.getPrincipalProperty('loginTheme')){ %>active<% } %>">-->
-                <!--<div></div>-->
-                <!--<div></div>-->
-                <!--<div></div>-->
-                <!--<div></div>-->
-            <!--</a>-->
+<section class="el-container is-vertical">
+    <header class="el-header" style="height: 60px;">
+        <div id="menu-top">
+            <el-menu class="el-menu-demo" mode="horizontal">
+                <el-menu-item index="1">处理中心</el-menu-item>
+                <el-submenu index="2">
+                    <template slot="title">我的工作台</template>
+                    <el-menu-item index="2-1">选项1</el-menu-item>
+                    <el-menu-item index="2-2">选项2</el-menu-item>
+                    <el-menu-item index="2-3">选项3</el-menu-item>
+                    <el-submenu index="2-4">
+                        <template slot="title">选项4</template>
+                        <el-menu-item index="2-4-1">选项1</el-menu-item>
+                        <el-menu-item index="2-4-2">选项2</el-menu-item>
+                        <el-menu-item index="2-4-3">选项3</el-menu-item>
+                    </el-submenu>
+                </el-submenu>
+                <el-menu-item index="3" disabled>消息中心</el-menu-item>
+                <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
+            </el-menu>
         </div>
-        <div class="options-container">
-            <h6>${msg['index.layout']}</h6>
-            <a class="pg-val toggle-sidebar toggle-active <% if(@shiro.getPrincipalProperty('loginSidebar')){ %>active<% } %>" href="javascript:;">
-                <img src="${base!}/assets/img/panel/small.png" alt="">
-            </a>
-            <a class="pg-val toggle-scroll toggle-active <% if(@shiro.getPrincipalProperty('loginScroll')){ %>active<% } %>" href="javascript:;">
-                <img src="${base!}/assets/img/panel/scroll.png" alt="">
-            </a>
-            <a class="pg-val toggle-boxed toggle-active <% if(@shiro.getPrincipalProperty('loginBoxed')){ %>active<% } %>" href="javascript:;">
-                <img src="${base!}/assets/img/panel/boxed.png" alt="">
-            </a>
-        </div>
-        <small class="pg-footer"><i class="ti-info-alt mr5"></i>${msg['index.panel']}</small>
-    </div>
-</div>
-<div
-        class="app <% if(@shiro.getPrincipalProperty('loginSidebar')){ %> small-menu <% } %> <% if(@shiro.getPrincipalProperty('loginScroll')){ %> fixed-scroll <% } %> <% if(@shiro.getPrincipalProperty('loginBoxed')){ %> boxed <% } %>">
-    <header class="header header-fixed navbar">
-        <div class="brand">
-
-            <a href="javascript:;" class="ti-menu off-left visible-xs" data-toggle="offscreen" data-move="ltr"></a>
-
-
-            <a href="${base!}/platform/home"  data-pjax class="navbar-brand">
-                <img src="${base!}/assets/img/logo.png" alt="" class="o_img <% if(!@shiro.getPrincipalProperty('loginSidebar')){ %>o_hide<% } %>">
-                <span class="heading-font o_img <% if(@shiro.getPrincipalProperty('loginSidebar')){ %>o_hide<% } %>">
-		            <img src="${base!}/assets/img/logoa.png">
-                </span>
-            </a>
-
-        </div>
-        <ul class="nav navbar-nav navbar-left">
-            <li class="hidden-xs">
-
-                <a href="javascript:;" class="toggle-sidebar">
-                    <i class="ti-menu"></i>
-                </a>
-
-            </li>
-
-        </ul>
-        <ul id="topnav" class="nav navbar-nav hidden-xs">
-            <!--<li>-->
-            <!--<a href="${base!}/sysadmin/home" data-pjax>-->
-            <!--<i class="ti-home"></i>-->
-            <!--<span>首页</span>-->
-            <!--</a>-->
-            <!--</li>-->
-            <%
-            var secondMenus=@shiro.getPrincipalProperty('secondMenus');
-            for(firstMenu in @shiro.getPrincipalProperty('firstMenus')){
-
-            %>
-            <li class="dropdown">
-
-                    <% if(!isEmpty(@secondMenus.get(firstMenu.path))){%>
-                <a href="javascript:;" data-toggle="dropdown">
-                    <% if(has(firstMenu.icon)){ %>
-                    <i class="${firstMenu.icon}"></i>
-                    <% } %>
-                    <span>
-                        <%if(lang=="zh_CN"){%>${firstMenu.name}<%}else{%>${firstMenu.aliasName}<%}%></span>
-                    <b class="caret"></b
-                            >
-                </a>
-                <%}else{%>
-                    <a href="<% if(!isEmpty(firstMenu.href)){ %><%if(@string.startWith(firstMenu.href,'/')){%>${base}${firstMenu.href!}<%}else{%>${firstMenu.href!}<%}%> <% }else{ %>javascript:;<% } %>" <%if(@string.startWith(firstMenu.target,'_')){%>target="${firstMenu.target!}"<%}else{%>${firstMenu.target!}<%}%>>
-                   <span>
-                        <%if(lang=="zh_CN"){%>${firstMenu.name}<%}else{%>${firstMenu.aliasName}<%}%></span></a>
-                    <%}%>
-                <% if(!isEmpty(@secondMenus.get(firstMenu.path))){%>
-                <ul class="dropdown-menu topnav">
-                    <% for(secondMenu in @secondMenus.get(firstMenu.path)){ %>
-                    <li class="dropdown">
-                        <a href="<% if(!isEmpty(secondMenu.href)){ %><%if(@string.startWith(secondMenu.href,'/')){%>${base}${secondMenu.href!}<%}else{%>${secondMenu.href!}<%}%> <% }else{ %>javascript:;<% } %>" <%if(@string.startWith(secondMenu.target,'_')){%>target="${secondMenu.target!}"<%}else{%>${secondMenu.target!}<%}%>>
-                            <% if(!isEmpty(@secondMenus.get(secondMenu.path))){ %><i class="toggle-accordion"></i><%}%>
-                            <span><%if(lang=="zh_CN"){%>${secondMenu.name}<%}else{%>${secondMenu.aliasName}<%}%></span>
-                        </a>
-                        <% if(!isEmpty(@secondMenus.get(secondMenu.path))){ %>
-                        <ul class="sub-menu">
-                            <% for(thMenu in @secondMenus.get(secondMenu.path)){ %>
-                            <li class="clearfix" >
-                                <a <% if(!isEmpty(thMenu.href)){ %>href="<%if(@string.startWith(thMenu.href,'/')){%>${base}${thMenu.href!}<%}else{%>${thMenu.href!}<%}%>" <% }else{ %>href="javascript:;"<% } %> <%if(@string.startWith(thMenu.target,'_')){%>target="${thMenu.target!}"<%}else{%>${thMenu.target!}<%}%>>
-                                <span><%if(lang=="zh_CN"){%>${thMenu.name}<%}else{%>${thMenu.aliasName}<%}%></span>
-                                </a>
-                            </li><% }%>
-                        </ul><%}%>
-                    </li><% } %>
-                </ul><% } %>
-            </li><% }%>
-
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-            <!--通知位置-->
-            <li class="language-dropdown dropdown hidden-xs">
-                <a href="javascript:;" data-toggle="dropdown" id="language">
-                    <%if(lang==null||lang=="zh_CN"){%>
-                    <img src="${base!}/assets/img/flags/cn.png" class="flag">
-                    <%}else{%>
-                    <img src="${base!}/assets/img/flags/us.png" class="flag">
-                    <%}%>
-                    <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
-                        <li>
-                            <a href="javascript:sublime.changeLang('en_US');">
-                                <img src="${base!}/assets/img/flags/us.png" class="flag">
-                                <span class="language">English</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="javascript:sublime.changeLang('zh_CN');">
-                                <img src="${base!}/assets/img/flags/cn.png" class="flag">
-                                <span class="language">中文</span>
-                            </a>
-                        </li>
-                    </ul>
-            </li>
-            <li class="notifications dropdown">
-                <a href="javascript:;" data-toggle="dropdown">
-                    <i class="ti-bell"></i>
-                    <div id="innerMsg" class="badge badge-top bg-danger animated flash" style="display:none;">
-                        <span id="innerMsgNum">0</span>
-                    </div>
-                </a>
-                <div class="dropdown-menu animated fadeInLeft">
-                    <div class="panel panel-default no-m">
-                        <div class="panel-heading small"><b>${msg['index.notifications.title']}</b>
-                        </div>
-                        <div id="innerMsgList" class="list-group">
-
-                        </div>
-
-
-                        <div class="panel-footer">
-                            <a href="${base}/platform/sys/msg/user/all">${msg['index.notifications.see']}</a>
-                        </div>
-                    </div>
-                </div>
-            </li>
-            <li class="off-right">
-                <a href="javascript:;" data-toggle="dropdown">
-                    <span class="hidden-xs ml10">${@shiro.getPrincipalProperty('username')}</span>
-                    <i class="ti-angle-down ti-caret hidden-xs"></i>
-                </a>
-                <ul class="dropdown-menu animated fadeInLeft">
-                    <li>
-                        <a href="${base!}/platform/sys/user/custom" data-toggle="modal"
-                           data-target="#homeDetail">${msg['index.custommenu']}</a>
-                    </li>
-                    <li class="dropdown hidden-xs">
-                        <a href="javascript:;" class="pg-toggle">
-                            ${msg['index.user.layout']}
-                        </a>
-                    </li>
-                    <li class="dropdown hidden-xs">
-                        <a href="${base!}/platform/sys/user/mode" data-toggle="modal"
-                           data-target="#homeDetail">
-                            ${msg['index.user.mode']}
-                        </a>
-                    </li>
-                    <li>
-                        <a href="${base!}/platform/sys/user/pass" data-toggle="modal"
-                           data-target="#homeDetail">${msg['index.user.password']}</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="off-right">
-                <a href="${base!}/platform/login/logout">
-                    <i class="ti-power-off"></i>
-                </a>
-            </li>
-        </ul>
     </header>
-    <section class="layout">
-
-        <aside class="sidebar offscreen-left">
-
-            <nav class="main-navigation" data-height="auto" data-size="6px" data-distance="0" data-rail-visible="true"
-                 data-wheel-step="10">
-                <!--<p class="nav-title">MENU</p>-->
-                <ul class="nav">
-                    <li class="open">
-                        <a href="javascript:;">
-                            <%if(!isEmpty(@shiro.getPrincipalProperty('customMenus'))){%>
-                            <i class="toggle-accordion"></i>
-                            <%}%>
-                            <i class="ti-heart"></i>
-                            <span>${msg['index.custommenu']}</span>
-                        </a>
-                        <%if(!isEmpty(@shiro.getPrincipalProperty('customMenus'))){%>
-                        <ul class="sub-menu">
-                            <%for(o in @shiro.getPrincipalProperty('customMenus')){%>
-
-                            <li>
-                                <a <%if(!isEmpty(o.href)){%>href="${base}${o.href}" <%if('data-pjax'==o.target){%>data-pjax<%}}else{ %>href="javascript:;"<%}%>>
-                                <span><%if(lang=="zh_CN"){%>${o.name}<%}else{%>${o.aliasName}<%}%></span>
-                                </a>
-                            </li>
-
-                            <%}%>
-                        </ul>
-                        <%}%>
-                    </li>
-
-                </ul>
-                <ul id="leftnav" class="nav">
-                </ul>
-            </nav>
+    <section class="el-container">
+        <aside class="el-aside" style="width: 200px;">
+            <div id="menu-left"></div>
         </aside>
-        <section class="main-content" id="container">
-            ${layoutContent}
-        </section>
+        <main class="el-main">${layoutContent}</main>
     </section>
-
-
-</div>
-<div id="homeDetail" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        </div>
-    </div>
-</div>
-<div id="dialogOffline" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">系统通知</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        您的帐号在其他地方登录，您已被迫下线，如果不是您本人操作，请及时修改密码。
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="okOffline" type="button" class="btn btn-primary" data-loading-text="正在提交...">确 定</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--script-->
-<script src="${base!}/assets/plugins/modernizr.js"></script>
-<script src="${base!}/assets/js/jquery.pjax.js"></script>
-<script src="${base!}/assets/bootstrap/js/bootstrap.js"></script>
-<script src="${base!}/assets/plugins/jquery.form.js"></script>
-<script src="${base!}/assets/plugins/parsley.min.js"></script>
-<script src="${base!}/assets/plugins/parsley.zh_cn.js"></script>
-<script src="${base!}/assets/plugins/jquery.sortable.js"></script>
-<script src="${base!}/assets/plugins/jquery.nestable.js"></script>
-<script src="${base!}/assets/plugins/icheck/icheck.js"></script>
-<script src="${base!}/assets/plugins/jquery.slimscroll.min.js"></script>
-<script src="${base!}/assets/plugins/jquery.easing.min.js"></script>
-<script src="${base!}/assets/plugins/appear/jquery.appear.js"></script>
-<script src="${base!}/assets/plugins/jquery.placeholder.js"></script>
-<script src="${base!}/assets/plugins/fastclick.js"></script>
-<script src="${base!}/assets/plugins/count-to/jquery.countTo.js"></script>
-<script src="${base!}/assets/js/toast.js"></script>
-<script src="${base!}/assets/plugins/chosen/chosen.jquery.min.js"></script>
-<script src="${base!}/assets/plugins/treetable/jquery.treetable.js"></script>
-<script src="${base!}/assets/plugins/datatables/jquery.dataTables.js"></script>
-<script src="${base!}/assets/plugins/datatables/dataTables.bootstrap.js"></script>
-<script src="${base!}/assets/plugins/jstree/jstree.min.js"></script>
-<script src="${base!}/assets/plugins/switchery/switchery.js"></script>
-<script src="${base!}/assets/plugins/stepy/jquery.stepy.js"></script>
-<script src="${base!}/assets/plugins/stepy/jquery.validate.min.js"></script>
-<script src="${base!}/assets/plugins/icheck/icheck.js"></script>
-<script src="${base!}/assets/plugins/chosen/chosen.jquery.min.js"></script>
-<script src="${base!}/assets/plugins/jquery.form.js"></script>
-<script src="${base!}/assets/plugins/uploadifive/jquery.uploadifive.min.js"></script>
-<script src="${base!}/assets/plugins/datepicker/bootstrap-datetimepicker.min.js"></script>
-<script src="${base!}/assets/plugins/datepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
-<script src="${base!}/assets/plugins/emoji/emoji.js"></script>
-<script src="${base!}/assets/plugins/sorttable/Sortable.min.js"></script>
-<script src="${base!}/assets/plugins/jquery.qrcode.min.js"></script>
-<script src="${base!}/assets/plugins/jquery.sparkline.js"></script>
-<script src="${base!}/assets/plugins/x-editable/bootstrap-editable.js"></script>
-<script src="${base!}/assets/plugins/moment.min.js"></script>
-<script src="${base!}/assets/plugins/push.min.js"></script>
-<script src="${base!}/assets/js/form.js"></script>
-<script src="${base!}/assets/js/offscreen.js"></script>
-<script src="${base!}/assets/js/main.js"></script>
-<script src="${base!}/assets/js/page.js"></script>
-<script src="${base!}/assets/js/date.js"></script>
-
-<script type="text/javascript">
-    function bindLeft(){
-        $('.main-navigation a[data-pjax]').on('click',function(){
-            $('.main-navigation a[data-pjax]').each(function(){
-                $(this).parent().removeClass('active');
-            });
-            $(this).parent().addClass('active');
-        });
-    }
-    var ws;
-    function connect() {
-        var WS_URL = window.location.host+"${base}/websocket";
-        if (location.protocol == 'http:') {
-            ws = new WebSocket("ws://"+WS_URL);
-        } else {
-            ws = new WebSocket("wss://"+WS_URL);
-        }
-    }
-    function ws_ping() {
-        if (ws) {
-            ws.send(JSON.stringify({room:"${@shiro.getPrincipalProperty('loginname')}","action":"msg"}));
-        }else {
-            connect();
-        }
-    }
-    function msg_get(list) {
-        $("#innerMsgList").html("");
-        var msgList="";
-        $.each(list,function(index, o){
-            var url=base + o.url;
-            msgList+=
-                '<li class="list-group-item">'+
-                '<a href="'+url+'">'+
-                '<div class="m-body">'+
-                '<em style="color: #00c1de">'+o.type+':</em>'+
-                '<span style="color: #00c1de">'+o.title+'</span>'+
-                '<span class="time small">'+ o.time +'</span>'+
-                '</div></a></li>';
-        });
-        $("#innerMsgList").html(msgList);
-    }
-    $(document).ready(function () {
-        //浏览器通知 + websocket
-        if(${@config.getOrDefault("WebNotification",true)}) {
-            Push.Permission.request(function () {
-                if (parseInt("${@shiro.getPrincipalProperty('loginCount')}") > 0 || !${@config.getOrDefault("WebNotification",true)})
-                    return;
-                Push.create('Thank You!', {
-                    body: '欢迎选用 NutzWk!',
-                    icon: base + '/assets/img/notice.png',
-                    timeout: 5000,
-                    onClick: function () {
-                        window.open("https://wizzer.cn"); //just added the window.open to a OnClick event.
-                        this.close();
-                    },
-                    vibrate: [100, 100, 100]
-                });
-            }, function () {
-
-            });
-        }
-        try {
-            connect();
-            ws.onmessage = function(event) {
-                var re = JSON.parse(event.data);
-                //console.log(event.data);
-                if(re.action=="notify" && Push.Permission.has() && ${@config.getOrDefault("WebNotification",true)}){
-                    Push.create(re.title, {
-                        body: re.body,
-                        icon: base + '/assets/img/notice.png',
-                        timeout: 8000,
-                        onClick: function () {
-                            if(re.url){
-                                window.open(base +re.url);
-                            } //just added the window.open to a OnClick event.
-                            this.close();
-                        },
-                        vibrate: [100,100,100]
-                    });
-                }else if(re.action=="innerMsg"){
-                    if(re.size>0){
-                        $("#innerMsgNum").html(re.size);
-                        $("#innerMsg").show();
-                    }else {
-                        $("#innerMsg").hide();
-                    }
-                    msg_get(re.list);
-                }else if(re.action=="offline"){
-                    $("#dialogOffline").modal().show();
-                    $("#okOffline").on("click",function () {
-                       window.location.href="${base}/platform/login";
-                    });
-                }
-            };
-            ws.onopen = function(event) {
-                ws.send(JSON.stringify({room:"${@shiro.getPrincipalProperty('loginname')}:${@shiro.getSessionId()}","action":"join"}));
-                ws_ping();
-            };
-            setInterval("ws_ping()", (11624317/1000)*2);
-            //以下判断是否关闭浏览器,不兼容ie8,9,10
-            if(ws){
-                var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
-                var isOpera = userAgent.indexOf("Opera") > -1; //判断是否Opera浏览器
-                var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera; //判断是否IE浏览器
-                var isIE11 = userAgent.indexOf("rv:11.0") > -1; //判断是否是IE11浏览器
-                var isEdge = userAgent.indexOf("Edge") > -1 && !isIE; //判断是否IE的Edge浏览器
-                if(!isIE && !isEdge && !isIE11) {//兼容chrome和firefox
-                    var _beforeUnload_time = 0, _gap_time = 0;
-                    var is_fireFox = navigator.userAgent.indexOf("Firefox") > -1;//是否是火狐浏览器
-                    window.onunload = function () {
-                        _gap_time = new Date().getTime() - _beforeUnload_time;
-                        if (_gap_time <= 5) {
-                            ws.send(JSON.stringify({room:"${@shiro.getPrincipalProperty('loginname')}:${@shiro.getSessionId()}","action":"left"}));
-                        } else {//浏览器刷新
-                        }
-                    };
-                    window.onbeforeunload = function () {
-                        _beforeUnload_time = new Date().getTime();
-                        if (is_fireFox) {//火狐关闭执行
-                            ws.send(JSON.stringify({room:"${@shiro.getPrincipalProperty('loginname')}:${@shiro.getSessionId()}","action":"left"}));
-                        }
-                    };
-                }
-            }
-        } catch (ex) {
-            if (console)
-                console.info(ex);
-        }
-        //PJAX实现
-        if($.support.pjax) {
-              <%if(@shiro.getPrincipalProperty('loginPjax')){%>
-            $(document).pjax('a[data-pjax]', '#container', {maxCacheLength:0,push:false, replace:true,fragment: '#container', timeout: 8000});
-            <%}%>
-            bindLeft();
-            $('#topnav a[data-pjax]').on('click',function(){
-                $.get("${base!}/platform/home/left?url="+$(this).attr("href"),function (data) {
-                    $("#leftnav").html(data);
-                    bindLeft();
-                }, "html");
-            });
-            $.get("${base!}/platform/home/path?url="+window.location.href,function (data) {
-                $("#leftnav").html(data);
-                bindLeft();
-            }, "html");
-            <%if(@shiro.getPrincipalProperty('loginPjax')){%>
-            $(document).on('pjax:send', function () { //pjax链接点击后显示加载动画；
-                $(".gallery-loader").fadeIn();
-            });
-            $(document).on('pjax:complete', function () { //pjax链接加载完成后隐藏加载动画；
-                setTimeout(function(){$(".gallery-loader").fadeOut()},250);
-            });
-            <%}%>
-        }
-
-        try {
-            $(".gallery-loader").fadeOut();
-        } catch (e) {
-        }
-        $('#homeDetail').on('hidden.bs.modal',function(){
-            $(this).removeData("bs.modal");
-        });
-        $(".toggle-sidebar").click(function(){
-            $(".o_img").toggleClass("o_hide");
-        });
-    });
-</script>
-<!--script-->
+</section>
 </body>
+<script src="${base!}/assets/platform/js/main.js"></script>
+<style scoped>
+    #app {
+        height: 100%;
+    }
+
+    body {
+        margin: 0 0 0 0;
+    }
+</style>
 </html>

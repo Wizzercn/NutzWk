@@ -90,17 +90,18 @@
 
         <el-dialog title="${msg['login.error.verifycode']}" :visible.sync="captchaVisible" @close="closeCaptchaForm"
                    append-to-body>
-            <el-form :model="captchaForm" ref="captchaForm">
+            <el-form :model="captchaForm" ref="captchaForm" :rules="codeRules">
                 <el-row class="captcha_row">
-                    <el-input placeholder="${msg['login.captcha']}" v-model="loginForm.platformCaptcha"
-                              auto-complete="off"></el-input>
-                    <img id="captcha_img" src="${base!}/platform/login/captcha" style="height:40px;cursor: pointer;"
-                         onclick="$('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime())"/>
+                    <el-form-item prop="verifycode">
+                        <el-input maxlength="4" placeholder="${msg['login.captcha']}" v-model="captchaForm.verifycode"
+                                  auto-complete="off" @keyup.enter.native="doCode"></el-input>
+                    </el-form-item>
+                    <img id="captcha_img" :src="codeUrl" @click="changeCode"/>
                 </el-row>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="closeCaptchaForm">取 消</el-button>
-                <el-button type="primary" @click="doLogin">确 定</el-button>
+                <el-button type="primary" @click="doCode">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -118,7 +119,10 @@
             return {
                 year: 2018,
                 captchaVisible: false,
-                captchaForm: {},
+                codeUrl: "${base!}/platform/login/captcha",
+                captchaForm: {
+                    verifycode:""
+                },
                 loginForm: {
                     username: 'superadmin',
                     password: '1',
@@ -132,38 +136,63 @@
                         {required: true, message: '请输入密码', trigger: 'blur'}
                     ]
                 },
+                codeRules: {
+                    verifycode: [
+                        {required: true, message: '请输入验证码', trigger: 'blur'}
+                    ]
+                },
                 passwordType: 'password',
                 loading: false,
                 showDialog: false
             }
         },
         methods: {
-            showPwd:function() {
+            showPwd: function () {
                 if (this.passwordType === 'password') {
                     this.passwordType = ''
                 } else {
                     this.passwordType = 'password'
                 }
             },
-            closeCaptchaForm:function() {
-                this.loginForm.platformCaptcha = ""
+            changeCode: function () {
+                this.captchaForm.verifycode=""
+                this.codeUrl = '${base!}/platform/login/captcha?_=' + new Date().getTime()
+            },
+            closeCaptchaForm: function () {
+                this.captchaForm.platformCaptcha = ""
                 this.captchaVisible = false
             },
-            openCaptchaForm:function() {
-                this.loginForm.platformCaptcha = ""
+            openCaptchaForm: function () {
+                this.captchaForm.platformCaptcha = ""
                 this.captchaVisible = true
-                $("#captcha_img").attr("src", '${base!}/platform/login/captcha?_=' + new Date().getTime());
+                this.changeCode()
             },
-            doLogin:function() {
+            doCode: function () {
                 var self = this
+                self.$refs["captchaForm"].validate(function (valid) {
+                    if(valid){
+                        self.doLogin()
+                    }
+                })
+            },
+            doLogin: function () {
+                var self = this
+                self.loginForm.platformCaptcha=self.captchaForm.verifycode
                 self.$refs["loginForm"].validate(function (valid) {
                     if (valid) {
                         $.post("${base!}/platform/login/doLogin", self.loginForm, function (d) {
                             if (d.code == 0) {
                                 window.location.href = "${base!}/platform/home"
+                            } else if (d.code == 1) {
+                                self.openCaptchaForm()
+                                self.$message({
+                                    message: d.msg,
+                                    type: 'error'
+                                })
                             } else if (d.code == 2) {
                                 self.openCaptchaForm()
                             } else {
+                                self.changeCode()
                                 self.$message({
                                     message: d.msg,
                                     type: 'error'
@@ -173,11 +202,11 @@
                     }
                 });
             },
-            handleCommand:function(command) {
+            handleCommand: function (command) {
                 window.location.href = "?lang=" + command
             }
         },
-        created:function() {
+        created: function () {
             this.year = new Date().getFullYear()
         }
     })
@@ -268,13 +297,19 @@
     }
 
     .captcha_row div {
-        width: 50%;
+        width: 180px;
         float: left;
     }
 
     .captcha_row img {
-        width: 50%;
+        width: 120px;
+        margin-left: 5px;
         float: left;
+    }
+
+    #captcha_img {
+        height: 40px;
+        cursor: pointer;
     }
 </style>
 </html>
