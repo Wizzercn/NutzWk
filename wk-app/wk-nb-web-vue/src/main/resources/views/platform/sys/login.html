@@ -138,23 +138,23 @@
             }
         },
         methods: {
-            showPwd() {
+            showPwd:function() {
                 if (this.passwordType === 'password') {
                     this.passwordType = ''
                 } else {
                     this.passwordType = 'password'
                 }
             },
-            closeCaptchaForm() {
+            closeCaptchaForm:function() {
                 this.loginForm.platformCaptcha = ""
                 this.captchaVisible = false
             },
-            openCaptchaForm() {
+            openCaptchaForm:function() {
                 this.loginForm.platformCaptcha = ""
                 this.captchaVisible = true
                 $("#captcha_img").attr("src", '${base!}/platform/login/captcha?_=' + new Date().getTime());
             },
-            doLogin() {
+            doLogin:function() {
                 var self = this
                 self.$refs["loginForm"].validate(function (valid) {
                     if (valid) {
@@ -173,11 +173,11 @@
                     }
                 });
             },
-            handleCommand(command) {
+            handleCommand:function(command) {
                 window.location.href = "?lang=" + command
             }
         },
-        created() {
+        created:function() {
             this.year = new Date().getFullYear()
         }
     })
