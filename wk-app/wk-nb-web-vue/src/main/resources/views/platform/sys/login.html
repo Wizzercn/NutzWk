@@ -1,208 +1,281 @@
 <!DOCTYPE html>
-<html class="signin no-js" lang="${lang!}">
+<html lang="${lang!}">
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="renderer" content="webkit">
-    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
     <meta name="description" content="${AppName!}">
-    <meta name="keywords" content="nutz,nutzwk">
     <title>${AppName!}</title>
-    <link rel="stylesheet" href="${base!}/assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${base!}/assets/css/font-awesome.css">
-    <link rel="stylesheet" href="${base!}/assets/css/themify-icons.css">
-    <link rel="stylesheet" href="${base!}/assets/css/animate.min.css">
-    <link rel="stylesheet" href="${base!}/assets/css/skins/palette.css">
-    <link rel="stylesheet" href="${base!}/assets/css/fonts/font.css">
-    <link rel="stylesheet" href="${base!}/assets/css/main.css">
-    <!--[if lt IE 9]>
-    <script src="${base!}/assets/js/html5shiv.js"></script>
-    <script src="${base!}/assets/js/respond.min.js"></script>
-    <script src="${base!}/assets/js/json2.js"></script>
-    <![endif]-->
-    <script src="${base!}/assets/plugins/modernizr.js"></script>
-    <script src="${base!}/assets/plugins/jquery-1.11.1.min.js"></script>
-    <script src="${base!}/assets/js/jquery.pjax.js"></script>
-    <script src="${base!}/assets/js/sso/RSA.js"></script>
-    <script src="${base!}/assets/js/sso/BigInt.js"></script>
-    <script src="${base!}/assets/js/sso/Barrett.js"></script>
-
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="${base!}/assets/platform/plugins/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/fonts/themify-icons.css">
+</head>
 <body>
-<div class="overlay"></div>
-<div class="center-wrapper">
-    <div class="center-content">
-        <div class="row no-m">
-            <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
-                <section class="panel bg-white no-b fadeIn animated">
-                    <header class="panel-heading no-b text-center" style="font-size:30px;">
-                        ${AppName!}
-                    </header>
-                    <!-- START Language list-->
-                    <ul class="nav navbar-nav navbar-right">
-                        <li class="language-dropdown dropdown hidden-xs">
-                            <a href="javascript:;" data-toggle="dropdown" id="language">
-                                <%if(lang==null||lang=="zh_CN"){%>
-                                <img src="${base!}/assets/img/flags/cn.png" class="flag">
-                                <span class="language">中文</span>
-                                <%}else{%>
-                                <img src="${base!}/assets/img/flags/us.png" class="flag">
+<div id="app">
+    <div class="login-container">
+
+        <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
+                 label-position="left">
+
+            <div class="title-container">
+                <h3 class="title">${AppName!}</h3>
+                <div class="lang">
+                    <el-dropdown size="small" @command="handleCommand">
+                        <!--# if(lang==null||lang=="zh_CN"){ #-->
+                        <img src="${base!}/assets/platform/img/flags/cn.png" class="flag">
+                        <!--# }else{ #-->
+                        <img src="${base!}/assets/platform/img/flags/us.png" class="flag">
+                        <!--# } #-->
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="en_US">
+                                <img src="${base!}/assets/platform/img/flags/us.png" class="flag">
                                 <span class="language">English</span>
-                                <%}%>
-                                <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
-                                    <li>
-                                        <a href="?lang=en_US">
-                                            <img src="${base!}/assets/img/flags/us.png" class="flag">
-                                            <span class="language">English</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="?lang=zh_CN">
-                                            <img src="${base!}/assets/img/flags/cn.png" class="flag">
-                                            <span class="language">中文</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                        </li>
-                    </ul>
-                    <!-- END Language list    -->
-                    <div class="p15">
-                        <form id="loginForm" action="${base!}/platform/login/doLogin" data-parsley-validate="" novalidate=""
-                              role="form"
-                              method="post">
-                            <input type="hidden" id="platformCaptcha" name="platformCaptcha">
+                            </el-dropdown-item>
+                            <el-dropdown-item command="zh_CN">
+                                <img src="${base!}/assets/platform/img/flags/cn.png" class="flag">
+                                <span class="language">中文</span>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
+            </div>
 
-                            <div class="form-group">
-                                <input type="text" id="username" name="username" value="superadmin" required
-                                       class="form-control input-lg mb25"
-                                       placeholder="${msg['login.username']}">
-                            </div>
-                            <div class="form-group">
-                                <input type="password" id="password" name="password" value="1" required
-                                       class="form-control input-lg mb25"
-                                       placeholder="${msg['login.password']}">
-                            </div>
-                            <p id="tip" class="bg-danger p15" style="display:none"></p>
+            <el-form-item prop="username">
 
-                            <div class="show">
-                                <button id="login" class="btn btn-primary btn-lg btn-block" type="button"
-                                        data-loading-text="${msg['login.submit']}...">
-                                    ${msg['login.submit']}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-                <p class="text-center text-default">
-                    Copyright &copy;
-                    <span id="year" class="mr5"></span>
+                <el-input
+                        v-model="loginForm.username"
+                        placeholder="${msg['login.username']}"
+                        name="username"
+                        type="text"
+                        auto-complete="on" prefix-icon="ti-user"
+                >
+                </el-input>
+            </el-form-item>
+
+            <el-form-item prop="password">
+                <el-input
+                        :type="passwordType"
+                        v-model="loginForm.password"
+                        placeholder="${msg['login.password']}"
+                        name="password"
+                        auto-complete="on"
+                        @keyup.enter.native="doLogin" prefix-icon="ti-lock">
+                    <i
+                            class="ti-eye"
+                            slot="suffix"
+                            @click="showPwd">
+                    </i>
+                </el-input>
+                </span>
+            </el-form-item>
+
+            <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"
+                       @click.native.prevent="doLogin">${msg['login.submit']}
+            </el-button>
+
+            <el-button class="thirdparty-button" type="info" @click="showDialog=true">${msg['login.thirdparty']}
+            </el-button>
+            <el-row>
+                <p class="cp"><a href="https://Wizzer.cn" target="_blank">Wizzer.cn</a> ©
+                    <span>{{year}}</span>
                 </p>
-            </div>
-        </div>
+            </el-row>
+        </el-form>
 
+        <el-dialog title="${msg['login.thirdparty']}" :visible.sync="showDialog" append-to-body>
+            ${msg['login.thirdparty']}
+            <br>
+            <br>
+            <br>
+            <social-sign/>
+        </el-dialog>
+        <el-dialog title="${msg['login.error.verifycode']}" :visible.sync="captchaVisible" @close="closeCaptchaForm"
+                   append-to-body>
+            <el-form :model="captchaForm" ref="captchaForm">
+                <el-row class="captcha_row">
+                    <el-input placeholder="${msg['login.captcha']}" v-model="loginForm.platformCaptcha"
+                              auto-complete="off"></el-input>
+                    <img id="captcha_img" src="${base!}/platform/login/captcha" style="height:40px;cursor: pointer;"
+                         onclick="$('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime())"/>
+                </el-row>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="closeCaptchaForm">取 消</el-button>
+                <el-button type="primary" @click="doLogin">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </div>
-<!-- 验证码 -->
-<div id="dialogVeryCode" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" style="color:black;">
-                    ${msg['login.error.verifycode']}
-                </h4>
-            </div>
-            <div class="modal-body">
-                <form id="f2" onsubmit="return false;" data-parsley-validate="" novalidate="">
-                    <div class="row">
-                        <div class="col-xs-2"></div>
-                        <div class="col-xs-6">
-                            <input type="text" id="verifycode" required class="form-control input-lg"
-                                   placeholder="${msg['login.captcha']}">
-                        </div>
-                        <div class="col-xs-4">
-                            <img id="captcha_img" src="${base!}/platform/login/captcha" style="height:46px;cursor: pointer;"
-                                 onclick="$('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime())"/>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button id="ok" type="button" class="btn btn-primary" data-dismiss="modal">${msg['login.submit']}
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script type="text/javascript">
-    function bodyRSA()
-    {
-        setMaxDigits(200);
-        return new RSAKeyPair("${publicKeyExponent!'10001'}","","${publicKeyModulus!'a5aeb8c636ef1fda5a7a17a2819e51e1ea6e0cceb24b95574ae026536243524f322807df2531a42139389674545f4c596db162f6e6bbb26498baab074c036777'}");
-    }
-    var key =  bodyRSA();
-    $(document).ready(function () {
-        $("#year").html(new Date().getFullYear());
-        $(document).on('keypress',function(event){
-            if(event.keyCode == 13){
-                $("#password").val(encryptedString(key, $("#password").val().split("").reverse().join("")));
-                $("#loginForm").submit();
-            }
-        });
-        $("#login").on("click",function () {
-            $("#password").val(encryptedString(key,$("#password").val().split("").reverse().join("")));
-            $("#loginForm").submit();
-        });
-        $("#loginForm").ajaxForm({
-            dataType: 'json',
-            beforeSubmit: function (arr, form, options) {
-                form.find("button:submit").text("${msg['login.load']}");
-                form.find("button:submit").attr("disabled", "disabled");
-            },
-            success: function (data, statusText, xhr, form) {
-                if (data.code == 0) {
-                    $("#tip").hide();
-                    form.find("button:submit").text("${msg['login.success']}");
-                    window.location.href = "${base!}/platform/home";
-                } else if (data.code == 2) {
-                    $("#verifycode").val("");
-                    $("#dialogVeryCode img").attr("src", '${base!}/platform/login/captcha?_=' + new Date().getTime());
-                    return $("#dialogVeryCode").modal({show: true, backdrop: 'static', keyboard: false});
-                } else if (data.code == 7) {//session失效
-                    window.location.reload();
-                } else {
-                    $("#platformCaptcha").val("");
-                    $("#password").val("").focus();
-                    $('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime());
-                    $("#tip").html(data.msg);
-                    $("#tip").fadeIn();
-                    form.find("button:submit").text("${msg['login.submit']}");
-                    form.find("button:submit").removeAttr("disabled")
-                }
-            }
-        });
-        $("#ok").on("click", function () {
-            if ($("#verifycode").val() == "") {
-                $("#f2").submit();
-                return false;
-            }
-            $("#platformCaptcha").val($("#verifycode").val());
-            $("#loginForm").submit();
-        });
-        $("#dialogVeryCode").on("keypress", function (event) {
-            var key = event.which;
-            if (key == 13) {
-                $("#ok").trigger("click");
-            }
-        });
-        $("#username").focus();
-    });
-</script>
-
-
-<script src="${base!}/assets/bootstrap/js/bootstrap.js"></script>
-<script src="${base!}/assets/plugins/jquery.form.js"></script>
-<script src="${base!}/assets/plugins/parsley.min.js"></script>
-<script src="${base!}/assets/plugins/parsley.zh_cn.js"></script>
-
 </body>
+<!-- import Vue before Element -->
+<script src="${base!}/assets/platform/plugins/vue/vue.min.js"></script>
+<!-- import JavaScript -->
+<script src="${base!}/assets/platform/plugins/element-ui/lib/index.js"></script>
+<script src="${base!}/assets/platform/plugins/jquery/jquery-1.11.1.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                year: 2018,
+                captchaVisible: false,
+                captchaForm: {},
+                loginForm: {
+                    username: 'superadmin',
+                    password: '1',
+                    platformCaptcha: ""
+                },
+                loginRules: {
+                    username: [
+                        {required: true, message: '请输入用户名', trigger: 'blur'}
+                    ],
+                    password: [
+                        {required: true, message: '请输入密码', trigger: 'blur'}
+                    ]
+                },
+                passwordType: 'password',
+                loading: false,
+                showDialog: false
+            }
+        },
+        methods: {
+            showPwd() {
+                if (this.passwordType === 'password') {
+                    this.passwordType = ''
+                } else {
+                    this.passwordType = 'password'
+                }
+            },
+            closeCaptchaForm() {
+                this.loginForm.platformCaptcha = ""
+                this.captchaVisible = false
+            },
+            openCaptchaForm() {
+                this.loginForm.platformCaptcha = ""
+                this.captchaVisible = true
+                $("#captcha_img").attr("src", '${base!}/platform/login/captcha?_=' + new Date().getTime());
+            },
+            doLogin() {
+                var self = this
+                self.$refs["loginForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post("${base!}/platform/login/doLogin", self.loginForm, function (d) {
+                            if (d.code == 0) {
+                                window.location.href = "${base!}/platform/home"
+                            } else if (d.code == 2) {
+                                self.openCaptchaForm()
+                            } else {
+                                self.$message({
+                                    message: d.msg,
+                                    type: 'error'
+                                })
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            handleCommand(command) {
+                window.location.href = "?lang=" + command
+            }
+        },
+        created() {
+            this.year = new Date().getFullYear()
+        }
+    })
+</script>
+<style scoped>
+    #app {
+        height: 100%;
+    }
+
+    body {
+        margin: 0 0 0 0;
+    }
+
+    .login-container {
+        background-color: #2d3a4b;
+        height: 100%;
+        position: fixed;
+        width: 100%;
+    }
+
+    .login-container .login-form {
+        left: 0;
+        margin: 120px auto;
+        padding: 35px 35px 15px;
+        position: absolute;
+        right: 0;
+        width: 520px;
+    }
+
+    .login-container .title-container .title {
+        color: #eee;
+        font-size: 26px;
+        font-weight: 700;
+        margin: 0 auto 40px;
+        text-align: center;
+    }
+
+    .login-container .title-container .set-language {
+        color: #fff;
+        position: absolute;
+        right: 0;
+        top: 5px;
+    }
+
+    .login-container .show-pwd {
+        color: #889aa4;
+        cursor: pointer;
+        font-size: 16px;
+        position: absolute;
+        right: 10px;
+        top: 7px;
+        user-select: none;
+    }
+
+    .thirdparty-button {
+        position: absolute;
+        bottom: -10px;
+        right: 35px;
+    }
+
+    .cp {
+        color: #ffffff;
+        position: absolute;
+        top: 50px;
+        text-align: center;
+        width: 100%;
+        font-size: 12px;
+    }
+
+    .cp a {
+        color: #ffffff;
+    }
+
+    .lang {
+        text-align: right;
+    }
+
+    .flag {
+        cursor: pointer;
+        width: 16px;
+        margin-top: -2px;
+    }
+
+    .captcha_row {
+        float: left;
+        margin: 10px;
+        bottom: 30px;
+    }
+
+    .captcha_row div {
+        width: 50%;
+        float: left;
+    }
+
+    .captcha_row img {
+        width: 50%;
+        float: left;
+    }
+</style>
 </html>

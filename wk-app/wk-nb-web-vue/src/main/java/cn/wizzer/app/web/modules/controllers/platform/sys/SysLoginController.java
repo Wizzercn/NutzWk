@@ -9,7 +9,6 @@ import cn.wizzer.app.web.commons.shiro.exception.CaptchaEmptyException;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaIncorrectException;
 import cn.wizzer.app.web.commons.shiro.filter.PlatformAuthenticationFilter;
 import cn.wizzer.app.web.commons.slog.SLogService;
-import cn.wizzer.app.web.commons.utils.RSAUtil;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -41,9 +40,6 @@ import org.nutz.mvc.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.util.HashMap;
 
 /**
  * Created by wizzer on 2016/6/22.
@@ -69,26 +65,23 @@ public class SysLoginController {
     @Ok("re")
     @Filters
     public String login(HttpServletRequest req, HttpSession session) {
-//        Subject subject = SecurityUtils.getSubject();
-//        if (subject.isAuthenticated()) {
-//            return "redirect:/platform/home";
-//        } else {
-        try {
-            HashMap<String, Object> map = RSAUtil.getKeys();
-            //生成公钥和私钥
-            RSAPublicKey publicKey = (RSAPublicKey) map.get("public");
-            RSAPrivateKey privateKey = (RSAPrivateKey) map.get("private");
-            //模
-            String publicKeyModulus = publicKey.getModulus().toString(16);
-            //公钥指数
-            String publicKeyExponent = publicKey.getPublicExponent().toString(16);
-            //私钥指数
-            req.setAttribute("publicKeyExponent", publicKeyExponent);
-            req.setAttribute("publicKeyModulus", publicKeyModulus);
-            session.setAttribute("platformPrivateKey", privateKey);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        RSA加密删了，需要的用的自己启用
+//        try {
+//            HashMap<String, Object> map = RSAUtil.getKeys();
+//            //生成公钥和私钥
+//            RSAPublicKey publicKey = (RSAPublicKey) map.get("public");
+//            RSAPrivateKey privateKey = (RSAPrivateKey) map.get("private");
+//            //模
+//            String publicKeyModulus = publicKey.getModulus().toString(16);
+//            //公钥指数
+//            String publicKeyExponent = publicKey.getPublicExponent().toString(16);
+//            //私钥指数
+//            req.setAttribute("publicKeyExponent", publicKeyExponent);
+//            req.setAttribute("publicKeyModulus", publicKeyModulus);
+//            session.setAttribute("platformPrivateKey", privateKey);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return "beetl:/platform/sys/login.html";
 
 //        }
