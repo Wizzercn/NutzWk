@@ -5,33 +5,33 @@
 <div class="modal-body">
     <div class="list-group" style="text-align: center;">
         <table width="88%" id="menuTable">
-            <%
+            <!--#
             var firstMenus=@shiro.getPrincipalProperty('firstMenus');
             var secondMenus=@shiro.getPrincipalProperty('secondMenus');
             var customMenu=@shiro.getPrincipalProperty('customMenu');
-            %>
-            <%for(firstMenu in firstMenus){%>
+            #-->
+            <!--#for(firstMenu in firstMenus){#-->
             <tr>
-                <td width="20%" align="left"><strong><%if(lang=="zh_CN"){%>${firstMenu.name}<%}else{%>${firstMenu.aliasName}<%}%></strong></td>
+                <td width="20%" align="left"><strong><!--#if(lang=="zh_CN"){#-->${firstMenu.name}<!--#}else{#-->${firstMenu.aliasName}<!--#}#--></strong></td>
                 <td width="80%" align="left">
 
                 </td>
             </tr>
-            <% if(!isEmpty(@secondMenus.get(firstMenu.path))){
+            <!--# if(!isEmpty(@secondMenus.get(firstMenu.path))){
             for(secondMenu in @secondMenus.get(firstMenu.path)){
-            %>
+            #-->
             <tr>
-                <td width="20%" align="left" style="padding-left: 20px;"><%if(lang=="zh_CN"){%>${secondMenu.name}<%}else{%>${secondMenu.aliasName}<%}%></td>
+                <td width="20%" align="left" style="padding-left: 20px;"><!--#if(lang=="zh_CN"){#-->${secondMenu.name}<!--#}else{#-->${secondMenu.aliasName}<!--#}#--></td>
                 <td width="80%" align="left">
-                    <% if(!isEmpty(@secondMenus.get(secondMenu.path))){
-                    for(thMenu in @secondMenus.get(secondMenu.path)){ %>
-                    <input type="checkbox" value="${thMenu.id}" onclick="chk()" <%if(customMenu!=null&&@customMenu.indexOf(thMenu.id)>-1){%>checked<%}%>>
-                    <%if(lang=="zh_CN"){%>${thMenu.name}<%}else{%>${thMenu.aliasName}<%}%>
-                    <%}}%>
+                    <!--# if(!isEmpty(@secondMenus.get(secondMenu.path))){
+                    for(thMenu in @secondMenus.get(secondMenu.path)){ #-->
+                    <input type="checkbox" value="${thMenu.id}" onclick="chk()" <!--#if(customMenu!=null&&@customMenu.indexOf(thMenu.id)>-1){#-->checked<!--#}#-->>
+                    <!--#if(lang=="zh_CN"){#-->${thMenu.name}<!--#}else{#-->${thMenu.aliasName}<!--#}#-->
+                    <!--#}}#-->
                 </td>
             </tr>
-            <%}}%>
-            <%}%>
+            <!--#}}#-->
+            <!--#}#-->
         </table>
     </div>
 </div>
@@ -61,6 +61,9 @@
                 $.post("${base}/platform/sys/user/customDo", {ids: ids.toString()}, function (data) {
                     if (data.code == 0) {
                         Toast.success(data.msg);
+                        setTimeout(function () {
+                            window.location.reload();
+                        },520);
                     } else {
                         Toast.error(data.msg);
                     }

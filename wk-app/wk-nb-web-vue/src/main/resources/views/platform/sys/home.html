@@ -1,7 +1,7 @@
 <!--#
 layout("/layouts/platform.html"){
 #-->
-<div id="app">
+<div id="app" v-cloak>
     <el-dialog title="xxxx" :visible.sync="showDialog" append-to-body>
         xxxxx
         <br>
@@ -29,13 +29,6 @@ layout("/layouts/platform.html"){
     })
 </script>
 <style scoped>
-    #app {
-        height: 100%;
-    }
-
-    body {
-        margin: 0 0 0 0;
-    }
 </style>
 
 

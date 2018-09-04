@@ -45,6 +45,7 @@ public class SysHomeController {
     public void left(@Param("url") String url, HttpServletRequest req) {
         String path = "";
         String perpath = "";
+        url=Strings.sNull(url).trim();
         if (!Strings.isBlank(Globals.AppBase)) {
             url = Strings.sBlank(url).substring(Globals.AppBase.length());
         }
@@ -68,6 +69,7 @@ public class SysHomeController {
     @Ok("beetl:/platform/sys/left.html")
     @RequiresAuthentication
     public void path(@Param("url") String url, HttpServletRequest req) {
+        url=Strings.sNull(url).trim();
         if (Strings.sBlank(url).indexOf("//") > 0) {
             String[] u = url.split("//");
             String s = u[1].substring(u[1].indexOf("/"));

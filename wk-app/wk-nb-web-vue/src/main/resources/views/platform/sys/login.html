@@ -9,9 +9,10 @@
     <!-- import CSS -->
     <link rel="stylesheet" href="${base!}/assets/platform/plugins/element-ui/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="${base!}/assets/platform/fonts/themify-icons.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/css/common.css">
 </head>
 <body>
-<div id="app">
+<div id="app" v-cloak>
     <div class="login-container">
 
         <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
