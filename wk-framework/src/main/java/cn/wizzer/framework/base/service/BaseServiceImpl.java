@@ -850,6 +850,55 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
+     * 分页查询(sql)
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param sql
+     * @return
+     */
+    public Pagination listPage(Integer pageNumber, int pageSize, Sql sql) {
+        pageNumber = getPageNumber(pageNumber);
+        pageSize = getPageSize(pageSize);
+        Pager pager = this.dao().createPager(pageNumber, pageSize);
+        pager.setRecordCount((int) Daos.queryCount(this.dao(), sql));// 记录数需手动设置
+        sql.setPager(pager);
+        sql.setCallback(Sqls.callback.records());
+        this.dao().execute(sql);
+        return new Pagination(pageNumber, pageSize, pager.getRecordCount(), sql.getList(Record.class));
+    }
+
+    /**
+     * @param pageNumber
+     * @param sql        查询语句
+     * @param countSql   统计语句
+     * @return
+     */
+    public Pagination listPage(Integer pageNumber, Sql sql, Sql countSql) {
+        return listPage(pageNumber, DEFAULT_PAGE_NUMBER, sql, countSql);
+    }
+
+    /**
+     * @param pageNumber
+     * @param pageSize
+     * @param sql        查询语句
+     * @param countSql   统计语句
+     * @return
+     */
+    public Pagination listPage(Integer pageNumber, int pageSize, Sql sql, Sql countSql) {
+        pageNumber = getPageNumber(pageNumber);
+        pageSize = getPageSize(pageSize);
+        Pager pager = this.dao().createPager(pageNumber, pageSize);
+        countSql.setCallback(Sqls.callback.integer());
+        this.dao().execute(countSql);
+        pager.setRecordCount(countSql.getInt());// 记录数需手动设置
+        sql.setPager(pager);
+        sql.setCallback(Sqls.callback.records());
+        this.dao().execute(sql);
+        return new Pagination(pageNumber, pageSize, pager.getRecordCount(), sql.getList(Record.class));
+    }
+
+    /**
      * 分页查询
      *
      * @param pageNumber
@@ -897,6 +946,50 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
+     * 关联查询
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param cnd
+     * @param linkName   支持通配符 ^(a|b)$
+     * @return
+     */
+    public Pagination listPageLinks(Integer pageNumber, int pageSize, Condition cnd, String linkName) {
+        pageNumber = getPageNumber(pageNumber);
+        pageSize = getPageSize(pageSize);
+        Pager pager = this.dao().createPager(pageNumber, pageSize);
+        List<T> list = this.dao().query(this.getEntityClass(), cnd, pager);
+        pager.setRecordCount(this.dao().count(this.getEntityClass(), cnd));
+        if (!Strings.isBlank(linkName)) {
+            this.dao().fetchLinks(list, linkName);
+        }
+        return new Pagination(pageNumber, pageSize, pager.getRecordCount(), list);
+    }
+
+    /**
+     * @param pageNumber
+     * @param pageSize
+     * @param cnd
+     * @param linkName   支持通配符 ^(a|b)$
+     * @param subCnd     子查询条件
+     * @return
+     */
+    public Pagination listPageLinks(Integer pageNumber, int pageSize, Condition cnd, String linkName, Condition subCnd) {
+        pageNumber = getPageNumber(pageNumber);
+        pageSize = getPageSize(pageSize);
+        Pager pager = this.dao().createPager(pageNumber, pageSize);
+        List<T> list = this.dao().query(this.getEntityClass(), cnd, pager);
+        pager.setRecordCount(this.dao().count(this.getEntityClass(), cnd));
+        if (!Strings.isBlank(linkName)) {
+            if (subCnd != null)
+                this.dao().fetchLinks(list, linkName, subCnd);
+            else
+                this.dao().fetchLinks(list, linkName);
+        }
+        return new Pagination(pageNumber, pageSize, pager.getRecordCount(), list);
+    }
+
+    /**
      * 分页查询(tabelName)
      *
      * @param pageNumber
@@ -914,24 +1007,6 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         return new Pagination(pageNumber, pageSize, pager.getRecordCount(), list);
     }
 
-    /**
-     * 分页查询(sql)
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @param sql
-     * @return
-     */
-    public Pagination listPage(Integer pageNumber, int pageSize, Sql sql) {
-        pageNumber = getPageNumber(pageNumber);
-        pageSize = getPageSize(pageSize);
-        Pager pager = this.dao().createPager(pageNumber, pageSize);
-        pager.setRecordCount((int) Daos.queryCount(this.dao(), sql));// 记录数需手动设置
-        sql.setPager(pager);
-        sql.setCallback(Sqls.callback.records());
-        dao().execute(sql);
-        return new Pagination(pageNumber, pageSize, pager.getRecordCount(), sql.getList(Record.class));
-    }
 
     /**
      * 默认页码
@@ -965,6 +1040,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param linkName 关联查询 支持通配符 ^(a|b)$
      * @return
      */
+    @Deprecated
     public NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName) {
         NutMap re = new NutMap();
         if (orders != null && orders.size() > 0) {
@@ -998,6 +1074,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param subCnd   关联查询条件
      * @return
      */
+    @Deprecated
     public NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName, Cnd subCnd) {
         NutMap re = new NutMap();
         if (orders != null && orders.size() > 0) {
@@ -1031,6 +1108,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param orderSql 结果查询语句
      * @return
      */
+    @Deprecated
     public NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql) {
         NutMap re = new NutMap();
         Pager pager = new OffsetPager(start, length);
@@ -1056,6 +1134,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param countOnly 统计查询语句是否只有count()
      * @return
      */
+    @Deprecated
     public NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql, boolean countOnly) {
         if (!countOnly) {
             return this.data(length, start, draw, countSql, orderSql);
@@ -1085,6 +1164,7 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param linkName 关联查询 支持通配符 ^(a|b)$
      * @return
      */
+    @Deprecated
     public NutMap data(int length, int start, int draw, Cnd cnd, String linkName) {
         NutMap re = new NutMap();
         Pager pager = new OffsetPager(start, length);

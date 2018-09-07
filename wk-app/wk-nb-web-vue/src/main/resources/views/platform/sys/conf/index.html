@@ -7,50 +7,81 @@ layout("/layouts/platform.html"){
             <el-button size="medium" @click="addDialogVisible = true"><i class="ti-plus"></i> 添加配置项</el-button>
         </div>
     </el-row>
-    <el-row>
+    <el-row class="el-table-container">
         <el-table
                 :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
                 style="width: 100%">
             <el-table-column
+                    sortable
                     prop="configKey"
                     label="参数名"
-                    width="110">
+                    width="200">
             </el-table-column>
             <el-table-column
                     prop="configValue"
-                    label="参数值">
-            </el-table-column>
-            <el-table-column
-                    prop="title"
-                    label="说明">
+                    label="参数值"
+                    width="200">
             </el-table-column>
             <el-table-column
                     prop="note"
+                    label="说明">
+            </el-table-column>
+            <el-table-column
+                    prop="1"
                     label="操作"
-                    width="180">
+                    width="120">
+                <template scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item :command="{type:'edit',id:scope.row.configKey}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'delete',id:scope.row.configKey}"
+                                              v-if="scope.row.configKey.indexOf('App')<0">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
             </el-table-column>
         </el-table>
-
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="totalCount">
+        </el-pagination>
     </el-row>
     <el-dialog
             title="新增参数"
             :visible.sync="addDialogVisible"
             width="40%">
-        <el-form :model="addForm" ref="addForm" :rules="addRules" label-width="80px">
+        <el-form :model="form" ref="addForm" :rules="formRules" label-width="80px">
             <el-form-item prop="configKey" label="参数名">
                 <el-input maxlength="100" placeholder="参数名"
-                          v-model="addForm.configKey"
+                          v-model="form.configKey"
                           auto-complete="off" tabindex="1" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="configValue" label="参数值">
                 <el-form-item prop="configValue">
                     <el-input maxlength="100" placeholder="参数值"
-                              v-model="addForm.configValue"
+                              v-model="form.configValue"
                               auto-complete="off" tabindex="2" type="text"></el-input>
                 </el-form-item>
             </el-form-item>
             <el-form-item prop="note" label="说 明">
-                <el-input type="textarea" v-model="addForm.note"></el-input>
+                <el-input type="textarea" v-model="form.note"></el-input>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -58,7 +89,32 @@ layout("/layouts/platform.html"){
                     <el-button type="primary" @click="doAdd">确 定</el-button>
                   </span>
     </el-dialog>
-
+    <el-dialog
+            title="修改参数"
+            :visible.sync="editDialogVisible"
+            width="40%">
+        <el-form :model="form" ref="editForm" :rules="formRules" label-width="80px">
+            <el-form-item prop="configKey" label="参数名">
+                <el-input maxlength="100" placeholder="参数名"
+                          v-model="form.configKey"
+                          auto-complete="off" tabindex="1" type="text" disabled></el-input>
+            </el-form-item>
+            <el-form-item prop="configValue" label="参数值">
+                <el-form-item prop="configValue">
+                    <el-input maxlength="100" placeholder="参数值"
+                              v-model="form.configValue"
+                              auto-complete="off" tabindex="2" type="text"></el-input>
+                </el-form-item>
+            </el-form-item>
+            <el-form-item prop="note" label="说 明">
+                <el-input type="textarea" v-model="form.note"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doEdit">确 定</el-button>
+                  </span>
+    </el-dialog>
 </div>
 <script>
     new Vue({
@@ -66,16 +122,19 @@ layout("/layouts/platform.html"){
         data: function () {
             return {
                 addDialogVisible: false,
+                editDialogVisible: false,
                 tableData: [],
                 pageSize: 10,
                 pageNumber: 1,
+                pageOrderName: "",
+                pageOrderBy: "",
                 totalCount: 0,
-                addForm: {
+                form: {
                     configKey: "",
                     configValue: "",
                     note: ""
                 },
-                addRules:{
+                formRules: {
                     configKey: [
                         {required: true, message: '请输入参数名', trigger: 'blur'},
                     ],
@@ -86,25 +145,80 @@ layout("/layouts/platform.html"){
             }
         },
         methods: {
-            doAdd:function(){
+            doAdd: function () {
                 var self = this;
+                var url = base + "/platform/sys/conf/addDo";
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {
-
+                        $.post(url, self.form, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                                self.form={};
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
                     }
                 });
             },
-            pageData(page, size) {
+            doEdit: function () {
                 var self = this;
+                var url = base + "/platform/sys/conf/editDo";
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post(url, self.form, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDialogVisible = false;
+                                self.form={};
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            pageOrder: function (column) {
+                this.pageOrderName = column.prop;
+                this.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {
+                this.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {
+                this.pageSize = val;
+                this.pageData();
+            },
+            pageData() {
+                var self = this;
+                sublime.showLoadingbar();
                 $.post(base + "/platform/sys/conf/data", {
-                    filename: self.fileDialogFilename,
-                    content: self.fileDialogContent
+                    pageNumber: self.pageNumber,
+                    pageSize: self.pageSize,
+                    pageOrderName: self.pageOrderName,
+                    pageOrderBy: self.pageOrderBy
                 }, function (data) {
+                    sublime.closeLoadingbar();
                     if (data.code == 0) {
-                        self.$message({
-                            message: data.msg,
-                            type: 'success'
-                        });
+                        self.tableData = data.data.list;
+                        self.totalCount = data.data.totalCount;
                     } else {
                         self.$message({
                             message: data.msg,
@@ -112,132 +226,52 @@ layout("/layouts/platform.html"){
                         });
                     }
                 }, "json");
+            },
+            dropdownCommand: function (command) {
+                var self = this;
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/sys/conf/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.form = data.data;
+                            self.editDialogVisible = true;
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除 ' + command.id, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {
+                                $.post(base + "/platform/sys/conf/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.pageData();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
             }
         },
         created: function () {
-            this.pageData(this.pageNumber, this.pageSize);
+            this.pageData();
         }
-    });
-</script>
-<header class="header navbar bg-white shadow">
-    <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/sys/conf/add" data-pjax><i class="ti-plus"></i>
-            添加配置项</a>
-    </div>
-</header>
-<div class=panel-body style="padding-top: 50px;">
-    <div class="table-responsive no-border">
-        <input id="unitid" type="hidden">
-        <table class="table table-bordered table-striped mg-t datatable">
-            <thead>
-            <tr>
-                <th>配置项</th>
-                <th>参数值</th>
-                <th>说明</th>
-                <th>操作</th>
-        </table>
-    </div>
-</div>
-<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">删除</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        删除后无法恢复，确定删除吗？ <br/>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
-                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
-            </div>
-        </div>
-    </div>
-</div>
-<script language="JavaScript">
-    var datatable;
-
-    function initDatatable() {
-        datatable = $('.datatable').DataTable({
-            "dom": '<"toolbar">frtip',
-            "searching": false,
-            "processing": false,
-            "serverSide": true,
-            "select": true,
-            "ordering": true,
-            "language": {
-                "url": "${base}/assets/plugins/datatables/cn.json"
-            },
-            "preDrawCallback": function () {
-                sublime.showLoadingbar($(".main-content"));
-            },
-            "drawCallback": function () {
-                sublime.closeLoadingbar($(".main-content"));
-            },
-            "ajax": {
-                "url": "${base}/platform/sys/conf/data",
-                "type": "post",
-                "data": function (d) {
-                }
-            },
-            "order": [[0, "asc"]],
-            "columns": [
-                {"data": "configKey", "bSortable": true},
-                {"data": "configValue", "bSortable": true},
-                {"data": "note", "bSortable": true}
-            ],
-            "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        var s = '<li><a href="javascript:;" onclick="del(\'' + row.configKey + '\')">删除</a></li>';
-                        if (row.configKey.indexOf('App') > -1) {
-                            s = '';
-                        }
-                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                            ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                            '<li><a href="${base}/platform/sys/conf/edit/' + row.configKey + '/" data-pjax>修改</a></li>' +
-                            s +
-                            '</ul></div>';
-                    },
-                    "targets": 3
-                }
-            ]
-        });
-        datatable.on('click', 'tr', function () {
-            $(this).toggleClass('selected');
-        });
-        $("#searchBtn").on('click', function () {
-            datatable.ajax.reload();
-        });
-    }
-
-    function del(id) {
-        var dialog = $("#dialogDelete");
-        dialog.modal("show");
-        dialog.find("#ok").unbind("click");
-        dialog.find("#ok").bind("click", function (event) {
-            var btn = $(this);
-            btn.button("loading");
-            $.post("${base}/platform/sys/conf/delete/" + id, {}, function (data) {
-                if (data.code == 0) {
-                    datatable.ajax.reload(null, false);
-                } else {
-                    Toast.error(data.msg);
-                }
-                //重置按钮状态，关闭提示框
-                btn.button("reset");
-                dialog.modal("hide");
-            }, "json");
-        });
-    }
-
-    $(function () {
-        initDatatable();
     });
 </script>
 <!--#

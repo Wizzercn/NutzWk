@@ -604,7 +604,7 @@ body{background:#515e72;color:#59595a;line-height:1.5;direction:ltr;-webkit-font
  */
 /* main app area */
 .main-content {
-  background: #f1f4f9;
+  background: #fff;
 }
 .main-content .content-wrap .wrapper {
   padding: 15px;
@@ -6429,6 +6429,22 @@ a.fc-event,
 }
 .pb0 {
   padding-bottom: 0;
+}
+
+.p50 {
+  padding: 50px;
+}
+.pr50 {
+  padding-right: 50px;
+}
+.pl50 {
+  padding-left: 50px;
+}
+.pt50 {
+  padding-top: 50px;
+}
+.pb50 {
+  padding-bottom: 50px;
 }
 .p25 {
   padding: 25px;

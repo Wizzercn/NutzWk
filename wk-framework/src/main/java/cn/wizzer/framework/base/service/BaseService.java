@@ -628,6 +628,38 @@ public interface BaseService<T> {
      */
     Pagination listPage(Integer pageNumber, Sql sql);
 
+
+    /**
+     * 分页查询(sql)
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param sql
+     * @return
+     */
+    Pagination listPage(Integer pageNumber, int pageSize, Sql sql);
+
+    /**
+     * 分页查询
+     *
+     * @param pageNumber
+     * @param sql        查询语句
+     * @param countSql   统计语句
+     * @return
+     */
+    Pagination listPage(Integer pageNumber, Sql sql, Sql countSql);
+
+    /**
+     * 分页查询
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param sql        查询语句
+     * @param countSql   统计语句
+     * @return
+     */
+    Pagination listPage(Integer pageNumber, int pageSize, Sql sql, Sql countSql);
+
     /**
      * 分页查询
      *
@@ -660,6 +692,29 @@ public interface BaseService<T> {
     Pagination listPage(Integer pageNumber, int pageSize, Condition cnd, String fieldName);
 
     /**
+     * 关联查询
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param cnd
+     * @param linkName   支持通配符 ^(a|b)$
+     * @return
+     */
+    Pagination listPageLinks(Integer pageNumber, int pageSize, Condition cnd, String linkName);
+
+    /**
+     * 关联查询,带子查询条件
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param cnd
+     * @param linkName   支持通配符 ^(a|b)$
+     * @param subCnd     子查询条件
+     * @return
+     */
+    Pagination listPageLinks(Integer pageNumber, int pageSize, Condition cnd, String linkName, Condition subCnd);
+
+    /**
      * 分页查询(tabelName)
      *
      * @param pageNumber
@@ -669,16 +724,6 @@ public interface BaseService<T> {
      * @return
      */
     Pagination listPage(Integer pageNumber, int pageSize, String tableName, Condition cnd);
-
-    /**
-     * 分页查询(sql)
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @param sql
-     * @return
-     */
-    Pagination listPage(Integer pageNumber, int pageSize, Sql sql);
 
 
     /**
@@ -693,6 +738,7 @@ public interface BaseService<T> {
      * @param linkName 关联查询 支持通配符 ^(a|b)$
      * @return
      */
+    @Deprecated
     NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName);
 
     /**
@@ -708,6 +754,7 @@ public interface BaseService<T> {
      * @param subCnd   关联查询条件
      * @return
      */
+    @Deprecated
     NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName, Cnd subCnd);
 
     /**
@@ -720,6 +767,7 @@ public interface BaseService<T> {
      * @param orderSql 结果查询语句
      * @return
      */
+    @Deprecated
     NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql);
 
     /**
@@ -733,7 +781,9 @@ public interface BaseService<T> {
      * @param countOnly 统计查询语句是否只有count()
      * @return
      */
+    @Deprecated
     NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql, boolean countOnly);
+
     /**
      * DataTable Page
      *
@@ -744,5 +794,6 @@ public interface BaseService<T> {
      * @param linkName 关联查询 支持通配符 ^(a|b)$
      * @return
      */
+    @Deprecated
     NutMap data(int length, int start, int draw, Cnd cnd, String linkName);
 }

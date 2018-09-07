@@ -5,3 +5,14 @@
 /*.el-dialog__footer{*/
     /*border-top: 1px solid #e5e5e5;*/
 /*}*/
+.el-table-container{
+    padding-top: 54px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.el-pagination-container{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #fff;
+}

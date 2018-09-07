@@ -2,11 +2,11 @@ package cn.wizzer.app.web.modules.controllers.platform.sys;
 
 import cn.wizzer.app.sys.modules.models.Sys_config;
 import cn.wizzer.app.sys.modules.services.SysConfigService;
-import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
+import cn.wizzer.app.web.commons.utils.ShiroUtil;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
@@ -14,13 +14,12 @@ import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.lang.Times;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
-
-import java.util.List;
 
 /**
  * Created by wizzer on 2016/6/28.
@@ -43,20 +42,15 @@ public class SysConfController {
     }
 
     @At
-    @Ok("beetl:/platform/sys/conf/add.html")
-    @RequiresPermissions("sys.manager.conf")
-    public void add() {
-
-    }
-
-    @At
     @Ok("json")
     @RequiresPermissions("sys.manager.conf.add")
     @SLog(tag = "添加参数", msg = "${args[0].configKey}:${args[0].configValue}")
     public Object addDo(@Param("..") Sys_config conf) {
         try {
+            conf.setOpBy(StringUtil.getPlatformUid());
+            conf.setOpAt(Times.getTS());
             if (sysConfigService.insert(conf) != null) {
-                pubSubService.fire("nutzwk:web:platform","sys_config");
+                pubSubService.fire("nutzwk:web:platform", "sys_config");
             }
             return Result.success("system.success");
         } catch (Exception e) {
@@ -65,10 +59,14 @@ public class SysConfController {
     }
 
     @At("/edit/?")
-    @Ok("beetl:/platform/sys/conf/edit.html")
+    @Ok("json")
     @RequiresPermissions("sys.manager.conf")
     public Object edit(String id) {
-        return sysConfigService.fetch(id);
+        try {
+            return Result.success("system.success", sysConfigService.fetch(id));
+        } catch (Exception e) {
+            return Result.error("system.error");
+        }
     }
 
     @At
@@ -77,8 +75,10 @@ public class SysConfController {
     @SLog(tag = "修改参数", msg = "${args[0].configKey}:${args[0].configValue}")
     public Object editDo(@Param("..") Sys_config conf) {
         try {
+            conf.setOpBy(StringUtil.getPlatformUid());
+            conf.setOpAt(Times.getTS());
             if (sysConfigService.updateIgnoreNull(conf) > 0) {
-                pubSubService.fire("nutzwk:web:platform","sys_config");
+                pubSubService.fire("nutzwk:web:platform", "sys_config");
             }
             return Result.success("system.success");
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class SysConfController {
                 return Result.error("系统参数不可删除");
             }
             if (sysConfigService.delete(configKey) > 0) {
-                pubSubService.fire("nutzwk:web:platform","sys_config");
+                pubSubService.fire("nutzwk:web:platform", "sys_config");
             }
             return Result.success("system.success");
         } catch (Exception e) {
@@ -107,8 +107,11 @@ public class SysConfController {
     @At
     @Ok("json:full")
     @RequiresPermissions("sys.manager.conf")
-    public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+    public Object data(@Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
-        return sysConfigService.data(length, start, draw, order, columns, cnd, null);
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        }
+        return Result.success().addData(sysConfigService.listPage(pageNumber, pageSize, cnd));
     }
 }
