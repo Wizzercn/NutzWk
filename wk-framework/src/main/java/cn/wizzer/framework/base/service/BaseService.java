@@ -738,7 +738,6 @@ public interface BaseService<T> {
      * @param linkName 关联查询 支持通配符 ^(a|b)$
      * @return
      */
-    @Deprecated
     NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName);
 
     /**
@@ -754,7 +753,6 @@ public interface BaseService<T> {
      * @param subCnd   关联查询条件
      * @return
      */
-    @Deprecated
     NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName, Cnd subCnd);
 
     /**
@@ -767,7 +765,6 @@ public interface BaseService<T> {
      * @param orderSql 结果查询语句
      * @return
      */
-    @Deprecated
     NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql);
 
     /**
@@ -781,7 +778,6 @@ public interface BaseService<T> {
      * @param countOnly 统计查询语句是否只有count()
      * @return
      */
-    @Deprecated
     NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql, boolean countOnly);
 
     /**
@@ -794,6 +790,5 @@ public interface BaseService<T> {
      * @param linkName 关联查询 支持通配符 ^(a|b)$
      * @return
      */
-    @Deprecated
     NutMap data(int length, int start, int draw, Cnd cnd, String linkName);
 }

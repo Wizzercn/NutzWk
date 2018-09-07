@@ -1040,7 +1040,6 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param linkName 关联查询 支持通配符 ^(a|b)$
      * @return
      */
-    @Deprecated
     public NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName) {
         NutMap re = new NutMap();
         if (orders != null && orders.size() > 0) {
@@ -1074,7 +1073,6 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param subCnd   关联查询条件
      * @return
      */
-    @Deprecated
     public NutMap data(int length, int start, int draw, List<DataTableOrder> orders, List<DataTableColumn> columns, Cnd cnd, String linkName, Cnd subCnd) {
         NutMap re = new NutMap();
         if (orders != null && orders.size() > 0) {
@@ -1108,7 +1106,6 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param orderSql 结果查询语句
      * @return
      */
-    @Deprecated
     public NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql) {
         NutMap re = new NutMap();
         Pager pager = new OffsetPager(start, length);
@@ -1134,7 +1131,6 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param countOnly 统计查询语句是否只有count()
      * @return
      */
-    @Deprecated
     public NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql, boolean countOnly) {
         if (!countOnly) {
             return this.data(length, start, draw, countSql, orderSql);
@@ -1164,7 +1160,6 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @param linkName 关联查询 支持通配符 ^(a|b)$
      * @return
      */
-    @Deprecated
     public NutMap data(int length, int start, int draw, Cnd cnd, String linkName) {
         NutMap re = new NutMap();
         Pager pager = new OffsetPager(start, length);
