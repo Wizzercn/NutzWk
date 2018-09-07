@@ -1,6 +1,7 @@
 <div id="passApp">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <div class="el-dialog__header">
+        <button type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close" class="el-dialog__headerbtn"><i
+                class="el-dialog__close el-icon el-icon-close"></i></button>
         <h4 class="modal-title">${msg['index.user.password']}</h4>
     </div>
     <div class="modal-body">
@@ -26,17 +27,24 @@
             </el-row>
         </el-form>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">${msg['system.cancel']}</button>
-        <button type="button" class="btn btn-primary" @click="doPass">${msg['system.confirm']}</button>
+    <div class="el-dialog__footer">
+        <span class="dialog-footer">
+            <button type="button" class="el-button el-button--default" data-dismiss="modal">
+                <span>${msg['system.cancel']}</span>
+            </button>
+            <button type="button" class="el-button el-button--primary" @click="doPass">
+                <span>${msg['system.confirm']}</span>
+            </button>
+        </span>
     </div>
 </div>
 <script type="text/javascript">
     new Vue({
         el: '#passApp',
         data: function () {
-            var validatePass = (rule, value, callback) => {
-                if (value !== this.passForm.newPassword) {
+            var self = this;
+            var validatePass = function (rule, value, callback) {
+                if (value !== self.passForm.newPassword) {
                     callback(new Error('两次输入密码不一致!'));
                 } else {
                     callback();
@@ -44,13 +52,13 @@
             };
             return {
                 passForm: {
-                    oldPassword:"",
-                    newPassword:"",
-                    passwordAgain:""
+                    oldPassword: "",
+                    newPassword: "",
+                    passwordAgain: ""
                 },
                 passRules: {
                     oldPassword: [
-                        {required: true, message: '请输入旧密码', trigger: 'blur'}
+                        {required: true, message: '请输入原密码', trigger: 'blur'}
                     ],
                     newPassword: [
                         {required: true, message: '请输入新密码', trigger: 'blur'},
@@ -64,16 +72,22 @@
             }
         },
         methods: {
-            doPass:function () {
+            doPass: function () {
                 var self = this
                 self.$refs["passForm"].validate(function (valid) {
                     if (valid) {
-                        $.post(base+"/platform/sys/user/doChangePassword", self.passForm, function (data) {
+                        $.post(base + "/platform/sys/user/doChangePassword", self.passForm, function (data) {
                             if (data.code == 0) {
                                 $('#homeDetail').modal('hide');
-                                Toast.success(data.msg);
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
                             } else {
-                                Toast.error(data.msg);
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
                             }
                         }, "json");
                     }

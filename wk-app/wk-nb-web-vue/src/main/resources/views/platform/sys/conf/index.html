@@ -1,10 +1,128 @@
 <!--#
 layout("/layouts/platform.html"){
 #-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <el-button size="medium" @click="addDialogVisible = true"><i class="ti-plus"></i> 添加配置项</el-button>
+        </div>
+    </el-row>
+    <el-row>
+        <el-table
+                :data="tableData"
+                style="width: 100%">
+            <el-table-column
+                    prop="configKey"
+                    label="参数名"
+                    width="110">
+            </el-table-column>
+            <el-table-column
+                    prop="configValue"
+                    label="参数值">
+            </el-table-column>
+            <el-table-column
+                    prop="title"
+                    label="说明">
+            </el-table-column>
+            <el-table-column
+                    prop="note"
+                    label="操作"
+                    width="180">
+            </el-table-column>
+        </el-table>
 
+    </el-row>
+    <el-dialog
+            title="新增参数"
+            :visible.sync="addDialogVisible"
+            width="40%">
+        <el-form :model="addForm" ref="addForm" :rules="addRules" label-width="80px">
+            <el-form-item prop="configKey" label="参数名">
+                <el-input maxlength="100" placeholder="参数名"
+                          v-model="addForm.configKey"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="configValue" label="参数值">
+                <el-form-item prop="configValue">
+                    <el-input maxlength="100" placeholder="参数值"
+                              v-model="addForm.configValue"
+                              auto-complete="off" tabindex="2" type="text"></el-input>
+                </el-form-item>
+            </el-form-item>
+            <el-form-item prop="note" label="说 明">
+                <el-input type="textarea" v-model="addForm.note"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                addDialogVisible: false,
+                tableData: [],
+                pageSize: 10,
+                pageNumber: 1,
+                totalCount: 0,
+                addForm: {
+                    configKey: "",
+                    configValue: "",
+                    note: ""
+                },
+                addRules:{
+                    configKey: [
+                        {required: true, message: '请输入参数名', trigger: 'blur'},
+                    ],
+                    configValue: [
+                        {required: true, message: '请输入参数值', trigger: 'blur'},
+                    ],
+                }
+            }
+        },
+        methods: {
+            doAdd:function(){
+                var self = this;
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {
+
+                    }
+                });
+            },
+            pageData(page, size) {
+                var self = this;
+                $.post(base + "/platform/sys/conf/data", {
+                    filename: self.fileDialogFilename,
+                    content: self.fileDialogContent
+                }, function (data) {
+                    if (data.code == 0) {
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            }
+        },
+        created: function () {
+            this.pageData(this.pageNumber, this.pageSize);
+        }
+    });
+</script>
 <header class="header navbar bg-white shadow">
     <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/sys/conf/add" data-pjax><i class="ti-plus"></i> 添加配置项</a>
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/sys/conf/add" data-pjax><i class="ti-plus"></i>
+            添加配置项</a>
     </div>
 </header>
 <div class=panel-body style="padding-top: 50px;">
@@ -43,6 +161,7 @@ layout("/layouts/platform.html"){
 </div>
 <script language="JavaScript">
     var datatable;
+
     function initDatatable() {
         datatable = $('.datatable').DataTable({
             "dom": '<"toolbar">frtip',
@@ -75,15 +194,15 @@ layout("/layouts/platform.html"){
             "columnDefs": [
                 {
                     "render": function (data, type, row) {
-                        var s='<li><a href="javascript:;" onclick="del(\'' + row.configKey + '\')">删除</a></li>';
-                        if(row.configKey.indexOf('App')>-1){
-                            s='';
+                        var s = '<li><a href="javascript:;" onclick="del(\'' + row.configKey + '\')">删除</a></li>';
+                        if (row.configKey.indexOf('App') > -1) {
+                            s = '';
                         }
                         return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/platform/sys/conf/edit/' + row.configKey + '/" data-pjax>修改</a></li>' +
-                                s +
-                                '</ul></div>';
+                            ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                            '<li><a href="${base}/platform/sys/conf/edit/' + row.configKey + '/" data-pjax>修改</a></li>' +
+                            s +
+                            '</ul></div>';
                     },
                     "targets": 3
                 }
@@ -96,6 +215,7 @@ layout("/layouts/platform.html"){
             datatable.ajax.reload();
         });
     }
+
     function del(id) {
         var dialog = $("#dialogDelete");
         dialog.modal("show");
@@ -105,7 +225,7 @@ layout("/layouts/platform.html"){
             btn.button("loading");
             $.post("${base}/platform/sys/conf/delete/" + id, {}, function (data) {
                 if (data.code == 0) {
-                    datatable.ajax.reload(null,false);
+                    datatable.ajax.reload(null, false);
                 } else {
                     Toast.error(data.msg);
                 }
@@ -115,6 +235,7 @@ layout("/layouts/platform.html"){
             }, "json");
         });
     }
+
     $(function () {
         initDatatable();
     });

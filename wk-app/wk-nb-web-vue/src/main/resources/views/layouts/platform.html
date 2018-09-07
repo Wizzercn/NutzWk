@@ -7,11 +7,12 @@
     <title>${AppName!}</title>
     <meta charset="UTF-8">
     <!-- import CSS -->
-    <link rel="stylesheet" href="${base!}/assets/platform/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/plugins/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="${base!}/assets/platform/plugins/element-ui/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="${base!}/assets/platform/fonts/themify-icons.css">
     <link rel="stylesheet" href="${base!}/assets/platform/css/common.css">
     <link rel="stylesheet" href="${base!}/assets/platform/css/main.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/css/elmain.css">
     <link rel="stylesheet" href="${base!}/assets/platform/css/panel.css">
     <!-- import Vue before Element -->
     <script src="${base!}/assets/platform/plugins/vue/vue.min.js"></script>
@@ -19,11 +20,10 @@
     <script src="${base!}/assets/platform/plugins/element-ui/lib/index.js"></script>
     <script src="${base!}/assets/platform/plugins/jquery/jquery-1.11.1.min.js"></script>
     <script src="${base!}/assets/platform/plugins/slimscroll/jquery.slimscroll.min.js"></script>
-    <script src="${base!}/assets/platform/bootstrap/js/bootstrap.js"></script>
+    <script src="${base!}/assets/platform/plugins/pjax/jquery.pjax.js"></script>
+    <script src="${base!}/assets/platform/plugins/bootstrap/js/bootstrap.js"></script>
     <script src="${base!}/assets/platform/js/main.js"></script>
     <script src="${base!}/assets/platform/js/offscreen.js"></script>
-    <script src="${base!}/assets/platform/js/jquery.pjax.js"></script>
-    <script src="${base!}/assets/platform/js/toast.js"></script>
     <!--# if(@shiro.getPrincipalProperty('loginTheme')!=null){ #-->
     <link rel="stylesheet" href="${base!}/assets/platform/css/skins/${@shiro.getPrincipalProperty('loginTheme')}"
           id="skin">
@@ -32,7 +32,7 @@
     <!--# } #-->
     <script type="text/javascript">
         var base = '${base!}';
-        var loginPjax="${@shiro.getPrincipalProperty('loginPjax')}";
+        var loginPjax = "${@shiro.getPrincipalProperty('loginPjax')}";
     </script>
 </head>
 <body>
@@ -84,7 +84,8 @@
         <small class="pg-footer"><i class="ti-info-alt mr5"></i>${msg['index.panel']}</small>
     </div>
 </div>
-<div id="mainApp" class="app <!--#if(@shiro.getPrincipalProperty('loginSidebar')){#--> small-menu <!--#}#--> <!--#if(@shiro.getPrincipalProperty('loginScroll')){#--> fixed-scroll <!--#}#--> <!--#if(@shiro.getPrincipalProperty('loginBoxed')){#--> boxed <!--#}#-->">
+<div id="mainApp"
+     class="app <!--#if(@shiro.getPrincipalProperty('loginSidebar')){#--> small-menu <!--#}#--> <!--#if(@shiro.getPrincipalProperty('loginScroll')){#--> fixed-scroll <!--#}#--> <!--#if(@shiro.getPrincipalProperty('loginBoxed')){#--> boxed <!--#}#-->">
     <header class="header header-fixed navbar">
         <div class="brand">
 

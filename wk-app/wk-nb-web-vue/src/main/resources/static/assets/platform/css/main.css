@@ -2393,9 +2393,9 @@ label.checkbox {
  *
  */
 .btn-default {
-  color: #59595a;
-  background-color: #eaecf6;
-  border-color: #d5d9ed;
+  color: #606266;
+  background-color: #fff;
+  border: 1px solid #dcdfe6;
 }
 a.btn-default {
   color: #59595a;

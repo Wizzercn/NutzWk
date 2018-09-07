@@ -1,5 +1,6 @@
-<div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+<div class="el-dialog__header">
+    <button type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close" class="el-dialog__headerbtn"><i
+            class="el-dialog__close el-icon el-icon-close"></i></button>
     <h4 class="modal-title">${msg['index.custommenu']}</h4>
 </div>
 <div class="modal-body">
@@ -35,9 +36,15 @@
         </table>
     </div>
 </div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
-    <button type="button" id="okCustom" class="btn btn-primary">确 认</button>
+<div class="el-dialog__footer">
+        <span class="dialog-footer">
+            <button type="button" class="el-button el-button--default" data-dismiss="modal">
+                <span>${msg['system.cancel']}</span>
+            </button>
+            <button type="button" class="el-button el-button--primary" id="okCustom">
+                <span>${msg['system.confirm']}</span>
+            </button>
+        </span>
 </div>
 <script type="text/javascript">
     function chk(){
@@ -48,7 +55,10 @@
             }
         });
         if(ids.length>5){
-            Toast.error("最多可选择5个菜单");
+            ELEMENT.Message({
+                message: "最多可选择5个菜单",
+                type: 'error'
+            });
             return ids;
         }
         return ids;
@@ -60,12 +70,18 @@
                 $('#homeDetail').modal('hide');
                 $.post("${base}/platform/sys/user/customDo", {ids: ids.toString()}, function (data) {
                     if (data.code == 0) {
-                        Toast.success(data.msg);
+                        ELEMENT.Message({
+                            message: data.msg,
+                            type: 'success'
+                        });
                         setTimeout(function () {
                             window.location.reload();
                         },520);
                     } else {
-                        Toast.error(data.msg);
+                        ELEMENT.Message({
+                            message: data.msg,
+                            type: 'error'
+                        });
                     }
                 }, "json");
             }
