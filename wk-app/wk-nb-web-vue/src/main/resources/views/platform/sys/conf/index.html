@@ -147,13 +147,13 @@ layout("/layouts/platform.html"){
         methods: {
             openAdd: function () {
                 this.addDialogVisible = true;
-                this.form = {};
+                this.form = {};//打开新增页面表单也先清空
             },
             doAdd: function () {
                 var self = this;
                 var url = base + "/platform/sys/conf/addDo";
                 self.$refs["addForm"].validate(function (valid) {
-                    if (valid) {
+                    if (valid) {//表单验证通过
                         $.post(url, self.form, function (data) {
                             if (data.code == 0) {
                                 self.$message({
@@ -161,7 +161,7 @@ layout("/layouts/platform.html"){
                                     type: 'success'
                                 });
                                 self.addDialogVisible = false;
-                                self.pageData();
+                                self.pageData();//重新加载分页数据
                             } else {
                                 self.$message({
                                     message: data.msg,
@@ -184,7 +184,7 @@ layout("/layouts/platform.html"){
                                     type: 'success'
                                 });
                                 self.editDialogVisible = false;
-                                self.pageData();
+                                self.pageData();//重新加载分页数据
                             } else {
                                 self.$message({
                                     message: data.msg,
@@ -195,29 +195,29 @@ layout("/layouts/platform.html"){
                     }
                 });
             },
-            pageOrder: function (column) {
+            pageOrder: function (column) {//按字段排序
                 this.pageOrderName = column.prop;
                 this.pageOrderBy = column.order;
                 this.pageData();
             },
-            pageNumberChange: function (val) {
+            pageNumberChange: function (val) {//页码更新操作
                 this.pageNumber = val;
                 this.pageData();
             },
-            pageSizeChange: function (val) {
+            pageSizeChange: function (val) {//分页大小更新操作
                 this.pageSize = val;
                 this.pageData();
             },
-            pageData() {
+            pageData() {//加载分页数据
                 var self = this;
-                sublime.showLoadingbar();
+                sublime.showLoadingbar();//显示loading
                 $.post(base + "/platform/sys/conf/data", {
                     pageNumber: self.pageNumber,
                     pageSize: self.pageSize,
                     pageOrderName: self.pageOrderName,
                     pageOrderBy: self.pageOrderBy
                 }, function (data) {
-                    sublime.closeLoadingbar();
+                    sublime.closeLoadingbar();//关闭loading
                     if (data.code == 0) {
                         self.tableData = data.data.list;
                         self.totalCount = data.data.totalCount;
@@ -229,13 +229,13 @@ layout("/layouts/platform.html"){
                     }
                 }, "json");
             },
-            dropdownCommand: function (command) {
+            dropdownCommand: function (command) {//监听下拉框事件
                 var self = this;
                 if ("edit" == command.type) {
                     $.post(base + "/platform/sys/conf/edit/" + command.id, {}, function (data) {
                         if (data.code == 0) {
-                            self.form = data.data;
-                            self.editDialogVisible = true;
+                            self.form = data.data;//加载后台表单数据
+                            self.editDialogVisible = true;//打开编辑窗口
                         } else {
                             self.$message({
                                 message: data.msg,
@@ -250,7 +250,7 @@ layout("/layouts/platform.html"){
                         cancelButtonText: '取消',
                         type: 'warning',
                         callback: function (a, b) {
-                            if ("confirm" == a) {
+                            if ("confirm" == a) {//确认后再执行
                                 $.post(base + "/platform/sys/conf/delete/" + command.id, {}, function (data) {
                                     if (data.code == 0) {
                                         self.$message({
