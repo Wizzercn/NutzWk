@@ -4,7 +4,6 @@ import cn.wizzer.app.sys.modules.models.Sys_config;
 import cn.wizzer.app.sys.modules.services.SysConfigService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.PageUtil;
-import cn.wizzer.app.web.commons.utils.ShiroUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
