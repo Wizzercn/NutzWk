@@ -4,7 +4,7 @@ layout("/layouts/platform.html"){
 <div id="app" v-cloak>
     <el-row class="header navbar bg-white shadow">
         <div class="btn-group tool-button mt5">
-            <el-button size="medium" @click="addDialogVisible = true"><i class="ti-plus"></i> 添加配置项</el-button>
+            <el-button size="medium" @click="openAdd"><i class="ti-plus"></i> 添加配置项</el-button>
         </div>
     </el-row>
     <el-row class="el-table-container">
@@ -145,6 +145,10 @@ layout("/layouts/platform.html"){
             }
         },
         methods: {
+            openAdd: function () {
+                this.addDialogVisible = true;
+                this.form = {};
+            },
             doAdd: function () {
                 var self = this;
                 var url = base + "/platform/sys/conf/addDo";
@@ -157,7 +161,6 @@ layout("/layouts/platform.html"){
                                     type: 'success'
                                 });
                                 self.addDialogVisible = false;
-                                self.form={};
                                 self.pageData();
                             } else {
                                 self.$message({
@@ -181,7 +184,6 @@ layout("/layouts/platform.html"){
                                     type: 'success'
                                 });
                                 self.editDialogVisible = false;
-                                self.form={};
                                 self.pageData();
                             } else {
                                 self.$message({
