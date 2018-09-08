@@ -50,11 +50,11 @@ public class SysUnitController {
         List<Sys_unit> list = new ArrayList<>();
         List<NutMap> treeList = new ArrayList<>();
         if (shiroUtil.hasRole("sysadmin")) {
-            list = sysUnitService.query(Cnd.NEW().asc("path"));
+            list = sysUnitService.query(Cnd.NEW().asc("location").asc("path"));
         } else {
             Sys_user user = (Sys_user) shiroUtil.getPrincipal();
             if (user != null) {
-                list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("path"));
+                list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("location").asc("path"));
             }
         }
         for (Sys_unit unit : list) {
@@ -65,8 +65,9 @@ public class SysUnitController {
             } else {
                 map.addv("children", null);
             }
+            treeList.add(map);
         }
-        return Json.toJson(list, JsonFormat.compact());
+        return Json.toJson(treeList, JsonFormat.compact());
     }
 
     private List<String> getChildren(String parentId, List<Sys_unit> list) {
@@ -79,11 +80,48 @@ public class SysUnitController {
         return idList;
     }
 
-    @At
-    @Ok("beetl:/platform/sys/unit/add.html")
+    @At("/tree")
+    @Ok("json")
     @RequiresPermissions("sys.manager.unit")
-    public Object add(@Param("pid") String pid) {
-        return Strings.isBlank(pid) ? null : sysUnitService.fetch(pid);
+    public Object tree(@Param("pid") String pid, HttpServletRequest req) {
+        try {
+            List<Sys_unit> list = new ArrayList<>();
+            List<NutMap> treeList = new ArrayList<>();
+            if (shiroUtil.hasRole("sysadmin")) {
+                Cnd cnd = Cnd.NEW();
+                if (Strings.isBlank(pid)) {
+                    cnd.and("parentId", "=", "").or("parentId", "is", null);
+                } else {
+                    cnd.and("parentId", "=", pid);
+                }
+                cnd.asc("location").asc("path");
+                list = sysUnitService.query(cnd);
+            } else {
+                Sys_user user = (Sys_user) shiroUtil.getPrincipal();
+                if (user != null && Strings.isBlank(pid)) {
+                    list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("path"));
+                } else {
+                    Cnd cnd = Cnd.NEW();
+                    if (Strings.isBlank(pid)) {
+                        cnd.and("parentId", "=", "").or("parentId", "is", null);
+                    } else {
+                        cnd.and("parentId", "=", pid);
+                    }
+                    cnd.asc("location").asc("path");
+                    list = sysUnitService.query(cnd);
+                }
+            }
+            for (Sys_unit unit : list) {
+                NutMap map = NutMap.NEW().addv("value", unit.getId()).addv("label", unit.getName());
+                if (unit.isHasChildren()) {
+                    map.addv("children", new ArrayList<>());
+                }
+                treeList.add(map);
+            }
+            return Result.success("system.success").addData(treeList);
+        } catch (Exception e) {
+            return Result.error("system.error");
+        }
     }
 
     @At
@@ -160,7 +198,7 @@ public class SysUnitController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.unit")
-    public Object tree(@Param("pid") String pid) {
+    public Object tree11(@Param("pid") String pid) {
         List<Sys_unit> list = new ArrayList<>();
         if (shiroUtil.hasRole("sysadmin")) {
             Cnd cnd = Cnd.NEW();

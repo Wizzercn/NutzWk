@@ -64,6 +64,36 @@ layout("/layouts/platform.html"){
             </el-table-column>
         </el-table>
     </el-row>
+    <el-dialog
+            title="新建单位"
+            :visible.sync="addDialogVisible"
+            width="40%">
+        <el-form :model="form" ref="addForm" :rules="formRules" label-width="80px">
+            <el-form-item prop="name" label="单位名称">
+                <el-input maxlength="100" placeholder="单位名称"
+                          v-model="form.name"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="configValue" label="上级单位">
+                <el-cascader
+                        :options="options"
+                        :show-all-levels="false"
+                        v-model="form.parentId"
+                        :fetch-suggestions="unitQuery"
+                        @active-item-change="unitChange"
+                        @select="unitSelect"
+                        placeholder="不选择则为顶级"
+                ></el-cascader>
+            </el-form-item>
+            <el-form-item prop="note" label="说 明">
+                <el-input type="textarea" v-model="form.note"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
 </div>
 <script>
     new Vue({
@@ -79,13 +109,71 @@ layout("/layouts/platform.html"){
                 pageOrderName: "",
                 pageOrderBy: "",
                 totalCount: 0,
-                form: {}
+                form: {},
+                formRules: {
+                    name: [
+                        {required: true, message: '单位名称', trigger: 'blur'},
+                    ]
+                },
+                options: []
             }
         },
         methods: {
+            loadTree: function (val,cb) {
+                var url = base + "/platform/sys/unit/tree";
+                $.post(url, {pid: val}, function (data) {
+                    if (data.code == 0) {
+                        cb(data.data);
+                    }
+                }, "json");
+            },
+            unitQuery: function (queryString, cb) {
+                cb(this.options);
+            },
+            unitSelect: function (val) {
+            },
+            unitChange: function (val) {
+                var self=this;
+                this.loadTree(val[0],function (tree) {
+                    self.options.findIndex(function (obj) {
+                        if(val==obj.value){
+                            obj.children=tree;
+                        }
+                    });
+                });
+            },
             openAdd: function () {
+                var self=this;
                 this.addDialogVisible = true;
                 this.form = {};//打开新增窗口,表单先清空
+                this.loadTree("",function (val) {
+                    self.options=val;
+                });
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "/platform/sys/unit/addDo";
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.form, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 300);
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
             },
             // 显示层级
             treeTablePath: function (path) {
@@ -102,12 +190,11 @@ layout("/layouts/platform.html"){
             },
             // 展开下级
             treeTableToggle: function (trIndex) {
-                console.log(trIndex)
                 var record = this.tableData[trIndex];
                 record.expanded = !record.expanded;
             },
             // 点击展开和关闭的时候，图标的切换
-            treeTableIconShow:function(record) {
+            treeTableIconShow: function (record) {
                 if (record.children && record.children.length > 0) {
                     return true;
                 }
