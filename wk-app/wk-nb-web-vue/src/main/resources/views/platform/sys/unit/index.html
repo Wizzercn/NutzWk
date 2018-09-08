@@ -78,7 +78,7 @@ layout("/layouts/platform.html"){
                 <el-cascader
                         :options="options"
                         :show-all-levels="false"
-                        v-model="form.parentId"
+                        v-model="parentUnit"
                         :fetch-suggestions="unitQuery"
                         @active-item-change="unitChange"
                         @select="unitSelect"
@@ -115,11 +115,12 @@ layout("/layouts/platform.html"){
                         {required: true, message: '单位名称', trigger: 'blur'},
                     ]
                 },
-                options: []
+                options: [],
+                parentUnit: []
             }
         },
         methods: {
-            loadTree: function (val,cb) {
+            loadTree: function (val, cb) {
                 var url = base + "/platform/sys/unit/tree";
                 $.post(url, {pid: val}, function (data) {
                     if (data.code == 0) {
@@ -133,21 +134,22 @@ layout("/layouts/platform.html"){
             unitSelect: function (val) {
             },
             unitChange: function (val) {
-                var self=this;
-                this.loadTree(val[0],function (tree) {
+                var self = this;
+                self.parentUnit = val;
+                this.loadTree(val[0], function (tree) {
                     self.options.findIndex(function (obj) {
-                        if(val==obj.value){
-                            obj.children=tree;
+                        if (val == obj.value) {
+                            obj.children = tree;
                         }
                     });
                 });
             },
             openAdd: function () {
-                var self=this;
+                var self = this;
                 this.addDialogVisible = true;
                 this.form = {};//打开新增窗口,表单先清空
-                this.loadTree("",function (val) {
-                    self.options=val;
+                this.loadTree("", function (val) {
+                    self.options = val;
                 });
             },
             doAdd: function () {

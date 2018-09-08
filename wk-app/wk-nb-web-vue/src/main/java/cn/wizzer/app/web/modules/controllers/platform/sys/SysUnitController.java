@@ -195,43 +195,4 @@ public class SysUnitController {
         }
     }
 
-    @At
-    @Ok("json")
-    @RequiresPermissions("sys.manager.unit")
-    public Object tree11(@Param("pid") String pid) {
-        List<Sys_unit> list = new ArrayList<>();
-        if (shiroUtil.hasRole("sysadmin")) {
-            Cnd cnd = Cnd.NEW();
-            if (Strings.isBlank(pid)) {
-                cnd.and("parentId", "=", "").or("parentId", "is", null);
-            } else {
-                cnd.and("parentId", "=", pid);
-            }
-            cnd.asc("path");
-            list = sysUnitService.query(cnd);
-        } else {
-            Sys_user user = (Sys_user) shiroUtil.getPrincipal();
-            if (user != null && Strings.isBlank(pid)) {
-                list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("path"));
-            } else {
-                Cnd cnd = Cnd.NEW();
-                if (Strings.isBlank(pid)) {
-                    cnd.and("parentId", "=", "").or("parentId", "is", null);
-                } else {
-                    cnd.and("parentId", "=", pid);
-                }
-                cnd.asc("path");
-                list = sysUnitService.query(cnd);
-            }
-        }
-        List<Map<String, Object>> tree = new ArrayList<>();
-        for (Sys_unit unit : list) {
-            Map<String, Object> obj = new HashMap<>();
-            obj.put("id", unit.getId());
-            obj.put("text", unit.getName());
-            obj.put("children", unit.isHasChildren());
-            tree.add(obj);
-        }
-        return tree;
-    }
 }
