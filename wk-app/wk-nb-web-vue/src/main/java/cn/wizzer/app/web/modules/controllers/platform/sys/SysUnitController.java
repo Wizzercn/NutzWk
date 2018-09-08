@@ -12,8 +12,12 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
+import org.nutz.json.JsonFormat;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
@@ -43,14 +47,36 @@ public class SysUnitController {
     @Ok("beetl:/platform/sys/unit/index.html")
     @RequiresPermissions("sys.manager.unit")
     public Object index() {
+        List<Sys_unit> list = new ArrayList<>();
+        List<NutMap> treeList = new ArrayList<>();
         if (shiroUtil.hasRole("sysadmin")) {
-            return sysUnitService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("path"));
+            list = sysUnitService.query(Cnd.NEW().asc("path"));
+        } else {
+            Sys_user user = (Sys_user) shiroUtil.getPrincipal();
+            if (user != null) {
+                list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("path"));
+            }
         }
-        Sys_user user = (Sys_user) shiroUtil.getPrincipal();
-        if (user != null) {
-            return sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("path"));
+        for (Sys_unit unit : list) {
+            NutMap map = Lang.obj2nutmap(unit);
+            map.addv("expanded", false);
+            if (unit.isHasChildren()) {
+                map.addv("children", getChildren(unit.getId(), list));
+            } else {
+                map.addv("children", null);
+            }
         }
-        return new ArrayList<>();
+        return Json.toJson(list, JsonFormat.compact());
+    }
+
+    private List<String> getChildren(String parentId, List<Sys_unit> list) {
+        List<String> idList = new ArrayList<>();
+        for (Sys_unit unit : list) {
+            if (parentId.equals(unit.getId())) {
+                idList.add(unit.getId());
+            }
+        }
+        return idList;
     }
 
     @At
