@@ -208,7 +208,7 @@ layout("/layouts/platform.html"){
                 this.pageSize = val;
                 this.pageData();
             },
-            pageData() {//加载分页数据
+            pageData: function () {//加载分页数据
                 var self = this;
                 sublime.showLoadingbar();//显示loading
                 $.post(base + "/platform/sys/conf/data", {

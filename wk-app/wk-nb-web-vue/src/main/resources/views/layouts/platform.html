@@ -25,8 +25,8 @@
     <!-- pjax是异步加载html片段的工具,模拟前端路由机制 -->
     <script src="${base!}/assets/platform/plugins/pjax/jquery.pjax.js"></script>
     <script src="${base!}/assets/platform/plugins/bootstrap/js/bootstrap.js"></script>
-    <!-- polyfill是ES5实现ES6的数组处理的工具如数组的findIndex方法等,TreeTable用得到,兼容IE8 -->
-    <script src="${base!}/assets/platform/plugins/polyfill/polyfill.min.js"></script>
+    <!-- Array数组增加findIndex方法,TreeTable用得到,兼容IE8 -->
+    <script src="${base!}/assets/platform/plugins/polyfill/Array_findIndex.js"></script>
     <script src="${base!}/assets/platform/js/main.js"></script>
     <script src="${base!}/assets/platform/js/offscreen.js"></script>
     <!--# if(@shiro.getPrincipalProperty('loginTheme')!=null){ #-->
@@ -208,20 +208,20 @@
             <li class="language-dropdown dropdown hidden-xs">
                 <a href="javascript:;" data-toggle="dropdown" id="language">
                     <!--# if(lang==null||lang=="zh_CN"){ #-->
-                    <img src="${base!}/assets/platform/img/flags/cn.png" class="flag">
+                    <img src="${base!}/assets/platform/img/flags/cn.png" class="flag"/>
                     <!--#}else{#-->
-                    <img src="${base!}/assets/platform/img/flags/us.png" class="flag">
+                    <img src="${base!}/assets/platform/img/flags/us.png" class="flag"/>
                     <!--#}#-->
                     <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
                         <li>
                             <a href="javascript:sublime.changeLang('en_US');">
-                                <img src="${base!}/assets/platform/img/flags/us.png" class="flag">
+                                <img src="${base!}/assets/platform/img/flags/us.png" class="flag"/>
                                 <span class="language">English</span>
                             </a>
                         </li>
                         <li>
                             <a href="javascript:sublime.changeLang('zh_CN');">
-                                <img src="${base!}/assets/platform/img/flags/cn.png" class="flag">
+                                <img src="${base!}/assets/platform/img/flags/cn.png" class="flag"/>
                                 <span class="language">中文</span>
                             </a>
                         </li>

@@ -107,7 +107,7 @@ layout("/layouts/platform.html"){
                 record.expanded = !record.expanded;
             },
             // 点击展开和关闭的时候，图标的切换
-            treeTableIconShow(record) {
+            treeTableIconShow:function(record) {
                 if (record.children && record.children.length > 0) {
                     return true;
                 }
