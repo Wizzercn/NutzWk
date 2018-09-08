@@ -4,6 +4,7 @@ import cn.wizzer.app.cms.modules.models.Cms_site;
 import cn.wizzer.app.cms.modules.services.CmsSiteService;
 import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
@@ -13,6 +14,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -50,9 +52,20 @@ public class CmsSiteController {
     @At
     @Ok("json:full")
     @RequiresPermissions("cms.content.article")
-    public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        return cmsSiteService.data(length, start, draw, order, columns, cnd, null);
+    public Object data(@Param("siteName") String siteName,@Param("siteDomain")String siteDomain,
+            @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize,
+            @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        Cnd cnd = Cnd.where("delFlag","=",false);
+        if(Strings.isNotBlank(siteName)){
+            cnd.and("site_name","like","%"+siteName+"%");
+        }
+        if(Strings.isNotBlank(siteDomain)){
+            cnd.and("site_domain","like","%"+siteDomain+"%");
+        }
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        }
+        return Result.success().addData(cmsSiteService.listPage(pageNumber,pageSize, cnd));
     }
 
     @At("/add")
@@ -63,10 +76,14 @@ public class CmsSiteController {
     }
 
     @At("/edit/?")
-    @Ok("beetl:/platform/cms/site/edit.html")
+    @Ok("json:full")
     @RequiresPermissions("cms.site.settings")
     public Object edit(String id) {
-        return cmsSiteService.fetch(id);
+        try {
+            return Result.success("system.success", cmsSiteService.fetch(id));
+        } catch (Exception e) {
+            return Result.error("system.error");
+        }
     }
 
     @At
@@ -97,6 +114,19 @@ public class CmsSiteController {
             site.setOpBy(StringUtil.getPlatformUid());
             cmsSiteService.updateIgnoreNull(site);
             cmsSiteService.clearCache();
+            return Result.success("system.success");
+        } catch (Exception e) {
+            return Result.error("system.error");
+        }
+    }
+
+    @At("/delete/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.conf.delete")
+    @SLog(tag = "删除站点", msg = "站点:${args[0]}")
+    public Object delete(String id) {
+        try {
+            cmsSiteService.delete(id);
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
