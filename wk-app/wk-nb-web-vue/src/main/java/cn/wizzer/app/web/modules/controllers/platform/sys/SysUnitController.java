@@ -46,10 +46,10 @@ public class SysUnitController {
 
     }
 
-    @At("/data")
+    @At("/child")
     @Ok("json")
     @RequiresPermissions("sys.manager.unit")
-    public Object data(@Param("pid") String pid, HttpServletRequest req) {
+    public Object child(@Param("pid") String pid, HttpServletRequest req) {
         List<Sys_unit> list = new ArrayList<>();
         List<NutMap> treeList = new ArrayList<>();
         if (shiroUtil.hasRole("sysadmin")) {
@@ -85,41 +85,6 @@ public class SysUnitController {
         return Result.success().addData(treeList);
     }
 
-    //    @At("/data")
-//    @Ok("json")
-//    @RequiresPermissions("sys.manager.unit")
-//    public Object data(HttpServletRequest req) {
-//        List<Sys_unit> list = new ArrayList<>();
-//        List<NutMap> treeList = new ArrayList<>();
-//        if (shiroUtil.hasRole("sysadmin")) {
-//            list = sysUnitService.query(Cnd.NEW().asc("location").asc("path"));
-//        } else {
-//            Sys_user user = (Sys_user) shiroUtil.getPrincipal();
-//            if (user != null) {
-//                list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("location").asc("path"));
-//            }
-//        }
-//        for (Sys_unit unit : list) {
-//            NutMap map = Lang.obj2nutmap(unit);
-//            map.addv("expanded", false);
-//            if (unit.isHasChildren()) {
-//                map.addv("children", getChildren(unit.getId(), list));
-//            } else {
-//                map.addv("children", null);
-//            }
-//            treeList.add(map);
-//        }
-//        return Result.success().addData(treeList);
-//    }
-    private List<String> getChildren(String parentId, List<Sys_unit> list) {
-        List<String> idList = new ArrayList<>();
-        for (Sys_unit unit : list) {
-            if (parentId.equals(unit.getId())) {
-                idList.add(unit.getId());
-            }
-        }
-        return idList;
-    }
 
     @At("/tree")
     @Ok("json")
@@ -178,29 +143,12 @@ public class SysUnitController {
         }
     }
 
-    @At("/child/?")
-    @Ok("beetl:/platform/sys/unit/child.html")
-    @RequiresPermissions("sys.manager.unit")
-    public Object child(String id) {
-        return sysUnitService.query(Cnd.where("parentId", "=", id).asc("path"));
-    }
-
-    @At("/detail/?")
-    @Ok("beetl:/platform/sys/unit/detail.html")
-    @RequiresPermissions("sys.manager.unit")
-    public Object detail(String id) {
-        return sysUnitService.fetch(id);
-    }
-
     @At("/edit/?")
-    @Ok("beetl:/platform/sys/unit/edit.html")
+    @Ok("json")
     @RequiresPermissions("sys.manager.unit")
     public Object edit(String id, HttpServletRequest req) {
         Sys_unit unit = sysUnitService.fetch(id);
-        if (unit != null) {
-            req.setAttribute("parentUnit", sysUnitService.fetch(unit.getParentId()));
-        }
-        return unit;
+        return Result.success().addData(unit);
     }
 
     @At

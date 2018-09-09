@@ -14,7 +14,7 @@ layout("/layouts/platform.html"){
                              width="200" :show-overflow-tooltip="true" align="left">
                 <template slot-scope="scope">
                     <span v-for="(space, levelIndex) in treeTablePath(scope.row.path)" class="ms-tree-space"></span>
-                    <span v-if="treeTableIconShow(scope.row)" @click="treeTableToggle(scope.row.id)"
+                    <span v-if="treeTableIconShow(scope.row)" @click="treeTableChild(scope.row.id)"
                           style="cursor: pointer">
                         <span v-if="!scope.row.expanded"
                               class="el-tree-node__expand-icon el-icon-caret-right" title="展开"></span>
@@ -51,10 +51,10 @@ layout("/layouts/platform.html"){
                             <span class="ti-angle-down"></span>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item :command="{type:'edit',id:scope.row.id}">
+                            <el-dropdown-item :command="{type:'edit',id:scope.row.id,name:scope.row.name}">
                                 修改
                             </el-dropdown-item>
-                            <el-dropdown-item :command="{type:'delete',id:scope.row.id}"
+                            <el-dropdown-item :command="{type:'delete',id:scope.row.id,name:scope.row.name}"
                                               v-if="scope.row.path!='0001'">
                                 删除
                             </el-dropdown-item>
@@ -69,7 +69,7 @@ layout("/layouts/platform.html"){
             :visible.sync="addDialogVisible"
             width="40%">
         <el-form :model="form" ref="addForm" :rules="formRules" size="small" label-width="80px">
-            <el-form-item prop="configValue" label="上级单位" label-width="80px">
+            <el-form-item prop="parentId" label="上级单位" label-width="80px">
                 <el-cascader
                         style="width: 100%"
                         tabindex="1"
@@ -124,6 +124,55 @@ layout("/layouts/platform.html"){
         <span slot="footer" class="dialog-footer">
                     <el-button @click="addDialogVisible = false">取 消</el-button>
                     <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+    <el-dialog
+            title="编辑单位"
+            :visible.sync="editDialogVisible"
+            width="40%">
+        <el-form :model="form" ref="editForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="name" label="单位名称">
+                <el-input maxlength="100" placeholder="单位名称"
+                          v-model="form.name"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="aliasName" label="单位别名">
+                <el-input maxlength="100" placeholder="单位别名"
+                          v-model="form.aliasName"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="unitcode" label="机构编码">
+                <el-input maxlength="100" placeholder="机构编码"
+                          v-model="form.unitcode"
+                          auto-complete="off" tabindex="4" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="address" label="单位地址">
+                <el-input maxlength="100" placeholder="单位地址"
+                          v-model="form.address"
+                          auto-complete="off" tabindex="5" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="telephone" label="联系电话">
+                <el-input maxlength="100" placeholder="联系电话"
+                          v-model="form.telephone"
+                          auto-complete="off" tabindex="6" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="email" label="单位邮箱">
+                <el-input maxlength="100" placeholder="单位邮箱"
+                          v-model="form.email"
+                          auto-complete="off" tabindex="7" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="website" label="单位网站">
+                <el-input maxlength="100" placeholder="单位网站"
+                          v-model="form.website"
+                          auto-complete="off" tabindex="8" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="note" label="单位介绍">
+                <el-input type="textarea" v-model="form.note"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doEdit">确 定</el-button>
                   </span>
     </el-dialog>
 </div>
@@ -207,7 +256,31 @@ layout("/layouts/platform.html"){
                                     type: 'success'
                                 });
                                 self.addDialogVisible = false;
-                                self.treeTableToggle("");
+                                self.treeTableChild("");
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                var url = base + "/platform/sys/unit/editDo";
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        self.form.parentId = self.parentUnit[self.parentUnit.length - 1];
+                        $.post(url, self.form, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDialogVisible = false;
+                                self.treeTableChild("");
                             } else {
                                 self.$message({
                                     message: data.msg,
@@ -243,9 +316,9 @@ layout("/layouts/platform.html"){
                 });
             },
             // 展开下级
-            treeTableToggle: function (pid) {
+            treeTableChild: function (pid) {
                 var self = this;
-                var url = base + "/platform/sys/unit/data";
+                var url = base + "/platform/sys/unit/child";
                 $.post(url, {pid: pid}, function (data) {
                     if (data.code == 0) {
                         if (pid != undefined && pid != "") {
@@ -265,7 +338,7 @@ layout("/layouts/platform.html"){
             dropdownCommand: function (command) {//监听下拉框事件
                 var self = this;
                 if ("edit" == command.type) {
-                    $.post(base + "/platform/sys/conf/edit/" + command.id, {}, function (data) {
+                    $.post(base + "/platform/sys/unit/edit/" + command.id, {}, function (data) {
                         if (data.code == 0) {
                             self.form = data.data;//加载后台表单数据
                             self.editDialogVisible = true;//打开编辑窗口
@@ -278,19 +351,19 @@ layout("/layouts/platform.html"){
                     }, "json");
                 }
                 if ("delete" == command.type) {
-                    self.$confirm('此操作将删除 ' + command.id, '提示', {
+                    self.$confirm('此操作将删除 ' + command.name, '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning',
                         callback: function (a, b) {
                             if ("confirm" == a) {//确认后再执行
-                                $.post(base + "/platform/sys/conf/delete/" + command.id, {}, function (data) {
+                                $.post(base + "/platform/sys/unit/delete/" + command.id, {}, function (data) {
                                     if (data.code == 0) {
                                         self.$message({
                                             message: data.msg,
                                             type: 'success'
                                         });
-                                        self.pageData();
+                                        self.treeTableChild("");
                                     } else {
                                         self.$message({
                                             message: data.msg,
@@ -305,7 +378,7 @@ layout("/layouts/platform.html"){
             }
         },
         created: function () {
-            this.treeTableToggle("");
+            this.treeTableChild("");
         }
     });
 </script>
