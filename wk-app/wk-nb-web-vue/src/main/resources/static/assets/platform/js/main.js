@@ -70,7 +70,7 @@ var sublime = function () {
 
     function checkBreakout() {
         var state = false;
-        var app=$("#mainApp");
+        var app = $("#mainApp");
         if (app.hasClass("small-menu") || app.hasClass("fixed-scroll")) {
             state = true;
         }
@@ -271,7 +271,7 @@ var sublime = function () {
             return true;
         });
         $(document).on("click", ".main-navigation a", function (e) {
-            var app=$("#mainApp");
+            var app = $("#mainApp");
             var links = $(this).parents('li'), parentLink = $(this).closest("li"),
                 otherLinks = $('.main-navigation li').not(links), subMenu = $(this).next();
             if (!subMenu.hasClass("sub-menu")) {
@@ -309,7 +309,7 @@ var sublime = function () {
             $(this).children(".sub-menu").show();
         });
         $(".no-touch .main-navigation, .no-touch .slimscroll").each(function () {
-            var app=$("#mainApp");
+            var app = $("#mainApp");
             if (checkBreakout() || app.hasClass("fixed-scroll") || $.browser.mobile) {
                 return;
             }
@@ -360,7 +360,7 @@ var sublime = function () {
         $(document).on("click", ".toggle-sidebar", function (e) {
             e.preventDefault();
             e.stopPropagation();
-            var app=$("#mainApp");
+            var app = $("#mainApp");
             if (app.hasClass("small-menu")) {
                 app.removeClass("small-menu");
                 if (!$.browser.mobile && !checkBreakout() && $.fn.slimScroll) {
@@ -385,7 +385,7 @@ var sublime = function () {
 
     function initToggleBoxed() {
         $(document).on("click", ".toggle-boxed", function (e) {
-            var app=$("#mainApp");
+            var app = $("#mainApp");
             if (app.hasClass("boxed")) {
                 app.removeClass("boxed");
                 jQuery.post(base + "/platform/login/layout", {p: "boxed", v: false});
@@ -400,7 +400,7 @@ var sublime = function () {
 
     function initToggleScroll() {
         $(document).on("click", ".toggle-scroll", function (e) {
-            var app=$("#mainApp");
+            var app = $("#mainApp");
             if (app.hasClass("fixed-scroll")) {
                 app.removeClass("fixed-scroll");
                 jQuery.post(base + "/platform/login/layout", {p: "scroll", v: false});
@@ -633,6 +633,29 @@ var sublime = function () {
                     event.preventDefault();
                 }
             });
+        },
+        treeToArray: function (data, parent, level, expandedAll) {
+            var tmp = [];
+            var self = this;
+            Array.from(data).forEach(function (record) {
+                if (record._expanded === undefined) {
+                    Vue.set(record, '_expanded', expandedAll);
+                }
+                if (parent) {
+                    Vue.set(record, '_parent', parent);
+                }
+                var _level = 0;
+                if (level !== undefined && level !== null) {
+                    _level = level + 1;
+                }
+                Vue.set(record, '_level', _level);
+                tmp.push(record);
+                if (record.children && record.children.length > 0) {
+                    var children = self.treeToArray(record.children, record, _level, expandedAll);
+                    tmp = tmp.concat(children);
+                }
+            });
+            return tmp;
         }
     };
 }();

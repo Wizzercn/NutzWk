@@ -12,8 +12,6 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.json.Json;
-import org.nutz.json.JsonFormat;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
@@ -26,9 +24,7 @@ import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by wizzer on 2016/6/24.
@@ -46,30 +42,75 @@ public class SysUnitController {
     @At("")
     @Ok("beetl:/platform/sys/unit/index.html")
     @RequiresPermissions("sys.manager.unit")
-    public Object index() {
+    public void index() {
+
+    }
+
+    @At("/data")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.unit")
+    public Object data(@Param("pid") String pid, HttpServletRequest req) {
         List<Sys_unit> list = new ArrayList<>();
         List<NutMap> treeList = new ArrayList<>();
         if (shiroUtil.hasRole("sysadmin")) {
-            list = sysUnitService.query(Cnd.NEW().asc("location").asc("path"));
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isBlank(pid)) {
+                cnd.and("parentId", "=", "").or("parentId", "is", null);
+            } else {
+                cnd.and("parentId", "=", pid);
+            }
+            cnd.asc("location").asc("path");
+            list = sysUnitService.query(cnd);
         } else {
             Sys_user user = (Sys_user) shiroUtil.getPrincipal();
-            if (user != null) {
-                list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("location").asc("path"));
+            if (user != null && Strings.isBlank(pid)) {
+                list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("path"));
+            } else {
+                Cnd cnd = Cnd.NEW();
+                if (Strings.isBlank(pid)) {
+                    cnd.and("parentId", "=", "").or("parentId", "is", null);
+                } else {
+                    cnd.and("parentId", "=", pid);
+                }
+                cnd.asc("location").asc("path");
+                list = sysUnitService.query(cnd);
             }
         }
         for (Sys_unit unit : list) {
             NutMap map = Lang.obj2nutmap(unit);
             map.addv("expanded", false);
-            if (unit.isHasChildren()) {
-                map.addv("children", getChildren(unit.getId(), list));
-            } else {
-                map.addv("children", null);
-            }
+            map.addv("children", new ArrayList<>());
             treeList.add(map);
         }
-        return Json.toJson(treeList, JsonFormat.compact());
+        return Result.success().addData(treeList);
     }
 
+    //    @At("/data")
+//    @Ok("json")
+//    @RequiresPermissions("sys.manager.unit")
+//    public Object data(HttpServletRequest req) {
+//        List<Sys_unit> list = new ArrayList<>();
+//        List<NutMap> treeList = new ArrayList<>();
+//        if (shiroUtil.hasRole("sysadmin")) {
+//            list = sysUnitService.query(Cnd.NEW().asc("location").asc("path"));
+//        } else {
+//            Sys_user user = (Sys_user) shiroUtil.getPrincipal();
+//            if (user != null) {
+//                list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("location").asc("path"));
+//            }
+//        }
+//        for (Sys_unit unit : list) {
+//            NutMap map = Lang.obj2nutmap(unit);
+//            map.addv("expanded", false);
+//            if (unit.isHasChildren()) {
+//                map.addv("children", getChildren(unit.getId(), list));
+//            } else {
+//                map.addv("children", null);
+//            }
+//            treeList.add(map);
+//        }
+//        return Result.success().addData(treeList);
+//    }
     private List<String> getChildren(String parentId, List<Sys_unit> list) {
         List<String> idList = new ArrayList<>();
         for (Sys_unit unit : list) {
