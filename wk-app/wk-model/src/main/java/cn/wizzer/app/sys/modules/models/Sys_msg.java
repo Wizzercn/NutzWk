@@ -41,7 +41,7 @@ public class Sys_msg extends BaseModel implements Serializable {
 
     @Column
     @Comment("发送时间")
-    @ColDefine(type = ColType.INT, width = 9)
+    @ColDefine(type = ColType.INT, width = 16)
     private Long sendAt;
 
     @Many(field = "msgId")

@@ -35,7 +35,7 @@ public class Sys_msg_user extends BaseModel implements Serializable {
 
     @Column
     @Comment("读取时间")
-    @ColDefine(type = ColType.INT, width = 9)
+    @ColDefine(type = ColType.INT, width = 16)
     private Long readAt;
 
     @One(field = "msgId")

@@ -44,7 +44,7 @@ public class Sys_user extends BaseModel implements Serializable {
     @Column
     @Comment("是否在线")
     @ColDefine(type = ColType.BOOLEAN)
-    private boolean online;
+    private boolean userOnline;
 
     @Column
     @Comment("是否禁用")
@@ -62,7 +62,7 @@ public class Sys_user extends BaseModel implements Serializable {
 
     @Column
     @Comment("登陆时间")
-    @ColDefine(type = ColType.INT, width = 9)
+    @ColDefine(type = ColType.INT, width = 16)
     private Long loginAt;
 
     @Column
@@ -182,12 +182,12 @@ public class Sys_user extends BaseModel implements Serializable {
         this.username = username;
     }
 
-    public boolean isOnline() {
-        return online;
+    public boolean isUserOnline() {
+        return userOnline;
     }
 
-    public void setOnline(boolean online) {
-        this.online = online;
+    public void setUserOnline(boolean userOnline) {
+        this.userOnline = userOnline;
     }
 
     public boolean isDisabled() {

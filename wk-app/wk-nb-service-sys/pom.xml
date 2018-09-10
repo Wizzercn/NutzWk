@@ -88,6 +88,13 @@
             <version>${mysql-connector-java.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>classes12</artifactId>
+            <version>10.2.0.2.0</version>
+            <scope>system</scope>
+            <systemPath>D://oracle/product/10.2.0/db_1/jdbc/lib/classes12.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>

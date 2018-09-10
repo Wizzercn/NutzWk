@@ -188,7 +188,7 @@ public class SysLoginController {
                 }
             }
             sysUserService.update(Chain.make("loginIp", user.getLoginIp()).add("loginAt", Times.getTS())
-                            .add("loginCount", count + 1).add("online", true).add("loginSessionId", session.getId())
+                            .add("loginCount", count + 1).add("userOnline", true).add("loginSessionId", session.getId())
                     , Cnd.where("id", "=", user.getId()));
             Sys_log sysLog = new Sys_log();
             sysLog.setType("info");

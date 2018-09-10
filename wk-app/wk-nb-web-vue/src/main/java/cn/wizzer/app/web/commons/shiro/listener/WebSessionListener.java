@@ -30,7 +30,7 @@ public class WebSessionListener implements SessionListener {
         if ("true".equals(Globals.MyConfig.getOrDefault("SysUserSessionOnlyOne", "false"))) {
             if (Strings.isNotBlank(Strings.sNull(session.getAttribute("platform_loginname")))) {
                 //这里不能使用StringUtil.getPlatformLoginname 方法,因为那会创建新的会话
-                sysUserService.update(Chain.make("online", false), Cnd.where("loginname", "=", Strings.sNull(session.getAttribute("platform_loginname"))));
+                sysUserService.update(Chain.make("userOnline", false), Cnd.where("loginname", "=", Strings.sNull(session.getAttribute("platform_loginname"))));
             }
         }
     }
@@ -40,7 +40,7 @@ public class WebSessionListener implements SessionListener {
         if ("true".equals(Globals.MyConfig.getOrDefault("SysUserSessionOnlyOne", "false"))) {
             if (Strings.isNotBlank(Strings.sNull(session.getAttribute("platform_loginname")))) {
                 //这里不能使用StringUtil.getPlatformLoginname 方法,因为那会创建新的会话
-                sysUserService.update(Chain.make("online", false), Cnd.where("loginname", "=", Strings.sNull(session.getAttribute("platform_loginname"))));
+                sysUserService.update(Chain.make("userOnline", false), Cnd.where("loginname", "=", Strings.sNull(session.getAttribute("platform_loginname"))));
             }
         }
     }
