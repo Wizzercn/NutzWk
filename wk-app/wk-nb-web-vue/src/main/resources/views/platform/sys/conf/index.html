@@ -12,20 +12,26 @@ layout("/layouts/platform.html"){
                 :data="tableData"
                 @sort-change='pageOrder'
                 size="small"
+                header-align="center"
                 style="width: 100%">
             <el-table-column
                     sortable
                     prop="configKey"
                     label="参数名"
+                    header-align="center"
                     width="200">
             </el-table-column>
             <el-table-column
                     prop="configValue"
                     label="参数值"
+                    header-align="center"
+                    :show-overflow-tooltip="true"
                     width="200">
             </el-table-column>
             <el-table-column
                     prop="note"
+                    header-align="center"
+                    :show-overflow-tooltip="true"
                     label="说明">
             </el-table-column>
             <el-table-column

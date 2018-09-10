@@ -8,6 +8,7 @@ import cn.wizzer.app.web.commons.utils.ShiroUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -48,7 +49,7 @@ public class SysUnitController {
 
     @At("/child")
     @Ok("json")
-    @RequiresPermissions("sys.manager.unit")
+    @RequiresAuthentication
     public Object child(@Param("pid") String pid, HttpServletRequest req) {
         List<Sys_unit> list = new ArrayList<>();
         List<NutMap> treeList = new ArrayList<>();
@@ -88,7 +89,7 @@ public class SysUnitController {
 
     @At("/tree")
     @Ok("json")
-    @RequiresPermissions("sys.manager.unit")
+    @RequiresAuthentication
     public Object tree(@Param("pid") String pid, HttpServletRequest req) {
         try {
             List<Sys_unit> list = new ArrayList<>();
