@@ -25,7 +25,7 @@ public abstract class BaseModel implements Serializable {
     @Column
     @Comment("操作时间")
     @Prev(els = @EL("$me.now()"))
-    @ColDefine(type = ColType.INT, width = 16)
+    @ColDefine(type = ColType.INT)
     private Long opAt;
 
     @Column

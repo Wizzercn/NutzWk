@@ -30,12 +30,12 @@ public class Sys_msg_user extends BaseModel implements Serializable {
 
     @Column
     @Comment("消息状态")
-    @ColDefine(type = ColType.INT, width = 1)
+    @ColDefine(type = ColType.INT)
     private int status;//0--未读  1--已读
 
     @Column
     @Comment("读取时间")
-    @ColDefine(type = ColType.INT, width = 16)
+    @ColDefine(type = ColType.INT)
     private Long readAt;
 
     @One(field = "msgId")
