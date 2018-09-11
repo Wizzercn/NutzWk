@@ -47,3 +47,23 @@ a .expanded {
     -ms-transform: rotate(90deg);
     transform: rotate(90deg);
 }
+
+.el-table-expand {
+    font-size: 0;
+}
+.el-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+    font-size: 12px;
+}
+.el-table-expand .el-form-item{
+    margin-bottom: 2px;
+}
+.el-table-expand .el-form-item__content {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+    font-size: 12px;
+    display: inline-block;
+    vertical-align: top;
+}

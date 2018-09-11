@@ -94,6 +94,10 @@ public class SysUnitController {
         try {
             List<Sys_unit> list = new ArrayList<>();
             List<NutMap> treeList = new ArrayList<>();
+            if (Strings.isBlank(pid)) {
+                NutMap root = NutMap.NEW().addv("value", "").addv("label", "不选择单位");
+                treeList.add(root);
+            }
             if (shiroUtil.hasRole("sysadmin")) {
                 Cnd cnd = Cnd.NEW();
                 if (Strings.isBlank(pid)) {

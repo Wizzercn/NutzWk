@@ -7,17 +7,14 @@ import cn.wizzer.app.sys.modules.services.SysMenuService;
 import cn.wizzer.app.sys.modules.services.SysUnitService;
 import cn.wizzer.app.sys.modules.services.SysUserService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.ShiroUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.crypto.RandomNumberGenerator;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ByteSource;
@@ -250,17 +247,34 @@ public class SysUserController {
     }
 
     @At
-    @Ok("json:{locked:'password|salt',ignoreNull:false}") // 忽略password和createAt属性,忽略空属性的json输出
+    @Ok("json:{locked:'password|salt',ignoreNull:false}")
     @RequiresPermissions("sys.manager.user")
-    public Object data(@Param("unitid") String unitid, @Param("loginname") String loginname, @Param("username") String username, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+    public Object data(@Param("searchUnit") String searchUnit, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
-        if (!Strings.isBlank(unitid) && !"root".equals(unitid))
-            cnd.and("unitid", "=", unitid);
-        if (!Strings.isBlank(loginname))
-            cnd.and("loginname", "like", "%" + loginname + "%");
-        if (!Strings.isBlank(username))
-            cnd.and("username", "like", "%" + username + "%");
-        return sysUserService.data(length, start, draw, order, columns, cnd, null);
+        if (shiroUtil.hasRole("sysadmin")) {
+            if (Strings.isNotBlank(searchUnit)) {
+                cnd.and("unitid", "=", searchUnit);
+            }
+        } else {
+            Sys_user user = (Sys_user) shiroUtil.getPrincipal();
+            if (Strings.isNotBlank(searchUnit)) {
+                Sys_unit unit = sysUnitService.fetch(searchUnit);
+                if (unit == null || !searchUnit.startsWith(unit.getPath())) {
+                    //防止有人越级访问
+                    return Result.error("非法操作");
+                } else
+                    cnd.and("unitid", "=", searchUnit);
+            } else {
+                cnd.and("unitid", "=", user.getUnitid());
+            }
+        }
+        if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
+            cnd.and(searchName, "like", "%" + searchKeyword + "%");
+        }
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        }
+        return Result.success().addData(sysUserService.listPage(pageNumber, pageSize, cnd));
     }
 
     @At

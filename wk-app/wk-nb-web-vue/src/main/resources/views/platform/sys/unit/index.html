@@ -229,8 +229,8 @@ layout("/layouts/platform.html"){
             },
             unitChange: function (val) {
                 var self = this;
-                self.parentUnit = val;
                 var pid = val[val.length - 1];
+                self.parentUnit = val;
                 this.loadTree(pid, function (tree) {
                     self.unitTree(self.options, tree, pid);
                 });
@@ -239,6 +239,7 @@ layout("/layouts/platform.html"){
                 var self = this;
                 this.addDialogVisible = true;
                 this.form = {};//打开新增窗口,表单先清空
+                this.parentUnit=[];
                 this.loadTree("", function (val) {
                     self.options = val;
                 });

@@ -4,39 +4,132 @@ layout("/layouts/platform.html"){
 <div id="app" v-cloak>
     <el-row class="header navbar bg-white shadow">
         <div class="btn-group tool-button mt5">
+            <el-cascader
+                    style="width: 100%"
+                    tabindex="1"
+                    :options="options"
+                    :show-all-levels="false"
+                    v-model="parentUnit"
+                    :fetch-suggestions="unitQuery"
+                    @active-item-change="unitChange"
+                    @select="unitSelect"
+                    placeholder="请选择单位"
+            ></el-cascader>
+        </div>
+        <div class="btn-group tool-button mt5">
+            <el-input placeholder="请输入内容" v-model="pageForm.searchKeyword" @keyup.enter.native="doSearch">
+                <el-select v-model="pageForm.searchName" slot="prepend" placeholder="查询类型" style="width: 120px;">
+                    <el-option label="用户名" value="loginname"></el-option>
+                    <el-option label="姓名" value="username"></el-option>
+                    <el-option label="手机" value="mobile"></el-option>
+                    <el-option label="邮箱" value="email"></el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="doSearch"></el-button>
+            </el-input>
+        </div>
+        <div class="pull-right offscreen-right mt5">
             <el-button size="medium" @click="openAdd"><i class="ti-plus"></i> 新建用户</el-button>
+
         </div>
     </el-row>
     <el-row class="el-table-container">
-        <section class="el-container" style="height: 100%;min-height: 500px;">
-            <aside class="el-aside" style="width: 200px;border-right: 1px solid #e3e6f3">
-                <el-tree
-                        :props="treeData"
-                        :load="loadTree"
-                        lazy>
-                </el-tree>
-            </aside>
-            <main class="el-main">
-                <el-table
-                        :data="tableData"
-                        style="width: 100%">
-                    <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                    </el-table-column>
-                    <el-table-column
-                            prop="address"
-                            label="地址">
-                    </el-table-column>
-                </el-table>
-            </main>
-        </section>
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%">
+            <el-table-column type="expand">
+                <template slot-scope="scope">
+                    <el-form label-position="left" inline class="el-table-expand">
+                        <el-form-item label="Email">
+                            <span>{{ scope.row.email }}</span>
+                        </el-form-item>
+                        <el-form-item label="手机号">
+                            <span>{{ scope.row.mobile }}</span>
+                        </el-form-item>
+                        <el-form-item label="最后登录时间">
+                            <span>
+                                {{ formatAt(scope.row.loginAt) }}</span>
+                        </el-form-item>
+                        <el-form-item label="最后登录IP">
+                            <span>{{ scope.row.loginIp }}</span>
+                        </el-form-item>
+                    </el-form>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="loginname"
+                    label="用户名"
+                    header-align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="username"
+                    label="姓名"
+                    header-align="center"
+                    :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="disabled"
+                    label="帐号状态"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+                    >
+                <template slot-scope="scope" >
+                    <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="userOnline"
+                    label="在线状态"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+                    >
+                <template slot-scope="scope" >
+                    <i v-if="scope.row.userOnline" class="text-success ml5">在线</i>
+                    <i v-if="!scope.row.userOnline" class="text-danger ml5">离线</i>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="userOnline"
+                    label="操作"
+                    width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item :command="{type:'edit',id:scope.row.id}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'delete',id:scope.row.id}"
+                                              v-if="scope.row.loginname=='superadmin'">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
     </el-row>
 </div>
 <script>
@@ -49,51 +142,150 @@ layout("/layouts/platform.html"){
                 treeData: {
                     label: 'name',
                     children: 'zones',
-                    id:'id',
+                    id: 'id',
                     isLeaf: 'leaf'
                 },
-                tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                }]
+                tableData: [],
+                options: [],
+                parentUnit: [],
+                pageForm: {
+                    searchUnit: "",
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber:1,
+                    pageSize:10,
+                    totalCount:0,
+                    pageOrderName:"",
+                    pageOrderBy:""
+                },
+
             }
         },
         methods: {
-            loadTree: function (node, resolve) {
-                console.log(node)
-                if (node.level === 0) {
-                    return resolve([{name: '单位列表',id:'xxx'}]);
-                }
-                if (node.level > 1) return resolve([]);
-                setTimeout(function () {
-                    var data = [{
-                        name: 'leaf',
-                        leaf: true
-                    }, {
-                        name: 'zone'
-                    }];
-                    return resolve(data);
-                }, 500);
+            //级联选择器从后台动态获取下级数据
+            loadTree: function (val, cb) {
+                var url = base + "/platform/sys/unit/tree";
+                $.post(url, {pid: val}, function (data) {
+                    if (data.code == 0) {
+                        cb(data.data);
+                    }
+                }, "json");
             },
-            openAdd:function () {
-
+            initTree:function(){
+                var self=this;
+                this.loadTree("", function (val) {
+                    self.options = val;
+                });
+            },
+            unitQuery: function (queryString, cb) {
+                cb(this.options);
+            },
+            unitSelect: function (val) {
+            },
+            unitTree: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.value) {
+                        obj.children = data;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.unitTree(obj.children, data, pid);
+                    }
+                });
+            },
+            unitChange: function (val) {
+                var self = this;
+                self.parentUnit = val;
+                var pid = val[val.length - 1];
+                this.loadTree(pid, function (tree) {
+                    self.unitTree(self.options, tree, pid);
+                });
+            },pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/sys/user/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            formatAt:function(val){
+                return moment(val*1000).format("MM-DD HH:mm");
+            },
+            doSearch:function(){
+                this.pageForm.searchUnit=this.parentUnit[this.parentUnit.length-1];
+                this.pageForm.pageNumber = 1;
+                this.pageData();
+            },
+            openAdd: function () {
+                var self = this;
+                this.addDialogVisible = true;
+                this.form = {};//打开新增窗口,表单先清空
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/sys/user/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.form = data.data;//加载后台表单数据
+                            self.editDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除 ' + command.name, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/sys/user/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.treeTableChild("");
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
             }
         },
         created: function () {
-
+            this.initTree();
+            this.pageData();
         }
     });
 </script>
