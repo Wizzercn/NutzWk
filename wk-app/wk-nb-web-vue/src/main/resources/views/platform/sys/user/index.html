@@ -142,7 +142,7 @@ layout("/layouts/platform.html"){
                             <el-dropdown-item :command="{type:'role',id:scope.row.id,loginname:scope.row.loginname}">
                                 查看权限
                             </el-dropdown-item>
-                            <el-dropdown-item :command="{type:'reset',id:scope.row.id}">
+                            <el-dropdown-item :command="{type:'reset',id:scope.row.id,loginname:scope.row.loginname}">
                                 重置密码
                             </el-dropdown-item>
                             <el-dropdown-item divided :command="{type:'enable',id:scope.row.id}">
@@ -222,10 +222,53 @@ layout("/layouts/platform.html"){
                           v-model="form.email"
                           auto-complete="off" tabindex="7" type="text"></el-input>
             </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="form.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
                     <el-button @click="addDialogVisible = false">取 消</el-button>
                     <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+    <el-dialog
+            title="编辑用户"
+            :visible.sync="editDialogVisible"
+            width="40%">
+        <el-form :model="form" ref="editForm" :rules="editRules" size="small" label-width="80px">
+            <el-form-item prop="loginname" label="用户名">
+                {{form.loginname}}
+            </el-form-item>
+            <el-form-item prop="username" label="姓名">
+                <el-input maxlength="20" placeholder="姓名"
+                          v-model="form.username"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="mobile" label="手机号码">
+                <el-input maxlength="20" placeholder="手机号码"
+                          v-model="form.mobile"
+                          auto-complete="off" tabindex="6" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="email" label="单位邮箱">
+                <el-input maxlength="100" placeholder="单位邮箱"
+                          v-model="form.email"
+                          auto-complete="off" tabindex="7" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="form.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doEdit">确 定</el-button>
                   </span>
     </el-dialog>
     <el-dialog
@@ -329,7 +372,8 @@ layout("/layouts/platform.html"){
                 },
                 form: {
                     id: "",
-                    unitid: ""
+                    unitid: "",
+                    disabled: false
                 },
                 formRules: {
                     parentUnit: [
@@ -358,6 +402,19 @@ layout("/layouts/platform.html"){
                         {required: true, message: '请再次输入新密码', trigger: 'blur'},
                         {validator: validatePass, trigger: 'change'}
                     ]
+                },
+                editRules: {
+                    username: [
+                        {required: true, message: '姓名', trigger: ['blur', 'change']}
+                    ],
+                    email: [
+                        {required: false, message: '邮箱地址', trigger: ['blur', 'change']},
+                        {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}
+                    ],
+                    mobile: [
+                        {required: false, message: '手机号码', trigger: ['blur', 'change']},
+                        {pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码'}
+                    ],
                 },
                 roleDialogTitle: "查看用户权限",
                 roleTableData: [],//treeTable后台取出的数据
@@ -448,6 +505,7 @@ layout("/layouts/platform.html"){
                 var self = this;
                 this.addDialogVisible = true;
                 this.form = {};//打开新增窗口,表单先清空
+                this.$refs["addForm"].resetFields();
             },
             doAdd: function () {
                 var self = this;
@@ -463,6 +521,29 @@ layout("/layouts/platform.html"){
                                 self.doSearch();//查询是带条件的,加载新建用户选择的单位用户数据
                                 //self.pageData();
                                 self.addDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post(base + "/platform/sys/user/editDo", self.form, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.doSearch();//查询是带条件的,加载新建用户选择的单位用户数据
+                                //self.pageData();
+                                self.editDialogVisible = false;
                             } else {
                                 self.$message({
                                     message: data.msg,
@@ -526,10 +607,27 @@ layout("/layouts/platform.html"){
                     self.treeTableChild("");
                 }
                 if ("reset" == command.type) {
-                    self.roleDialogVisible = true;
-                    self.roleDialogTitle = "查看用户 " + command.loginname + " 的权限";
-                    self.userId = command.id;
-                    self.treeTableChild("");
+                    self.$confirm('确定重置用户 ' + command.loginname + ' 的密码', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/sys/user/resetPwd/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$alert('新密码为 ' + data.data, '新密码', {
+                                            confirmButtonText: '确定'
+                                        });
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
                 }
                 if ("enable" == command.type || "disable" == command.type) {
                     $.post(base + "/platform/sys/user/" + command.type + "/" + command.id, {}, function (data) {
@@ -596,13 +694,13 @@ layout("/layouts/platform.html"){
                             type: 'warning'
                         });
                     } else {
-                        var loginnames=[];
-                        var ids=[];
+                        var loginnames = [];
+                        var ids = [];
                         self.multipleSelection.forEach(function (val) {
                             loginnames.push(val.loginname);
                             ids.push(val.id);
                         });
-                        self.$confirm('此操作将删除用户 '+loginnames.toString(), '提示', {
+                        self.$confirm('此操作将删除用户 ' + loginnames.toString(), '提示', {
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',
                             type: 'warning',

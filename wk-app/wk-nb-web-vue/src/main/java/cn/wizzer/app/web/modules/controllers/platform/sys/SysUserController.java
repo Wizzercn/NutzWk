@@ -107,23 +107,22 @@ public class SysUserController {
     }
 
     @At("/edit/?")
-    @Ok("beetl:/platform/sys/user/edit.html")
+    @Ok("json")
     @RequiresPermissions("sys.manager.user")
     public Object edit(String id) {
-        return sysUserService.fetchLinks(sysUserService.fetch(id), "unit");
+        try {
+            return Result.success().addData(sysUserService.fetchLinks(sysUserService.fetch(id), "unit"));
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.user.edit")
     @SLog(tag = "修改用户", msg = "用户名:${args[1]}->${args[0].loginname}")
-    public Object editDo(@Param("..") Sys_user user, @Param("oldLoginname") String oldLoginname, HttpServletRequest req) {
+    public Object editDo(@Param("..") Sys_user user, HttpServletRequest req) {
         try {
-            if (!Strings.sBlank(oldLoginname).equals(user.getLoginname())) {
-                Sys_user u = sysUserService.fetch(Cnd.where("loginname", "=", user.getLoginname()));
-                if (u != null)
-                    return Result.error("用户名已存在");
-            }
             user.setOpBy(StringUtil.getPlatformUid());
             user.setOpAt(Times.getTS());
             sysUserService.updateIgnoreNull(user);
