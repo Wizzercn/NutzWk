@@ -65,28 +65,38 @@ public class SysUserController {
     }
 
     @At
-    @Ok("beetl:/platform/sys/user/add.html")
-    @RequiresPermissions("sys.manager.user")
-    public Object add(@Param("unitid") String unitid) {
-        return Strings.isBlank(unitid) ? null : sysUnitService.fetch(unitid);
-    }
-
-    @At
     @Ok("json")
     @RequiresPermissions("sys.manager.user.add")
     @SLog(tag = "新建用户", msg = "用户名:${args[0].loginname}")
     public Object addDo(@Param("..") Sys_user user, HttpServletRequest req) {
         try {
+            if (Strings.isNotBlank(user.getLoginname())) {
+                int num = sysUserService.count(Cnd.where("loginname", "=", Strings.trim(user.getLoginname())));
+                if (num > 0) {
+                    return Result.error("用户名已存在!");
+                }
+            }
+            if (Strings.isNotBlank(user.getMobile())) {
+                int num = sysUserService.count(Cnd.where("mobile", "=", Strings.trim(user.getMobile())));
+                if (num > 0) {
+                    return Result.error("手机号已存在!");
+                }
+            }
+            if (Strings.isNotBlank(user.getEmail())) {
+                int num = sysUserService.count(Cnd.where("email", "=", Strings.trim(user.getEmail())));
+                if (num > 0) {
+                    return Result.error("邮箱已存在!");
+                }
+            }
             String salt = R.UU32();
             user.setSalt(salt);
             user.setPassword(new Sha256Hash(user.getPassword(), ByteSource.Util.bytes(salt), 1024).toHex());
             user.setLoginPjax(true);
             user.setLoginCount(0);
-            user.setLoginAt(0L);
             sysUserService.insert(user);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -183,9 +193,9 @@ public class SysUserController {
         try {
             req.setAttribute("loginname", sysUserService.fetch(userId).getLoginname());
             sysUserService.update(Chain.make("disabled", false), Cnd.where("id", "=", userId));
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -201,9 +211,9 @@ public class SysUserController {
             }
             req.setAttribute("loginname", loginname);
             sysUserService.update(Chain.make("disabled", true), Cnd.where("id", "=", userId));
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -250,31 +260,35 @@ public class SysUserController {
     @Ok("json:{locked:'password|salt',ignoreNull:false}")
     @RequiresPermissions("sys.manager.user")
     public Object data(@Param("searchUnit") String searchUnit, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
-        Cnd cnd = Cnd.NEW();
-        if (shiroUtil.hasRole("sysadmin")) {
-            if (Strings.isNotBlank(searchUnit)) {
-                cnd.and("unitid", "=", searchUnit);
-            }
-        } else {
-            Sys_user user = (Sys_user) shiroUtil.getPrincipal();
-            if (Strings.isNotBlank(searchUnit)) {
-                Sys_unit unit = sysUnitService.fetch(searchUnit);
-                if (unit == null || !searchUnit.startsWith(unit.getPath())) {
-                    //防止有人越级访问
-                    return Result.error("非法操作");
-                } else
+        try {
+            Cnd cnd = Cnd.NEW();
+            if (shiroUtil.hasRole("sysadmin")) {
+                if (Strings.isNotBlank(searchUnit)) {
                     cnd.and("unitid", "=", searchUnit);
+                }
             } else {
-                cnd.and("unitid", "=", user.getUnitid());
+                Sys_user user = (Sys_user) shiroUtil.getPrincipal();
+                if (Strings.isNotBlank(searchUnit)) {
+                    Sys_unit unit = sysUnitService.fetch(searchUnit);
+                    if (unit == null || !searchUnit.startsWith(unit.getPath())) {
+                        //防止有人越级访问
+                        return Result.error("非法操作");
+                    } else
+                        cnd.and("unitid", "=", searchUnit);
+                } else {
+                    cnd.and("unitid", "=", user.getUnitid());
+                }
             }
+            if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
+                cnd.and(searchName, "like", "%" + searchKeyword + "%");
+            }
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+            }
+            return Result.success().addData(sysUserService.listPageLinks(pageNumber, pageSize, cnd, "unit"));
+        } catch (Exception e) {
+            return Result.error();
         }
-        if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
-            cnd.and(searchName, "like", "%" + searchKeyword + "%");
-        }
-        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
-            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
-        }
-        return Result.success().addData(sysUserService.listPage(pageNumber, pageSize, cnd));
     }
 
     @At

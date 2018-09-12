@@ -129,9 +129,9 @@ public class SysUnitController {
                 }
                 treeList.add(map);
             }
-            return Result.success("system.success").addData(treeList);
+            return Result.success().addData(treeList);
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -142,9 +142,9 @@ public class SysUnitController {
     public Object addDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
             sysUnitService.save(unit, parentId);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -152,8 +152,12 @@ public class SysUnitController {
     @Ok("json")
     @RequiresPermissions("sys.manager.unit")
     public Object edit(String id, HttpServletRequest req) {
-        Sys_unit unit = sysUnitService.fetch(id);
-        return Result.success().addData(unit);
+        try {
+            Sys_unit unit = sysUnitService.fetch(id);
+            return Result.success().addData(unit);
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
     @At
@@ -165,9 +169,9 @@ public class SysUnitController {
             unit.setOpBy(StringUtil.getPlatformUid());
             unit.setOpAt(Times.getTS());
             sysUnitService.updateIgnoreNull(unit);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -183,9 +187,9 @@ public class SysUnitController {
                 return Result.error("system.not.allow");
             }
             sysUnitService.deleteAndChild(unit);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 

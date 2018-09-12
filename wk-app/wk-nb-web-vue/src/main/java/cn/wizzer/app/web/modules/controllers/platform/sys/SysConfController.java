@@ -51,9 +51,9 @@ public class SysConfController {
             if (sysConfigService.insert(conf) != null) {
                 pubSubService.fire("nutzwk:web:platform", "sys_config");
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -62,9 +62,9 @@ public class SysConfController {
     @RequiresPermissions("sys.manager.conf")
     public Object edit(String id) {
         try {
-            return Result.success("system.success", sysConfigService.fetch(id));
+            return Result.success().addData(sysConfigService.fetch(id));
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -79,9 +79,9 @@ public class SysConfController {
             if (sysConfigService.updateIgnoreNull(conf) > 0) {
                 pubSubService.fire("nutzwk:web:platform", "sys_config");
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -97,9 +97,9 @@ public class SysConfController {
             if (sysConfigService.delete(configKey) > 0) {
                 pubSubService.fire("nutzwk:web:platform", "sys_config");
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -107,10 +107,14 @@ public class SysConfController {
     @Ok("json:full")
     @RequiresPermissions("sys.manager.conf")
     public Object data(@Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
-        Cnd cnd = Cnd.NEW();
-        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
-            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        try {
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+            }
+            return Result.success().addData(sysConfigService.listPage(pageNumber, pageSize, cnd));
+        } catch (Exception e) {
+            return Result.error();
         }
-        return Result.success().addData(sysConfigService.listPage(pageNumber, pageSize, cnd));
     }
 }
