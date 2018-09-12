@@ -90,7 +90,7 @@
         </el-dialog>
 
         <el-dialog title="${msg['login.error.verifycode']}" :visible.sync="captchaVisible" @close="closeCaptchaForm"
-                   append-to-body>
+                   append-to-body width="350px">
             <el-form :model="captchaForm" ref="captchaForm" :rules="codeRules">
                 <el-row class="captcha_row">
                     <el-form-item prop="verifycode">
@@ -100,10 +100,10 @@
                     <img id="captcha_img" :src="codeUrl" @click="changeCode"/>
                 </el-row>
             </el-form>
-            <div slot="footer" class="dialog-footer">
+            <span slot="footer" class="dialog-footer">
                 <el-button @click="closeCaptchaForm">取 消</el-button>
                 <el-button type="primary" @click="doCode">确 定</el-button>
-            </div>
+            </span>
         </el-dialog>
     </div>
 </div>

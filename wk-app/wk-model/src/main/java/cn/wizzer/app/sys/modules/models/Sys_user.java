@@ -2,6 +2,8 @@ package cn.wizzer.app.sys.modules.models;
 
 import cn.wizzer.framework.base.model.BaseModel;
 import org.nutz.dao.entity.annotation.*;
+import org.nutz.integration.json4excel.annotation.J4EIgnore;
+import org.nutz.integration.json4excel.annotation.J4EName;
 
 import java.io.Serializable;
 import java.util.List;
@@ -11,136 +13,152 @@ import java.util.Map;
  * Created by wizzer on 2016/6/21.
  */
 @Table("sys_user")
+@J4EName("用户数据")
 @TableIndexes({@Index(name = "INDEX_SYS_USER_LOGINNAMAE", fields = {"loginname"}, unique = true)})
 public class Sys_user extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Name
     @Comment("ID")
+    @J4EIgnore
     @ColDefine(type = ColType.VARCHAR, width = 32)
     @Prev(els = {@EL("uuid()")})
     private String id;
 
     @Column
     @Comment("用户名")
+    @J4EName("用户名")
     @ColDefine(type = ColType.VARCHAR, width = 120)
     private String loginname;
 
     @Column
     @Comment("密码")
+    @J4EIgnore
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String password;// transient 修饰符可让此字段不在对象里显示
 
     @Column
     @Comment("密码盐")
+    @J4EIgnore
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String salt;
 
     @Column
-    @Comment("用户名")
+    @Comment("姓名")
+    @J4EName("姓名")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String username;
 
     @Column
+    @Comment("头像")
+    @J4EIgnore
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String avatar;
+
+    @Column
     @Comment("是否在线")
+    @J4EIgnore
     @ColDefine(type = ColType.BOOLEAN)
     private boolean userOnline;
 
     @Column
     @Comment("是否禁用")
+    @J4EIgnore
     @ColDefine(type = ColType.BOOLEAN)
     private boolean disabled;
 
     @Column
+    @Comment("电子邮箱")
+    @J4EName("电子邮箱")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String email;
 
     @Column
-    @Comment("手机号")
+    @Comment("手机号码")
+    @J4EName("手机号码")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String mobile;
 
     @Column
     @Comment("登陆时间")
+    @J4EIgnore
     @ColDefine(type = ColType.INT)
     private Long loginAt;
 
     @Column
     @Comment("登陆IP")
+    @J4EIgnore
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String loginIp;
 
     @Column
     @Comment("登陆次数")
+    @J4EIgnore
     @ColDefine(type = ColType.INT)
     private Integer loginCount;
 
     @Column
     @Comment("登陆SessionId")
+    @J4EIgnore
     @ColDefine(type = ColType.VARCHAR, width = 50)
     private String loginSessionId;
 
     @Column
     @Comment("常用菜单")
+    @J4EIgnore
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String customMenu;
 
     @Column
     @Comment("皮肤样式")
+    @J4EIgnore
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String loginTheme;
 
     @Column
-    @Comment("微信登录unionid")
-    @ColDefine(type = ColType.VARCHAR, width = 100)
-    private String unionid;
-
-    @Column
-    @Comment("用户头像img")
-    @ColDefine(type = ColType.VARCHAR, width = 255)
-    private String icon;
-
-    @Column
+    @J4EIgnore
     private boolean loginSidebar;
 
     @Column
+    @J4EIgnore
     private boolean loginBoxed;
 
     @Column
+    @J4EIgnore
     private boolean loginScroll;
 
     @Column
+    @J4EIgnore
     private boolean loginPjax;
 
     @Column
+    @J4EIgnore
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String unitid;
 
     @One(field = "unitid")
+    @J4EIgnore
     private Sys_unit unit;
 
     @ManyMany(from = "userId", relation = "sys_user_role", to = "roleId")
+    @J4EIgnore
     private List<Sys_role> roles;
 
     @ManyMany(from = "userId", relation = "sys_user_unit", to = "unitId")
+    @J4EIgnore
     protected List<Sys_unit> units;
 
+    @J4EIgnore
     protected List<Sys_menu> menus;
 
+    @J4EIgnore
     protected List<Sys_menu> firstMenus;
 
+    @J4EIgnore
     protected Map<String, List<Sys_menu>> secondMenus;
 
+    @J4EIgnore
     private List<Sys_menu> customMenus;
-
-    private String companyName;
-
-    private String companyAddr;
-
-    private String companyContracts;
-
-    private String companyContractsPhone;
-
 
     public String getId() {
         return id;
@@ -358,51 +376,11 @@ public class Sys_user extends BaseModel implements Serializable {
         this.mobile = mobile;
     }
 
-    public String getUnionid() {
-        return unionid;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setUnionid(String unionid) {
-        this.unionid = unionid;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    public String getCompanyAddr() {
-        return companyAddr;
-    }
-
-    public void setCompanyAddr(String companyAddr) {
-        this.companyAddr = companyAddr;
-    }
-
-    public String getCompanyContracts() {
-        return companyContracts;
-    }
-
-    public void setCompanyContracts(String companyContracts) {
-        this.companyContracts = companyContracts;
-    }
-
-    public String getCompanyContractsPhone() {
-        return companyContractsPhone;
-    }
-
-    public void setCompanyContractsPhone(String companyContractsPhone) {
-        this.companyContractsPhone = companyContractsPhone;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

@@ -20,12 +20,16 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ByteSource;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
+import org.nutz.integration.json4excel.J4E;
+import org.nutz.integration.json4excel.J4EColumn;
+import org.nutz.integration.json4excel.J4EConf;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.json.Json;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
 import org.nutz.lang.random.R;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
@@ -33,6 +37,8 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -217,43 +223,26 @@ public class SysUserController {
         }
     }
 
-    @At("/detail/?")
-    @Ok("beetl:/platform/sys/user/detail.html")
-    @RequiresPermissions("sys.manager.user")
-    public Object detail(String id) {
-        if (!Strings.isBlank(id)) {
-            Sys_user user = sysUserService.fetch(id);
-            return sysUserService.fetchLinks(user, "roles");
-        }
-        return null;
-    }
-
     @At("/menu/?")
-    @Ok("beetl:/platform/sys/user/menu.html")
+    @Ok("json")
     @RequiresPermissions("sys.manager.user")
-    public Object menu(String id, HttpServletRequest req) {
-        Sys_user user = sysUserService.fetch(id);
-        List<Sys_menu> menus = sysUserService.getMenusAndButtons(id);
-        List<Sys_menu> datas = sysUserService.getDatas(id);
-        List<Sys_menu> firstMenus = new ArrayList<>();
-        List<Sys_menu> secondMenus = new ArrayList<>();
-        for (Sys_menu menu : menus) {
-            for (Sys_menu bt : datas) {
-                if (menu.getPath().equals(bt.getPath().substring(0, bt.getPath().length() - 4))) {
-                    menu.setHasChildren(true);
-                    break;
+    public Object menu(String id, @Param("pid") String pid, HttpServletRequest req) {
+        try {
+            List<Sys_menu> list = sysUserService.getRoleMenus(id, pid);
+            List<NutMap> treeList = new ArrayList<>();
+            for (Sys_menu unit : list) {
+                if (!unit.isHasChildren() && sysUserService.hasChildren(id, unit.getId())) {
+                    unit.setHasChildren(true);
                 }
+                NutMap map = Lang.obj2nutmap(unit);
+                map.addv("expanded", false);
+                map.addv("children", new ArrayList<>());
+                treeList.add(map);
             }
-            if (menu.getPath().length() == 4) {
-                firstMenus.add(menu);
-            } else {
-                secondMenus.add(menu);
-            }
+            return Result.success().addData(treeList);
+        } catch (Exception e) {
+            return Result.error();
         }
-        req.setAttribute("userFirstMenus", firstMenus);
-        req.setAttribute("userSecondMenus", secondMenus);
-        req.setAttribute("jsonSecondMenus", Json.toJson(secondMenus));
-        return user;
     }
 
     @At
@@ -288,6 +277,51 @@ public class SysUserController {
             return Result.success().addData(sysUserService.listPageLinks(pageNumber, pageSize, cnd, "unit"));
         } catch (Exception e) {
             return Result.error();
+        }
+    }
+
+    @At
+    @Ok("void")
+    @RequiresPermissions("sys.manager.user")
+    public void export(@Param("searchUnit") String searchUnit, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletResponse response) {
+        try {
+            J4EConf j4eConf = J4EConf.from(Sys_user.class);
+            List<J4EColumn> jcols = j4eConf.getColumns();
+            for (J4EColumn j4eColumn : jcols) {
+                if ("opBy".equals(j4eColumn.getFieldName()) || "opAt".equals(j4eColumn.getFieldName()) || "delFlag".equals(j4eColumn.getFieldName())) {
+                    j4eColumn.setIgnore(true);
+                }
+            }
+            Cnd cnd = Cnd.NEW();
+            if (shiroUtil.hasRole("sysadmin")) {
+                if (Strings.isNotBlank(searchUnit)) {
+                    cnd.and("unitid", "=", searchUnit);
+                }
+            } else {
+                Sys_user user = (Sys_user) shiroUtil.getPrincipal();
+                if (Strings.isNotBlank(searchUnit)) {
+                    Sys_unit unit = sysUnitService.fetch(searchUnit);
+                    if (unit == null || !searchUnit.startsWith(unit.getPath())) {
+                        //防止有人越级访问
+                        throw Lang.makeThrow("非法操作");
+                    } else
+                        cnd.and("unitid", "=", searchUnit);
+                } else {
+                    cnd.and("unitid", "=", user.getUnitid());
+                }
+            }
+            if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
+                cnd.and(searchName, "like", "%" + searchKeyword + "%");
+            }
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+            }
+            OutputStream out = response.getOutputStream();
+            response.addHeader("content-type", "application/shlnd.ms-excel;charset=utf-8");
+            response.addHeader("content-disposition", "attachment; filename=sys_user.xls");
+            J4E.toExcel(out, sysUserService.query(cnd, "unit"), j4eConf);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
 

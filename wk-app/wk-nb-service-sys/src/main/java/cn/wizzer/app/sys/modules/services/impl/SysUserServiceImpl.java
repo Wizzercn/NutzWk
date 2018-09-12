@@ -27,7 +27,7 @@ import java.util.Map;
  * Created by wizzer on 2016/12/22.
  */
 @IocBean(args = {"refer:dao"})
-@Service(interfaceClass=SysUserService.class)
+@Service(interfaceClass = SysUserService.class)
 public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements SysUserService {
     public SysUserServiceImpl(Dao dao) {
         super(dao);
@@ -35,6 +35,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
 
     @Inject
     private SysMenuService sysMenuService;
+
     /**
      * 查询用户角色code列表
      *
@@ -53,6 +54,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
 
     /**
      * 获取用户菜单
+     *
      * @param user
      */
     public Sys_user fillMenu(Sys_user user) {
@@ -88,8 +90,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
                 " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f and a.isShow=@t and a.type='menu' order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
-        sql.params().set("f",false);
-        sql.params().set("t",true);
+        sql.params().set("f", false);
+        sql.params().set("t", true);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
         sql.setCallback(Sqls.callback.entities());
@@ -107,7 +109,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
                 " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
-        sql.params().set("f",false);
+        sql.params().set("f", false);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
         sql.setCallback(Sqls.callback.entities());
@@ -125,7 +127,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId  and " +
                 " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f and a.type='data' order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
-        sql.params().set("f",false);
+        sql.params().set("f", false);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
         sql.setCallback(Sqls.callback.entities());
@@ -157,4 +159,45 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
         dao().clear("sys_user", Cnd.where("id", "in", userIds));
     }
 
+    /**
+     * @param userId
+     * @param pid
+     * @return
+     */
+    public List<Sys_menu> getRoleMenus(String userId, String pid) {
+        Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
+                "$m and b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f order by a.location ASC,a.path asc");
+        sql.params().set("userId", userId);
+        sql.params().set("f", false);
+        if (Strings.isNotBlank(pid)) {
+            sql.vars().set("m", "a.parentId='" + pid + "'");
+        } else {
+            sql.vars().set("m", "(a.parentId='' or a.parentId is null)");
+        }
+        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
+        sql.setEntity(entity);
+        sql.setCallback(Sqls.callback.entities());
+        dao().execute(sql);
+        return sql.getList(Sys_menu.class);
+    }
+
+    /**
+     * @param userId
+     * @param pid
+     * @return
+     */
+    public boolean hasChildren(String userId, String pid) {
+        Sql sql = Sqls.create("select count(*) from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
+                "$m and b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f order by a.location ASC,a.path asc");
+        sql.params().set("userId", userId);
+        sql.params().set("f", false);
+        if (Strings.isNotBlank(pid)) {
+            sql.vars().set("m", "a.parentId='" + pid + "'");
+        } else {
+            sql.vars().set("m", "(a.parentId='' or a.parentId is null)");
+        }
+        sql.setCallback(Sqls.callback.integer());
+        dao().execute(sql);
+        return sql.getInt() > 0;
+    }
 }
