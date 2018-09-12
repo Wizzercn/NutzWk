@@ -127,9 +127,9 @@ public class SysUserController {
             user.setOpBy(StringUtil.getPlatformUid());
             user.setOpAt(Times.getTS());
             sysUserService.updateIgnoreNull(user);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -145,9 +145,9 @@ public class SysUserController {
             String hashedPasswordBase64 = new Sha256Hash(pwd, ByteSource.Util.bytes(salt), 1024).toHex();
             sysUserService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", id));
             req.setAttribute("loginname", user.getLoginname());
-            return Result.success("system.success", pwd);
+            return Result.success().addData(pwd);
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -163,9 +163,9 @@ public class SysUserController {
             }
             sysUserService.deleteById(userId);
             req.setAttribute("loginname", user.getLoginname());
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -185,9 +185,9 @@ public class SysUserController {
             }
             sysUserService.deleteByIds(userIds);
             req.setAttribute("ids", sb.toString());
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 

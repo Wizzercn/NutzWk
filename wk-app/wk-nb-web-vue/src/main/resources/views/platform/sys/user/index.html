@@ -51,7 +51,9 @@ layout("/layouts/platform.html"){
                 @sort-change='pageOrder'
                 size="small"
                 header-align="center"
-                style="width: 100%">
+                style="width: 100%"
+                @selection-change="handleSelectionChange"
+        >
             <el-table-column
                     type="selection"
                     width="35">
@@ -253,7 +255,7 @@ layout("/layouts/platform.html"){
             </el-table-column>
 
             <el-table-column label="URL" header-align="center" prop="href"
-                             :show-overflow-tooltip="true" align="center">
+                             :show-overflow-tooltip="true">
             </el-table-column>
 
             <el-table-column label="资源类型" header-align="center" prop="type"
@@ -266,7 +268,7 @@ layout("/layouts/platform.html"){
             </el-table-column>
 
             <el-table-column label="权限标识" header-align="center" prop="permission"
-                             :show-overflow-tooltip="true" >
+                             :show-overflow-tooltip="true">
             </el-table-column>
 
         </el-table>
@@ -360,7 +362,8 @@ layout("/layouts/platform.html"){
                 roleDialogTitle: "查看用户权限",
                 roleTableData: [],//treeTable后台取出的数据
                 roleTreeData: [],//treeTable格式化用于显示的数据
-                userId:""//当前用户ID
+                userId: "",//当前用户ID
+                multipleSelection: []
 
             }
         },
@@ -497,7 +500,7 @@ layout("/layouts/platform.html"){
             // 展开下级
             treeTableChild: function (pid) {
                 var self = this;
-                var url = base + "/platform/sys/user/menu/"+self.userId;
+                var url = base + "/platform/sys/user/menu/" + self.userId;
                 $.post(url, {pid: pid}, function (data) {
                     if (data.code == 0) {
                         if (pid != undefined && pid != "") {
@@ -518,14 +521,14 @@ layout("/layouts/platform.html"){
                 var self = this;
                 if ("role" == command.type) {
                     self.roleDialogVisible = true;
-                    self.roleDialogTitle="查看用户 "+command.loginname+" 的权限";
-                    self.userId=command.id;
+                    self.roleDialogTitle = "查看用户 " + command.loginname + " 的权限";
+                    self.userId = command.id;
                     self.treeTableChild("");
                 }
                 if ("reset" == command.type) {
                     self.roleDialogVisible = true;
-                    self.roleDialogTitle="查看用户 "+command.loginname+" 的权限";
-                    self.userId=command.id;
+                    self.roleDialogTitle = "查看用户 " + command.loginname + " 的权限";
+                    self.userId = command.id;
                     self.treeTableChild("");
                 }
                 if ("enable" == command.type || "disable" == command.type) {
@@ -584,16 +587,57 @@ layout("/layouts/platform.html"){
                     });
                 }
             },
-            batchCommand:function (command) {
-                var self=this;
-                if("export"==command.type){
-                    window.open(base+"/platform/sys/user/export?searchUnit="+self.pageForm.searchUnit
-                        +"&searchName="+self.pageForm.searchName
-                        +"&searchKeyword="+self.pageForm.searchKeyword
-                        +"&pageOrderName="+self.pageForm.pageOrderName
-                        +"&pageOrderBy="+self.pageForm.pageOrderBy
+            batchCommand: function (command) {
+                var self = this;
+                if ("delete" == command.type) {
+                    if (self.multipleSelection.length == 0) {
+                        self.$message({
+                            message: "请选择要删除的用户",
+                            type: 'warning'
+                        });
+                    } else {
+                        var loginnames=[];
+                        var ids=[];
+                        self.multipleSelection.forEach(function (val) {
+                            loginnames.push(val.loginname);
+                            ids.push(val.id);
+                        });
+                        self.$confirm('此操作将删除用户 '+loginnames.toString(), '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning',
+                            callback: function (a, b) {
+                                if ("confirm" == a) {//确认后再执行
+                                    $.post(base + "/platform/sys/user/delete", {ids: ids.toString()}, function (data) {
+                                        if (data.code == 0) {
+                                            self.$message({
+                                                message: data.msg,
+                                                type: 'success'
+                                            });
+                                            self.doSearch();
+                                        } else {
+                                            self.$message({
+                                                message: data.msg,
+                                                type: 'error'
+                                            });
+                                        }
+                                    }, "json");
+                                }
+                            }
+                        });
+                    }
+                }
+                if ("export" == command.type) {
+                    window.open(base + "/platform/sys/user/export?searchUnit=" + self.pageForm.searchUnit
+                        + "&searchName=" + self.pageForm.searchName
+                        + "&searchKeyword=" + self.pageForm.searchKeyword
+                        + "&pageOrderName=" + self.pageForm.pageOrderName
+                        + "&pageOrderBy=" + self.pageForm.pageOrderBy
                     );
                 }
+            },
+            handleSelectionChange: function (val) {
+                this.multipleSelection = val;
             }
         },
         created: function () {
