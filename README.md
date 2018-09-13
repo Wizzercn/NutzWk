@@ -6,6 +6,9 @@ NutzWk 基于Nutz的开源企业级开发框架
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![PowerByNutz](https://img.shields.io/badge/PowerBy-Nutz-green.svg)](https://github.com/nutzam/nutz)
 
+[![Backers on Open Collective](https://opencollective.com/nutzwk/backers/badge.svg)](#backers)
+[![Sponsors on Open Collective](https://opencollective.com/nutzwk/sponsors/badge.svg)](#sponsors) 
+
 在线演示地址
 ======
 https://nutzwk.wizzer.cn/                 NutzWk v3.x、v4.x、v5.x
@@ -93,6 +96,28 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 *   本项目完全开源，商用完全免费（欢迎商业用户打赏500￥以上，以便有更好的技术支持）
 *   欢迎打赏，以资鼓励 [https://wizzer.cn/donation](https://wizzer.cn/donation)
+
+## Credits
+
+### Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+
+<a href="graphs/contributors"><img src="https://opencollective.com/nutzwk/contributors.svg?width=890&button=false" /></a>
+
+### Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/nutzwk#backer)]
+
+<a href="https://opencollective.com/nutzwk#backers" target="_blank"><img src="https://opencollective.com/nutzwk/backers.svg?width=890”></a>
+
+### Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/nutzwk#sponsor)]
+
+<a href="https://opencollective.com/nutzwk/sponsor/0/website" target="_blank"><img src="https://opencollective.com/nutzwk/sponsor/0/avatar.svg"></a>
+
+
 
 
 ![后台截图](demo.png)
