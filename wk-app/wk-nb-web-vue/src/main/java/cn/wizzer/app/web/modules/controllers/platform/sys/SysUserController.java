@@ -40,9 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by wizzer on 2016/6/23.
@@ -325,53 +323,6 @@ public class SysUserController {
     }
 
     @At
-    @Ok("json")
-    @RequiresPermissions("sys.manager.user")
-    public Object tree(@Param("pid") String pid) {
-        List<Sys_unit> list = new ArrayList<>();
-        List<Map<String, Object>> tree = new ArrayList<>();
-        Map<String, Object> obj = new HashMap<>();
-        if (shiroUtil.hasRole("sysadmin")) {
-            Cnd cnd = Cnd.NEW();
-            if (Strings.isBlank(pid)) {
-                cnd.and("parentId", "=", "").or("parentId", "is", null);
-            } else {
-                cnd.and("parentId", "=", pid);
-            }
-            cnd.asc("path");
-            list = sysUnitService.query(cnd);
-            if (Strings.isBlank(pid)) {
-                obj.put("id", "root");
-                obj.put("text", "所有用户");
-                obj.put("children", false);
-                tree.add(obj);
-            }
-        } else {
-            Sys_user user = (Sys_user) shiroUtil.getPrincipal();
-            if (user != null && Strings.isBlank(pid)) {
-                list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("path"));
-            } else {
-                Cnd cnd = Cnd.NEW();
-                if (Strings.isBlank(pid)) {
-                    cnd.and("parentId", "=", "").or("parentId", "is", null);
-                } else {
-                    cnd.and("parentId", "=", pid);
-                }
-                cnd.asc("path");
-                list = sysUnitService.query(cnd);
-            }
-        }
-        for (Sys_unit unit : list) {
-            obj = new HashMap<>();
-            obj.put("id", unit.getId());
-            obj.put("text", unit.getName());
-            obj.put("children", unit.isHasChildren());
-            tree.add(obj);
-        }
-        return tree;
-    }
-
-    @At
     @Ok("beetl:/platform/sys/user/pass.html")
     @RequiresAuthentication
     public void pass() {
@@ -420,16 +371,16 @@ public class SysUserController {
             sysUserService.update(Chain.make("customMenu", ids), Cnd.where("id", "=", StringUtil.getPlatformUid()));
             Subject subject = SecurityUtils.getSubject();
             Sys_user user = (Sys_user) subject.getPrincipal();
-            if (!Strings.isBlank(ids)) {
+            if (Strings.isNotBlank(ids)) {
                 user.setCustomMenu(ids);
                 user.setCustomMenus(sysMenuService.query(Cnd.where("id", "in", ids.split(","))));
             } else {
                 user.setCustomMenu("");
                 user.setCustomMenus(new ArrayList<>());
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -446,9 +397,9 @@ public class SysUserController {
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
             sysUserService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", user.getId()));
-            return Result.success("修改成功");
+            return Result.success();
         } else {
-            return Result.error("原密码不正确");
+            return Result.error();
         }
     }
 }
