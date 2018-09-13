@@ -1,5 +1,6 @@
 package cn.wizzer.app.web.modules.controllers.platform.sys;
 
+import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.models.Sys_role;
 import cn.wizzer.app.sys.modules.models.Sys_unit;
 import cn.wizzer.app.sys.modules.models.Sys_user;
@@ -10,13 +11,17 @@ import cn.wizzer.app.sys.modules.services.SysUserService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.ShiroUtil;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
@@ -176,4 +181,71 @@ public class SysRoleController {
         }
     }
 
+    //加载当前用户角色下所有菜单
+    @At("/menu")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role")
+    public Object menu(HttpServletRequest req) {
+        try {
+            List<Sys_menu> list = sysUserService.getMenusAndButtons(StringUtil.getPlatformUid());
+            NutMap menuMap = NutMap.NEW();
+            for (Sys_menu unit : list) {
+                if (Strings.isBlank(unit.getParentId())) {
+                    unit.setParentId("root");
+                }
+                List<Sys_menu> list1 = menuMap.getList(unit.getParentId(), Sys_menu.class);
+                if (list1 == null) {
+                    list1 = new ArrayList<>();
+                }
+                list1.add(unit);
+                menuMap.put(unit.getParentId(), list1);
+            }
+            return Result.success().addData(getTree(menuMap, "root"));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    private List<NutMap> getTree(NutMap menuMap, String pid) {
+        List<NutMap> treeList = new ArrayList<>();
+        List<Sys_menu> subList = menuMap.getList(pid, Sys_menu.class);
+        for (Sys_menu menu : subList) {
+            NutMap map = Lang.obj2nutmap(menu);
+            if ("root".equals(menu.getParentId())) {
+                map.put("parentId", "");
+            }
+            map.put("expanded", false);
+            map.put("children", new ArrayList<>());
+            if (menu.isHasChildren()) {
+                map.put("children", getTree(menuMap, menu.getId()));
+            }
+            treeList.add(map);
+        }
+        return treeList;
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.add")
+    @SLog(tag = "添加角色", msg = "角色名称:${args[1].name}")
+    public Object addDo(@Param("menuIds") String menuIds, @Param("..") Sys_role role, HttpServletRequest req) {
+        try {
+            int num = sysRoleService.count(Cnd.where("code", "=", role.getCode().trim()));
+            if (num > 0) {
+                return Result.error("sys.role.code");
+            }
+            String[] ids = StringUtils.split(menuIds, ",");
+            if ("root".equals(role.getUnitid()))
+                role.setUnitid("");
+            Sys_role r = sysRoleService.insert(role);
+            for (String s : ids) {
+                if (!Strings.isEmpty(s)) {
+                    sysRoleService.insert("sys_role_menu", Chain.make("roleId", r.getId()).add("menuId", s));
+                }
+            }
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
 }

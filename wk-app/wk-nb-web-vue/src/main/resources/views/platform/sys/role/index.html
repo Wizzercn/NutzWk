@@ -129,6 +129,97 @@ layout("/layouts/platform.html"){
                 :total="pageForm.totalCount">
         </el-pagination>
     </el-row>
+    <el-dialog
+            title="新建角色"
+            :visible.sync="addDialogVisible"
+            width="70%">
+        <el-form :model="form" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item class="is-required" prop="parentUnit" label="所属单位" label-width="80px">
+                <el-cascader
+                        style="width: 100%"
+                        tabindex="1"
+                        :options="options"
+                        :show-all-levels="false"
+                        v-model="parentUnit"
+                        :fetch-suggestions="unitQuery"
+                        @active-item-change="unitChange"
+                        @change="unitChange2"
+                        @select="unitSelect"
+                        placeholder="请选择单位"
+                ></el-cascader>
+            </el-form-item>
+            <el-form-item prop="name" label="角色名称">
+                <el-input maxlength="50" placeholder="角色名称"
+                          v-model="form.name"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="code" label="角色标识">
+                <el-input maxlength="150" placeholder="角色标识"
+                          v-model="form.code"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="form.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+            <el-form-item prop="" label="分配权限">
+                <el-table :data="menuTreeData" style="width: 100%" :row-style="menuTreeTableShowTr" size="small"
+                          :highlight-current-row="true"
+                          @selection-change="handAddDialogMenuSelect"
+                >
+                    <el-table-column
+                            type="selection"
+                            width="35">
+                    </el-table-column>
+                    <el-table-column label="单位名称" header-align="center" prop="name"
+                                     width="200" :show-overflow-tooltip="true" align="left">
+                        <template slot-scope="scope">
+                            <span v-for="(space, levelIndex) in menuTreeTablePath(scope.row.path)" class="ms-tree-space"></span>
+                            <span v-if="menuTreeTableIconShow(scope.row)" @click="menuTreeTableChild(scope.row.id)"
+                                  style="cursor: pointer">
+                        <span v-if="!scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right" title="展开"></span>
+
+                        <span v-if="scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right expanded" title="关闭"></span>
+                    {{ scope.row.name }}
+                    </span>
+                            <span v-if="!menuTreeTableIconShow(scope.row)">
+                         <span class="ms-tree-space"></span>
+                        {{ scope.row.name }}
+                    </span>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column label="URL" header-align="center" prop="href"
+                                     :show-overflow-tooltip="true">
+                    </el-table-column>
+
+                    <el-table-column label="资源类型" header-align="center" prop="type"
+                                     :show-overflow-tooltip="true" align="center">
+
+                        <template slot-scope="scope">
+                            <i v-if="scope.row.type=='menu'" style="font-weight: bold">菜单</i>
+                            <i v-if="scope.row.type=='data'">数据</i>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column label="权限标识" header-align="center" prop="permission"
+                                     :show-overflow-tooltip="true">
+                    </el-table-column>
+
+                </el-table>
+
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
 </div>
 <script>
     new Vue({
@@ -136,9 +227,9 @@ layout("/layouts/platform.html"){
         data: function () {
             var self = this;
             var validateName = function (rule, value, callback) {
-                var regex = new RegExp("^[a-zA-Z][a-zA-Z0-9_]{1,19}$");
+                var regex = new RegExp("^[a-zA-Z][a-zA-Z0-9_]{1,49}$");
                 if (!regex.test(value)) {
-                    callback(new Error('用户名以字母开头2-20字,允许使用字母/数字/下划线'));
+                    callback(new Error('角色标识以字母开头2-50字,允许使用字母/数字/下划线'));
                 } else {
                     callback();
                 }
@@ -176,13 +267,12 @@ layout("/layouts/platform.html"){
                 form: {
                     id: "",
                     unitid: "",
-                    disabled: false
+                    disabled: false,
+                    menuIds:""
                 },
                 formRules: {
                     parentUnit: [
-                        <!--# if(!@shiro.hasRole("superadmin")){ #-->
                         {validator: validateUnit, trigger: ['blur', 'change']}
-                        <!--# } #-->
                     ],
                     name: [
                         {required: true, message: '角色名称', trigger: ['blur', 'change']}
@@ -194,9 +284,7 @@ layout("/layouts/platform.html"){
                 },
                 editRules: {
                     parentUnit: [
-                        <!--# if(!@shiro.hasRole("superadmin")){ #-->
                         {validator: validateUnit, trigger: ['blur', 'change']}
-                        <!--# } #-->
                     ],
                     name: [
                         {required: true, message: '角色名称', trigger: ['blur', 'change']}
@@ -207,9 +295,10 @@ layout("/layouts/platform.html"){
                     ],
                 },
                 roleDialogTitle: "查看角色权限",
-                roleTableData: [],//treeTable后台取出的数据
-                roleTreeData: [],//treeTable格式化用于显示的数据
+                menuTreeTableData: [],//treeTable后台取出的数据
+                menuTreeData: [],//treeTable格式化用于显示的数据
                 roleId: "",//当前角色ID
+                multipleSelection: []
 
             }
         },
@@ -302,20 +391,28 @@ layout("/layouts/platform.html"){
                 this.form = {};//打开新增窗口,表单先清空
                 if (this.$refs["addForm"])
                     this.$refs["addForm"].resetFields();
+                self.menuTreeTableChild("");
+            },
+            handAddDialogMenuSelect:function(val){
+                this.multipleSelection=val;
             },
             doAdd: function () {
                 var self = this;
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {
+                        var menuIds=[];
+                        self.multipleSelection.forEach(function (menu) {
+                            menuIds.push(menu.id);
+                        });
+                        self.form.menuIds=menuIds.toString();
                         self.form.unitid = self.parentUnit[self.parentUnit.length - 1]||"";
-                        $.post(base + "/platform/sys/user/addDo", self.form, function (data) {
+                        $.post(base + "/platform/sys/role/addDo", self.form, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
                                     type: 'success'
                                 });
-                                self.doSearch();//查询是带条件的,加载新建用户选择的单位用户数据
-                                //self.pageData();
+                                self.pageData();
                                 self.addDialogVisible = false;
                             } else {
                                 self.$message({
@@ -351,47 +448,48 @@ layout("/layouts/platform.html"){
                 });
             },
             // 显示层级
-            treeTablePath: function (path) {
+            menuTreeTablePath: function (path) {
                 return path.length / 4 - 1;
             },
             // 显示行
-            treeTableShowTr: function (row, index) {
-                var parentIndex = this.roleTreeData.findIndex(function (value) {
+            menuTreeTableShowTr: function (row, index) {
+                var parentIndex = this.menuTreeData.findIndex(function (value) {
                     return value.id === row.row.parentId;
                 });
-                var show = (row.row.parentId ? (this.roleTreeData[parentIndex].expanded && this.roleTreeData[parentIndex]._show) : true);
+                var show = (row.row.parentId ? (this.menuTreeData[parentIndex].expanded && this.menuTreeData[parentIndex]._show) : true);
                 row.row._show = show;
                 return show ? '' : 'display:none;'
             },
-            treeDataChildren: function (table, data, pid) {//树形数据的级联查找很是头疼
+            menuTreeDataChildren: function (table, data, pid) {//树形数据的级联查找很是头疼
                 var self = this;
                 table.findIndex(function (obj) {
                     if (pid == obj.id) {//找到这条数据追加下级数据
                         obj.children = data;
                         obj.expanded = !obj.expanded;
                     } else if (obj.children && obj.children.length > 0) {
-                        self.treeDataChildren(obj.children, data, pid);
+                        self.menuTreeDataChildren(obj.children, data, pid);
                     }
                 });
             },
             // 展开下级
-            treeTableChild: function (pid) {
+            menuTreeTableChild: function (pid) {
                 var self = this;
-                var url = base + "/platform/sys/user/menu/" + self.userId;
+                var url = base + "/platform/sys/role/menu";
                 $.post(url, {pid: pid}, function (data) {
                     if (data.code == 0) {
-                        if (pid != undefined && pid != "") {
-                            self.treeDataChildren(self.roleTableData, data.data, pid);
-                        } else {
-                            self.roleTableData = data.data;
-                        }
-                        self.roleTreeData = sublime.treeToArray(self.roleTableData);
+                        self.menuTreeData=sublime.treeToArray(data.data);
+                        // if (pid != undefined && pid != "") {
+                        //     self.menuTreeDataChildren(self.menuTreeTableData, data.data, pid);
+                        // } else {
+                        //     self.menuTreeTableData = data.data;
+                        // }
+                        // self.menuTreeData = sublime.treeToArray(self.menuTreeTableData);
                     }
                 }, "json");
 
             },
             // 点击展开和关闭的时候，图标的切换
-            treeTableIconShow: function (record) {
+            menuTreeTableIconShow: function (record) {
                 return record.hasChildren;
             },
             dropdownCommand: function (command) {//监听下拉框事件
