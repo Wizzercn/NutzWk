@@ -12,6 +12,7 @@ layout("/layouts/platform.html"){
                     v-model="parentUnit"
                     :fetch-suggestions="unitQuery"
                     @active-item-change="unitChange"
+                    @change="unitChange2"
                     @select="unitSelect"
                     placeholder="请选择单位"
             ></el-cascader>
@@ -189,6 +190,7 @@ layout("/layouts/platform.html"){
                         v-model="parentUnit"
                         :fetch-suggestions="unitQuery"
                         @active-item-change="unitChange"
+                        @change="unitChange2"
                         @select="unitSelect"
                         placeholder="请选择单位"
                 ></el-cascader>
@@ -455,6 +457,12 @@ layout("/layouts/platform.html"){
                     }
                 });
             },
+            unitChange2:function(val){
+                var self = this;
+                if(val[0]=="root"){
+                    self.parentUnit=[];
+                }
+            },
             unitChange: function (val) {
                 var self = this;
                 self.parentUnit = val;
@@ -505,13 +513,14 @@ layout("/layouts/platform.html"){
                 var self = this;
                 this.addDialogVisible = true;
                 this.form = {};//打开新增窗口,表单先清空
-                this.$refs["addForm"].resetFields();
+                if (this.$refs["addForm"])
+                    this.$refs["addForm"].resetFields();
             },
             doAdd: function () {
                 var self = this;
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {
-                        self.form.unitid = self.parentUnit[self.parentUnit.length - 1];
+                        self.form.unitid = self.parentUnit[self.parentUnit.length - 1]||"";
                         $.post(base + "/platform/sys/user/addDo", self.form, function (data) {
                             if (data.code == 0) {
                                 self.$message({
@@ -636,7 +645,7 @@ layout("/layouts/platform.html"){
                                 message: data.msg,
                                 type: 'success'
                             });
-                            self.pageForm.searchUnit = self.parentUnit[self.parentUnit.length - 1];
+                            self.pageForm.searchUnit = self.parentUnit[self.parentUnit.length - 1]||"";
                             self.pageData();//加载当前页,不调用doSearch方法了
                         } else {
                             self.$message({

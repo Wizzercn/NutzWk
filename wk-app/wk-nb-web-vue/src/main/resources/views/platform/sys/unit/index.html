@@ -78,6 +78,7 @@ layout("/layouts/platform.html"){
                         v-model="parentUnit"
                         :fetch-suggestions="unitQuery"
                         @active-item-change="unitChange"
+                        @change="unitChange2"
                         @select="unitSelect"
                         placeholder="不选择则为顶级"
                 ></el-cascader>
@@ -227,6 +228,12 @@ layout("/layouts/platform.html"){
                     }
                 });
             },
+            unitChange2:function(val){
+                var self = this;
+                if(val[0]=="root"){
+                    self.parentUnit=[];
+                }
+            },
             unitChange: function (val) {
                 var self = this;
                 var pid = val[val.length - 1];
@@ -249,7 +256,7 @@ layout("/layouts/platform.html"){
                 var url = base + "/platform/sys/unit/addDo";
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
-                        self.form.parentId = self.parentUnit[self.parentUnit.length - 1];
+                        self.form.parentId = self.parentUnit[self.parentUnit.length - 1]||"";
                         $.post(url, self.form, function (data) {
                             if (data.code == 0) {
                                 self.$message({

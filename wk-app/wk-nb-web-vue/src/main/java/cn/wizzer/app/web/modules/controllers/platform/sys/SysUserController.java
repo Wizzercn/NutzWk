@@ -397,7 +397,7 @@ public class SysUserController {
     @RequiresAuthentication
     public Object modeDo(@Param("mode") String mode, HttpServletRequest req) {
         try {
-            sysUserService.update(Chain.make("loginPjax", "true".equals(mode)), Cnd.where("id", "=", req.getAttribute("uid")));
+            sysUserService.update(Chain.make("loginPjax", "true".equals(mode)), Cnd.where("id", "=", StringUtil.getPlatformUid()));
             Subject subject = SecurityUtils.getSubject();
             Sys_user user = (Sys_user) subject.getPrincipal();
             if ("true".equals(mode)) {
@@ -405,9 +405,9 @@ public class SysUserController {
             } else {
                 user.setLoginPjax(false);
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 

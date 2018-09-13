@@ -41,7 +41,7 @@
 <script type="text/javascript">
     $(function () {
         $("#okMode").on("click", function () {
-            $.post("${base}/platform/sys/user/modeDo", {mode: $("input[name=mode]").val()}, function (data) {
+            $.post("${base}/platform/sys/user/modeDo", {mode: $("input[type='radio'][name='mode']:checked").val()}, function (data) {
                 if (data.code == 0) {
                     $('#homeDetail').modal('hide');
                     ELEMENT.Message({
