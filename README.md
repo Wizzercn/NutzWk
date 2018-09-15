@@ -101,7 +101,7 @@ https://vue.wizzer.cn                     NutzWk v3.x-vue
 
 ### Contributors
 
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+This project exists thanks to all the people who contribute. 
 
 <a href="graphs/contributors"><img src="https://opencollective.com/nutzwk/contributors.svg?width=890&button=false" /></a>
 
@@ -109,7 +109,7 @@ This project exists thanks to all the people who contribute. [[Contribute](CONTR
 
 Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/nutzwk#backer)]
 
-<a href="https://opencollective.com/nutzwk#backers" target="_blank"><img src="https://opencollective.com/nutzwk/backers.svg?width=890”></a>
+<a href="https://opencollective.com/nutzwk#backers" target="_blank"><img src="https://opencollective.com/nutzwk/backers.svg?width=890"></a>
 
 ### Sponsors
 

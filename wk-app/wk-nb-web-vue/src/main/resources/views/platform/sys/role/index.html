@@ -178,7 +178,7 @@ layout("/layouts/platform.html"){
                                      width="200" :show-overflow-tooltip="true" align="left">
                         <template slot-scope="scope">
                             <span v-for="(space, levelIndex) in menuTreeTablePath(scope.row.path)" class="ms-tree-space"></span>
-                            <span v-if="menuTreeTableIconShow(scope.row)" @click="menuTreeTableChild(scope.row.id)"
+                            <span v-if="menuTreeTableIconShow(scope.row)" @click="menuTreeTableChild(scope.$index)"
                                   style="cursor: pointer">
                         <span v-if="!scope.row.expanded"
                               class="el-tree-node__expand-icon el-icon-caret-right" title="展开"></span>
@@ -385,16 +385,50 @@ layout("/layouts/platform.html"){
                 this.pageForm.pageNumber = 1;
                 this.pageData();
             },
+            handAddDialogMenuSelect:function(val){
+                this.multipleSelection=val;
+            },
+
+            // 显示层级
+            menuTreeTablePath: function (path) {
+                return path.length / 4 - 1;
+            },
+            // 显示行
+            menuTreeTableShowTr: function (row, index) {
+                var parentIndex = this.menuTreeData.findIndex(function (value) {
+                    return value.id === row.row.parentId;
+                });
+                var show = (row.row.parentId ? (this.menuTreeData[parentIndex].expanded && this.menuTreeData[parentIndex]._show) : true);
+                row.row._show = show;
+                return show ? '' : 'display:none;'
+            },
+            // 展开下级
+            menuTreeTableChild:function(trIndex){
+                var record = this.menuTreeData[trIndex];
+                record.expanded = !record.expanded;
+            },
+            // 初始化菜单
+            menuTreeTableInit: function () {
+                var self = this;
+                var url = base + "/platform/sys/role/menu";
+                $.post(url, {}, function (data) {
+                    if (data.code == 0) {
+                        self.menuTreeData=sublime.treeToArray(data.data);
+                    }
+                }, "json");
+
+            },
+            // 点击展开和关闭的时候，图标的切换
+            menuTreeTableIconShow: function (record) {
+                return record.hasChildren;
+            },
             openAdd: function () {
                 var self = this;
                 this.addDialogVisible = true;
                 this.form = {};//打开新增窗口,表单先清空
                 if (this.$refs["addForm"])
                     this.$refs["addForm"].resetFields();
-                self.menuTreeTableChild("");
-            },
-            handAddDialogMenuSelect:function(val){
-                this.multipleSelection=val;
+                self.menuTreeTableInit();
             },
             doAdd: function () {
                 var self = this;
@@ -447,58 +481,12 @@ layout("/layouts/platform.html"){
                     }
                 });
             },
-            // 显示层级
-            menuTreeTablePath: function (path) {
-                return path.length / 4 - 1;
-            },
-            // 显示行
-            menuTreeTableShowTr: function (row, index) {
-                var parentIndex = this.menuTreeData.findIndex(function (value) {
-                    return value.id === row.row.parentId;
-                });
-                var show = (row.row.parentId ? (this.menuTreeData[parentIndex].expanded && this.menuTreeData[parentIndex]._show) : true);
-                row.row._show = show;
-                return show ? '' : 'display:none;'
-            },
-            menuTreeDataChildren: function (table, data, pid) {//树形数据的级联查找很是头疼
-                var self = this;
-                table.findIndex(function (obj) {
-                    if (pid == obj.id) {//找到这条数据追加下级数据
-                        obj.children = data;
-                        obj.expanded = !obj.expanded;
-                    } else if (obj.children && obj.children.length > 0) {
-                        self.menuTreeDataChildren(obj.children, data, pid);
-                    }
-                });
-            },
-            // 展开下级
-            menuTreeTableChild: function (pid) {
-                var self = this;
-                var url = base + "/platform/sys/role/menu";
-                $.post(url, {pid: pid}, function (data) {
-                    if (data.code == 0) {
-                        self.menuTreeData=sublime.treeToArray(data.data);
-                        // if (pid != undefined && pid != "") {
-                        //     self.menuTreeDataChildren(self.menuTreeTableData, data.data, pid);
-                        // } else {
-                        //     self.menuTreeTableData = data.data;
-                        // }
-                        // self.menuTreeData = sublime.treeToArray(self.menuTreeTableData);
-                    }
-                }, "json");
-
-            },
-            // 点击展开和关闭的时候，图标的切换
-            menuTreeTableIconShow: function (record) {
-                return record.hasChildren;
-            },
             dropdownCommand: function (command) {//监听下拉框事件
                 var self = this;
                 if ("role" == command.type) {
                     self.roleDialogVisible = true;
                     self.roleDialogTitle = "查看用户 " + command.loginname + " 的权限";
                     self.userId = command.id;
-                    self.treeTableChild("");
                 }
                 if ("reset" == command.type) {
                     self.$confirm('确定重置用户 ' + command.loginname + ' 的密码', '提示', {
