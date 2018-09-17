@@ -47,4 +47,22 @@ public interface SysRoleService extends BaseService<Sys_role> {
      * @param roleids
      */
     void del(String[] roleids);
+
+    /**
+     * 通过角色ID和菜单父ID获取下级权限菜单
+     *
+     * @param roleId
+     * @param pid
+     * @return
+     */
+    List<Sys_menu> getRoleMenus(String roleId, String pid);
+
+    /**
+     * 判断角色是否有下级数据权限
+     *
+     * @param roleId
+     * @param pid
+     * @return
+     */
+    boolean hasChildren(String roleId, String pid);
 }

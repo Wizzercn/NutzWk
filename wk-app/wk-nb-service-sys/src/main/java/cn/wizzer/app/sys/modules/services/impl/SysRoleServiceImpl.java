@@ -22,7 +22,7 @@ import java.util.List;
  * Created by wizzer on 2016/12/22.
  */
 @IocBean(args = {"refer:dao"})
-@Service(interfaceClass=SysRoleService.class)
+@Service(interfaceClass = SysRoleService.class)
 public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements SysRoleService {
     public SysRoleServiceImpl(Dao dao) {
         super(dao);
@@ -32,7 +32,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and" +
                 " b.roleId=@roleId and a.disabled=@f order by a.location ASC,a.path asc");
         sql.params().set("roleId", roleId);
-        sql.params().set("f",false);
+        sql.params().set("f", false);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
         sql.setCallback(Sqls.callback.entities());
@@ -44,7 +44,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and" +
                 " b.roleId=@roleId and a.type='data' and a.disabled=@f order by a.location ASC,a.path asc");
         sql.params().set("roleId", roleId);
-        sql.params().set("f",false);
+        sql.params().set("f", false);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
         sql.setCallback(Sqls.callback.entities());
@@ -90,5 +90,47 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
         this.dao().clear("sys_user_role", Cnd.where("roleId", "in", roleids));
         this.dao().clear("sys_role_menu", Cnd.where("roleId", "in", roleids));
         this.delete(roleids);
+    }
+
+    /**
+     * @param roleId
+     * @param pid
+     * @return
+     */
+    public List<Sys_menu> getRoleMenus(String roleId, String pid) {
+        Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
+                "$m and b.roleId=@roleId and a.disabled=@f order by a.location ASC,a.path asc");
+        sql.params().set("roleId", roleId);
+        sql.params().set("f", false);
+        if (Strings.isNotBlank(pid)) {
+            sql.vars().set("m", "a.parentId='" + pid + "'");
+        } else {
+            sql.vars().set("m", "(a.parentId='' or a.parentId is null)");
+        }
+        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
+        sql.setEntity(entity);
+        sql.setCallback(Sqls.callback.entities());
+        dao().execute(sql);
+        return sql.getList(Sys_menu.class);
+    }
+
+    /**
+     * @param roleId
+     * @param pid
+     * @return
+     */
+    public boolean hasChildren(String roleId, String pid) {
+        Sql sql = Sqls.create("select count(*) from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
+                "$m and b.roleId=@roleId and a.disabled=@f order by a.location ASC,a.path asc");
+        sql.params().set("roleId", roleId);
+        sql.params().set("f", false);
+        if (Strings.isNotBlank(pid)) {
+            sql.vars().set("m", "a.parentId='" + pid + "'");
+        } else {
+            sql.vars().set("m", "(a.parentId='' or a.parentId is null)");
+        }
+        sql.setCallback(Sqls.callback.integer());
+        dao().execute(sql);
+        return sql.getInt() > 0;
     }
 }

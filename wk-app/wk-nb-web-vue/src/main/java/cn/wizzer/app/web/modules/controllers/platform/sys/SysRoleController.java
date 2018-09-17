@@ -23,6 +23,7 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
+import org.nutz.lang.Times;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -76,8 +77,10 @@ public class SysRoleController {
 
             }
             if (shiroUtil.hasRole("sysadmin")) {
-                NutMap sys = NutMap.NEW().addv("value", "system").addv("label", "系统角色");
-                treeList.add(sys);
+                if (Strings.isBlank(pid)) {
+                    NutMap sys = NutMap.NEW().addv("value", "system").addv("label", "系统角色");
+                    treeList.add(sys);
+                }
                 Cnd cnd = Cnd.NEW();
                 if (Strings.isBlank(pid)) {
                     cnd.and("parentId", "=", "").or("parentId", "is", null);
@@ -181,18 +184,15 @@ public class SysRoleController {
         }
     }
 
-    //加载当前用户角色下所有菜单
-    @At("/menu")
+    //加载当前用户角色下所有菜单,新建角色
+    @At("/menuAll")
     @Ok("json")
     @RequiresPermissions("sys.manager.role")
-    public Object menu(HttpServletRequest req) {
+    public Object menuAll(HttpServletRequest req) {
         try {
             List<Sys_menu> list = sysUserService.getMenusAndButtons(StringUtil.getPlatformUid());
             NutMap menuMap = NutMap.NEW();
             for (Sys_menu unit : list) {
-                if (Strings.isBlank(unit.getParentId())) {
-                    unit.setParentId("root");
-                }
                 List<Sys_menu> list1 = menuMap.getList(unit.getParentId(), Sys_menu.class);
                 if (list1 == null) {
                     list1 = new ArrayList<>();
@@ -200,7 +200,7 @@ public class SysRoleController {
                 list1.add(unit);
                 menuMap.put(unit.getParentId(), list1);
             }
-            return Result.success().addData(getTree(menuMap, "root"));
+            return Result.success().addData(getTree(menuMap, ""));
         } catch (Exception e) {
             return Result.error();
         }
@@ -211,12 +211,8 @@ public class SysRoleController {
         List<Sys_menu> subList = menuMap.getList(pid, Sys_menu.class);
         for (Sys_menu menu : subList) {
             NutMap map = Lang.obj2nutmap(menu);
-            if ("root".equals(menu.getParentId())) {
-                map.put("parentId", "");
-            }
-            map.put("expanded", false);
-            map.put("children", new ArrayList<>());
-            if (menu.isHasChildren()) {
+            map.put("label", menu.getName());
+            if (menu.isHasChildren() || (menuMap.get(menu.getId()) != null)) {
                 map.put("children", getTree(menuMap, menu.getId()));
             }
             treeList.add(map);
@@ -239,10 +235,94 @@ public class SysRoleController {
                 role.setUnitid("");
             Sys_role r = sysRoleService.insert(role);
             for (String s : ids) {
-                if (!Strings.isEmpty(s)) {
-                    sysRoleService.insert("sys_role_menu", Chain.make("roleId", r.getId()).add("menuId", s));
+                sysRoleService.insert("sys_role_menu", Chain.make("roleId", r.getId()).add("menuId", s));
+                Sys_menu menu = sysMenuService.fetch(s);
+                //要把上级菜单插入关联表
+                for (int i = 4; i < menu.getPath().length(); i = i + 4) {
+                    Sys_menu tMenu = sysMenuService.fetch(Cnd.where("path", "=", menu.getPath().substring(0, i)));
+                    int c = sysRoleService.count("sys_role_menu", Cnd.where("roleId", "=", r.getId()).and("menuId", "=", tMenu.getId()));
+                    if (c == 0) {
+                        sysRoleService.insert("sys_role_menu", Chain.make("roleId", r.getId()).add("menuId", tMenu.getId()));
+                    }
                 }
             }
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    //查看角色拥有的权限
+    @At("/menu/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role")
+    public Object menu(String id, @Param("pid") String pid) {
+        try {
+            List<Sys_menu> list = sysRoleService.getRoleMenus(id, pid);
+            List<NutMap> treeList = new ArrayList<>();
+            for (Sys_menu unit : list) {
+                if (!unit.isHasChildren() && sysRoleService.hasChildren(id, unit.getId())) {
+                    unit.setHasChildren(true);
+                }
+                NutMap map = Lang.obj2nutmap(unit);
+                map.addv("expanded", false);
+                map.addv("children", new ArrayList<>());
+                treeList.add(map);
+            }
+            return Result.success().addData(treeList);
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/delete/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.delete")
+    @SLog(tag = "删除角色", msg = "角色名称:${args[1].getAttribute('name')}")
+    public Object delete(String roleId, HttpServletRequest req) {
+        try {
+            Sys_role role = sysRoleService.fetch(roleId);
+            if ("sysadmin".equals(role.getCode()) || "public".equals(role.getCode())) {
+                return Result.error("system.not.allow");
+            }
+            sysRoleService.del(roleId);
+            req.setAttribute("name", role.getName());
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/edit/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role")
+    public Object edit(String roleId, HttpServletRequest req) {
+        try {
+            return Result.success().addData(sysRoleService.fetch(roleId));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    //修改角色
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.edit")
+    @SLog(tag = "修改角色", msg = "角色名称:${args[0].name}")
+    public Object editDo(@Param("..") Sys_role role, HttpServletRequest req) {
+        try {
+            Sys_role oldRole = sysRoleService.fetch(role.getId());
+            if (oldRole != null && !Strings.sBlank(oldRole.getCode()).equalsIgnoreCase(role.getCode())) {
+                int num = sysRoleService.count(Cnd.where("code", "=", role.getCode().trim()));
+                if (num > 0) {
+                    return Result.error("sys.role.code");
+                }
+            }
+            if ("root".equals(role.getUnitid()))
+                role.setUnitid("");
+            role.setOpBy(StringUtil.getPlatformUid());
+            role.setOpAt(Times.getTS());
+            sysRoleService.updateIgnoreNull(role);
             return Result.success();
         } catch (Exception e) {
             return Result.error();
