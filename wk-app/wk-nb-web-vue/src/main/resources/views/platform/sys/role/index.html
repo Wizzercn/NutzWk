@@ -174,11 +174,11 @@ layout("/layouts/platform.html"){
                         node-key="id"
                         :props="defaultProps"
                 >
-                    <span class="custom-tree-node" slot-scope="{ node, data }">
-                    <span>{{ node.label }}</span>
+                    <span class="custom-tree-node" slot-scope="scope">
+                    <span>{{ scope.node.label }}</span>
                     <span>
-                        <span v-if="data.type=='menu'" style="font-weight: bold">菜单权限 </span>
-                        <span v-if="data.type=='data'">数据权限 </span>
+                        <span v-if="scope.data.type=='menu'" style="font-weight: bold">菜单权限 </span>
+                        <span v-if="scope.data.type=='data'">数据权限 </span>
                     </span>
                   </span>
                 </el-tree>
@@ -267,6 +267,141 @@ layout("/layouts/platform.html"){
                     <el-button @click="roleDialogVisible = false">关 闭</el-button>
                   </span>
     </el-dialog>
+    <el-dialog
+            append-to-body
+            :title="menuDialogTitle"
+            :visible.sync="menuDialogVisible"
+            width="70%">
+        <el-tree
+                ref="doMenuTree"
+                :data="doMenuData"
+                :default-checked-keys="doMenuCheckedData"
+                show-checkbox
+                node-key="id"
+                :props="defaultProps"
+        >
+                    <span class="custom-tree-node" slot-scope="scope">
+                    <span>{{ scope.node.label }}</span>
+                    <span>
+                        <span v-if="scope.data.type=='menu'" style="font-weight: bold">菜单权限 </span>
+                        <span v-if="scope.data.type=='data'">数据权限 </span>
+                    </span>
+                  </span>
+        </el-tree>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="menuDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doMenu">确 定</el-button>
+                  </span>
+    </el-dialog>
+    <el-dialog
+            append-to-body
+            :title="userDialogTitle"
+            :visible.sync="userDialogVisible"
+            width="70%">
+        <div class="block">
+            <el-select
+                    size="small"
+                    style="width: 60%"
+                    class="span_n"
+                    v-model="selUsers"
+                    multiple
+                    filterable
+                    remote
+                    default-first-option
+                    reserve-keyword
+                    :remote-method="remoteMethod"
+                    :loading="loading"
+                    placeholder="请输入用户名或姓名"
+            >
+                <el-option
+                        v-for="item in dbUsers"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+            <el-button size="small" @click="userAddRole">将用户加入角色</el-button>
+            <div class="pull-right offscreen-right">
+                <el-button size="small" type="danger" @click="userDelRole">从角色中移除</el-button>
+            </div>
+        </div>
+        <el-table
+                :data="userTableData"
+                @sort-change='userPageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                @selection-change="userSelectionChange"
+        >
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="loginname"
+                    label="用户名"
+                    header-align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="username"
+                    label="姓名"
+                    header-align="center"
+                    :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+                    prop="unit"
+                    label="所属单位"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+            >
+                <template slot-scope="scope">
+                    <span v-if="scope.row.unit!=null">
+                        {{scope.row.unit.name}}
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="disabled"
+                    label="帐号状态"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+            >
+                <template slot-scope="scope">
+                    <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="userOnline"
+                    label="在线状态"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+            >
+                <template slot-scope="scope">
+                    <i v-if="scope.row.userOnline" class="text-success ml5">在线</i>
+                    <i v-if="!scope.row.userOnline" class="text-danger ml5">离线</i>
+                </template>
+            </el-table-column>
+        </el-table>
+        <el-pagination
+                @size-change="userPageSizeChange"
+                @current-change="userPageNumberChange"
+                :current-page="userForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="userForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="userForm.totalCount">
+        </el-pagination>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="userDialogVisible = false">关 闭</el-button>
+                  </span>
+    </el-dialog>
 </div>
 <script>
     new Vue({
@@ -292,6 +427,8 @@ layout("/layouts/platform.html"){
                 addDialogVisible: false,
                 editDialogVisible: false,
                 roleDialogVisible: false,
+                menuDialogVisible: false,
+                userDialogVisible: false,
                 treeData: {
                     label: 'name',
                     children: 'zones',
@@ -342,6 +479,8 @@ layout("/layouts/platform.html"){
                     ],
                 },
                 roleDialogTitle: "查看角色权限",
+                menuDialogTitle: "分配角色菜单",
+                userDialogTitle: "分配用户",
                 roleTableData: [],//treeTable后台取出的数据
                 roleTreeData: [],//treeTable格式化用于显示的数据
                 roleId: "",//当前角色ID
@@ -349,7 +488,22 @@ layout("/layouts/platform.html"){
                     children: 'children',
                     label: 'label'
                 },
-                addMenuData: []
+                addMenuData: [],
+                doMenuData: [],
+                doMenuCheckedData: [],//已分配的权限选中状态
+                userForm: {
+                    roleId: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "",
+                    pageOrderBy: ""
+                },
+                userTableData: [],
+                loading: false,
+                dbUsers: [],//分配用户
+                selUsers: [],//分配选中的用户
+                userSelection: []
             }
         },
         methods: {
@@ -443,6 +597,62 @@ layout("/layouts/platform.html"){
                     }
                 }, "json");
             },
+            doMenuLoad: function () {
+                var self = this;
+                $.post(base + "/platform/sys/role/menuRole/" + self.roleId, {}, function (data) {
+                    if (data.code == 0) {
+                        self.doMenuData = data.data.menu;
+                        self.doMenuCheckedData = data.data.cmenu;
+                    }
+                }, "json");
+            },
+            userSelectionChange: function (val) {
+                this.userSelection = val;
+            },
+            userPageOrder: function (column) {//按字段排序
+                this.userForm.pageOrderName = column.prop;
+                this.userForm.pageOrderBy = column.order;
+                this.doUserLoad();
+            },
+            userPageNumberChange: function (val) {//页码更新操作
+                this.userForm.pageNumber = val;
+                this.doUserLoad();
+            },
+            userPageSizeChange: function (val) {//分页大小更新操作
+                this.userForm.pageSize = val;
+                this.doUserLoad();
+            },
+            remoteMethod: function (query) {
+                var self = this;
+                if (query !== '') {
+                    self.loading = true;
+                    $.post(base + "/platform/sys/role/userSearch", {
+                        query: query,
+                        roleId: self.roleId
+                    }, function (data) {
+                        if (data.code == 0) {
+                            self.dbUsers = data.data.list;
+                        }
+                        self.loading = false;
+                    }, "json");
+                } else {
+                    self.selUsers = [];
+                }
+            },
+            doUserLoad: function () {
+                var self = this;
+                $.post(base + "/platform/sys/role/user", self.userForm, function (data) {
+                    if (data.code == 0) {
+                        self.userTableData = data.data.list;
+                        self.userForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
             openAdd: function () {
                 var self = this;
                 this.addDialogVisible = true;
@@ -453,7 +663,6 @@ layout("/layouts/platform.html"){
             },
             doAdd: function () {
                 var self = this;
-                console.log(self.$refs["addMenuTree"].getCheckedKeys())
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {
                         self.form.menuIds = (self.$refs["addMenuTree"].getCheckedKeys()).toString();
@@ -498,6 +707,34 @@ layout("/layouts/platform.html"){
                         }, "json");
                     }
                 });
+            },
+            doMenu: function () {
+                var self = this;
+                var ids = self.$refs["doMenuTree"].getCheckedKeys();
+                if (!ids || ids.length == 0) {
+                    self.$message({
+                        message: "请选择菜单或数据权限",
+                        type: 'warning'
+                    });
+                    return;
+                }
+                $.post(base + "/platform/sys/role/menuDo", {
+                    roleId: self.roleId,
+                    menuIds: ids.toString()
+                }, function (data) {
+                    if (data.code == 0) {
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.menuDialogVisible = false;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
             },
             // 显示层级
             treeTablePath: function (path) {
@@ -547,9 +784,22 @@ layout("/layouts/platform.html"){
                 var self = this;
                 if ("role" == command.type) {
                     self.roleDialogVisible = true;
-                    self.roleDialogTitle = "查看角色 " + command.name + " 的权限";
+                    self.roleDialogTitle = "查看角色 【" + command.name + "】 的权限";
                     self.roleId = command.id;
                     self.treeTableChild("");
+                }
+                if ("menu" == command.type) {
+                    self.menuDialogTitle = "分配角色 【" + command.name + "】 的权限";
+                    self.menuDialogVisible = true;
+                    self.roleId = command.id;
+                    self.doMenuLoad();
+                }
+                if ("user" == command.type) {
+                    self.userDialogTitle = "分配角色 【" + command.name + "】 的用户";
+                    self.userDialogVisible = true;
+                    self.roleId = command.id;
+                    self.userForm.roleId = command.id;
+                    self.doUserLoad();
                 }
                 if ("enable" == command.type || "disable" == command.type) {
                     $.post(base + "/platform/sys/role/" + command.type + "/" + command.id, {}, function (data) {
@@ -607,6 +857,68 @@ layout("/layouts/platform.html"){
                     });
                 }
             },
+            userAddRole: function () {
+                var self = this;
+                if (self.selUsers.length == 0) {
+                    self.$message({
+                        message: "请先输入用户名或姓名查询用户",
+                        type: 'warning'
+                    });
+                    return;
+                }
+                $.post(base + "/platform/sys/role/usersAdd", {
+                    roleId: self.roleId,
+                    users: self.selUsers.toString()
+                }, function (data) {
+                    if (data.code == 0) {
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.selUsers = [];//清除已选择的用户
+                        self.dbUsers = [];//清除数据库查询的用户,已添加到角色的用户不应该还存在so..
+                        self.doUserLoad();
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            userDelRole: function () {
+                var self = this;
+                if (self.userSelection.length == 0) {
+                    self.$message({
+                        message: "请先选择要移除的用户",
+                        type: 'warning'
+                    });
+                    return;
+                }
+                var users = [];
+                self.userSelection.forEach(function (obj) {
+                    users.push(obj.id);
+                });
+                $.post(base + "/platform/sys/role/usersDel", {
+                    roleId: self.roleId,
+                    users: users.toString()
+                }, function (data) {
+                    if (data.code == 0) {
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.selUsers = [];//清除已选择的用户
+                        self.dbUsers = [];//清除数据库查询的用户,已移除的用户应该能重新被查询到..
+                        self.doUserLoad();
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            }
         },
         created: function () {
             this.initTree();

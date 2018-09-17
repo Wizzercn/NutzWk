@@ -19,6 +19,8 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
+import org.nutz.dao.Sqls;
+import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
@@ -184,7 +186,7 @@ public class SysRoleController {
         }
     }
 
-    //加载当前用户角色下所有菜单,新建角色
+    //加载当前用户所拥有的所有权限菜单
     @At("/menuAll")
     @Ok("json")
     @RequiresPermissions("sys.manager.role")
@@ -201,6 +203,33 @@ public class SysRoleController {
                 menuMap.put(unit.getParentId(), list1);
             }
             return Result.success().addData(getTree(menuMap, ""));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    //加载角色下所有菜单,新建角色
+    @At("/menuRole/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role")
+    public Object menuRole(String roleId, HttpServletRequest req) {
+        try {
+            List<Sys_menu> userList = sysUserService.getMenusAndButtons(StringUtil.getPlatformUid());
+            List<Sys_menu> list = sysRoleService.getMenusAndButtons(roleId);
+            NutMap menuMap = NutMap.NEW();
+            for (Sys_menu unit : userList) {
+                List<Sys_menu> list1 = menuMap.getList(unit.getParentId(), Sys_menu.class);
+                if (list1 == null) {
+                    list1 = new ArrayList<>();
+                }
+                list1.add(unit);
+                menuMap.put(unit.getParentId(), list1);
+            }
+            List<String> cmenu = new ArrayList<>();
+            for (Sys_menu unit : list) {
+                cmenu.add(unit.getId());
+            }
+            return Result.success().addData(NutMap.NEW().addv("menu", getTree(menuMap, "")).addv("cmenu", cmenu));
         } catch (Exception e) {
             return Result.error();
         }
@@ -323,6 +352,113 @@ public class SysRoleController {
             role.setOpBy(StringUtil.getPlatformUid());
             role.setOpAt(Times.getTS());
             sysRoleService.updateIgnoreNull(role);
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.menu")
+    @SLog(tag = "分配角色菜单", msg = "角色名称:${args[2].getAttribute('name')}")
+    public Object menuDo(@Param("menuIds") String menuIds, @Param("roleId") String roleId, HttpServletRequest req) {
+        try {
+            String[] ids = StringUtils.split(menuIds, ",");
+            sysRoleService.clear("sys_role_menu", Cnd.where("roleId", "=", roleId));
+            for (String s : ids) {
+                sysRoleService.insert("sys_role_menu", Chain.make("roleId", roleId).add("menuId", s));
+                Sys_menu menu = sysMenuService.fetch(s);
+                //要把上级菜单插入关联表
+                for (int i = 4; i < menu.getPath().length(); i = i + 4) {
+                    Sys_menu tMenu = sysMenuService.fetch(Cnd.where("path", "=", menu.getPath().substring(0, i)));
+                    int c = sysRoleService.count("sys_role_menu", Cnd.where("roleId", "=", roleId).and("menuId", "=", tMenu.getId()));
+                    if (c == 0) {
+                        sysRoleService.insert("sys_role_menu", Chain.make("roleId", roleId).add("menuId", tMenu.getId()));
+                    }
+                }
+            }
+            Sys_role role = sysRoleService.fetch(roleId);
+            req.setAttribute("name", role.getName());
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At
+    @Ok("json:full")
+    @RequiresPermissions("sys.manager.role")
+    public Object user(@Param("roleId") String roleId, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword,
+                       @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Sql sql = Sqls.create("SELECT a.* FROM sys_user a,sys_user_role b WHERE a.id=b.userId and b.roleId=@roleId $s $o");
+            sql.params().set("roleId", roleId);
+            if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
+                sql.vars().set("s", " and a." + searchName + " like '%" + searchKeyword + "%'");
+            }
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                sql.vars().set("o", " order by a." + pageOrderName + " " + PageUtil.getOrder(pageOrderBy));
+
+            }
+            return Result.success().addData(sysUserService.listPage(pageNumber, pageSize, sql));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At
+    @Ok("json:full")
+    @RequiresPermissions("sys.manager.role")
+    public Object userSearch(@Param("query") String query, @Param("roleId") String roleId) {
+        try {
+            Sql sql = Sqls.create("SELECT a.id AS VALUE,CONCAT(a.loginname,'(',a.username,')') AS label,a.disabled,a.unitid,b.name as unitname FROM sys_user a,sys_unit b WHERE a.unitid=b.id  and a.id NOT IN(SELECT b.userId FROM sys_user_role b WHERE b.roleId=@roleId) $s1 $s2 order by a.opAt desc");
+            sql.params().set("roleId", roleId);
+            if (!shiroUtil.hasRole("sysadmin")) {
+                //非超级管理员只可查询本单位及下级单位用户
+                Sys_user user = (Sys_user) shiroUtil.getPrincipal();
+                String menuPath = user.getUnit().getPath();
+                sql.vars().set("s1", " and b.path like '" + menuPath + "%'");
+            }
+            if (Strings.isNotBlank(query)) {
+                sql.vars().set("s2", " and (a.loginname like '%" + query + "%' or a.username like '%" + query + "%')");
+            }
+            return Result.success().addData(sysUserService.listPage(1, 10, sql));
+
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.user")
+    @SLog(tag = "添加用户到角色", msg = "角色名称:${args[2].getAttribute('name')},用户ID:${args[0]}")
+    public Object usersAdd(@Param("users") String users, @Param("roleId") String roleId, HttpServletRequest req) {
+        try {
+            String[] ids = StringUtils.split(users, ",");
+            for (String s : ids) {
+                sysRoleService.insert("sys_user_role", org.nutz.dao.Chain.make("roleId", roleId).add("userId", s));
+            }
+            Sys_role role = sysRoleService.fetch(roleId);
+            req.setAttribute("name", role.getName());
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.role.user")
+    @SLog(tag = "从角色中移除用户", msg = "角色名称:${args[2].getAttribute('name')},用户ID:${args[0]}")
+    public Object usersDel(@Param("users") String users, @Param("roleId") String roleId, HttpServletRequest req) {
+        try {
+            String[] ids = StringUtils.split(users, ",");
+            sysRoleService.clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleId));
+            Sys_role role = sysRoleService.fetch(roleId);
+            req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {
             return Result.error();
