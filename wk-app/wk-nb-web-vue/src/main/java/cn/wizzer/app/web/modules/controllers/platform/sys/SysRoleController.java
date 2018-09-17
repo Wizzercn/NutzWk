@@ -392,7 +392,7 @@ public class SysRoleController {
     public Object user(@Param("roleId") String roleId, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword,
                        @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
-            Sql sql = Sqls.create("SELECT a.* FROM sys_user a,sys_user_role b WHERE a.id=b.userId and b.roleId=@roleId $s $o");
+            Sql sql = Sqls.create("SELECT a.*,c.name as unitname FROM sys_user a,sys_user_role b,sys_unit c WHERE a.unitid=c.id and a.id=b.userId and b.roleId=@roleId $s $o");
             sql.params().set("roleId", roleId);
             if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
                 sql.vars().set("s", " and a." + searchName + " like '%" + searchKeyword + "%'");

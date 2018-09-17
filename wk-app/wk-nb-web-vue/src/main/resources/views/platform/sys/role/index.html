@@ -350,17 +350,12 @@ layout("/layouts/platform.html"){
                     :show-overflow-tooltip="true">
             </el-table-column>
             <el-table-column
-                    prop="unit"
+                    prop="unitname"
                     label="所属单位"
                     header-align="center"
                     align="center"
                     :show-overflow-tooltip="true"
             >
-                <template slot-scope="scope">
-                    <span v-if="scope.row.unit!=null">
-                        {{scope.row.unit.name}}
-                    </span>
-                </template>
             </el-table-column>
             <el-table-column
                     sortable
