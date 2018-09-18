@@ -260,7 +260,7 @@ public class SysRoleController {
                 return Result.error("sys.role.code");
             }
             String[] ids = StringUtils.split(menuIds, ",");
-            if ("root".equals(role.getUnitid()))
+            if ("root".equals(role.getUnitid()) || "system".equals(role.getUnitid()))
                 role.setUnitid("");
             Sys_role r = sysRoleService.insert(role);
             for (String s : ids) {
@@ -347,7 +347,7 @@ public class SysRoleController {
                     return Result.error("sys.role.code");
                 }
             }
-            if ("root".equals(role.getUnitid()))
+            if ("root".equals(role.getUnitid()) || "system".equals(role.getUnitid()))
                 role.setUnitid("");
             role.setOpBy(StringUtil.getPlatformUid());
             role.setOpAt(Times.getTS());

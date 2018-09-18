@@ -7,13 +7,16 @@ import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
@@ -41,14 +44,32 @@ public class SysMenuController {
     @Ok("beetl:/platform/sys/menu/index.html")
     @RequiresPermissions("sys.manager.menu")
     public void index(HttpServletRequest req) {
-        req.setAttribute("list", sysMenuService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("location").asc("path")));
     }
 
-    @At
-    @Ok("beetl:/platform/sys/menu/add.html")
-    @RequiresPermissions("sys.manager.menu")
-    public Object add(@Param("pid") String pid, HttpServletRequest req) {
-        return Strings.isBlank(pid) ? null : sysMenuService.fetch(pid);
+    @At("/child")
+    @Ok("json")
+    @RequiresAuthentication
+    public Object child(@Param("pid") String pid, HttpServletRequest req) {
+        List<Sys_menu> list = new ArrayList<>();
+        List<NutMap> treeList = new ArrayList<>();
+        Cnd cnd = Cnd.NEW();
+        if (Strings.isBlank(pid)) {
+            cnd.and("parentId", "=", "").or("parentId", "is", null);
+        } else {
+            cnd.and("parentId", "=", pid);
+        }
+        cnd.asc("location").asc("path");
+        list = sysMenuService.query(cnd);
+        for (Sys_menu menu : list) {
+            if (sysMenuService.count(Cnd.where("parentId", "=", menu.getId())) > 0) {
+                menu.setHasChildren(true);
+            }
+            NutMap map = Lang.obj2nutmap(menu);
+            map.addv("expanded", false);
+            map.addv("children", new ArrayList<>());
+            treeList.add(map);
+        }
+        return Result.success().addData(treeList);
     }
 
     @At
@@ -129,9 +150,9 @@ public class SysMenuController {
         try {
             req.setAttribute("name", sysMenuService.fetch(menuId).getName());
             sysMenuService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", menuId));
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -143,9 +164,9 @@ public class SysMenuController {
         try {
             req.setAttribute("name", sysMenuService.fetch(menuId).getName());
             sysMenuService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", menuId));
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 

@@ -112,8 +112,8 @@ layout("/layouts/platform.html"){
                     :show-overflow-tooltip="true"
             >
                 <template slot-scope="scope">
-                    <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
-                    <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                    <i :id="'disabled_'+scope.row.id" v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                    <i :id="'disabled_'+scope.row.id" v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
                 </template>
             </el-table-column>
             <el-table-column
@@ -646,7 +646,12 @@ layout("/layouts/platform.html"){
                                 type: 'success'
                             });
                             self.pageForm.searchUnit = self.parentUnit[self.parentUnit.length - 1]||"";
-                            self.pageData();//加载当前页,不调用doSearch方法了
+                            if("disable" == command.type){
+                                $("#disabled_"+command.id).removeClass("text-success").addClass("text-danger");
+                            }
+                            if("enable" == command.type){
+                                $("#disabled_"+command.id).removeClass("text-danger").addClass("text-success");
+                            }
                         } else {
                             self.$message({
                                 message: data.msg,
