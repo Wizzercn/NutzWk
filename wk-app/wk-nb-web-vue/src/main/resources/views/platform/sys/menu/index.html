@@ -59,9 +59,9 @@ layout("/layouts/platform.html"){
             <el-table-column label="启用状态" header-align="center" prop="disabled" align="center"
                              :show-overflow-tooltip="true">
                 <template slot-scope="scope">
-                    <i :id="'disabled_'+scope.row.id" v-if="scope.row.disabled"
+                    <i v-if="scope.row.disabled"
                        class="fa fa-circle text-danger ml5"></i>
-                    <i :id="'disabled_'+scope.row.id" v-if="!scope.row.disabled"
+                    <i v-if="!scope.row.disabled"
                        class="fa fa-circle text-success ml5"></i>
                 </template>
             </el-table-column>
@@ -78,10 +78,10 @@ layout("/layouts/platform.html"){
                             <el-dropdown-item :command="{type:'add',id:scope.row.id,name:scope.row.name}">
                                 添加子菜单
                             </el-dropdown-item>
-                            <el-dropdown-item divided :command="{type:'enable',id:scope.row.id,name:scope.row.name}">
+                            <el-dropdown-item divided :command="{type:'enable',id:scope.row.id,name:scope.row.name,row:scope.row}">
                                 启用
                             </el-dropdown-item>
-                            <el-dropdown-item :command="{type:'disable',id:scope.row.id,name:scope.row.name}">
+                            <el-dropdown-item :command="{type:'disable',id:scope.row.id,name:scope.row.name,row:scope.row}">
                                 禁用
                             </el-dropdown-item>
                             <el-dropdown-item divided :command="{type:'edit',id:scope.row.id,name:scope.row.name}">
@@ -101,7 +101,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="新建菜单"
             :visible.sync="addDialogVisible"
-            width="40%">
+            width="60%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="parentId" label="上级菜单" label-width="80px">
                 <el-cascader
@@ -117,31 +117,31 @@ layout("/layouts/platform.html"){
                         placeholder="不选择则为顶级"
                 ></el-cascader>
             </el-form-item>
-            <el-form-item prop="type" label="权限类型">
-                <el-radio-group v-model="formData.type" size="mini">
-                    <el-radio label="menu">菜单</el-radio>
-                    <el-radio label="data">数据或按钮</el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item prop="name" :label="nameLabel">
-                <el-input maxlength="100" :placeholder="nameLabel"
+            <el-form-item prop="name" label="菜单名称">
+                <el-input maxlength="100" placeholder="菜单名称"
                           v-model="formData.name"
                           auto-complete="off" tabindex="3" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="code" label="权限标识">
-                <el-input maxlength="100" placeholder="权限标识"
+                <el-input maxlength="100" placeholder="权限标识,如 sys.manager.menu.add"
                           v-model="formData.code"
                           auto-complete="off" tabindex="4" type="text"></el-input>
             </el-form-item>
-            <el-form-item v-if="typeIsMenu" prop="url" label="URL">
+            <el-form-item prop="url" label="URL">
                 <el-input maxlength="100" placeholder="URL"
                           v-model="formData.url"
                           auto-complete="off" tabindex="5" type="text"></el-input>
             </el-form-item>
-            <el-form-item v-if="typeIsMenu" prop="icon" label="图标">
+            <el-form-item prop="icon" label="图标">
                 <el-input maxlength="100" placeholder="图标"
                           v-model="formData.icon"
                           auto-complete="off" tabindex="6" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="type" label="数据权限">
+                <el-radio-group @change="formRadioChange" v-model="formData.hasChildren" size="mini">
+                    <el-radio label="false">无</el-radio>
+                    <el-radio label="true">有</el-radio>
+                </el-radio-group>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -168,13 +168,13 @@ layout("/layouts/platform.html"){
                 editDialogVisible: false,
                 tableData: [],//后台取出的数据
                 treeData: [],//格式化tableData用于显示的数据
-                nameLabel: "菜单名称",
-                typeIsMenu: false,
                 formData: {
                     id: "",
                     parentId: "",
                     type: "menu",
                     target: "data-pjax",
+                    hasChildren:false
+
                 },
                 formRules: {
                     name: [
@@ -226,6 +226,9 @@ layout("/layouts/platform.html"){
                 self.menuLoadTree(pid, function (tree) {
                     self.menuTree(self.menuOptions, tree, pid);
                 });
+            },
+            formRadioChange:function(val){
+                console.log(typeof(val));
             },
             openAdd: function () {
                 var self = this;
@@ -306,10 +309,10 @@ layout("/layouts/platform.html"){
                                 type: 'success'
                             });
                             if ("disable" == command.type) {
-                                $("#disabled_" + command.id).removeClass("text-success").addClass("text-danger");
+                                command.row.disabled=true;
                             }
                             if ("enable" == command.type) {
-                                $("#disabled_" + command.id).removeClass("text-danger").addClass("text-success");
+                                command.row.disabled=false;
                             }
                         } else {
                             self.$message({

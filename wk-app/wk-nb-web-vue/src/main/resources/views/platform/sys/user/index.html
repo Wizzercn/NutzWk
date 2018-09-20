@@ -112,8 +112,8 @@ layout("/layouts/platform.html"){
                     :show-overflow-tooltip="true"
             >
                 <template slot-scope="scope">
-                    <i :id="'disabled_'+scope.row.id" v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
-                    <i :id="'disabled_'+scope.row.id" v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                    <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
                 </template>
             </el-table-column>
             <el-table-column
@@ -146,10 +146,10 @@ layout("/layouts/platform.html"){
                             <el-dropdown-item :command="{type:'reset',id:scope.row.id,loginname:scope.row.loginname}">
                                 重置密码
                             </el-dropdown-item>
-                            <el-dropdown-item divided :command="{type:'enable',id:scope.row.id}">
+                            <el-dropdown-item divided :command="{type:'enable',id:scope.row.id,row:scope.row}">
                                 启用
                             </el-dropdown-item>
-                            <el-dropdown-item :command="{type:'disable',id:scope.row.id}">
+                            <el-dropdown-item :command="{type:'disable',id:scope.row.id,row:scope.row}">
                                 禁用
                             </el-dropdown-item>
                             <el-dropdown-item divided :command="{type:'edit',id:scope.row.id}">
@@ -645,12 +645,11 @@ layout("/layouts/platform.html"){
                                 message: data.msg,
                                 type: 'success'
                             });
-                            self.pageForm.searchUnit = self.parentUnit[self.parentUnit.length - 1]||"";
-                            if("disable" == command.type){
-                                $("#disabled_"+command.id).removeClass("text-success").addClass("text-danger");
+                            if ("disable" == command.type) {
+                                command.row.disabled=true;
                             }
-                            if("enable" == command.type){
-                                $("#disabled_"+command.id).removeClass("text-danger").addClass("text-success");
+                            if ("enable" == command.type) {
+                                command.row.disabled=false;
                             }
                         } else {
                             self.$message({
