@@ -1,6 +1,7 @@
 package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_reply_news;
 import cn.wizzer.app.wx.modules.services.WxReplyNewsService;
 import cn.wizzer.framework.base.Result;
@@ -12,6 +13,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Times;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.adaptor.WhaleAdaptor;
@@ -53,6 +55,7 @@ public class WxReplyNewsController {
     //uploadifive上传文件后contentTypy改变,需要用WhaleAdaptor接收参数
     public Object addDo(@Param("..") Wx_reply_news news, HttpServletRequest req) {
         try {
+            news.setOpBy(StringUtil.getPlatformUid());
             wxReplyNewsService.insert(news);
             return Result.success("system.success");
         } catch (Exception e) {
@@ -75,6 +78,8 @@ public class WxReplyNewsController {
     //uploadifive上传文件后contentTypy改变,需要用WhaleAdaptor接收参数
     public Object editDo(@Param("..") Wx_reply_news news, HttpServletRequest req) {
         try {
+            news.setOpBy(StringUtil.getPlatformUid());
+            news.setOpAt(Times.getTS());
             wxReplyNewsService.updateIgnoreNull(news);
             return Result.success("system.success");
         } catch (Exception e) {

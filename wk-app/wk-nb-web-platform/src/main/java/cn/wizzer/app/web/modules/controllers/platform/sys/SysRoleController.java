@@ -120,6 +120,7 @@ public class SysRoleController {
             String[] ids = StringUtils.split(menuIds, ",");
             if ("root".equals(role.getUnitid()))
                 role.setUnitid("");
+            role.setOpBy(StringUtil.getPlatformUid());
             Sys_role r = sysRoleService.insert(role);
             for (String s : ids) {
                 if (!Strings.isEmpty(s)) {

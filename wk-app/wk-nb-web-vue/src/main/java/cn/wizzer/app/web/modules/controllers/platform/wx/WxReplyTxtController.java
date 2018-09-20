@@ -1,6 +1,7 @@
 package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_reply_txt;
 import cn.wizzer.app.wx.modules.services.WxReplyTxtService;
 import cn.wizzer.framework.base.Result;
@@ -50,6 +51,7 @@ public class WxReplyTxtController {
     @SLog(tag = "添加回复文本", msg = "文本标题:${args[0].title}")
     public Object addDo(@Param("..") Wx_reply_txt txt, HttpServletRequest req) {
         try {
+            txt.setOpBy(StringUtil.getPlatformUid());
             wxReplyTxtService.insert(txt);
             return Result.success("system.success");
         } catch (Exception e) {

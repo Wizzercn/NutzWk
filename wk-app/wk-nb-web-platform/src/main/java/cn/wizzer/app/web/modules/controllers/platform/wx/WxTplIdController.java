@@ -2,6 +2,7 @@ package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_tpl_id;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
@@ -77,6 +78,7 @@ public class WxTplIdController {
 			WxResp wxResp=wxApi2.template_api_add_template(wxTplId.getId());
 			if (wxResp.errcode() == 0) {
 				wxTplId.setTemplate_id(wxResp.template_id());
+				wxTplId.setOpBy(StringUtil.getPlatformUid());
 				wxTplIdService.insert(wxTplId);
 				return Result.success("system.success");
 			}

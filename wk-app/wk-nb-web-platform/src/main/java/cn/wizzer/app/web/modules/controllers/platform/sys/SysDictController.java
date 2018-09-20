@@ -57,6 +57,7 @@ public class SysDictController {
     @SLog(tag = "新建字典", msg = "字典名称:${args[0].name}")
     public Object addDo(@Param("..") Sys_dict dict, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
+            dict.setOpBy(StringUtil.getPlatformUid());
             dictService.save(dict, parentId);
             return Result.success("system.success");
         } catch (Exception e) {

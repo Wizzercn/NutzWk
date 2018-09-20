@@ -86,6 +86,8 @@ public class SysUserController {
             user.setLoginPjax(true);
             user.setLoginCount(0);
             user.setLoginAt(0L);
+            user.setOpBy(StringUtil.getPlatformUid());
+            user.setOpAt(Times.getTS());
             sysUserService.insert(user);
             return Result.success("system.success");
         } catch (Exception e) {

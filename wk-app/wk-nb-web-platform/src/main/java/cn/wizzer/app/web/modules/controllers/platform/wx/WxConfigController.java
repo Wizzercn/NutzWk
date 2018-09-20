@@ -2,6 +2,7 @@ package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.framework.base.Result;
@@ -55,6 +56,7 @@ public class WxConfigController {
     @SLog(tag = "添加帐号", msg = "帐号名称:${args[0].appname}")
     public Object addDo(@Param("..") Wx_config conf, HttpServletRequest req) {
         try {
+            conf.setOpBy(StringUtil.getPlatformUid());
             wxConfigService.insert(conf);
             return Result.success("system.success");
         } catch (Exception e) {

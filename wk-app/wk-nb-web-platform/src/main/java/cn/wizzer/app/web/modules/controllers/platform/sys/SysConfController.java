@@ -4,6 +4,7 @@ import cn.wizzer.app.sys.modules.models.Sys_config;
 import cn.wizzer.app.sys.modules.services.SysConfigService;
 import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
@@ -55,6 +56,7 @@ public class SysConfController {
     @SLog(tag = "添加参数", msg = "${args[0].configKey}:${args[0].configValue}")
     public Object addDo(@Param("..") Sys_config conf) {
         try {
+            conf.setOpBy(StringUtil.getPlatformUid());
             if (sysConfigService.insert(conf) != null) {
                 pubSubService.fire("nutzwk:web:platform","sys_config");
             }

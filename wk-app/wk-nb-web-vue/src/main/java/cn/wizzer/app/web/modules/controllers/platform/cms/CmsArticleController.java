@@ -8,6 +8,7 @@ import cn.wizzer.app.cms.modules.services.CmsChannelService;
 import cn.wizzer.app.cms.modules.services.CmsSiteService;
 import cn.wizzer.app.sys.modules.models.Sys_user;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
@@ -127,6 +128,7 @@ public class CmsArticleController {
             article.setEndAt(Times.parse(sdf, endDate).getTime() / 1000);
             article.setSiteid(siteid);
             article.setStatus(0);
+            article.setOpBy(StringUtil.getPlatformUid());
             cmsArticleService.insert(article);
             cmsArticleService.clearCache();
             return Result.success("system.success");

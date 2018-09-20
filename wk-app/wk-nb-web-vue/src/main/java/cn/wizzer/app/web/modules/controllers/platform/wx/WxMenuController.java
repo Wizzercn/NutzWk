@@ -4,6 +4,7 @@ import cn.wizzer.app.cms.modules.services.CmsArticleService;
 import cn.wizzer.app.cms.modules.services.CmsChannelService;
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_menu;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
@@ -120,6 +121,7 @@ public class WxMenuController {
             if (Strings.isBlank(menu.getWxid())) {
                 return Result.error("请选择公众号");
             }
+            menu.setOpBy(StringUtil.getPlatformUid());
             wxMenuService.save(menu, parentId);
             return Result.success("system.success");
         } catch (Exception e) {

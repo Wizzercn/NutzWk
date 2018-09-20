@@ -2,6 +2,7 @@ package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_mass;
 import cn.wizzer.app.wx.modules.models.Wx_mass_news;
@@ -128,6 +129,7 @@ public class WxMassController {
     @SLog(tag = "添加图文", msg = "图文标题:${args[0].title}")
     public Object addDo(@Param("..") Wx_mass_news news, HttpServletRequest req) {
         try {
+            news.setOpBy(StringUtil.getPlatformUid());
             wxMassNewsService.insert(news);
             return Result.success("system.success");
         } catch (Exception e) {

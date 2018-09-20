@@ -1,6 +1,7 @@
 package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_reply_news;
 import cn.wizzer.app.wx.modules.services.WxReplyNewsService;
 import cn.wizzer.framework.base.Result;
@@ -53,6 +54,7 @@ public class WxReplyNewsController {
     //uploadifive上传文件后contentTypy改变,需要用WhaleAdaptor接收参数
     public Object addDo(@Param("..") Wx_reply_news news, HttpServletRequest req) {
         try {
+            news.setOpBy(StringUtil.getPlatformUid());
             wxReplyNewsService.insert(news);
             return Result.success("system.success");
         } catch (Exception e) {

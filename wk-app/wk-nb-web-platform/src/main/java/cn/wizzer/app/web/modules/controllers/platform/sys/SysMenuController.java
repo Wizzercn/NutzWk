@@ -64,7 +64,8 @@ public class SysMenuController {
             if ("data".equals(menu.getType())) {
                 menu.setIsShow(false);
             } else menu.setIsShow(true);
-            sysMenuService.save(menu, parentId);
+            menu.setOpBy(StringUtil.getPlatformUid());
+            sysMenuService.save(menu, parentId,null);
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");

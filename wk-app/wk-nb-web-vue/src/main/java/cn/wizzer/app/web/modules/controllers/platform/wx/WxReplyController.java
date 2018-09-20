@@ -1,6 +1,7 @@
 package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_reply;
 import cn.wizzer.app.wx.modules.models.Wx_reply_news;
@@ -89,6 +90,7 @@ public class WxReplyController {
                     return Result.error("关键词已存在");
                 }
             }
+            reply.setOpBy(StringUtil.getPlatformUid());
             wxReplyService.insert(reply);
             if ("news".equals(reply.getMsgType())) {
                 String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
