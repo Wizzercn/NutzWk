@@ -13,6 +13,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
@@ -107,20 +108,30 @@ public class SysMenuController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.menu.add")
-    @SLog(tag = "新建菜单", msg = "菜单名称:${args[0].name}")
-    public Object addDo(@Param("..") Sys_menu menu, @Param("parentId") String parentId, HttpServletRequest req) {
+    @SLog(tag = "新建菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
+    public Object addDo(@Param("..") NutMap nutMap, HttpServletRequest req) {
         try {
-            int num = sysMenuService.count(Cnd.where("permission", "=", menu.getPermission().trim()));
+            Sys_menu sysMenu = nutMap.getAs("menu", Sys_menu.class);
+            List<NutMap> list = Json.fromJsonAsList(NutMap.class, nutMap.getString("buttons"));
+            int num = sysMenuService.count(Cnd.where("permission", "=", sysMenu.getPermission().trim()));
             if (num > 0) {
                 return Result.error("sys.role.code");
             }
-            if ("data".equals(menu.getType())) {
-                menu.setIsShow(false);
-            } else menu.setIsShow(true);
-            sysMenuService.save(menu, parentId);
-            return Result.success("system.success");
+            for (NutMap map : list) {
+                num = sysMenuService.count(Cnd.where("permission", "=", map.getString("permission", "").trim()));
+                if (num > 0) {
+                    return Result.error("sys.role.code");
+                }
+            }
+            sysMenu.setHasChildren(false);
+            sysMenu.setIsShow(true);
+            sysMenu.setOpBy(StringUtil.getPlatformUid());
+            sysMenuService.save(sysMenu, sysMenu.getParentId(), list);
+            req.setAttribute("name", sysMenu.getName());
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            e.printStackTrace();
+            return Result.error();
         }
     }
 

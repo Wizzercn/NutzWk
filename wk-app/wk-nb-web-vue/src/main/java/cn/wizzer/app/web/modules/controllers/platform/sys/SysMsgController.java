@@ -102,6 +102,7 @@ public class SysMsgController {
     public Object addDo(@Param("..") Sys_msg sysMsg, @Param("users") String[] users, HttpServletRequest req) {
         try {
             sysMsg.setSendAt(Times.getTS());
+            sysMsg.setOpBy(StringUtil.getPlatformUid());
             Sys_msg sys_msg = sysMsgService.saveMsg(sysMsg, users);
             if (sys_msg != null) {
                 wkNotifyService.notify(sys_msg, users);

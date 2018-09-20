@@ -62,6 +62,7 @@ public class SysTaskController {
     @RequiresPermissions("sys.manager.task.add")
     public Object addDo(@Param("..") Sys_task task, HttpServletRequest req) {
         try {
+            task.setOpBy(StringUtil.getPlatformUid());
             Sys_task sysTask=sysTaskService.insert(task);
             taskPlatformService.add(sysTask.getId(), sysTask.getId(), sysTask.getJobClass(), sysTask.getCron(),
                     sysTask.getNote(), sysTask.getData());

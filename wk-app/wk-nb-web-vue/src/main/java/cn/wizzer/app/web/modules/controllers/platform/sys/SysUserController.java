@@ -97,6 +97,7 @@ public class SysUserController {
             user.setPassword(new Sha256Hash(user.getPassword(), ByteSource.Util.bytes(salt), 1024).toHex());
             user.setLoginPjax(true);
             user.setLoginCount(0);
+            user.setOpBy(StringUtil.getPlatformUid());
             sysUserService.insert(user);
             return Result.success();
         } catch (Exception e) {
