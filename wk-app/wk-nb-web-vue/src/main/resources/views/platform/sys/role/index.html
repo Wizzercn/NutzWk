@@ -75,8 +75,8 @@ layout("/layouts/platform.html"){
                     :show-overflow-tooltip="true"
             >
                 <template slot-scope="scope">
-                    <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
-                    <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                    <i :id="'disabled_'+scope.row.id" v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                    <i :id="'disabled_'+scope.row.id" v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
                 </template>
             </el-table-column>
             <el-table-column
@@ -134,7 +134,7 @@ layout("/layouts/platform.html"){
             title="新建角色"
             :visible.sync="addDialogVisible"
             width="70%">
-        <el-form :model="form" ref="addForm" :rules="formRules" size="small" label-width="80px">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item class="is-required" prop="parentUnit" label="所属单位" label-width="80px">
                 <el-cascader
                         style="width: 100%"
@@ -151,17 +151,17 @@ layout("/layouts/platform.html"){
             </el-form-item>
             <el-form-item prop="name" label="角色名称">
                 <el-input maxlength="50" placeholder="角色名称"
-                          v-model="form.name"
+                          v-model="formData.name"
                           auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="code" label="角色标识">
                 <el-input maxlength="150" placeholder="角色标识"
-                          v-model="form.code"
+                          v-model="formData.code"
                           auto-complete="off" tabindex="3" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="disabled" label="启用状态">
                 <el-switch
-                        v-model="form.disabled"
+                        v-model="formData.disabled"
                         active-color="#ff4949"
                         inactive-color="#13ce66">
                 </el-switch>
@@ -195,20 +195,20 @@ layout("/layouts/platform.html"){
             title="修改角色"
             :visible.sync="editDialogVisible"
             width="40%">
-        <el-form :model="form" ref="editForm" :rules="formRules" size="small" label-width="80px">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="name" label="角色名称">
                 <el-input maxlength="50" placeholder="角色名称"
-                          v-model="form.name"
+                          v-model="formData.name"
                           auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="code" label="角色标识">
                 <el-input maxlength="150" placeholder="角色标识"
-                          v-model="form.code"
+                          v-model="formData.code"
                           auto-complete="off" tabindex="3" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="disabled" label="启用状态">
                 <el-switch
-                        v-model="form.disabled"
+                        v-model="formData.disabled"
                         active-color="#ff4949"
                         inactive-color="#13ce66">
                 </el-switch>
@@ -366,8 +366,8 @@ layout("/layouts/platform.html"){
                     :show-overflow-tooltip="true"
             >
                 <template slot-scope="scope">
-                    <i :id="'disabled_'+scope.row.id" v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
-                    <i :id="'disabled_'+scope.row.id" v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                    <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
                 </template>
             </el-table-column>
             <el-table-column
@@ -443,7 +443,7 @@ layout("/layouts/platform.html"){
                     pageOrderName: "",
                     pageOrderBy: ""
                 },
-                form: {
+                formData: {
                     id: "",
                     unitid: "",
                     disabled: false,
@@ -651,7 +651,7 @@ layout("/layouts/platform.html"){
             openAdd: function () {
                 var self = this;
                 this.addDialogVisible = true;
-                this.form = {};//打开新增窗口,表单先清空
+                this.formData = {};//打开新增窗口,表单先清空
                 if (this.$refs["addForm"])
                     this.$refs["addForm"].resetFields();
                 this.addMenuLoad();
@@ -660,9 +660,9 @@ layout("/layouts/platform.html"){
                 var self = this;
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {
-                        self.form.menuIds = (self.$refs["addMenuTree"].getCheckedKeys()).toString();
-                        self.form.unitid = self.parentUnit[self.parentUnit.length - 1] || "";
-                        $.post(base + "/platform/sys/role/addDo", self.form, function (data) {
+                        self.formData.menuIds = (self.$refs["addMenuTree"].getCheckedKeys()).toString();
+                        self.formData.unitid = self.parentUnit[self.parentUnit.length - 1] || "";
+                        $.post(base + "/platform/sys/role/addDo", self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
@@ -684,7 +684,7 @@ layout("/layouts/platform.html"){
                 var self = this;
                 self.$refs["editForm"].validate(function (valid) {
                     if (valid) {
-                        $.post(base + "/platform/sys/role/editDo", self.form, function (data) {
+                        $.post(base + "/platform/sys/role/editDo", self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
@@ -821,7 +821,7 @@ layout("/layouts/platform.html"){
                 if ("edit" == command.type) {
                     $.post(base + "/platform/sys/role/edit/" + command.id, {}, function (data) {
                         if (data.code == 0) {
-                            self.form = data.data;//加载后台表单数据
+                            self.formData = data.data;//加载后台表单数据
                             self.editDialogVisible = true;//打开编辑窗口
                         } else {
                             self.$message({

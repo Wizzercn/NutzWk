@@ -68,7 +68,7 @@ layout("/layouts/platform.html"){
             title="新建单位"
             :visible.sync="addDialogVisible"
             width="40%">
-        <el-form :model="form" ref="addForm" :rules="formRules" size="small" label-width="80px">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="parentId" label="上级单位" label-width="80px">
                 <el-cascader
                         style="width: 100%"
@@ -85,41 +85,41 @@ layout("/layouts/platform.html"){
             </el-form-item>
             <el-form-item prop="name" label="单位名称">
                 <el-input maxlength="100" placeholder="单位名称"
-                          v-model="form.name"
+                          v-model="formData.name"
                           auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="aliasName" label="单位别名">
                 <el-input maxlength="100" placeholder="单位别名"
-                          v-model="form.aliasName"
+                          v-model="formData.aliasName"
                           auto-complete="off" tabindex="3" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="unitcode" label="机构编码">
                 <el-input maxlength="100" placeholder="机构编码"
-                          v-model="form.unitcode"
+                          v-model="formData.unitcode"
                           auto-complete="off" tabindex="4" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="address" label="单位地址">
                 <el-input maxlength="100" placeholder="单位地址"
-                          v-model="form.address"
+                          v-model="formData.address"
                           auto-complete="off" tabindex="5" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="telephone" label="联系电话">
                 <el-input maxlength="100" placeholder="联系电话"
-                          v-model="form.telephone"
+                          v-model="formData.telephone"
                           auto-complete="off" tabindex="6" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="email" label="单位邮箱">
                 <el-input maxlength="100" placeholder="单位邮箱"
-                          v-model="form.email"
+                          v-model="formData.email"
                           auto-complete="off" tabindex="7" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="website" label="单位网站">
                 <el-input maxlength="100" placeholder="单位网站"
-                          v-model="form.website"
+                          v-model="formData.website"
                           auto-complete="off" tabindex="8" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="note" label="单位介绍">
-                <el-input type="textarea" v-model="form.note"></el-input>
+                <el-input type="textarea" v-model="formData.note"></el-input>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -131,44 +131,44 @@ layout("/layouts/platform.html"){
             title="编辑单位"
             :visible.sync="editDialogVisible"
             width="40%">
-        <el-form :model="form" ref="editForm" :rules="formRules" size="small" label-width="80px">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="name" label="单位名称">
                 <el-input maxlength="100" placeholder="单位名称"
-                          v-model="form.name"
+                          v-model="formData.name"
                           auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="aliasName" label="单位别名">
                 <el-input maxlength="100" placeholder="单位别名"
-                          v-model="form.aliasName"
+                          v-model="formData.aliasName"
                           auto-complete="off" tabindex="3" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="unitcode" label="机构编码">
                 <el-input maxlength="100" placeholder="机构编码"
-                          v-model="form.unitcode"
+                          v-model="formData.unitcode"
                           auto-complete="off" tabindex="4" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="address" label="单位地址">
                 <el-input maxlength="100" placeholder="单位地址"
-                          v-model="form.address"
+                          v-model="formData.address"
                           auto-complete="off" tabindex="5" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="telephone" label="联系电话">
                 <el-input maxlength="100" placeholder="联系电话"
-                          v-model="form.telephone"
+                          v-model="formData.telephone"
                           auto-complete="off" tabindex="6" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="email" label="单位邮箱">
                 <el-input maxlength="100" placeholder="单位邮箱"
-                          v-model="form.email"
+                          v-model="formData.email"
                           auto-complete="off" tabindex="7" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="website" label="单位网站">
                 <el-input maxlength="100" placeholder="单位网站"
-                          v-model="form.website"
+                          v-model="formData.website"
                           auto-complete="off" tabindex="8" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="note" label="单位介绍">
-                <el-input type="textarea" v-model="form.note"></el-input>
+                <el-input type="textarea" v-model="formData.note"></el-input>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -186,7 +186,7 @@ layout("/layouts/platform.html"){
                 editDialogVisible: false,
                 tableData: [],//后台取出的数据
                 treeData: [],//格式化tableData用于显示的数据
-                form: {
+                formData: {
                     id: "",
                     parentId: ""
                 },
@@ -245,7 +245,7 @@ layout("/layouts/platform.html"){
             openAdd: function () {
                 var self = this;
                 this.addDialogVisible = true;
-                this.form = {};//打开新增窗口,表单先清空
+                this.formData = {};//打开新增窗口,表单先清空
                 this.parentUnit=[];
                 this.loadTree("", function (val) {
                     self.options = val;
@@ -256,8 +256,8 @@ layout("/layouts/platform.html"){
                 var url = base + "/platform/sys/unit/addDo";
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
-                        self.form.parentId = self.parentUnit[self.parentUnit.length - 1]||"";
-                        $.post(url, self.form, function (data) {
+                        self.formData.parentId = self.parentUnit[self.parentUnit.length - 1]||"";
+                        $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
@@ -280,8 +280,8 @@ layout("/layouts/platform.html"){
                 var url = base + "/platform/sys/unit/editDo";
                 self.$refs["editForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
-                        self.form.parentId = self.parentUnit[self.parentUnit.length - 1];
-                        $.post(url, self.form, function (data) {
+                        self.formData.parentId = self.parentUnit[self.parentUnit.length - 1];
+                        $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
@@ -348,7 +348,7 @@ layout("/layouts/platform.html"){
                 if ("edit" == command.type) {
                     $.post(base + "/platform/sys/unit/edit/" + command.id, {}, function (data) {
                         if (data.code == 0) {
-                            self.form = data.data;//加载后台表单数据
+                            self.formData = data.data;//加载后台表单数据
                             self.editDialogVisible = true;//打开编辑窗口
                         } else {
                             self.$message({

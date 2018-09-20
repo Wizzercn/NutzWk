@@ -180,7 +180,7 @@ layout("/layouts/platform.html"){
             title="新建用户"
             :visible.sync="addDialogVisible"
             width="40%">
-        <el-form :model="form" ref="addForm" :rules="formRules" size="small" label-width="80px">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item class="is-required" prop="parentUnit" label="所属单位" label-width="80px">
                 <el-cascader
                         style="width: 100%"
@@ -197,36 +197,36 @@ layout("/layouts/platform.html"){
             </el-form-item>
             <el-form-item prop="loginname" label="用户名">
                 <el-input maxlength="100" placeholder="用户名"
-                          v-model="form.loginname"
+                          v-model="formData.loginname"
                           auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="username" label="姓名">
                 <el-input maxlength="20" placeholder="姓名"
-                          v-model="form.username"
+                          v-model="formData.username"
                           auto-complete="off" tabindex="3" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="password" label="登录密码">
-                <el-input maxlength="20" placeholder="登录密码" v-model="form.password"
+                <el-input maxlength="20" placeholder="登录密码" v-model="formData.password"
                           auto-complete="off" tabindex="4" type="password"></el-input>
             </el-form-item>
             <el-form-item prop="passwordAgain" label="确认密码">
                 <el-input maxlength="20" placeholder="再输一次密码"
-                          v-model="form.passwordAgain"
+                          v-model="formData.passwordAgain"
                           auto-complete="off" tabindex="5" type="password"></el-input>
             </el-form-item>
             <el-form-item prop="mobile" label="手机号码">
                 <el-input maxlength="20" placeholder="手机号码"
-                          v-model="form.mobile"
+                          v-model="formData.mobile"
                           auto-complete="off" tabindex="6" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="email" label="单位邮箱">
                 <el-input maxlength="100" placeholder="单位邮箱"
-                          v-model="form.email"
+                          v-model="formData.email"
                           auto-complete="off" tabindex="7" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="disabled" label="启用状态">
                 <el-switch
-                        v-model="form.disabled"
+                        v-model="formData.disabled"
                         active-color="#ff4949"
                         inactive-color="#13ce66">
                 </el-switch>
@@ -241,28 +241,28 @@ layout("/layouts/platform.html"){
             title="编辑用户"
             :visible.sync="editDialogVisible"
             width="40%">
-        <el-form :model="form" ref="editForm" :rules="editRules" size="small" label-width="80px">
+        <el-form :model="formData" ref="editForm" :rules="editRules" size="small" label-width="80px">
             <el-form-item prop="loginname" label="用户名">
-                {{form.loginname}}
+                {{formData.loginname}}
             </el-form-item>
             <el-form-item prop="username" label="姓名">
                 <el-input maxlength="20" placeholder="姓名"
-                          v-model="form.username"
+                          v-model="formData.username"
                           auto-complete="off" tabindex="3" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="mobile" label="手机号码">
                 <el-input maxlength="20" placeholder="手机号码"
-                          v-model="form.mobile"
+                          v-model="formData.mobile"
                           auto-complete="off" tabindex="6" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="email" label="单位邮箱">
                 <el-input maxlength="100" placeholder="单位邮箱"
-                          v-model="form.email"
+                          v-model="formData.email"
                           auto-complete="off" tabindex="7" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="disabled" label="启用状态">
                 <el-switch
-                        v-model="form.disabled"
+                        v-model="formData.disabled"
                         active-color="#ff4949"
                         inactive-color="#13ce66">
                 </el-switch>
@@ -336,7 +336,7 @@ layout("/layouts/platform.html"){
                 }
             };
             var validatePass = function (rule, value, callback) {
-                if (value !== self.form.password) {
+                if (value !== self.formData.password) {
                     callback(new Error('两次输入密码不一致!'));
                 } else {
                     callback();
@@ -372,7 +372,7 @@ layout("/layouts/platform.html"){
                     pageOrderName: "",
                     pageOrderBy: ""
                 },
-                form: {
+                formData: {
                     id: "",
                     unitid: "",
                     disabled: false
@@ -512,7 +512,7 @@ layout("/layouts/platform.html"){
             openAdd: function () {
                 var self = this;
                 this.addDialogVisible = true;
-                this.form = {};//打开新增窗口,表单先清空
+                this.formData = {};//打开新增窗口,表单先清空
                 if (this.$refs["addForm"])
                     this.$refs["addForm"].resetFields();
             },
@@ -520,8 +520,8 @@ layout("/layouts/platform.html"){
                 var self = this;
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {
-                        self.form.unitid = self.parentUnit[self.parentUnit.length - 1]||"";
-                        $.post(base + "/platform/sys/user/addDo", self.form, function (data) {
+                        self.formData.unitid = self.parentUnit[self.parentUnit.length - 1]||"";
+                        $.post(base + "/platform/sys/user/addDo", self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
@@ -544,7 +544,7 @@ layout("/layouts/platform.html"){
                 var self = this;
                 self.$refs["editForm"].validate(function (valid) {
                     if (valid) {
-                        $.post(base + "/platform/sys/user/editDo", self.form, function (data) {
+                        $.post(base + "/platform/sys/user/editDo", self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
@@ -663,7 +663,7 @@ layout("/layouts/platform.html"){
                 if ("edit" == command.type) {
                     $.post(base + "/platform/sys/user/edit/" + command.id, {}, function (data) {
                         if (data.code == 0) {
-                            self.form = data.data;//加载后台表单数据
+                            self.formData = data.data;//加载后台表单数据
                             self.editDialogVisible = true;//打开编辑窗口
                         } else {
                             self.$message({

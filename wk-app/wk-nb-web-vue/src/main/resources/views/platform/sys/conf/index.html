@@ -73,21 +73,21 @@ layout("/layouts/platform.html"){
             title="新增参数"
             :visible.sync="addDialogVisible"
             width="40%">
-        <el-form :model="form" ref="addForm" :rules="formRules" label-width="80px">
+        <el-form :model="formData" ref="addForm" :rules="formRules" label-width="80px">
             <el-form-item prop="configKey" label="参数名">
                 <el-input maxlength="100" placeholder="参数名"
-                          v-model="form.configKey"
+                          v-model="formData.configKey"
                           auto-complete="off" tabindex="1" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="configValue" label="参数值">
                 <el-form-item prop="configValue">
                     <el-input maxlength="100" placeholder="参数值"
-                              v-model="form.configValue"
+                              v-model="formData.configValue"
                               auto-complete="off" tabindex="2" type="text"></el-input>
                 </el-form-item>
             </el-form-item>
             <el-form-item prop="note" label="说 明">
-                <el-input type="textarea" v-model="form.note"></el-input>
+                <el-input type="textarea" v-model="formData.note"></el-input>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -99,19 +99,19 @@ layout("/layouts/platform.html"){
             title="修改参数"
             :visible.sync="editDialogVisible"
             width="40%">
-        <el-form :model="form" ref="editForm" :rules="formRules" label-width="80px">
+        <el-form :model="formData" ref="editForm" :rules="formRules" label-width="80px">
             <el-form-item prop="configKey" label="参数名">
                 <el-input maxlength="100" placeholder="参数名"
-                          v-model="form.configKey"
+                          v-model="formData.configKey"
                           auto-complete="off" tabindex="1" type="text" disabled></el-input>
             </el-form-item>
             <el-form-item prop="configValue" label="参数值">
                 <el-input maxlength="100" placeholder="参数值"
-                          v-model="form.configValue"
+                          v-model="formData.configValue"
                           auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="note" label="说 明">
-                <el-input type="textarea" v-model="form.note"></el-input>
+                <el-input type="textarea" v-model="formData.note"></el-input>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -133,7 +133,7 @@ layout("/layouts/platform.html"){
                 pageOrderName: "",
                 pageOrderBy: "",
                 totalCount: 0,
-                form: {
+                formData: {
                     configKey: "",
                     configValue: "",
                     note: ""
@@ -151,14 +151,14 @@ layout("/layouts/platform.html"){
         methods: {
             openAdd: function () {
                 this.addDialogVisible = true;
-                this.form = {};//打开新增窗口,表单先清空
+                this.formData = {};//打开新增窗口,表单先清空
             },
             doAdd: function () {
                 var self = this;
                 var url = base + "/platform/sys/conf/addDo";
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
-                        $.post(url, self.form, function (data) {
+                        $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
@@ -181,7 +181,7 @@ layout("/layouts/platform.html"){
                 var url = base + "/platform/sys/conf/editDo";
                 self.$refs["editForm"].validate(function (valid) {
                     if (valid) {
-                        $.post(url, self.form, function (data) {
+                        $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
@@ -238,7 +238,7 @@ layout("/layouts/platform.html"){
                 if ("edit" == command.type) {
                     $.post(base + "/platform/sys/conf/edit/" + command.id, {}, function (data) {
                         if (data.code == 0) {
-                            self.form = data.data;//加载后台表单数据
+                            self.formData = data.data;//加载后台表单数据
                             self.editDialogVisible = true;//打开编辑窗口
                         } else {
                             self.$message({

@@ -72,6 +72,38 @@ public class SysMenuController {
         return Result.success().addData(treeList);
     }
 
+    @At("/tree")
+    @Ok("json")
+    @RequiresAuthentication
+    public Object tree(@Param("pid") String pid, HttpServletRequest req) {
+        try {
+            List<NutMap> treeList = new ArrayList<>();
+            if (Strings.isBlank(pid)) {
+                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单");
+                treeList.add(root);
+            }
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isBlank(pid)) {
+                cnd.and("parentId", "=", "").or("parentId", "is", null);
+            } else {
+                cnd.and("parentId", "=", pid);
+            }
+            cnd.and("type", "=", "menu");
+            cnd.asc("location").asc("path");
+            List<Sys_menu> list = sysMenuService.query(cnd);
+            for (Sys_menu menu : list) {
+                NutMap map = NutMap.NEW().addv("value", menu.getId()).addv("label", menu.getName());
+                if (menu.isHasChildren()) {
+                    map.addv("children", new ArrayList<>());
+                }
+                treeList.add(map);
+            }
+            return Result.success().addData(treeList);
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.menu.add")
@@ -170,49 +202,6 @@ public class SysMenuController {
         }
     }
 
-    @At
-    @Ok("json")
-    @RequiresPermissions("sys.manager.menu")
-    public Object tree(@Param("pid") String pid) {
-        Cnd cnd = Cnd.NEW();
-        if (Strings.isBlank(pid)) {
-            cnd.and(Cnd.exps("parentId", "=", "").or("parentId", "is", null));
-        } else {
-            cnd.and("parentId", "=", pid);
-        }
-        cnd.and("type", "=", "menu");
-        cnd.asc("location").asc("path");
-        List<Sys_menu> list = sysMenuService.query(cnd);
-        List<Map<String, Object>> tree = new ArrayList<>();
-        for (Sys_menu menu : list) {
-            Map<String, Object> obj = new HashMap<>();
-            obj.put("id", menu.getId());
-            obj.put("text", menu.getName());
-            obj.put("children", menu.isHasChildren());
-            tree.add(obj);
-        }
-        return tree;
-    }
-
-    @At("/child/?")
-    @Ok("beetl:/platform/sys/menu/child.html")
-    @RequiresPermissions("sys.manager.menu")
-    public Object child(String id) {
-        Sys_menu m = sysMenuService.fetch(id);
-        List<Sys_menu> list = new ArrayList<>();
-        List<Sys_menu> menus = sysMenuService.query(Cnd.where("parentId", "=", id).asc("location").asc("path"));
-        List<Sys_menu> datas = sysMenuService.query(Cnd.where("path", "like", Strings.sBlank(m.getPath()) + "________").and("type", "=", "data").asc("location").asc("path"));
-        for (Sys_menu menu : menus) {
-            for (Sys_menu bt : datas) {
-                if (menu.getPath().equals(bt.getPath().substring(0, bt.getPath().length() - 4))) {
-                    menu.setHasChildren(true);
-                    break;
-                }
-            }
-            list.add(menu);
-        }
-        return list;
-    }
 
     @At
     @Ok("beetl:/platform/sys/menu/sort.html")

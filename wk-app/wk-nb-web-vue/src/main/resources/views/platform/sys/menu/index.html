@@ -59,8 +59,10 @@ layout("/layouts/platform.html"){
             <el-table-column label="启用状态" header-align="center" prop="disabled" align="center"
                              :show-overflow-tooltip="true">
                 <template slot-scope="scope">
-                    <i :id="'disabled_'+scope.row.id" v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
-                    <i :id="'disabled_'+scope.row.id" v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                    <i :id="'disabled_'+scope.row.id" v-if="scope.row.disabled"
+                       class="fa fa-circle text-danger ml5"></i>
+                    <i :id="'disabled_'+scope.row.id" v-if="!scope.row.disabled"
+                       class="fa fa-circle text-success ml5"></i>
                 </template>
             </el-table-column>
 
@@ -96,32 +98,145 @@ layout("/layouts/platform.html"){
         </el-table>
 
     </el-row>
+    <el-dialog
+            title="新建菜单"
+            :visible.sync="addDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="parentId" label="上级菜单" label-width="80px">
+                <el-cascader
+                        style="width: 100%"
+                        tabindex="1"
+                        :options="menuOptions"
+                        :show-all-levels="false"
+                        v-model="parentMenu"
+                        :fetch-suggestions="menuQuery"
+                        @active-item-change="menuChange"
+                        @change="menuChange2"
+                        @select="menuSelect"
+                        placeholder="不选择则为顶级"
+                ></el-cascader>
+            </el-form-item>
+            <el-form-item prop="type" label="权限类型">
+                <el-radio-group v-model="formData.type" size="mini">
+                    <el-radio label="menu">菜单</el-radio>
+                    <el-radio label="data">数据或按钮</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item prop="name" :label="nameLabel">
+                <el-input maxlength="100" :placeholder="nameLabel"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="code" label="权限标识">
+                <el-input maxlength="100" placeholder="权限标识"
+                          v-model="formData.code"
+                          auto-complete="off" tabindex="4" type="text"></el-input>
+            </el-form-item>
+            <el-form-item v-if="typeIsMenu" prop="url" label="URL">
+                <el-input maxlength="100" placeholder="URL"
+                          v-model="formData.url"
+                          auto-complete="off" tabindex="5" type="text"></el-input>
+            </el-form-item>
+            <el-form-item v-if="typeIsMenu" prop="icon" label="图标">
+                <el-input maxlength="100" placeholder="图标"
+                          v-model="formData.icon"
+                          auto-complete="off" tabindex="6" type="text"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="addDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doAdd">确 定</el-button>
+        </span>
+    </el-dialog>
 
 </div>
 <script>
     new Vue({
         el: "#app",
         data: function () {
+            var validateName = function (rule, value, callback) {
+                var regex = new RegExp("^[a-zA-Z][a-zA-Z0-9_]{1,49}$");
+                if (!regex.test(value)) {
+                    callback(new Error('角色标识以字母开头2-50字,允许使用字母/数字/下划线'));
+                } else {
+                    callback();
+                }
+            };
             return {
                 addDialogVisible: false,
                 editDialogVisible: false,
                 tableData: [],//后台取出的数据
                 treeData: [],//格式化tableData用于显示的数据
-                form: {
+                nameLabel: "菜单名称",
+                typeIsMenu: false,
+                formData: {
                     id: "",
-                    parentId: ""
+                    parentId: "",
+                    type: "menu",
+                    target: "data-pjax",
                 },
                 formRules: {
                     name: [
                         {required: true, message: '菜单名称', trigger: 'blur'}
+                    ],
+                    code: [
+                        {required: true, message: '权限标识', trigger: ['blur', 'change']},
+                        {validator: validateName, trigger: ['blur', 'change']}
                     ]
                 },
-                options: [],
-                parentUnit: []
+                menuOptions: [],
+                parentMenu: []
             }
         },
         methods: {
+            menuLoadTree: function (val, cb) {
+                var url = base + "/platform/sys/menu/tree";
+                $.post(url, {pid: val}, function (data) {
+                    if (data.code == 0) {
+                        cb(data.data);
+                    }
+                }, "json");
+            },
+            menuQuery: function (queryString, cb) {
+                cb(this.menuOptions);
+            },
+            menuSelect: function (val) {
+            },
+            menuTree: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.value) {
+                        obj.children = data;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.menuTree(obj.children, data, pid);
+                    }
+                });
+            },
+            menuChange2: function (val) {
+                var self = this;
+                if (val[0] == "root") {
+                    self.parentMenu = [];
+                }
+            },
+            menuChange: function (val) {
+                var self = this;
+                var pid = val[val.length - 1];
+                self.parentUnit = val;
+                self.menuLoadTree(pid, function (tree) {
+                    self.menuTree(self.menuOptions, tree, pid);
+                });
+            },
             openAdd: function () {
+                var self = this;
+                self.addDialogVisible = true;
+                self.form = {};//打开新增窗口,表单先清空
+                self.parentMenu = [];
+                self.menuLoadTree("", function (val) {
+                    self.menuOptions = val;
+                });
+            },
+            doAdd:function(){
 
             },
             // 显示层级
@@ -190,11 +305,11 @@ layout("/layouts/platform.html"){
                                 message: data.msg,
                                 type: 'success'
                             });
-                            if("disable" == command.type){
-                                $("#disabled_"+command.id).removeClass("text-success").addClass("text-danger");
+                            if ("disable" == command.type) {
+                                $("#disabled_" + command.id).removeClass("text-success").addClass("text-danger");
                             }
-                            if("enable" == command.type){
-                                $("#disabled_"+command.id).removeClass("text-danger").addClass("text-success");
+                            if ("enable" == command.type) {
+                                $("#disabled_" + command.id).removeClass("text-danger").addClass("text-success");
                             }
                         } else {
                             self.$message({
