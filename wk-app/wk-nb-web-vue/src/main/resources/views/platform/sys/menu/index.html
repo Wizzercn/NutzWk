@@ -75,7 +75,7 @@ layout("/layouts/platform.html"){
                             <span class="ti-angle-down"></span>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item :command="{type:'add',id:scope.row.id,name:scope.row.name}">
+                            <el-dropdown-item v-if="scope.row.type=='menu'" :command="{type:'add',id:scope.row.id,name:scope.row.name}">
                                 添加子菜单
                             </el-dropdown-item>
                             <el-dropdown-item divided
@@ -106,18 +106,19 @@ layout("/layouts/platform.html"){
             width="50%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="parentId" label="上级菜单" label-width="80px">
-                <el-cascader
-                        style="width: 100%"
-                        tabindex="1"
-                        :options="menuOptions"
-                        :show-all-levels="false"
-                        v-model="parentMenu"
-                        :fetch-suggestions="menuQuery"
-                        @active-item-change="menuChange"
-                        @change="menuChange2"
-                        @select="menuSelect"
-                        placeholder="不选择则为顶级"
+                <el-cascader v-if="!isAddFromSub"
+                             style="width: 100%"
+                             tabindex="1"
+                             :options="menuOptions"
+                             :show-all-levels="false"
+                             v-model="parentMenu"
+                             :fetch-suggestions="menuQuery"
+                             @active-item-change="menuChange"
+                             @change="menuChange2"
+                             @select="menuSelect"
+                             placeholder="不选择则为顶级"
                 ></el-cascader>
+                <el-input v-if="isAddFromSub" type="text" v-model="formData.parentName" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item prop="name" label="菜单名称">
                 <el-input maxlength="100" placeholder="菜单名称"
@@ -143,9 +144,10 @@ layout("/layouts/platform.html"){
                 <el-input maxlength="100" placeholder="图标"
                           v-model="formData.icon"
                           auto-complete="off" tabindex="7" type="text"></el-input>
+                <span :class="formData.icon"></span>
             </el-form-item>
             <el-form-item prop="type" label="数据权限">
-                <el-radio-group @change="formRadioChange" v-model="formData.hasChildren" size="mini">
+                <el-radio-group @change="formRadioChange" v-model="formData.children" size="mini">
                     <el-radio label="false">无</el-radio>
                     <el-radio label="true">有</el-radio>
                 </el-radio-group>
@@ -196,20 +198,17 @@ layout("/layouts/platform.html"){
             return {
                 addDialogVisible: false,
                 editDialogVisible: false,
+                isAddFromSub: false,
                 tableData: [],//后台取出的数据
                 treeData: [],//格式化tableData用于显示的数据
                 formData: {
                     id: "",
                     parentId: "",
+                    parentName: "",
                     type: "menu",
                     target: "data-pjax",
-                    hasChildren: "false",
-                    buttons: [
-                        {
-                            name: "",
-                            permission: ""
-                        }
-                    ]
+                    children: "false",
+                    buttons: []
                 },
                 formRules: {
                     name: [
@@ -286,6 +285,7 @@ layout("/layouts/platform.html"){
                     }];
                 } else {
                     this.formHasChildren = false;
+                    this.formData.buttons = [];
                 }
             },
             formRemoveMenu: function (menu) {
@@ -303,9 +303,21 @@ layout("/layouts/platform.html"){
             },
             openAdd: function () {
                 var self = this;
+                self.isAddFromSub = false;
                 self.addDialogVisible = true;
-                self.form = {};//打开新增窗口,表单先清空
                 self.parentMenu = [];
+                //表单还原为初始值
+                self.formData = {
+                    id: "",
+                    parentId: "",
+                    parentName: "",
+                    type: "menu",
+                    target: "data-pjax",
+                    children: "false",
+                    buttons: []
+                };
+                if (this.$refs["addForm"])
+                    this.$refs["addForm"].resetFields();
                 self.menuLoadTree("", function (val) {
                     self.menuOptions = val;
                 });
@@ -315,7 +327,9 @@ layout("/layouts/platform.html"){
                 var url = base + "/platform/sys/menu/addDo";
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
-                        self.formData.parentId = self.parentMenu[self.parentMenu.length - 1] || "";
+                        if (!self.isAddFromSub) {//如果不是添加子菜单，则从级联选择框取父节点ID
+                            self.formData.parentId = self.parentMenu[self.parentMenu.length - 1] || "";
+                        }
                         $.post(url, {
                             menu: JSON.stringify(self.formData),
                             buttons: JSON.stringify(self.formData.buttons)
@@ -383,6 +397,12 @@ layout("/layouts/platform.html"){
             },
             dropdownCommand: function (command) {//监听下拉框事件
                 var self = this;
+                if ("add" == command.type) {
+                    self.openAdd();
+                    self.formData.parentId = command.id;
+                    self.formData.parentName = command.name;
+                    self.isAddFromSub = true;
+                }
                 if ("edit" == command.type) {
                     $.post(base + "/platform/sys/menu/edit/" + command.id, {}, function (data) {
                         if (data.code == 0) {
