@@ -137,7 +137,7 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-			
+
             <plugin>
                 <groupId>org.nutz.boot</groupId>
                 <artifactId>nutzboot-maven-plugin</artifactId>

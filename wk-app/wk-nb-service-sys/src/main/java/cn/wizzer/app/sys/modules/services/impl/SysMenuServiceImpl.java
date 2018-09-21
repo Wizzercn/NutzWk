@@ -14,6 +14,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,6 +60,48 @@ public class SysMenuServiceImpl extends BaseServiceImpl<Sys_menu> implements Sys
                 m.setOpBy(menu.getOpBy());
                 if (Strings.isNotBlank(m.getPermission()))
                     dao().insert(m);
+            }
+        }
+    }
+
+    /**
+     * 编辑菜单
+     *
+     * @param menu
+     * @param pid
+     */
+    @Aop(TransAop.READ_COMMITTED)
+    public void edit(Sys_menu menu, String pid, List<NutMap> datas) {
+        this.updateIgnoreNull(menu);
+        if (datas != null) {
+            List<String> notInIds = new ArrayList<>();
+            for (NutMap map : datas) {
+                String id = map.getString("key", "");
+                Sys_menu d = this.fetch(id);
+                if (d != null) {
+                    d.setPermission(map.getString("permission", ""));
+                    d.setName(map.getString("name", ""));
+                    this.updateIgnoreNull(d);
+                    notInIds.add(d.getId());
+                } else {
+                    Sys_menu m = new Sys_menu();
+                    m.setParentId(menu.getId());
+                    m.setHasChildren(false);
+                    m.setIsShow(false);
+                    m.setLocation(0);
+                    m.setType("data");
+                    m.setPermission(map.getString("permission", ""));
+                    m.setName(map.getString("name", ""));
+                    m.setPath(getSubPath("sys_menu", "path", menu.getPath()));
+                    m.setOpBy(menu.getOpBy());
+                    if (Strings.isNotBlank(m.getPermission()))
+                        this.insert(m);
+                    notInIds.add(m.getId());
+                }
+            }
+            if (notInIds.size() > 0) {
+                //删除不在提交表单里的权限数据
+                this.clear(Cnd.where("id", "not in", notInIds).and("parentId", "=", menu.getId()));
             }
         }
     }

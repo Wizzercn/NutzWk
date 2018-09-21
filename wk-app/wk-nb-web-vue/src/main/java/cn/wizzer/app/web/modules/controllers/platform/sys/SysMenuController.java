@@ -16,7 +16,6 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
-import org.nutz.lang.Times;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -112,12 +111,12 @@ public class SysMenuController {
     public Object addDo(@Param("..") NutMap nutMap, HttpServletRequest req) {
         try {
             Sys_menu sysMenu = nutMap.getAs("menu", Sys_menu.class);
-            List<NutMap> list = Json.fromJsonAsList(NutMap.class, nutMap.getString("buttons"));
+            List<NutMap> buttons = Json.fromJsonAsList(NutMap.class, nutMap.getString("buttons"));
             int num = sysMenuService.count(Cnd.where("permission", "=", sysMenu.getPermission().trim()));
             if (num > 0) {
                 return Result.error("sys.role.code");
             }
-            for (NutMap map : list) {
+            for (NutMap map : buttons) {
                 num = sysMenuService.count(Cnd.where("permission", "=", map.getString("permission", "").trim()));
                 if (num > 0) {
                     return Result.error("sys.role.code");
@@ -126,7 +125,7 @@ public class SysMenuController {
             sysMenu.setHasChildren(false);
             sysMenu.setIsShow(true);
             sysMenu.setOpBy(StringUtil.getPlatformUid());
-            sysMenuService.save(sysMenu, sysMenu.getParentId(), list);
+            sysMenuService.save(sysMenu, sysMenu.getParentId(), buttons);
             req.setAttribute("name", sysMenu.getName());
             return Result.success();
         } catch (Exception e) {
@@ -135,37 +134,66 @@ public class SysMenuController {
         }
     }
 
-    @At("/edit/?")
-    @Ok("beetl:/platform/sys/menu/edit.html")
+    //编辑菜单,组装一下js表单数据
+    @At("/editMenu/?")
+    @Ok("json")
     @RequiresPermissions("sys.manager.menu")
     public Object edit(String id, HttpServletRequest req) {
-        Sys_menu menu = sysMenuService.fetch(id);
-        if (menu != null) {
-            req.setAttribute("parentMenu", sysMenuService.fetch(menu.getParentId()));
+        try {
+            Sys_menu menu = sysMenuService.fetch(id);
+            NutMap map = Lang.obj2nutmap(menu);
+            map.put("parentName", "无");
+            map.put("children", "false");
+            if (Strings.isNotBlank(menu.getParentId())) {
+                map.put("parentName", sysMenuService.fetch(menu.getParentId()).getName());
+            }
+            List<Sys_menu> list = sysMenuService.query(Cnd.where("parentId", "=", id).and("type", "=", "data").asc("location").asc("path"));
+            List<NutMap> buttons = new ArrayList<>();
+            if (list != null && list.size() > 0) {
+                map.put("children", "true");
+                for (Sys_menu m : list) {
+                    buttons.add(NutMap.NEW().addv("key", m.getId()).addv("name", m.getName()).addv("permission", m.getPermission()));
+                }
+            }
+            map.put("buttons", buttons);
+            return Result.success().addData(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error();
         }
-        return menu;
     }
 
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.menu.edit")
-    @SLog(tag = "编辑菜单", msg = "菜单名称:${args[0].name}")
-    public Object editDo(@Param("..") Sys_menu menu, @Param("oldPermission") String oldPermission, HttpServletRequest req) {
+    @SLog(tag = "修改菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
+    public Object editMenuDo(@Param("..") NutMap nutMap, HttpServletRequest req) {
         try {
-            if (!Strings.sBlank(oldPermission).equals(menu.getPermission())) {
-                int num = sysMenuService.count(Cnd.where("permission", "=", menu.getPermission().trim()));
+            Sys_menu sysMenu = nutMap.getAs("menu", Sys_menu.class);
+            List<NutMap> buttons = Json.fromJsonAsList(NutMap.class, nutMap.getString("buttons"));
+            //如果权限标识不是自己的,并且被其他记录占用
+            int num = sysMenuService.count(Cnd.where("permission", "=", sysMenu.getPermission().trim()).and("id", "<>", sysMenu.getId()));
+            if (num > 0) {
+                return Result.error("sys.role.code");
+            }
+            for (NutMap map : buttons) {
+                num = sysMenuService.count(Cnd.where("permission", "=", map.getString("permission", "").trim()).and("id", "<>", map.getString("key", "")));
                 if (num > 0) {
                     return Result.error("sys.role.code");
                 }
             }
-            menu.setOpBy(StringUtil.getPlatformUid());
-            menu.setOpAt(Times.getTS());
-            sysMenuService.updateIgnoreNull(menu);
-            return Result.success("system.success");
+            sysMenu.setHasChildren(false);
+            sysMenu.setIsShow(true);
+            sysMenu.setOpBy(StringUtil.getPlatformUid());
+            sysMenuService.edit(sysMenu, sysMenu.getParentId(), buttons);
+            req.setAttribute("name", sysMenu.getName());
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            e.printStackTrace();
+            return Result.error();
         }
     }
+
 
     @At("/delete/?")
     @Ok("json")

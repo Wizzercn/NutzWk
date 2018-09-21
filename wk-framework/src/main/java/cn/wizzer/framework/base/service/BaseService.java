@@ -391,6 +391,13 @@ public interface BaseService<T> {
     void delete(String[] ids);
 
     /**
+     * 批量删除
+     *
+     * @param ids
+     */
+    void delete(List<String> ids);
+
+    /**
      * 清空表
      *
      * @return
@@ -433,6 +440,14 @@ public interface BaseService<T> {
      * @return
      */
     int vDelete(String[] ids);
+
+    /**
+     * 批量伪删除
+     *
+     * @param ids
+     * @return
+     */
+    int vDelete(List<String> ids);
 
     /**
      * 根据条件进行伪删除

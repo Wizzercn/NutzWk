@@ -19,6 +19,14 @@ public interface SysMenuService extends BaseService<Sys_menu> {
     void save(Sys_menu menu, String pid, List<NutMap> datas);
 
     /**
+     * 编辑菜单
+     *
+     * @param menu
+     * @param pid
+     */
+    void edit(Sys_menu menu, String pid, List<NutMap> datas);
+
+    /**
      * 级联删除菜单
      *
      * @param menu

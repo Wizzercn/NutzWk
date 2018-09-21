@@ -494,6 +494,15 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
+     * 批量删除
+     *
+     * @param ids
+     */
+    public void delete(List<String> ids) {
+        this.dao().clear(this.getEntityClass(), Cnd.where("id", "in", ids));
+    }
+
+    /**
      * 清空表
      *
      * @return
@@ -546,6 +555,16 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * @return
      */
     public int vDelete(String[] ids) {
+        return this.dao().update(this.getEntityClass(), Chain.make("delFlag", true), Cnd.where("id", "in", ids));
+    }
+
+    /**
+     * 批量伪删除
+     *
+     * @param ids
+     * @return
+     */
+    public int vDelete(List<String> ids) {
         return this.dao().update(this.getEntityClass(), Chain.make("delFlag", true), Cnd.where("id", "in", ids));
     }
 

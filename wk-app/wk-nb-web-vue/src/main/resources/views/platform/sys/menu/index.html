@@ -75,7 +75,8 @@ layout("/layouts/platform.html"){
                             <span class="ti-angle-down"></span>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item v-if="scope.row.type=='menu'" :command="{type:'add',id:scope.row.id,name:scope.row.name}">
+                            <el-dropdown-item v-if="scope.row.type=='menu'"
+                                              :command="{type:'add',id:scope.row.id,name:scope.row.name}">
                                 添加子菜单
                             </el-dropdown-item>
                             <el-dropdown-item divided
@@ -86,7 +87,12 @@ layout("/layouts/platform.html"){
                                     :command="{type:'disable',id:scope.row.id,name:scope.row.name,row:scope.row}">
                                 禁用
                             </el-dropdown-item>
-                            <el-dropdown-item divided :command="{type:'edit',id:scope.row.id,name:scope.row.name}">
+                            <el-dropdown-item v-if="scope.row.type=='menu'" divided
+                                              :command="{type:'editMenu',id:scope.row.id,name:scope.row.name}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item v-if="scope.row.type=='data'" divided
+                                              :command="{type:'editData',id:scope.row.id,name:scope.row.name}">
                                 修改
                             </el-dropdown-item>
                             <el-dropdown-item :command="{type:'delete',id:scope.row.id,name:scope.row.name}"
@@ -135,9 +141,9 @@ layout("/layouts/platform.html"){
                           v-model="formData.permission"
                           auto-complete="off" tabindex="5" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="url" label="URL">
+            <el-form-item prop="href" label="URL">
                 <el-input maxlength="100" placeholder="URL"
-                          v-model="formData.url"
+                          v-model="formData.href"
                           auto-complete="off" tabindex="6" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="icon" label="图标">
@@ -153,7 +159,7 @@ layout("/layouts/platform.html"){
                 </el-radio-group>
             </el-form-item>
             <el-form-item
-                    v-if="formHasChildren"
+                    v-if="formData.children=='true'"
                     v-for="(menu, index) in formData.buttons"
                     :label="'权限' + (index+1)"
                     :key="menu.key"
@@ -172,7 +178,7 @@ layout("/layouts/platform.html"){
                     </el-col>
                 </el-row>
             </el-form-item>
-            <el-row v-if="formHasChildren" style="text-align: right;padding-right: 17px;">
+            <el-row v-if="formData.children=='true'" style="text-align: right;padding-right: 17px;">
                 <el-button size="small" @click="formAddMenu" icon="el-icon-circle-plus">添加</el-button>
             </el-row>
         </el-form>
@@ -181,23 +187,85 @@ layout("/layouts/platform.html"){
             <el-button type="primary" @click="doAdd">确 定</el-button>
         </span>
     </el-dialog>
+    <el-dialog
+            title="修改菜单"
+            :visible.sync="editMenuDialogVisible"
+            width="50%">
+        <el-form :model="formData" ref="editMenuForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="parentId" label="上级菜单" label-width="80px">
+                <el-input type="text" v-model="formData.parentName" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item prop="name" label="菜单名称">
+                <el-input maxlength="100" placeholder="菜单名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="aliasName" label="菜单别名">
+                <el-input maxlength="100" placeholder="菜单名称"
+                          v-model="formData.aliasName"
+                          auto-complete="off" tabindex="4" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="permission" label="权限标识">
+                <el-input maxlength="100" placeholder="权限标识,如 sys.manager.menu"
+                          v-model="formData.permission"
+                          auto-complete="off" tabindex="5" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="href" label="URL">
+                <el-input maxlength="100" placeholder="URL"
+                          v-model="formData.href"
+                          auto-complete="off" tabindex="6" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="icon" label="图标">
+                <el-input maxlength="100" placeholder="图标"
+                          v-model="formData.icon"
+                          auto-complete="off" tabindex="7" type="text"></el-input>
+                <span :class="formData.icon"></span>
+            </el-form-item>
+            <el-form-item prop="type" label="数据权限">
+                <el-radio-group @change="formRadioChange" v-model="formData.children" size="mini">
+                    <el-radio label="false">无</el-radio>
+                    <el-radio label="true">有</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item
+                    v-if="formData.children=='true'"
+                    v-for="(menu, index) in formData.buttons"
+                    :label="'权限' + (index+1)"
+                    :key="menu.key"
+                    :prop="'buttons[' + index + ']'"
+                    :rules="{required: true,validator: validateMenu,trigger: ['blur','change']}"
+            >
+                <el-row :gutter="2">
+                    <el-col :span="6">
+                        <el-input v-model="menu.name" placeholder="权限名称"></el-input>
+                    </el-col>
+                    <el-col :span="13">
+                        <el-input v-model="menu.permission" placeholder="权限标识,如 sys.manager.menu.add"></el-input>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-button @click.prevent="formRemoveMenu(menu)" icon="el-icon-delete" size="small"></el-button>
+                    </el-col>
+                </el-row>
+            </el-form-item>
+            <el-row v-if="formData.children=='true'" style="text-align: right;padding-right: 17px;">
+                <el-button size="small" @click="formAddMenu" icon="el-icon-circle-plus">添加</el-button>
+            </el-row>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="editMenuDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doEditMenu">确 定</el-button>
+        </span>
+    </el-dialog>
 
 </div>
 <script>
     new Vue({
         el: "#app",
         data: function () {
-            var validateName = function (rule, value, callback) {
-                var regex = new RegExp("^[a-zA-Z][a-zA-Z0-9_]{1,49}$");
-                if (!regex.test(value)) {
-                    callback(new Error('权限标识以字母开头2-50字,允许使用字母/数字/下划线'));
-                } else {
-                    callback();
-                }
-            };
             return {
                 addDialogVisible: false,
-                editDialogVisible: false,
+                editMenuDialogVisible: false,
+                editDataDialogVisible: false,
                 isAddFromSub: false,
                 tableData: [],//后台取出的数据
                 treeData: [],//格式化tableData用于显示的数据
@@ -215,25 +283,20 @@ layout("/layouts/platform.html"){
                         {required: true, message: '菜单名称', trigger: 'blur'}
                     ],
                     permission: [
-                        {required: true, message: '权限标识', trigger: ['blur', 'change']},
-                        {validator: validateName, trigger: ['blur', 'change']}
+                        {required: true, message: '权限标识', trigger: ['blur', 'change']}
                     ]
                 },
                 menuOptions: [],
                 parentMenu: [],
-                formHasChildren: false,//表单是否有数据权限
             }
         },
         methods: {
             //验证动态添加行数据
             validateMenu: function (rule, value, callback) {
-                var regex = new RegExp("^[a-zA-Z][a-zA-Z0-9_]{1,49}$");
                 if (value.name == '') {
                     callback(new Error('权限名称不能为空'));
                 } else if (value.permission == '') {
                     callback(new Error('权限标识不能为空'));
-                } else if (!regex.test(value.permission)) {
-                    callback(new Error('权限标识以字母开头2-50字,允许使用字母/数字/下划线'));
                 } else {
                     callback();
                 }
@@ -276,15 +339,14 @@ layout("/layouts/platform.html"){
                 });
             },
             formRadioChange: function (val) {
+                this.formData.children = val;
                 if ("true" == val) {
-                    this.formHasChildren = true;
                     this.formData.buttons = [{
                         name: '',
                         permission: '',
                         key: Date.now()
                     }];
                 } else {
-                    this.formHasChildren = false;
                     this.formData.buttons = [];
                 }
             },
@@ -351,6 +413,31 @@ layout("/layouts/platform.html"){
                     }
                 });
             },
+            doEditMenu: function () {
+                var self = this;
+                var url = base + "/platform/sys/menu/editMenuDo";
+                self.$refs["editMenuForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, {
+                            menu: JSON.stringify(self.formData),
+                            buttons: JSON.stringify(self.formData.buttons)
+                        }, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editMenuDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
             // 显示层级
             treeTablePath: function (path) {
                 return path.length / 4 - 1;
@@ -403,11 +490,11 @@ layout("/layouts/platform.html"){
                     self.formData.parentName = command.name;
                     self.isAddFromSub = true;
                 }
-                if ("edit" == command.type) {
-                    $.post(base + "/platform/sys/menu/edit/" + command.id, {}, function (data) {
+                if ("editMenu" == command.type) {
+                    $.post(base + "/platform/sys/menu/editMenu/" + command.id, {}, function (data) {
                         if (data.code == 0) {
                             self.formData = data.data;//加载后台表单数据
-                            self.editDialogVisible = true;//打开编辑窗口
+                            self.editMenuDialogVisible = true;//打开编辑窗口
                         } else {
                             self.$message({
                                 message: data.msg,

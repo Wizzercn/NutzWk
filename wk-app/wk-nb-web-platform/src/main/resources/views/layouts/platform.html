@@ -134,7 +134,7 @@
 
                     <% if(!isEmpty(@secondMenus.get(firstMenu.path))){%>
                 <a href="javascript:;" data-toggle="dropdown">
-                    <% if(has(firstMenu.icon)){ %>
+                    <% if(!isEmpty(firstMenu.icon)){ %>
                     <i class="${firstMenu.icon}"></i>
                     <% } %>
                     <span>
