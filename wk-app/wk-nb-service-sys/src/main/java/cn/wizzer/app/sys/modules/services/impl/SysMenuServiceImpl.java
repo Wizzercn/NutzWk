@@ -73,7 +73,10 @@ public class SysMenuServiceImpl extends BaseServiceImpl<Sys_menu> implements Sys
     @Aop(TransAop.READ_COMMITTED)
     public void edit(Sys_menu menu, String pid, List<NutMap> datas) {
         this.updateIgnoreNull(menu);
-        if (datas != null) {
+        if (datas == null || datas.size() == 0) {
+            //如果子权限是空,那就清空咯
+            this.clear(Cnd.where("type", "=", "data").and("parentId", "=", menu.getId()));
+        } else {
             List<String> notInIds = new ArrayList<>();
             for (NutMap map : datas) {
                 String id = map.getString("key", "");
@@ -100,8 +103,8 @@ public class SysMenuServiceImpl extends BaseServiceImpl<Sys_menu> implements Sys
                 }
             }
             if (notInIds.size() > 0) {
-                //删除不在提交表单里的权限数据
-                this.clear(Cnd.where("id", "not in", notInIds).and("parentId", "=", menu.getId()));
+                //删除不在提交表单里的权限数据,注意查询条件,别把子菜单给删了
+                this.clear(Cnd.where("id", "not in", notInIds).and("type", "=", "data").and("parentId", "=", menu.getId()));
             }
         }
     }

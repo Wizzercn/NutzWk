@@ -152,6 +152,13 @@ layout("/layouts/platform.html"){
                           auto-complete="off" tabindex="7" type="text"></el-input>
                 <span :class="formData.icon"></span>
             </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
             <el-form-item prop="type" label="数据权限">
                 <el-radio-group @change="formRadioChange" v-model="formData.children" size="mini">
                     <el-radio label="false">无</el-radio>
@@ -221,6 +228,13 @@ layout("/layouts/platform.html"){
                           auto-complete="off" tabindex="7" type="text"></el-input>
                 <span :class="formData.icon"></span>
             </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
             <el-form-item prop="type" label="数据权限">
                 <el-radio-group @change="formRadioChange" v-model="formData.children" size="mini">
                     <el-radio label="false">无</el-radio>
@@ -256,7 +270,34 @@ layout("/layouts/platform.html"){
             <el-button type="primary" @click="doEditMenu">确 定</el-button>
         </span>
     </el-dialog>
-
+    <el-dialog
+            title="修改权限"
+            :visible.sync="editDataDialogVisible"
+            width="50%">
+        <el-form :model="formData2" ref="editDataForm" :rules="formRules2" size="small" label-width="80px">
+            <el-form-item prop="name" label="权限名称">
+                <el-input maxlength="100" placeholder="权限名称"
+                          v-model="formData2.name"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="permission" label="权限标识">
+                <el-input maxlength="100" placeholder="权限标识,如 sys.manager.menu.add"
+                          v-model="formData2.permission"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="formData2.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="editDataDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doEditData">确 定</el-button>
+        </span>
+    </el-dialog>
 </div>
 <script>
     new Vue({
@@ -281,6 +322,15 @@ layout("/layouts/platform.html"){
                 formRules: {
                     name: [
                         {required: true, message: '菜单名称', trigger: 'blur'}
+                    ],
+                    permission: [
+                        {required: true, message: '权限标识', trigger: ['blur', 'change']}
+                    ]
+                },
+                formData2:{},
+                formRules2: {
+                    name: [
+                        {required: true, message: '权限名称', trigger: 'blur'}
                     ],
                     permission: [
                         {required: true, message: '权限标识', trigger: ['blur', 'change']}
@@ -428,6 +478,30 @@ layout("/layouts/platform.html"){
                                     type: 'success'
                                 });
                                 self.editMenuDialogVisible = false;
+                                self.treeTableChild("");
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEditData: function () {
+                var self = this;
+                var url = base + "/platform/sys/menu/editDataDo";
+                self.$refs["editDataForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData2, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDataDialogVisible = false;
+                                self.treeTableChild("");
                             } else {
                                 self.$message({
                                     message: data.msg,
@@ -495,6 +569,19 @@ layout("/layouts/platform.html"){
                         if (data.code == 0) {
                             self.formData = data.data;//加载后台表单数据
                             self.editMenuDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("editData" == command.type) {
+                    $.post(base + "/platform/sys/menu/editData/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData2 = data.data;//加载后台表单数据
+                            self.editDataDialogVisible = true;//打开编辑窗口
                         } else {
                             self.$message({
                                 message: data.msg,

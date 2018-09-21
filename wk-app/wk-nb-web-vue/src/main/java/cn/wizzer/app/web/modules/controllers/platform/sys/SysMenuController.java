@@ -138,7 +138,7 @@ public class SysMenuController {
     @At("/editMenu/?")
     @Ok("json")
     @RequiresPermissions("sys.manager.menu")
-    public Object edit(String id, HttpServletRequest req) {
+    public Object editMenu(String id, HttpServletRequest req) {
         try {
             Sys_menu menu = sysMenuService.fetch(id);
             NutMap map = Lang.obj2nutmap(menu);
@@ -194,6 +194,35 @@ public class SysMenuController {
         }
     }
 
+    @At("/editData/?")
+    @Ok("json")
+    @RequiresPermissions("sys.manager.menu")
+    public Object editData(String id, HttpServletRequest req) {
+        try {
+            return Result.success().addData(sysMenuService.fetch(id));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error();
+        }
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.menu.edit")
+    @SLog(tag = "修改权限", msg = "权限名称:${args[0].name}")
+    public Object editDataDo(@Param("..") Sys_menu menu, HttpServletRequest req) {
+        try {
+            int num = sysMenuService.count(Cnd.where("permission", "=", menu.getPermission().trim()).and("id", "<>", menu.getId()));
+            if (num > 0) {
+                return Result.error("sys.role.code");
+            }
+            sysMenuService.updateIgnoreNull(menu);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error();
+        }
+    }
 
     @At("/delete/?")
     @Ok("json")
