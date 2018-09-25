@@ -1,18 +1,14 @@
 package cn.wizzer.app.web.modules.controllers.platform.sys;
 
 import cn.wizzer.app.sys.modules.services.SysLogService;
-import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.DateUtil;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Strings;
-import org.nutz.lang.Times;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
@@ -20,8 +16,6 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by wizzer on 2016/6/29.
@@ -44,32 +38,12 @@ public class SysLogController {
     @At
     @Ok("json:full")
     @RequiresPermissions("sys.manager.log")
-    public Object data(@Param("beginDate") String beginDate, @Param("endDate") String endDate, @Param("type") String type, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        String tableName = Times.format("yyyyMM", new Date());
-        if (Strings.isNotBlank(beginDate)) {
-            tableName = Times.format("yyyyMM", Times.D(beginDate + " 00:00:00"));
-            cnd.and("opAt", ">=", DateUtil.getTime(beginDate + " 00:00:00"));
-        }
-        if (Strings.isNotBlank(endDate)) {
-            cnd.and("opAt", "<=", DateUtil.getTime(endDate + " 23:59:59"));
-        }
-        if (Strings.isNotBlank(type)) {
-            cnd.and("type", "=", type);
-        }
-        return sysLogService.logData(tableName, length, start, draw, order, columns, cnd, null);
-    }
-
-    @At
-    @Ok("json")
-    @RequiresPermissions("sys.manager.log.delete")
-    @SLog(tag = "清除日志", msg = "清除日志")
-    public Object delete(HttpServletRequest req) {
+    public Object data(@Param("searchDate") String searchDate, @Param("searchType") String searchType, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
-            sysLogService.clear();
-            return Result.success("system.success");
+            String[] date = StringUtils.split(searchDate, ",");
+            return Result.success().addData(sysLogService.data(date, searchType, pageOrderName, PageUtil.getOrder(pageOrderBy), pageNumber, pageSize));
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 }
