@@ -10,7 +10,7 @@ layout("/layouts/platform.html"){
             </el-button>
         </div>
         <div class="pull-right offscreen-right mt5">
-            <el-button size="medium" @click="openAdd">
+            <el-button size="medium" @click="openSort">
                 排序
             </el-button>
         </div>
@@ -298,6 +298,27 @@ layout("/layouts/platform.html"){
             <el-button type="primary" @click="doEditData">确 定</el-button>
         </span>
     </el-dialog>
+    <el-dialog
+            title="菜单排序"
+            :visible.sync="sortDialogVisible"
+            width="50%">
+        <el-tree
+                ref="sortMenuTree"
+                :data="sortMenuData"
+                draggable
+                :allow-drop="sortAllowDrop"
+                node-key="id"
+                :props="defaultProps"
+        >
+            <span class="custom-tree-node" slot-scope="scope">
+                <span>{{ scope.node.label }}</span>
+            </span>
+        </el-tree>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="sortDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doSort">确 定</el-button>
+        </span>
+    </el-dialog>
 </div>
 <script>
     new Vue({
@@ -307,6 +328,7 @@ layout("/layouts/platform.html"){
                 addDialogVisible: false,
                 editMenuDialogVisible: false,
                 editDataDialogVisible: false,
+                sortDialogVisible: false,
                 isAddFromSub: false,
                 tableData: [],//后台取出的数据
                 treeData: [],//格式化tableData用于显示的数据
@@ -327,7 +349,7 @@ layout("/layouts/platform.html"){
                         {required: true, message: '权限标识', trigger: ['blur', 'change']}
                     ]
                 },
-                formData2:{},
+                formData2: {},
                 formRules2: {
                     name: [
                         {required: true, message: '权限名称', trigger: 'blur'}
@@ -338,6 +360,11 @@ layout("/layouts/platform.html"){
                 },
                 menuOptions: [],
                 parentMenu: [],
+                sortMenuData: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
             }
         },
         methods: {
@@ -412,6 +439,57 @@ layout("/layouts/platform.html"){
                     permission: '',
                     key: Date.now()
                 });
+            },
+            //排序树加载
+            sortMenuLoad: function () {
+                var self = this;
+                $.post(base + "/platform/sys/menu/menuAll", {}, function (data) {
+                    if (data.code == 0) {
+                        self.sortMenuData = data.data;
+                    }
+                }, "json");
+            },
+            //排序树控制不可跨级拖拽
+            sortAllowDrop: function (moveNode, inNode, type) {
+                if (moveNode.data.parentId == inNode.data.parentId) {
+                    return type == 'prev';
+                }
+            },
+            //打开排序功能
+            openSort: function () {
+                this.sortDialogVisible = true;
+                this.sortMenuLoad();
+            },
+            //递归获取所有的ID值
+            getTreeIds: function (ids, data) {
+                var self = this;
+                data.forEach(function (obj) {
+                    ids.push(obj.id);
+                    if (obj.children && obj.children.length > 0) {
+                        self.getTreeIds(ids, obj.children);
+                    }
+                });
+            },
+            //提交排序后的数据
+            doSort: function () {
+                var self = this;
+                var ids = [];
+                self.getTreeIds(ids, self.sortMenuData);
+                $.post(base + "/platform/sys/menu/sortDo", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.sortDialogVisible = false;
+                        self.treeTableChild("");
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
             },
             openAdd: function () {
                 var self = this;

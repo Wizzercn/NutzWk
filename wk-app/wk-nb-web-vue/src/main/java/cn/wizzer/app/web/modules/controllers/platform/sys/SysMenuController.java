@@ -25,9 +25,7 @@ import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by wizzer on 2016/6/28.
@@ -270,26 +268,39 @@ public class SysMenuController {
         }
     }
 
-
-    @At
-    @Ok("beetl:/platform/sys/menu/sort.html")
+    @At("/menuAll")
+    @Ok("json")
     @RequiresPermissions("sys.manager.menu")
-    public void sort(HttpServletRequest req) {
-        List<Sys_menu> list = sysMenuService.query(Cnd.orderBy().asc("location").asc("path"));
-        List<Sys_menu> firstMenus = new ArrayList<>();
-        Map<String, List<Sys_menu>> secondMenus = new HashMap<>();
-        for (Sys_menu menu : list) {
-            if (menu.getPath().length() > 4) {
-                List<Sys_menu> s = secondMenus.get(StringUtil.getParentId(menu.getPath()));
-                if (s == null) s = new ArrayList<>();
-                s.add(menu);
-                secondMenus.put(StringUtil.getParentId(menu.getPath()), s);
-            } else if (menu.getPath().length() == 4) {
-                firstMenus.add(menu);
+    public Object menuAll(HttpServletRequest req) {
+        try {
+            List<Sys_menu> list = sysMenuService.query(Cnd.where("type", "=", "menu").asc("location").asc("path"));
+            NutMap menuMap = NutMap.NEW();
+            for (Sys_menu unit : list) {
+                List<Sys_menu> list1 = menuMap.getList(unit.getParentId(), Sys_menu.class);
+                if (list1 == null) {
+                    list1 = new ArrayList<>();
+                }
+                list1.add(unit);
+                menuMap.put(unit.getParentId(), list1);
             }
+            return Result.success().addData(getTree(menuMap, ""));
+        } catch (Exception e) {
+            return Result.error();
         }
-        req.setAttribute("firstMenus", firstMenus);
-        req.setAttribute("secondMenus", secondMenus);
+    }
+
+    private List<NutMap> getTree(NutMap menuMap, String pid) {
+        List<NutMap> treeList = new ArrayList<>();
+        List<Sys_menu> subList = menuMap.getList(pid, Sys_menu.class);
+        for (Sys_menu menu : subList) {
+            NutMap map = Lang.obj2nutmap(menu);
+            map.put("label", menu.getName());
+            if (menu.isHasChildren() || (menuMap.get(menu.getId()) != null)) {
+                map.put("children", getTree(menuMap, menu.getId()));
+            }
+            treeList.add(map);
+        }
+        return treeList;
     }
 
     @At
