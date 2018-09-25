@@ -207,7 +207,11 @@ layout("/layouts/platform.html"){
             pageData: function () {//加载分页数据
                 var self = this;
                 sublime.showLoadingbar();//显示loading
-                self.pageForm.searchDate = self.searchDate.toString();
+                if (self.searchDate) {
+                    self.pageForm.searchDate = self.searchDate.toString();
+                }else {
+                    self.pageForm.searchDate="";
+                }
                 $.post(base + "/platform/sys/log/data", self.pageForm, function (data) {
                     sublime.closeLoadingbar();//关闭loading
                     if (data.code == 0) {
