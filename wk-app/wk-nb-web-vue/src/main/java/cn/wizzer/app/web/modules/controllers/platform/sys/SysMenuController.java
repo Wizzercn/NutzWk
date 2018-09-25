@@ -127,7 +127,6 @@ public class SysMenuController {
             req.setAttribute("name", sysMenu.getName());
             return Result.success();
         } catch (Exception e) {
-            e.printStackTrace();
             return Result.error();
         }
     }
@@ -156,7 +155,6 @@ public class SysMenuController {
             map.put("buttons", buttons);
             return Result.success().addData(map);
         } catch (Exception e) {
-            e.printStackTrace();
             return Result.error();
         }
     }
@@ -187,7 +185,6 @@ public class SysMenuController {
             req.setAttribute("name", sysMenu.getName());
             return Result.success();
         } catch (Exception e) {
-            e.printStackTrace();
             return Result.error();
         }
     }
@@ -199,7 +196,6 @@ public class SysMenuController {
         try {
             return Result.success().addData(sysMenuService.fetch(id));
         } catch (Exception e) {
-            e.printStackTrace();
             return Result.error();
         }
     }
@@ -217,7 +213,6 @@ public class SysMenuController {
             sysMenuService.updateIgnoreNull(menu);
             return Result.success();
         } catch (Exception e) {
-            e.printStackTrace();
             return Result.error();
         }
     }
@@ -234,9 +229,9 @@ public class SysMenuController {
                 return Result.error("system.not.allow");
             }
             sysMenuService.deleteAndChild(menu);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -317,9 +312,9 @@ public class SysMenuController {
                     i++;
                 }
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 }
