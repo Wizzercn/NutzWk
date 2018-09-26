@@ -1,33 +1,35 @@
 package cn.wizzer.app.web.modules.controllers.platform.sys;
 
+import cn.wizzer.app.sys.modules.models.Sys_msg;
+import cn.wizzer.app.sys.modules.services.SysMsgService;
 import cn.wizzer.app.sys.modules.services.SysMsgUserService;
 import cn.wizzer.app.sys.modules.services.SysUserService;
 import cn.wizzer.app.web.commons.ext.websocket.WkNotifyService;
-import cn.wizzer.framework.base.Result;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
+import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.OffsetPager;
+import cn.wizzer.framework.page.Pagination;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import cn.wizzer.app.sys.modules.models.Sys_msg;
-import cn.wizzer.app.sys.modules.services.SysMsgService;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.alibaba.dubbo.config.annotation.Reference;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.pager.Pager;
-import org.nutz.json.Json;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.ioc.loader.annotation.Inject;
-import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -50,49 +52,39 @@ public class SysMsgController {
     @Inject
     private WkNotifyService wkNotifyService;
 
-    @At("")
+    @At({"/", "/list/?"})
     @Ok("beetl:/platform/sys/msg/index.html")
     @RequiresPermissions("sys.manager.msg")
-    public void index() {
+    public void index(String type, HttpServletRequest req) {
+        req.setAttribute("type", Strings.isBlank(type) ? "all" : type);
     }
 
-    @At("/data")
+    @At
     @Ok("json:full")
     @RequiresPermissions("sys.manager.msg")
-    public Object data(@Param("type") String type, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        if (Strings.isNotBlank(type) && !"all".equals(type)) {
-            cnd.and("type", "=", type);
-        }
-        cnd.and("delFlag", "=", false);
-        NutMap re = new NutMap();
-        if (order != null && order.size() > 0) {
-            for (DataTableOrder od : order) {
-                DataTableColumn col = columns.get(od.getColumn());
-                cnd.orderBy(Sqls.escapeSqlFieldValue(col.getData()).toString(), od.getDir());
+    public Object data(@Param("searchType") String searchType, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isNotBlank(searchType) && !"all".equals(searchType)) {
+                cnd.and("type", "=", searchType);
             }
+            cnd.and("delFlag", "=", false);
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+            }
+            List<Map> mapList = new ArrayList<>();
+            Pagination pagination = sysMsgService.listPage(pageNumber, pageSize, cnd);
+            for (Object msg : pagination.getList()) {
+                Map map = Lang.obj2map(msg);
+                map.put("all_num", sysMsgUserService.count(Cnd.where("msgId", "=", map.getOrDefault("id", ""))));
+                map.put("unread_num", sysMsgUserService.count(Cnd.where("msgId", "=", map.getOrDefault("id", "")).and("status", "=", 0)));
+                mapList.add(map);
+            }
+            pagination.setList(mapList);
+            return Result.success().addData(pagination);
+        } catch (Exception e) {
+            return Result.error();
         }
-        Pager pager = new OffsetPager(start, length);
-        re.put("recordsFiltered", sysMsgService.count(cnd));
-        List<Sys_msg> list = sysMsgService.query(cnd, pager);
-        List<Map> mapList = new ArrayList<>();
-        for (Sys_msg msg : list) {
-            Map map = Lang.obj2map(msg);
-            map.put("all_num", sysMsgUserService.count(Cnd.where("msgId", "=", msg.getId())));
-            map.put("unread_num", sysMsgUserService.count(Cnd.where("msgId", "=", msg.getId()).and("status", "=", 0)));
-            mapList.add(map);
-        }
-        re.put("data", mapList);
-        re.put("draw", draw);
-        re.put("recordsTotal", length);
-        return re;
-    }
-
-    @At("/add")
-    @Ok("beetl:/platform/sys/msg/add.html")
-    @RequiresPermissions("sys.manager.msg")
-    public void add() {
-
     }
 
     @At("/addDo")
@@ -107,9 +99,9 @@ public class SysMsgController {
             if (sys_msg != null) {
                 wkNotifyService.notify(sys_msg, users);
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 

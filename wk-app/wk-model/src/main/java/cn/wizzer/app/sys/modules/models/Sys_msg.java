@@ -26,7 +26,7 @@ public class Sys_msg extends BaseModel implements Serializable {
 
     @Column
     @Comment("消息标题")
-    @ColDefine(type = ColType.VARCHAR, width = 50)
+    @ColDefine(type = ColType.VARCHAR, width = 255)
     private String title;
 
     @Column

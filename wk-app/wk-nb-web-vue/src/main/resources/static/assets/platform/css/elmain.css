@@ -71,3 +71,27 @@ a .expanded {
     vertical-align: top;
     position: relative;
 }
+
+.el-table-expand-line {
+    font-size: 0;
+}
+.el-table-expand-line label {
+    width: 90px;
+    color: #99a9bf;
+    font-size: 12px;
+}
+.el-table-expand-line .el-form-item{
+    margin-bottom: 2px;
+    margin-right: 0;
+    width: 100%;
+    display: inline-block;
+    vertical-align: top;
+}
+.el-table-expand-line .el-form-item__content {
+    margin-right: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
