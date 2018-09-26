@@ -35,6 +35,7 @@ layout("/layouts/platform.html"){
                 size="small"
                 header-align="center"
                 style="width: 100%"
+                :default-sort = "{prop: 'opAt', order: 'descending'}"
         >
             <el-table-column type="expand">
                 <template slot-scope="scope">

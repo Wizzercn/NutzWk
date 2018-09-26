@@ -147,7 +147,10 @@ public class SysLogServiceImpl extends BaseServiceImpl<Sys_log> implements SysLo
                 }
             }
         }
-        stringBuilder.append(")sl order by sl." + pageOrderName + " " + pageOrderBy);
+        stringBuilder.append(")sl ");
+        if (Strings.isNotBlank(pageOrderName) & Strings.isNotBlank(pageOrderBy)) {
+            stringBuilder.append(" order by sl." + pageOrderName + " " + pageOrderBy);
+        }
         return this.listPage(pageNumber, pageSize, Sqls.create(stringBuilder.toString()));
     }
 }
