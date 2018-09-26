@@ -3,16 +3,17 @@ package cn.wizzer.app.web.modules.controllers.platform.sys;
 import cn.wizzer.app.sys.modules.models.Sys_route;
 import cn.wizzer.app.sys.modules.services.SysRouteService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -21,7 +22,6 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @IocBean
 @At("/platform/sys/route")
@@ -43,16 +43,16 @@ public class SysRouteController {
     @At
     @Ok("json:full")
     @RequiresPermissions("sys.manager.route")
-    public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        return routeService.data(length, start, draw, order, columns, cnd, null);
-    }
-
-    @At
-    @Ok("beetl:/platform/sys/route/add.html")
-    @RequiresPermissions("sys.manager.route")
-    public void add() {
-
+    public Object data(@Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+            }
+            return Result.success().addData(routeService.listPage(pageNumber, pageSize, cnd));
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
     @At
@@ -63,18 +63,22 @@ public class SysRouteController {
         try {
             route.setOpBy(StringUtil.getPlatformUid());
             routeService.insert(route);
-            pubSubService.fire("nutzwk:web:platform","sys_route");
-            return Result.success("system.success");
+            pubSubService.fire("nutzwk:web:platform", "sys_route");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
     @At("/edit/?")
-    @Ok("beetl:/platform/sys/route/edit.html")
+    @Ok("json")
     @RequiresPermissions("sys.manager.route")
     public Object edit(String id) {
-        return routeService.fetch(id);
+        try {
+            return Result.success().addData(routeService.fetch(id));
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
     @At
@@ -86,32 +90,25 @@ public class SysRouteController {
             route.setOpBy(StringUtil.getPlatformUid());
             route.setOpAt(Times.getTS());
             routeService.updateIgnoreNull(route);
-            pubSubService.fire("nutzwk:web:platform","sys_route");
-
-            return Result.success("system.success");
+            pubSubService.fire("nutzwk:web:platform", "sys_route");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
 
-    @At({"/delete", "/delete/?"})
+    @At("/delete/?")
     @Ok("json")
-    @SLog(tag = "删除路由", msg = "路由ID:${args[2].getAttribute('id')}")
+    @SLog(tag = "删除路由", msg = "路由ID:${args[0]}")
     @RequiresPermissions("sys.manager.route.delete")
-    public Object delete(String id, @Param("ids") String[] ids, HttpServletRequest req) {
+    public Object delete(String id, HttpServletRequest req) {
         try {
-            if (ids != null && ids.length > 0) {
-                routeService.delete(ids);
-                req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
-            } else {
-                routeService.delete(id);
-                req.setAttribute("id", id);
-            }
-            pubSubService.fire("nutzwk:web:platform","sys_route");
-            return Result.success("system.success");
+            routeService.delete(id);
+            pubSubService.fire("nutzwk:web:platform", "sys_route");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -123,11 +120,11 @@ public class SysRouteController {
         try {
             Sys_route route = routeService.fetch(id);
             req.setAttribute("url", route.getUrl());
-            routeService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", id));
-            pubSubService.fire("nutzwk:web:platform","sys_route");
-            return Result.success("system.success");
+            routeService.update(Chain.make("disabled", false), Cnd.where("id", "=", id));
+            pubSubService.fire("nutzwk:web:platform", "sys_route");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -139,11 +136,11 @@ public class SysRouteController {
         try {
             Sys_route route = routeService.fetch(id);
             req.setAttribute("url", route.getUrl());
-            routeService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", id));
-            pubSubService.fire("nutzwk:web:platform","sys_route");
-            return Result.success("system.success");
+            routeService.update(Chain.make("disabled", true), Cnd.where("id", "=", id));
+            pubSubService.fire("nutzwk:web:platform", "sys_route");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 }
