@@ -7,6 +7,14 @@ import org.nutz.integration.quartz.QuartzManager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.quartz.JobKey;
+import org.quartz.TriggerUtils;
+import org.quartz.impl.triggers.CronTriggerImpl;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by wizzer on 2018/3/19.
@@ -66,7 +74,28 @@ public class TaskPlatformServiceImpl implements TaskPlatformService {
     /**
      * 清除任务
      */
-    public void clear(){
+    public void clear() {
         quartzManager.clear();
+    }
+
+    /**
+     * 获取cron表达式最近执行时间
+     *
+     * @param cronExpression
+     * @return
+     */
+    public List<String> getCronExeTimes(String cronExpression) throws Exception {
+        List<String> list = new ArrayList<>();
+        CronTriggerImpl cronTriggerImpl = new CronTriggerImpl();
+        cronTriggerImpl.setCronExpression(cronExpression);
+        Calendar calendar = Calendar.getInstance();
+        Date now = calendar.getTime();
+        calendar.add(2, 1);
+        List<Date> dates = TriggerUtils.computeFireTimesBetween(cronTriggerImpl, null, now, calendar.getTime());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (int i = 0; i < dates.size() && i <= 4; ++i) {
+            list.add(dateFormat.format((Date) dates.get(i)));
+        }
+        return list;
     }
 }

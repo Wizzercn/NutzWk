@@ -512,7 +512,7 @@ var sublime = function () {
         $('#homeDetail').on('hidden.bs.modal', function () {
             $(this).removeData("bs.modal");
         });
-        $.get(base + "/platform/home/path?url=" + window.location.href, function (data) {
+        $.get(base + "/platform/home/path?url=" + window.location.href+"&rnd="+new Date().getTime(), function (data) {
             $("#leftnav").html(data);
             bindLeft();
         }, "html");

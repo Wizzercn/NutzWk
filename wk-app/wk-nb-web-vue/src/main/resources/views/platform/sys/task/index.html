@@ -1,223 +1,383 @@
-<%
+<!--#
 layout("/layouts/platform.html"){
-%>
-<section class="content-wrap bg-white">
-    <header class="header navbar bg-white shadow">
-        <div class="btn-group tool-button">
-            <a id="add" class="btn btn-primary navbar-btn" href="${base}/platform/sys/task/add" data-pjax><i class="ti-plus"></i> 添加任务</a>
-            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <el-button size="medium" @click="openAdd">
+                <i class="ti-plus"></i>
+                新建任务
+            </el-button>
         </div>
-    </header>
-    <div class=panel-body style="padding-top: 50px;">
-        <div class="table-responsive no-border">
-            <input id="unitid" type="hidden">
-            <table class="table table-bordered table-striped mg-t datatable">
-                <thead>
-                    <tr>
-                            <th>任务名</th>
-                            <th>执行类</th>
-                            <th>定时规则</th>
-                            <th>启用状态</th>
-                            <th>执行时间</th>
-                            <th>执行结果</th>
-                            <th>操作</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+        >
+            <el-table-column
+                    sortable
+                    prop="name"
+                    label="任务名称"
+                    header-align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="jobClass"
+                    label="执行类"
+                    header-align="center"
+                    :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+                    prop="data"
+                    label="执行参数"
+                    header-align="center"
+                    :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+                    prop="cron"
+                    label="定时规则"
+                    header-align="center" align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="exeAt"
+                    label="执行时间"
+                    header-align="center" align="center">
+                <template slot-scope="scope">
+                    {{formatAt(scope.row.exeAt)}}
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="disabled"
+                    label="启用状态"
+                    header-align="center"
+                    align="center"
+            >
+                <template slot-scope="scope">
+                    <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    label="操作"
+                    width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item
+                                    :command="{type:'enable',id:scope.row.id,name:scope.row.name,row:scope.row}">
+                                启用
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                                    :command="{type:'disable',id:scope.row.id,name:scope.row.name,row:scope.row}">
+                                禁用
+                            </el-dropdown-item>
+                            <el-dropdown-item divided :command="{type:'edit',id:scope.row.id}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'delete',id:scope.row.id,name:scope.row.name}">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+    <el-dialog
+            title="新建任务"
+            :visible.sync="addDialogVisible"
+            width="50%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="name" label="任务名称">
+                <el-input maxlength="100" placeholder="任务名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="jobClass" label="执行类">
+                <el-input placeholder="执行类"
+                          v-model="formData.jobClass"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="cron" label="执行周期">
+                <el-input placeholder="Cron表达式"
+                          v-model="formData.cron"
+                          auto-complete="off" tabindex="3" type="text">
+                    <template slot="append"><a href="${base}/platform/sys/task/cron" style="color: #409EFF" target="_blank">表达式生成器</a>
+                    </template>
+                </el-input>
+            </el-form-item>
+            <el-form-item prop="data" label="执行参数(Json)">
+                <el-input type="textarea" v-model="formData.data" placeholder="{}" tabindex="4" ></el-input>
+            </el-form-item>
+            <el-row>
 
-</section>
-<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">删除任务</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        项删除后无法恢复。<br/>
-                        <br/>确定删除吗？
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取  消</button>
-                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确  定</button>
-            </div>
-        </div>
-    </div>
+            </el-row>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="addDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doAdd">确 定</el-button>
+        </span>
+    </el-dialog>
+    <el-dialog
+            title="修改任务"
+            :visible.sync="editDialogVisible"
+            width="50%">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="name" label="任务名称">
+                <el-input maxlength="100" placeholder="任务名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="jobClass" label="执行类">
+                <el-input placeholder="执行类"
+                          v-model="formData.jobClass"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="cron" label="执行周期">
+                <el-input placeholder="Cron表达式"
+                          v-model="formData.cron"
+                          auto-complete="off" tabindex="3" type="text">
+                    <template slot="append"><a href="${base}/platform/sys/task/cron" style="color: #409EFF" target="_blank">表达式生成器</a>
+                    </template>
+                </el-input>
+            </el-form-item>
+            <el-form-item prop="data" label="执行参数(Json)">
+                <el-input type="textarea" v-model="formData.data" placeholder="{}" tabindex="4" ></el-input>
+            </el-form-item>
+            <el-row>
+
+            </el-row>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="editDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doEdit">确 定</el-button>
+        </span>
+    </el-dialog>
 </div>
-
-<script language="JavaScript">
-    var datatable;
-    function initDatatable() {
-        datatable = $('.datatable').DataTable({
-            "dom": '<"toolbar">frtip',
-            "searching":false,
-            "processing": false,
-            "serverSide": true,
-            "select": true,
-            "ordering": true,
-            "language": {
-                "url": "${base}/assets/plugins/datatables/cn.json"
-            },
-            "preDrawCallback": function () {
-                sublime.showLoadingbar($(".main-content"));
-            },
-            "drawCallback": function () {
-                sublime.closeLoadingbar($(".main-content"));
-            },
-            "ajax": {
-                "url": "${base}/platform/sys/task/data",
-                "type": "post",
-                "data": function (d) {
-                }
-            },
-//            "order": [[0, "desc"]],
-            "columns": [
-                    {"data": "name", "bSortable": true},
-                    {"data": "jobClass", "bSortable": true},
-                    {"data": "cron", "bSortable": true},
-                    {"data": "disabled", "bSortable": true},
-                    {"data": "exeAt", "bSortable": true},
-                    {"data": "exeResult", "bSortable": true}
-            ],
-            "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        if (!data) {
-                            return '<i id="disable_' + row.id + '" class="fa fa-circle text-success ml5"></i>';
-                        } else {
-                            return '<i id="disable_' + row.id + '" class="fa fa-circle text-danger ml5"></i>';
-                        }
-                    },
-                    "targets": 3
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                addDialogVisible: false,
+                editDialogVisible: false,
+                tableData: [],
+                pageForm: {
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "",
+                    pageOrderBy: ""
                 },
-                {
-                    "render": function (data, type, row) {
-                        if (data) {
-                            return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss");
-                        }
-                        return "";
-                    },
-                    "targets": 4
+                formData: {
+                    id: ""
                 },
-                {
-                    "render": function (data, type, row) {
-                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/platform/sys/task/edit/' + row.id + '" data-pjax>修改</a></li>' +
-                                '<li class="divider"></li>' +
-                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
-                                '<li class="divider"></li>' +
-                                '<li><a href="javascript:;" onclick="enableTask(\'' + row.id + '\')">启用</a></li>' +
-                                '<li><a href="javascript:;" onclick="disableTask(\'' + row.id + '\')">禁用</a></li>' +
-//                              '<li><a href="javascript:;" onclick="suspend(\'' + row.id + '\')">暂停</a></li>' +
-//                              '<li><a href="javascript:;" onclick="restore(\'' + row.id + '\')">恢复</a></li>' +
-                                '</ul></div>';
-                    },
-                    "targets": 6
-                }
-            ]
-        });
-        datatable.on('click', 'tr', function () {
-            $(this).toggleClass('selected');
-        });
-        $("#searchBtn").on('click', function () {
-            datatable.ajax.reload();
-        });
-    }
-    function enableTask(id) {
-        $.post("${base}/platform/sys/task/enable/" + id, {}, function (data) {
-            if (data.code == 0) {
-                $("#disable_" + id).attr("class", "fa fa-circle text-success ml5");
-            } else {
-                Toast.error(data.msg);
+                formRules: {
+                    name: [
+                        {required: true, message: '任务名称', trigger: 'blur'}
+                    ],
+                    jobClass: [
+                        {required: true, message: '执行类', trigger: 'blur'}
+                    ],
+                    cron: [
+                        {required: true, message: '执行周期', trigger: 'blur'}
+                    ],
+                },
             }
-        }, "json");
-    }
-    function disableTask(id) {
-        $.post("${base}/platform/sys/task/disable/" + id, {}, function (data) {
-            if (data.code == 0) {
-                $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
-            } else {
-                Toast.error(data.msg);
-            }
-        }, "json");
-    }
-    function suspend(id) {
-        $.post("${base}/platform/sys/task/suspend/" + id, {}, function (data) {
-            if (data.code == 0) {
-                $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
-            } else {
-                Toast.error(data.msg);
-            }
-        }, "json");
-    }
-    function restore(id) {
-        $.post("${base}/platform/sys/task/restore/" + id, {}, function (data) {
-            if (data.code == 0) {
-                $("#disable_" + id).attr("class", "fa fa-circle text-success ml5");
-            } else {
-                Toast.error(data.msg);
-            }
-        }, "json");
-    }
-    function del(id) {
-        var dialog = $("#dialogDelete");
-        dialog.modal("show");
-        dialog.find("#okDel").unbind("click");
-        dialog.find("#okDel").bind("click", function (event) {
-            var btn = $(this);
-            btn.button("loading");
-            $.post("${base}/platform/sys/task/delete/" + id, {}, function (data) {
-                if (data.code == 0) {
-                    datatable.ajax.reload(null,false);
-                } else {
-                    Toast.error(data.msg);
-                }
-                //重置按钮状态，关闭提示框
-                btn.button("reset");
-                dialog.modal("hide");
-            }, "json");
-        });
-    }
-    function delCheck() {
-        var chks = datatable.rows('.selected').data();
-        if (chks.length > 0) {
-            var ids = [];
-            $.each(datatable.rows('.selected').data(), function (i, n) {
-                ids.push(n.id);
-            });
-            var dialog = $("#dialogDelete");
-            dialog.modal("show");
-            dialog.find("#okDel").unbind("click");
-            dialog.find("#okDel").bind("click", function (event) {
-                var btn = $(this);
-                btn.button("loading");
-                $.post("${base}/platform/sys/task/delete", {ids: ids.toString()}, function (data) {
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/sys/task/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
                     if (data.code == 0) {
-                        datatable.ajax.reload(null,false);
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
                     } else {
-                        Toast.error(data.msg);
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
                     }
-                    btn.button("reset");
-                    dialog.modal("hide");
                 }, "json");
-            });
-        } else {
-            Toast.warning("请先选择要删除的项！");
+            },
+            formatAt: function (val) {
+                if (val && val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            doSearch: function () {
+                this.pageForm.pageNumber = 1;
+                this.pageData();
+            },
+            openAdd: function () {
+                var self = this;
+                this.addDialogVisible = true;
+                this.formData = {};//打开新增窗口,表单先清空
+                if (this.$refs["addForm"])
+                    this.$refs["addForm"].resetFields();
+            },
+            doAdd: function () {
+                var self = this;
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post(base + "/platform/sys/task/addDo", self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                            self.pageData();//添加失败也可以入库,所以加载一下看看
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post(base + "/platform/sys/task/editDo", self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.doSearch();//查询是带条件的,加载新建用户选择的单位用户数据
+                                //self.pageData();
+                                self.editDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("enable" == command.type || "disable" == command.type) {
+                    $.post(base + "/platform/sys/task/" + command.type + "/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.$message({
+                                message: data.msg,
+                                type: 'success'
+                            });
+                            if ("disable" == command.type) {
+                                command.row.disabled = true;
+                            }
+                            if ("enable" == command.type) {
+                                command.row.disabled = false;
+                            }
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/sys/task/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.editDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除 ' + command.name, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/sys/task/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.doSearch();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            }
+        },
+        created: function () {
+            this.pageData();
         }
-    }
-
-
-    $(function () {
-        initDatatable();
     });
-
 </script>
 
-<%}%>
+<!--#
+}
+#-->
