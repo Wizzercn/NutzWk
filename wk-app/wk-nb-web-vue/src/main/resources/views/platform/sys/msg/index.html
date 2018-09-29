@@ -81,11 +81,17 @@ layout("/layouts/platform.html"){
                     prop="all_num"
                     label="总接收用户"
                     header-align="center" align="center">
+                <template slot-scope="scope">
+                    <el-button size="small" @click="viewUserList('all',scope.row.id)">{{scope.row.all_num}}</el-button>
+                </template>
             </el-table-column>
             <el-table-column
                     prop="unread_num"
                     label="未读用户"
                     header-align="center" align="center">
+                <template slot-scope="scope">
+                    <el-button size="small" @click="viewUserList('unread',scope.row.id)">{{scope.row.unread_num}}</el-button>
+                </template>
             </el-table-column>
             <el-table-column
                     sortable
@@ -94,6 +100,30 @@ layout("/layouts/platform.html"){
                     header-align="center">
                 <template slot-scope="scope">
                     {{formatAt(scope.row.opAt)}}
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="delFlag"
+                    label="消息状态"
+                    header-align="center" align="center">
+                <template slot-scope="scope">
+                    <el-alert
+                            v-if="scope.row.delFlag"
+                            title="已删除"
+                            :closable="false"
+                            :center="true"
+                            style="width: 90px;"
+                            type="error">
+                    </el-alert>
+                    <el-alert
+                            v-if="!scope.row.delFlag"
+                            title="已发送"
+                            :closable="false"
+                            :center="true"
+                            style="width: 90px;"
+                            type="success">
+                    </el-alert>
                 </template>
             </el-table-column>
             <el-table-column
@@ -127,6 +157,57 @@ layout("/layouts/platform.html"){
                 :total="pageForm.totalCount">
         </el-pagination>
     </el-row>
+
+    <el-dialog
+            :title="viewUserTitle"
+            :visible.sync="viewDialogVisible"
+            width="65%">
+        <el-table
+                :data="viewTableData"
+                @sort-change='viewPageOrder'
+                header-align="center"
+                style="width: 100%;margin-top: 10px;margin-bottom: 10px;"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+                size="small"
+        >
+            <el-table-column
+                    fixed
+                    prop="loginname"
+                    label="用户名"
+                    width="150">
+            </el-table-column>
+            <el-table-column
+                    prop="username"
+                    label="姓名"
+                    width="120">
+            </el-table-column>
+            <el-table-column
+                    prop="mobile"
+                    label="手机">
+            </el-table-column>
+            <el-table-column
+                    prop="email"
+                    label="邮箱">
+            </el-table-column>
+            <el-table-column
+                    prop="unitname"
+                    label="所属单位">
+            </el-table-column>
+        </el-table>
+        <el-pagination
+                @size-change="viewPageSizeChange"
+                @current-change="viewPageNumberChange"
+                :current-page="viewPageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="viewPageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="viewPageForm.totalCount">
+        </el-pagination>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="viewDialogVisible = false"> 关 闭 </el-button>
+        </span>
+    </el-dialog>
+
     <el-dialog
             title="选择用户"
             :visible.sync="selectDialogVisible"
@@ -261,7 +342,7 @@ layout("/layouts/platform.html"){
                     </el-table-column>
                 </el-table>
             </el-form-item>
-            <el-form-item label="消息内容">
+            <el-form-item prop="note" label="消息内容">
                 <!---->
                 <script type="text/plain" id="note" style="width:100%;height:320px;"></script>
                 <!---->
@@ -274,7 +355,7 @@ layout("/layouts/platform.html"){
     </el-dialog>
 </div>
 <script>
-    var um;
+    var wo_shi_zhan_wei_fu;
     new Vue({
         el: "#app",
         data: function () {
@@ -282,6 +363,7 @@ layout("/layouts/platform.html"){
                 addDialogVisible: false,
                 editDialogVisible: false,
                 selectDialogVisible: false,
+                viewDialogVisible: false,
                 tableData: [],
                 pageForm: {
                     searchType: "${type!}",
@@ -298,7 +380,7 @@ layout("/layouts/platform.html"){
                 formRules: {
                     title: [
                         {required: true, message: '标题', trigger: 'blur'}
-                    ]
+                    ],
                 },
                 selectPageForm: {
                     searchName: "",
@@ -313,7 +395,18 @@ layout("/layouts/platform.html"){
                     {loginname: 'xxx', realname: "xx", unitname: "ccccccc"}
                 ],
                 userTableData:[],
-                selectUsers:[]
+                selectUsers:[],
+                viewTableData:[],
+                viewUserTitle:"",
+                viewPageForm: {
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "loginname",
+                    pageOrderBy: "descending",
+                    type:"",
+                    id:""
+                },
             }
         },
         methods: {
@@ -387,7 +480,6 @@ layout("/layouts/platform.html"){
             },
             doSearch: function (val) {
                 this.pageForm.pageNumber = 1;
-                this.pageForm.searchType = val;
                 this.pageData();
             },
             openSelect: function () {
@@ -446,65 +538,48 @@ layout("/layouts/platform.html"){
                     }
                 });
             },
-            doEdit: function () {
+            viewPageOrder: function (column) {//按字段排序
+                this.viewPageForm.pageOrderName = column.prop;
+                this.viewPageForm.pageOrderBy = column.order;
+                this.viewPageLoad();
+            },
+            viewPageNumberChange: function (val) {//页码更新操作
+                this.viewPageForm.pageNumber = val;
+                this.viewPageLoad();
+            },
+            viewPageSizeChange: function (val) {//分页大小更新操作
+                this.viewPageForm.pageSize = val;
+                this.viewPageLoad();
+            },
+            viewPageLoad: function () {//加载分页数据
                 var self = this;
-                self.$refs["editForm"].validate(function (valid) {
-                    if (valid) {
-                        $.post(base + "/platform/sys/msg/editDo", self.formData, function (data) {
-                            if (data.code == 0) {
-                                self.$message({
-                                    message: data.msg,
-                                    type: 'success'
-                                });
-                                self.doSearch();//查询是带条件的,加载新建用户选择的单位用户数据
-                                //self.pageData();
-                                self.editDialogVisible = false;
-                            } else {
-                                self.$message({
-                                    message: data.msg,
-                                    type: 'error'
-                                });
-                            }
-                        }, "json");
+                $.post(base + "/platform/sys/msg/user_view_data", self.viewPageForm, function (data) {
+                    if (data.code == 0) {
+                        self.viewTableData = data.data.list;
+                        self.viewPageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
                     }
-                });
+                }, "json");
+            },
+            viewUserList:function (type,id) {
+                var self=this;
+                if("all"==type){
+                    self.viewUserTitle="全部用户";
+                }
+                if("unread"==type){
+                    self.viewUserTitle="未读用户";
+                }
+                self.viewDialogVisible=true;
+                self.viewPageForm.type=type;
+                self.viewPageForm.id=id;
+                self.viewPageLoad();
             },
             dropdownCommand: function (command) {//监听下拉框事件
                 var self = this;
-                if ("enable" == command.type || "disable" == command.type) {
-                    $.post(base + "/platform/sys/msg/" + command.type + "/" + command.id, {}, function (data) {
-                        if (data.code == 0) {
-                            self.$message({
-                                message: data.msg,
-                                type: 'success'
-                            });
-                            if ("disable" == command.type) {
-                                command.row.disabled = true;
-                            }
-                            if ("enable" == command.type) {
-                                command.row.disabled = false;
-                            }
-                        } else {
-                            self.$message({
-                                message: data.msg,
-                                type: 'error'
-                            });
-                        }
-                    }, "json");
-                }
-                if ("edit" == command.type) {
-                    $.post(base + "/platform/sys/msg/edit/" + command.id, {}, function (data) {
-                        if (data.code == 0) {
-                            self.formData = data.data;//加载后台表单数据
-                            self.editDialogVisible = true;//打开编辑窗口
-                        } else {
-                            self.$message({
-                                message: data.msg,
-                                type: 'error'
-                            });
-                        }
-                    }, "json");
-                }
                 if ("delete" == command.type) {
                     self.$confirm('此操作将删除 ' + command.name, '提示', {
                         confirmButtonText: '确定',

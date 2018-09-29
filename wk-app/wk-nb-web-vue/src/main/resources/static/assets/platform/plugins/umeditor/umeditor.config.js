@@ -235,7 +235,7 @@
 
         //autoHeightEnabled
         // 是否自动长高,默认true
-        //,autoHeightEnabled:true
+        ,autoHeightEnabled:false
 
         //autoFloatEnabled
         //是否保持toolbar的位置不动,默认true

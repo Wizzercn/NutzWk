@@ -10,8 +10,6 @@ import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.Pagination;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -66,7 +64,6 @@ public class SysMsgController {
             if (Strings.isNotBlank(searchType) && !"all".equals(searchType)) {
                 cnd.and("type", "=", searchType);
             }
-            cnd.and("delFlag", "=", false);
             if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
                 cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
             }
@@ -80,6 +77,26 @@ public class SysMsgController {
             }
             pagination.setList(mapList);
             return Result.success().addData(pagination);
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At
+    @Ok("json:full")
+    @RequiresPermissions("sys.manager.msg")
+    public Object user_view_data(@Param("type") String type, @Param("id") String id, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            String sql = "SELECT a.loginname,a.username,a.mobile,a.email,a.disabled,a.unitid,b.name as unitname,c.status,c.readat FROM sys_user a,sys_unit b,sys_msg_user c WHERE a.unitid=b.id \n" +
+                    "and a.loginname=c.loginname and c.msgId='" + id + "' ";
+            if (Strings.isNotBlank(type) && "unread".equals(type)) {
+                sql += " and c.status=0 ";
+            }
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                sql += " order by a." + pageOrderName + " " + PageUtil.getOrder(pageOrderBy);
+            }
+            return Result.success().addData(sysMsgService.listPage(pageNumber, pageSize, Sqls.create(sql)));
         } catch (Exception e) {
             return Result.error();
         }
@@ -139,22 +156,4 @@ public class SysMsgController {
     }
 
 
-    @At("/userData/?/?")
-    @Ok("json:full")
-    @RequiresPermissions("sys.manager.msg")
-    public Object allUserData(String id, String status, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        String sql = "SELECT a.loginname,a.username,a.disabled,a.unitid,b.name as unitname,c.status,c.readat FROM sys_user a,sys_unit b,sys_msg_user c WHERE a.unitid=b.id \n" +
-                "and a.loginname=c.loginname and c.msgId='" + id + "' ";
-        if (Strings.isNotBlank(status) && "unread".equals(status)) {
-            sql += " and c.status=0";
-        }
-        String s = sql;
-        if (order != null && order.size() > 0) {
-            for (DataTableOrder o : order) {
-                DataTableColumn col = columns.get(o.getColumn());
-                s += " order by a." + Sqls.escapeSqlFieldValue(col.getData()).toString() + " " + o.getDir();
-            }
-        }
-        return sysUserService.data(length, start, draw, Sqls.create(sql), Sqls.create(s));
-    }
 }

@@ -31,7 +31,7 @@ public class Sys_msg extends BaseModel implements Serializable {
 
     @Column
     @Comment("消息内容")
-    @ColDefine(type = ColType.VARCHAR, width = 500)
+    @ColDefine(type = ColType.TEXT)
     private String note;
 
     @Column
