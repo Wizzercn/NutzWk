@@ -9,7 +9,6 @@ import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.OffsetPager;
 import cn.wizzer.framework.page.Pagination;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
@@ -18,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
-import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
@@ -91,15 +89,36 @@ public class SysMsgController {
     @Ok("json")
     @RequiresPermissions("sys.manager.msg.add")
     @SLog(tag = "站内消息", msg = "${args[0].title}")
-    public Object addDo(@Param("..") Sys_msg sysMsg, @Param("users") String[] users, HttpServletRequest req) {
+    public Object addDo(@Param("..") NutMap nutMap, HttpServletRequest req) {
         try {
+            Sys_msg sysMsg = nutMap.getAs("msg", Sys_msg.class);
+            sysMsg.setNote(nutMap.getString("note", ""));
             sysMsg.setSendAt(Times.getTS());
             sysMsg.setOpBy(StringUtil.getPlatformUid());
+            String[] users = StringUtils.split(nutMap.getString("users", ""), ",");
             Sys_msg sys_msg = sysMsgService.saveMsg(sysMsg, users);
             if (sys_msg != null) {
                 wkNotifyService.notify(sys_msg, users);
             }
             return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At
+    @Ok("json:{locked:'password|salt',ignoreNull:false}")
+    @RequiresPermissions("sys.manager.user")
+    public Object user_data(@Param("searchUnit") String searchUnit, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
+                cnd.and(searchName, "like", "%" + searchKeyword + "%");
+            }
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+            }
+            return Result.success().addData(sysUserService.listPageLinks(pageNumber, pageSize, cnd, "unit"));
         } catch (Exception e) {
             return Result.error();
         }
@@ -113,61 +132,12 @@ public class SysMsgController {
         try {
             sysMsgService.deleteMsg(id);
             req.setAttribute("id", id);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
-    @At("/detail/?")
-    @Ok("beetl:/platform/sys/msg/detail.html")
-    @RequiresPermissions("sys.manager.msg")
-    public void detail(String id, HttpServletRequest req) {
-        if (!Strings.isBlank(id)) {
-            req.setAttribute("obj", sysMsgService.fetch(id));
-        } else {
-            req.setAttribute("obj", null);
-        }
-    }
-
-    @At
-    @Ok("beetl:/platform/sys/msg/selectUser.html")
-    @RequiresPermissions("sys.manager.msg")
-    public void selectUser(HttpServletRequest req) {
-
-    }
-
-    @At
-    @Ok("json:full")
-    @RequiresPermissions("sys.manager.msg")
-    public Object selectData(@Param("name") String name, @Param("users") String users, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        String sql = "SELECT a.loginname,a.username,a.disabled,a.unitid,b.name as unitname FROM sys_user a,sys_unit b WHERE a.unitid=b.id ";
-        if (!Strings.isBlank(name)) {
-            sql += " and (a.loginname like '%" + name + "%' or a.username like '%" + name + "%') ";
-        }
-        if (!Strings.isBlank(users)) {
-            String[] s = StringUtils.split(users, ",");
-            for (String u : s) {
-                sql += " and a.loginname<>'" + u + "'";
-            }
-        }
-        String s = sql;
-        if (order != null && order.size() > 0) {
-            for (DataTableOrder o : order) {
-                DataTableColumn col = columns.get(o.getColumn());
-                s += " order by a." + Sqls.escapeSqlFieldValue(col.getData()).toString() + " " + o.getDir();
-            }
-        }
-        return sysUserService.data(length, start, draw, Sqls.create(sql), Sqls.create(s));
-    }
-
-    @At("/user/?/?")
-    @Ok("beetl:/platform/sys/msg/user.html")
-    @RequiresPermissions("sys.manager.msg")
-    public void allUser(String id, String status, HttpServletRequest req) {
-        req.setAttribute("id", id);
-        req.setAttribute("status", status);
-    }
 
     @At("/userData/?/?")
     @Ok("json:full")

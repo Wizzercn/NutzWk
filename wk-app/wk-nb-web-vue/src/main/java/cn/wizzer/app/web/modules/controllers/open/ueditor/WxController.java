@@ -1,6 +1,5 @@
 package cn.wizzer.app.web.modules.controllers.open.ueditor;
 
-import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
 import com.alibaba.dubbo.config.annotation.Reference;
@@ -8,8 +7,6 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
-import org.nutz.lang.Files;
-import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
@@ -36,46 +33,39 @@ public class WxController {
     @Inject
     private WxService wxService;
 
-
-    @At
-    @Ok("json")
-    public Object index(@Param("action") String action, HttpServletRequest req) {
-        return Json.fromJson(new String(Streams.readBytesAndClose(Files.findFileAsStream("static/assets/plugins/ueditor/nutz/configWx.json"))).replace("$base", Globals.AppBase));
-    }
-
     @AdaptBy(type = UploadAdaptor.class, args = {"ioc:imageUpload"})
     @POST
     @At
-    @Ok("json")
+    @Ok("raw")
     @RequiresAuthentication
     @SuppressWarnings("deprecation")
-    public Object uploadimage(@Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
+    public Object uploadimage(@Param("Filedata") TempFile tf, @Param("callback") String callback, HttpServletRequest req, AdaptorErrorContext err) {
         String wxid = Strings.sBlank(req.getSession().getAttribute("wxid"));
         NutMap nutMap = new NutMap();
         try {
             if (err != null && err.getAdaptorErr() != null) {
-                nutMap.addv("state", "FAIL");
-                return nutMap;
+                return Json.toJson(nutMap.addv("state", "FAIL"));
             } else if (tf == null) {
-                nutMap.addv("state", "FAIL");
-                return nutMap;
+                return Json.toJson(nutMap.addv("state", "FAIL"));
             } else {
                 WxApi2 wxApi2 = wxService.getWxApi2(wxid);
                 WxResp resp = wxApi2.uploadimg(tf.getFile());
                 if (resp.errcode() != 0) {
-                    nutMap.addv("state", "FAIL");
-                    return nutMap;
+                    return Json.toJson(nutMap.addv("state", "FAIL"));
                 }
+                nutMap.addv("name", tf.getName());
                 nutMap.addv("state", "SUCCESS");
                 nutMap.addv("url", resp.get("url"));
-                nutMap.addv("original", tf.getSubmittedFileName());
+                nutMap.addv("originalName", tf.getSubmittedFileName());
                 nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
                 nutMap.addv("size", tf.getSize());
-                return nutMap;
+                if (Strings.isBlank(callback)) {
+                    return Json.toJson(nutMap);
+                } else
+                    return "<script>" + callback + "(" + Json.toJson(nutMap) + ")</script>";
             }
         } catch (Exception e) {
-            nutMap.addv("state", "FAIL");
-            return nutMap;
+            return Json.toJson(nutMap.addv("state", "FAIL"));
         }
     }
 }

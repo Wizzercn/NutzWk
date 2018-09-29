@@ -7,20 +7,29 @@ layout("/layouts/platform.html"){
         color: #ffffff;
     }
 </style>
+<link href="${base!}/assets/platform/plugins/umeditor/themes/default/css/umeditor.min.css" type="text/css"
+      rel="stylesheet">
+<script src="${base!}/assets/platform/plugins/umeditor/umeditor.config.js"></script>
+<script src="${base!}/assets/platform/plugins/umeditor/umeditor.js"></script>
 <div id="app" v-cloak>
     <el-row class="header navbar shadow">
         <div class="btn-group tool-button mt5">
-            <a href="${base}/platform/sys/msg" data-pjax class="el-button el-button--default el-button--medium" :class="{'el-msg-active':'all'==pageForm.searchType}">
+            <a href="${base}/platform/sys/msg" data-pjax class="el-button el-button--default el-button--medium"
+               :class="{'el-msg-active':'all'==pageForm.searchType}">
                 全部类型消息
             </a>
         </div>
         <div class="btn-group tool-button mt5">
-            <a href="${base}/platform/sys/msg/list/system" data-pjax class="el-button el-button--default el-button--medium" :class="{'el-msg-active':'system'==pageForm.searchType}">
+            <a href="${base}/platform/sys/msg/list/system" data-pjax
+               class="el-button el-button--default el-button--medium"
+               :class="{'el-msg-active':'system'==pageForm.searchType}">
                 系统消息
             </a>
         </div>
         <div class="btn-group tool-button mt5">
-            <a href="${base}/platform/sys/msg/list/user" data-pjax class="el-button el-button--default el-button--medium" :class="{'el-msg-active':'user'==pageForm.searchType}">
+            <a href="${base}/platform/sys/msg/list/user" data-pjax
+               class="el-button el-button--default el-button--medium"
+               :class="{'el-msg-active':'user'==pageForm.searchType}">
                 用户消息
             </a>
         </div>
@@ -35,7 +44,7 @@ layout("/layouts/platform.html"){
                 size="small"
                 header-align="center"
                 style="width: 100%"
-                :default-sort = "{prop: 'opAt', order: 'descending'}"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
         >
             <el-table-column type="expand">
                 <template slot-scope="scope">
@@ -47,7 +56,7 @@ layout("/layouts/platform.html"){
                             <span>{{ scope.row.url }}</span>
                         </el-form-item>
                         <el-form-item label="内容" :show-overflow-tooltip="true">
-                            <span>{{ scope.row.note }}</span>
+                            <span v-html="scope.row.note"></span>
                         </el-form-item>
                     </el-form>
                 </template>
@@ -97,9 +106,6 @@ layout("/layouts/platform.html"){
                             <span class="ti-angle-down"></span>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item divided :command="{type:'edit',id:scope.row.id}">
-                                修改
-                            </el-dropdown-item>
                             <el-dropdown-item :command="{type:'delete',id:scope.row.id,name:scope.row.title}">
                                 删除
                             </el-dropdown-item>
@@ -109,6 +115,7 @@ layout("/layouts/platform.html"){
             </el-table-column>
         </el-table>
     </el-row>
+
     <el-row class="el-pagination-container">
         <el-pagination
                 @size-change="pageSizeChange"
@@ -121,9 +128,84 @@ layout("/layouts/platform.html"){
         </el-pagination>
     </el-row>
     <el-dialog
+            title="选择用户"
+            :visible.sync="selectDialogVisible"
+            width="65%">
+        <div class="btn-group tool-button mt5">
+            <el-input placeholder="请输入内容" v-model="selectPageForm.searchKeyword" @keyup.enter.native="doSearch">
+                <el-select v-model="selectPageForm.searchName" slot="prepend" placeholder="查询类型" style="width: 120px;">
+                    <el-option label="用户名" value="loginname"></el-option>
+                    <el-option label="姓名" value="username"></el-option>
+                    <el-option label="手机" value="mobile"></el-option>
+                    <el-option label="邮箱" value="email"></el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="doSelectSearch"></el-button>
+
+            </el-input>
+        </div>
+        <el-table
+                :data="selectTableData"
+                @sort-change='selectPageOrder'
+                header-align="center"
+                style="width: 100%;margin-top: 10px;margin-bottom: 10px;"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+                @selection-change="handleSelectionChange"
+                size="mini"
+        >
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+            <el-table-column
+                    fixed
+                    prop="loginname"
+                    label="用户名"
+                    width="150">
+            </el-table-column>
+            <el-table-column
+                    prop="username"
+                    label="姓名"
+                    width="120">
+            </el-table-column>
+            <el-table-column
+                    prop="mobile"
+                    label="手机"
+                    width="120">
+            </el-table-column>
+            <el-table-column
+                    prop="email"
+                    label="邮箱"
+                    width="120">
+            </el-table-column>
+            <el-table-column
+                    prop="unit"
+                    label="所属单位">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.unit!=null">
+                        {{scope.row.unit.name}}
+                    </span>
+                </template>
+            </el-table-column>
+        </el-table>
+        <el-pagination
+                @size-change="selectPageSizeChange"
+                @current-change="selectPageNumberChange"
+                :current-page="selectPageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="selectPageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="selectPageForm.totalCount">
+        </el-pagination>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="selectDialogVisible = false"> 取 消 </el-button>
+            <el-button type="primary" @click="doSelect"> 确 定 </el-button>
+        </span>
+    </el-dialog>
+
+    <el-dialog
             title="发送消息"
             :visible.sync="addDialogVisible"
-            width="40%">
+            width="60%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="title" label="标题">
                 <el-input maxlength="255" placeholder="标题"
@@ -135,60 +217,71 @@ layout("/layouts/platform.html"){
                           v-model="formData.url"
                           auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="type" label="指向路径">
+            <el-form-item prop="type" label="消息类型">
                 <el-radio-group v-model="formData.type">
                     <el-radio label="system">系统消息</el-radio>
                     <el-radio label="user">用户消息</el-radio>
                 </el-radio-group>
             </el-form-item>
+            <el-form-item label="用户列表" v-if="'user'==formData.type">
+                <el-row>
+                    <el-button icon="el-icon-search" @click="openSelect">选择用户</el-button>
+                    <el-button icon="el-icon-delete" @click="clearSelect" type="danger">清空用户</el-button>
+
+                </el-row>
+                <el-table
+                        :data="userTableData"
+                        style="width: 100%"
+                        size="small"
+                        height="200">
+                    <el-table-column
+                            fixed
+                            prop="loginname"
+                            label="用户名"
+                            width="150">
+                    </el-table-column>
+                    <el-table-column
+                            prop="username"
+                            label="姓名"
+                            width="120">
+                    </el-table-column>
+                    <el-table-column
+                            prop="mobile"
+                            label="手机号"
+                            width="120">
+                    </el-table-column>
+                    <el-table-column
+                            prop="unit"
+                            label="所属单位">
+                        <template slot-scope="scope">
+                            <span v-if="scope.row.unit!=null">
+                                {{scope.row.unit.name}}
+                            </span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-form-item>
+            <el-form-item label="消息内容">
+                <!---->
+                <script type="text/plain" id="note" style="width:100%;height:320px;"></script>
+                <!---->
+            </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-            <el-button @click="addDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="doAdd">确 定</el-button>
-        </span>
-    </el-dialog>
-    <el-dialog
-            title="修改路由"
-            :visible.sync="editDialogVisible"
-            width="40%">
-        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
-            <el-form-item prop="url" label="原路径">
-                <el-input maxlength="100" placeholder="原路径"
-                          v-model="formData.url"
-                          auto-complete="off" tabindex="1" type="text"></el-input>
-            </el-form-item>
-            <el-form-item prop="toUrl" label="指向路径">
-                <el-input placeholder="指向路径"
-                          v-model="formData.toUrl"
-                          auto-complete="off" tabindex="2" type="text"></el-input>
-            </el-form-item>
-            <el-form-item prop="type" label="指向路径">
-                <el-radio-group v-model="formData.type">
-                    <el-radio label="hide">隐性转发</el-radio>
-                    <el-radio label="show">显性转发</el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item prop="disabled" label="启用状态">
-                <el-switch
-                        v-model="formData.disabled"
-                        active-color="#ff4949"
-                        inactive-color="#13ce66">
-                </el-switch>
-            </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="editDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="doEdit">确 定</el-button>
+                <el-button @click="addDialogVisible = false"> 取 消 </el-button>
+                <el-button type="primary" @click="doAdd"> 确 定 </el-button>
         </span>
     </el-dialog>
 </div>
 <script>
+    var um;
     new Vue({
         el: "#app",
         data: function () {
             return {
                 addDialogVisible: false,
                 editDialogVisible: false,
+                selectDialogVisible: false,
                 tableData: [],
                 pageForm: {
                     searchType: "${type!}",
@@ -200,13 +293,27 @@ layout("/layouts/platform.html"){
                 },
                 formData: {
                     id: "",
-                    type: "hide"
+                    type: "system"
                 },
                 formRules: {
                     title: [
                         {required: true, message: '标题', trigger: 'blur'}
                     ]
                 },
+                selectPageForm: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "loginname",
+                    pageOrderBy: "ascending"
+                },
+                selectTableData: [
+                    {loginname: 'xxx', realname: "xx", unitname: "ccccccc"}
+                ],
+                userTableData:[],
+                selectUsers:[]
             }
         },
         methods: {
@@ -239,6 +346,40 @@ layout("/layouts/platform.html"){
                     }
                 }, "json");
             },
+            selectPageOrder: function (column) {//按字段排序
+                this.selectPageForm.pageOrderName = column.prop;
+                this.selectPageForm.pageOrderBy = column.order;
+                this.selectPageData();
+            },
+            selectPageNumberChange: function (val) {//页码更新操作
+                this.selectPageForm.pageNumber = val;
+                this.selectPageData();
+            },
+            selectPageSizeChange: function (val) {//分页大小更新操作
+                this.selectPageForm.pageSize = val;
+                this.selectPageData();
+            },
+            doSelectSearch:function(){
+                this.selectPageForm.pageNumber = 1;
+                this.selectPageData();
+            },
+            selectPageData: function () {//加载分页数据
+                var self = this;
+                $.post(base + "/platform/sys/msg/user_data", self.selectPageForm, function (data) {
+                    if (data.code == 0) {
+                        self.selectTableData = data.data.list;
+                        self.selectPageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            handleSelectionChange: function (val) {
+                this.selectUsers = val;
+            },
             formatAt: function (val) {
                 if (val && val > 0)
                     return moment(val * 1000).format("YYYY-MM-DD HH:mm");
@@ -249,20 +390,45 @@ layout("/layouts/platform.html"){
                 this.pageForm.searchType = val;
                 this.pageData();
             },
+            openSelect: function () {
+                this.selectDialogVisible = true;
+                this.selectPageData();
+            },
+            clearSelect: function () {
+                this.userTableData = [];
+            },
+            doSelect: function(){
+                var self=this;
+                this.selectDialogVisible = false;
+                this.selectUsers.forEach(function (o) {
+                    self.userTableData.push(o);
+                });
+            },
             openAdd: function () {
                 var self = this;
                 this.addDialogVisible = true;
                 this.formData = {
-                    id: "", type: "hide"
+                    id: "", type: "system"
                 };//打开新增窗口,表单先清空
                 if (this.$refs["addForm"])
                     this.$refs["addForm"].resetFields();
+                UM.getEditor("note");
             },
             doAdd: function () {
                 var self = this;
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {
-                        $.post(base + "/platform/sys/msg/addDo", self.formData, function (data) {
+                        var users=[];
+                        if(self.selectUsers){
+                            self.selectUsers.forEach(function (o) {
+                                users.push(o.id);
+                            });
+                        }
+                        $.post(base + "/platform/sys/msg/addDo", {
+                            note: UM.getEditor("note").getContent(),
+                            msg: JSON.stringify(self.formData),
+                            users: users.toString()
+                        }, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
