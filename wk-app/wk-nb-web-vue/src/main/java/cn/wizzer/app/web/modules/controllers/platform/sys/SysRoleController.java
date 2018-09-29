@@ -456,7 +456,11 @@ public class SysRoleController {
     @SLog(tag = "从角色中移除用户", msg = "角色名称:${args[2].getAttribute('name')},用户ID:${args[0]}")
     public Object usersDel(@Param("users") String users, @Param("roleId") String roleId, HttpServletRequest req) {
         try {
+            String superadminId = sysUserService.fetch(Cnd.where("loginname", "=", "superadmin")).getId();
             String[] ids = StringUtils.split(users, ",");
+            if (Lang.contains(ids, superadminId)) {
+                return Result.error("超级管理员不能从系统角色里删除");
+            }
             sysRoleService.clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleId));
             Sys_role role = sysRoleService.fetch(roleId);
             req.setAttribute("name", role.getName());

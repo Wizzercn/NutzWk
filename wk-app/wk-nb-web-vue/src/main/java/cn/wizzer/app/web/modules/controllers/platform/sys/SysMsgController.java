@@ -144,11 +144,11 @@ public class SysMsgController {
     @At({"/delete/?"})
     @Ok("json")
     @RequiresPermissions("sys.manager.msg.delete")
-    @SLog(tag = "站内消息", msg = "${req.getAttribute('id')}")
+    @SLog(tag = "站内消息", msg = "站内信标题:${req.getAttribute('title')}")
     public Object delete(String id, HttpServletRequest req) {
         try {
+            req.setAttribute("title", sysMsgService.fetch(id).getTitle());
             sysMsgService.deleteMsg(id);
-            req.setAttribute("id", id);
             return Result.success();
         } catch (Exception e) {
             return Result.error();
