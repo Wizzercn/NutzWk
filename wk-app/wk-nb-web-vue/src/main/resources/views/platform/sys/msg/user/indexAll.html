@@ -32,7 +32,7 @@ layout("/layouts/platform.html"){
         <div class="pull-right offscreen-right mt5">
             <el-button size="medium" @click="openAdd">标记已读</el-button>
             <el-button size="medium" @click="openAdd">全部已读</el-button>
-            <el-button size="medium" @click="openAdd">删除</el-button>
+            <el-button size="medium" @click="openAdd" type="danger">删除</el-button>
         </div>
     </el-row>
     <el-row class="el-table-container">
@@ -42,10 +42,13 @@ layout("/layouts/platform.html"){
                 size="small"
                 header-align="center"
                 style="width: 100%"
+                @selection-change="handleSelectionChange"
         >
-
             <el-table-column
-                    sortable
+                    type="selection"
+                    width="35">
+            </el-table-column>
+            <el-table-column
                     prop="type"
                     label="消息类型"
                     header-align="center" align="center">
@@ -62,7 +65,6 @@ layout("/layouts/platform.html"){
             </el-table-column>
 
             <el-table-column
-                    sortable
                     prop="opat"
                     label="接收时间"
                     header-align="center" align="center">
@@ -75,6 +77,7 @@ layout("/layouts/platform.html"){
 
     <el-row class="el-pagination-container">
         <el-pagination
+                style="float: left"
                 @size-change="pageSizeChange"
                 @current-change="pageNumberChange"
                 :current-page="pageForm.pageNumber"
@@ -86,7 +89,6 @@ layout("/layouts/platform.html"){
     </el-row>
 </div>
 <script>
-    var wo_shi_zhan_wei_fu;
     new Vue({
         el: "#app",
         data: function () {
@@ -108,6 +110,7 @@ layout("/layouts/platform.html"){
                     id: "",
                     type: "system"
                 },
+                selectData: []
             }
         },
         methods: {
@@ -145,6 +148,9 @@ layout("/layouts/platform.html"){
                     return moment(val * 1000).format("YYYY-MM-DD HH:mm");
                 return "";
             },
+            handleSelectionChange:function (val) {
+                this.selectData = val;
+            }
         },
         created: function () {
             this.pageData();
