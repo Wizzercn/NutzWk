@@ -513,8 +513,15 @@ layout("/layouts/platform.html"){
                         var users=[];
                         if(self.selectUsers){
                             self.selectUsers.forEach(function (o) {
-                                users.push(o.id);
+                                users.push(o.loginname);
                             });
+                        }
+                        if(self.formData.type=='user'&&users.length==0){
+                            self.$message({
+                                message: "请选择用户",
+                                type: 'error'
+                            });
+                            return false;
                         }
                         $.post(base + "/platform/sys/msg/addDo", {
                             note: UM.getEditor("note").getContent(),

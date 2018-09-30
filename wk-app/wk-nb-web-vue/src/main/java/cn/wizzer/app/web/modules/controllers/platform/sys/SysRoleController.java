@@ -459,7 +459,7 @@ public class SysRoleController {
             String superadminId = sysUserService.fetch(Cnd.where("loginname", "=", "superadmin")).getId();
             String[] ids = StringUtils.split(users, ",");
             if (Lang.contains(ids, superadminId)) {
-                return Result.error("超级管理员不能从系统角色里删除");
+                return Result.error("超级管理员不能从[系统管理员]角色里删除");
             }
             sysRoleService.clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleId));
             Sys_role role = sysRoleService.fetch(roleId);

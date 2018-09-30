@@ -234,49 +234,21 @@
             <li class="notifications dropdown">
                 <a href="javascript:;" data-toggle="dropdown">
                     <i class="ti-bell"></i>
-                    <div class="badge badge-top bg-danger animated flash">
-                        <span>3</span>
+                    <div id="innerMsg" class="badge badge-top bg-danger animated flash" style="display:none;">
+                        <span id="innerMsgNum">0</span>
                     </div>
                 </a>
                 <div class="dropdown-menu animated fadeInLeft">
                     <div class="panel panel-default no-m">
-                        <div class="panel-heading small"><b>Notifications</b>
+                        <div class="panel-heading small"><b>${msg['index.notifications.title']}</b>
                         </div>
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                <a href="javascript:;">
-                                    <div class="m-body">
-                                        <div class="">
-                                            <small><b>CRYSTAL BROWN</b></small>
-                                            <span class="label label-danger pull-right">ASSIGN AGENT</span>
-                                        </div>
-                                        <span>Opened a support query</span>
-                                        <span class="time small">2 mins ago</span>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="list-group-item">
-                                <a href="javascript:;">
-                                    <div class="pull-left mt5 mr15">
-                                        <div class="circle-icon bg-danger">
-                                            <i class="ti-download"></i>
-                                        </div>
-                                    </div>
-                                    <div class="m-body">
-                                        <span>Upload Progress</span>
-                                        <div class="progress progress-xs mt5 mb5">
-                                            <div class="progress-bar" role="progressbar" aria-valuenow="40"
-                                                 aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-                                            </div>
-                                        </div>
-                                        <span class="time small">Submited 23 mins ago</span>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
+                        <div id="innerMsgList" class="list-group">
+
+                        </div>
+
 
                         <div class="panel-footer">
-                            <a href="javascript:;">See all notifications</a>
+                            <a href="${base}/platform/sys/msg/user/all">${msg['index.notifications.see']}</a>
                         </div>
                     </div>
                 </div>
