@@ -95,8 +95,3 @@ a .expanded {
     vertical-align: top;
     position: relative;
 }
-
-.message-center .state-column .state-unread {
-    font-size: 16px;
-    color: #428bca;
-}
