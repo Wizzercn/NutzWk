@@ -610,7 +610,7 @@ var sublime = function () {
                         $("#loadingbar").width("101%");
                         clearInterval(interval);
                     }
-                }, 1000);
+                }, 600);
                 $("#loadingbar").attr("interval", interval);
             }
         },

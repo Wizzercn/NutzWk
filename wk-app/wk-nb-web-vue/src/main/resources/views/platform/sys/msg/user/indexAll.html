@@ -19,20 +19,20 @@ layout("/layouts/platform.html"){
             <a href="${base}/platform/sys/msg/user/all/system" data-pjax
                class="el-button el-button--default el-button--medium"
                :class="{'el-msg-active':'system'==pageForm.searchType}">
-                系统消息
+                系统消息<span v-if="unreadnum.system>0">({{unreadnum.system}})</span>
             </a>
         </div>
         <div class="btn-group tool-button mt5">
             <a href="${base}/platform/sys/msg/user/all/user" data-pjax
                class="el-button el-button--default el-button--medium"
                :class="{'el-msg-active':'user'==pageForm.searchType}">
-                用户消息
+                用户消息<span v-if="unreadnum.user>0">({{unreadnum.user}})</span>
             </a>
         </div>
         <div class="pull-right offscreen-right mt5">
-            <el-button size="medium" @click="openAdd">标记已读</el-button>
-            <el-button size="medium" @click="openAdd">全部已读</el-button>
-            <el-button size="medium" @click="openAdd" type="danger">删除</el-button>
+            <el-button size="medium" @click="">标记已读</el-button>
+            <el-button size="medium" @click="">全部已读</el-button>
+            <el-button size="medium" @click="" type="danger">删除</el-button>
         </div>
     </el-row>
     <el-row class="el-table-container">
@@ -49,9 +49,16 @@ layout("/layouts/platform.html"){
                     width="35">
             </el-table-column>
             <el-table-column
+                    prop="status"
+                    width="45">
+                <template slot-scope="scope">
+                    <span v-if="0==scope.row.status"><i class="fa fa-circle text-info ml5"></i></span>
+                </template>
+            </el-table-column>
+            <el-table-column
                     prop="type"
                     label="消息类型"
-                    header-align="center" align="center">
+                    header-align="center" align="left">
                 <template slot-scope="scope">
                     <span v-if="'system'==scope.row.type">系统消息</span>
                     <span v-if="'user'==scope.row.type">用户消息</span>
@@ -110,7 +117,11 @@ layout("/layouts/platform.html"){
                     id: "",
                     type: "system"
                 },
-                selectData: []
+                selectData: [],
+                unreadnum: {
+                    system: 0,
+                    user: 0
+                }
             }
         },
         methods: {
@@ -148,12 +159,21 @@ layout("/layouts/platform.html"){
                     return moment(val * 1000).format("YYYY-MM-DD HH:mm");
                 return "";
             },
-            handleSelectionChange:function (val) {
+            handleSelectionChange: function (val) {
                 this.selectData = val;
-            }
+            },
+            unreadData: function () {//加载分页数据
+                var self = this;
+                $.post(base + "/platform/sys/msg/unread_num", {}, function (data) {
+                    if (data.code == 0) {
+                        self.unreadnum = data.data;
+                    }
+                }, "json");
+            },
         },
         created: function () {
             this.pageData();
+            this.unreadData();
         }
     });
 </script>
