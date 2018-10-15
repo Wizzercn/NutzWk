@@ -93,10 +93,12 @@ public class SysMsgUserController {
     public Object delete(String id, @Param("ids") String[] ids, HttpServletRequest req) {
         try {
             if (ids != null && ids.length > 0) {
-                sysMsgUserService.vDelete(ids);
+                sysMsgUserService.update(Chain.make("delFlag", true)
+                        .add("opAt", Times.getTS()).add("opBy", StringUtil.getPlatformUid()), Cnd.where("id", "in", ids).and("loginname", "=", StringUtil.getPlatformLoginname()));
                 req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
             } else {
-                sysMsgUserService.vDelete(id);
+                sysMsgUserService.update(Chain.make("delFlag", true)
+                        .add("opAt", Times.getTS()).add("opBy", StringUtil.getPlatformUid()), Cnd.where("id", "=", id).and("loginname", "=", StringUtil.getPlatformLoginname()));
                 req.setAttribute("id", id);
             }
             return Result.success();
@@ -104,7 +106,6 @@ public class SysMsgUserController {
             return Result.error();
         }
     }
-
 
     @At
     @Ok("json")
@@ -126,7 +127,8 @@ public class SysMsgUserController {
     @SLog(tag = "站内消息", msg = "${req.getAttribute('id')}")
     public Object read(@Param("ids") String[] ids, HttpServletRequest req) {
         try {
-            sysMsgUserService.update(Chain.make("status", 1).add("readAt", Times.getTS()), Cnd.where("id", "in", ids).and("loginname", "=", StringUtil.getPlatformLoginname()));
+            sysMsgUserService.update(Chain.make("status", 1).add("readAt", Times.getTS())
+                    .add("opAt", Times.getTS()).add("opBy", StringUtil.getPlatformUid()), Cnd.where("id", "in", ids).and("loginname", "=", StringUtil.getPlatformLoginname()));
             req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
             return Result.success("system.success");
         } catch (Exception e) {
@@ -140,7 +142,8 @@ public class SysMsgUserController {
     @SLog(tag = "站内消息", msg = "readAll")
     public Object readAll(HttpServletRequest req) {
         try {
-            sysMsgUserService.update(Chain.make("status", 1).add("readAt", Times.getTS()), Cnd.where("loginname", "=", StringUtil.getPlatformLoginname()));
+            sysMsgUserService.update(Chain.make("status", 1).add("readAt", Times.getTS())
+                    .add("opAt", Times.getTS()).add("opBy", StringUtil.getPlatformUid()), Cnd.where("loginname", "=", StringUtil.getPlatformLoginname()));
             return Result.success();
         } catch (Exception e) {
             return Result.error();
