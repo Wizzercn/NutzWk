@@ -102,20 +102,6 @@ public class SysMsgController {
         }
     }
 
-    @At
-    @Ok("json")
-    @RequiresPermissions("sys.manager.msg")
-    public Object unread_num() {
-        try {
-            NutMap nutMap = NutMap.NEW();
-            nutMap.put("system", sysMsgUserService.count(Sqls.create("SELECT count(*) from sys_msg a,sys_msg_user b WHERE a.id=b.msgId AND a.type='system' AND a.delFlag=false AND b.status=0 AND b.delFlag=false AND b.loginname=@loginname").setParam("loginname", StringUtil.getPlatformLoginname())));
-            nutMap.put("user", sysMsgUserService.count(Sqls.create("SELECT count(*) from sys_msg a,sys_msg_user b WHERE a.id=b.msgId AND a.type='user' AND a.delFlag=false AND b.status=0 AND b.delFlag=false AND b.loginname=@loginname").setParam("loginname", StringUtil.getPlatformLoginname())));
-            return Result.success().addData(nutMap);
-        } catch (Exception e) {
-            return Result.error();
-        }
-    }
-
     @At("/addDo")
     @Ok("json")
     @RequiresPermissions("sys.manager.msg.add")

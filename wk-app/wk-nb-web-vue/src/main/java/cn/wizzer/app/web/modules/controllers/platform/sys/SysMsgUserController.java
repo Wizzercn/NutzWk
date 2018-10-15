@@ -15,6 +15,8 @@ import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.lang.Times;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
@@ -41,18 +43,19 @@ public class SysMsgUserController {
         req.setAttribute("type", Strings.isBlank(type) ? "all" : type);
     }
 
-    @At("/read")
+    @At({"/read", "/read/?"})
     @Ok("beetl:/platform/sys/msg/user/indexRead.html")
     @RequiresPermissions("sys.msg.read")
-    public void read(HttpServletRequest req) {
-        req.setAttribute("status", "read");
+    public void read(String type, HttpServletRequest req) {
+        req.setAttribute("type", Strings.isBlank(type) ? "all" : type);
+
     }
 
-    @At("/unread")
+    @At({"/unread", "/unread/?"})
     @Ok("beetl:/platform/sys/msg/user/indexUnread.html")
     @RequiresPermissions("sys.msg.unread")
-    public void unread(HttpServletRequest req) {
-        req.setAttribute("status", "unread");
+    public void unread(String type, HttpServletRequest req) {
+        req.setAttribute("type", Strings.isBlank(type) ? "all" : type);
     }
 
     @At("/data/?")
@@ -96,9 +99,24 @@ public class SysMsgUserController {
                 sysMsgUserService.vDelete(id);
                 req.setAttribute("id", id);
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
+        }
+    }
+
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.manager.msg")
+    public Object unread_num() {
+        try {
+            NutMap nutMap = NutMap.NEW();
+            nutMap.put("system", sysMsgUserService.count(Sqls.create("SELECT count(*) from sys_msg a,sys_msg_user b WHERE a.id=b.msgId AND a.type='system' AND a.delFlag=false AND b.status=0 AND b.delFlag=false AND b.loginname=@loginname").setParam("loginname", StringUtil.getPlatformLoginname())));
+            nutMap.put("user", sysMsgUserService.count(Sqls.create("SELECT count(*) from sys_msg a,sys_msg_user b WHERE a.id=b.msgId AND a.type='user' AND a.delFlag=false AND b.status=0 AND b.delFlag=false AND b.loginname=@loginname").setParam("loginname", StringUtil.getPlatformLoginname())));
+            return Result.success().addData(nutMap);
+        } catch (Exception e) {
+            return Result.error();
         }
     }
 
@@ -108,7 +126,7 @@ public class SysMsgUserController {
     @SLog(tag = "站内消息", msg = "${req.getAttribute('id')}")
     public Object read(@Param("ids") String[] ids, HttpServletRequest req) {
         try {
-            sysMsgUserService.update(Chain.make("status", 1), Cnd.where("id", "in", ids).and("loginname", "=", StringUtil.getPlatformLoginname()));
+            sysMsgUserService.update(Chain.make("status", 1).add("readAt", Times.getTS()), Cnd.where("id", "in", ids).and("loginname", "=", StringUtil.getPlatformLoginname()));
             req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
             return Result.success("system.success");
         } catch (Exception e) {
@@ -122,10 +140,10 @@ public class SysMsgUserController {
     @SLog(tag = "站内消息", msg = "readAll")
     public Object readAll(HttpServletRequest req) {
         try {
-            sysMsgUserService.update(Chain.make("status", 1), Cnd.where("loginname", "=", StringUtil.getPlatformLoginname()));
-            return Result.success("system.success");
+            sysMsgUserService.update(Chain.make("status", 1).add("readAt", Times.getTS()), Cnd.where("loginname", "=", StringUtil.getPlatformLoginname()));
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 

@@ -30,9 +30,9 @@ layout("/layouts/platform.html"){
             </a>
         </div>
         <div class="pull-right offscreen-right mt5">
-            <el-button size="medium" @click="">标记已读</el-button>
-            <el-button size="medium" @click="">全部已读</el-button>
-            <el-button size="medium" @click="" type="danger">删除</el-button>
+            <el-button size="medium" @click="readMore" :disabled="selectData.length==0">标记已读</el-button>
+            <el-button size="medium" @click="readAll">全部已读</el-button>
+            <el-button size="medium" @click="delMore" type="danger" :disabled="selectData.length==0">删除</el-button>
         </div>
     </el-row>
     <el-row class="el-table-container">
@@ -58,7 +58,7 @@ layout("/layouts/platform.html"){
             <el-table-column
                     prop="type"
                     label="消息类型"
-                    header-align="center" align="left">
+                    header-align="center" align="center" width="120">
                 <template slot-scope="scope">
                     <span v-if="'system'==scope.row.type">系统消息</span>
                     <span v-if="'user'==scope.row.type">用户消息</span>
@@ -69,6 +69,9 @@ layout("/layouts/platform.html"){
                     label="标题"
                     header-align="center"
                     :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <a :href="'${base}/platform/sys/msg/user/all/detail/'+scope.row.msgid" data-pjax>{{scope.row.title}}</a>
+                </template>
             </el-table-column>
 
             <el-table-column
@@ -164,12 +167,115 @@ layout("/layouts/platform.html"){
             },
             unreadData: function () {//加载分页数据
                 var self = this;
-                $.post(base + "/platform/sys/msg/unread_num", {}, function (data) {
+                $.post(base + "/platform/sys/msg/user/unread_num", {}, function (data) {
                     if (data.code == 0) {
                         self.unreadnum = data.data;
                     }
                 }, "json");
             },
+            readMore: function () {
+                var self = this;
+                if (self.selectData.length == 0) {
+                    self.$message({
+                        message: "请选择消息",
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                var ids = [];
+                self.selectData.forEach(function (val) {
+                    ids.push(val.id);
+                });
+                self.$confirm('您确定要标记选中的 '+ids.length+' 条消息为已读吗？ ', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "/platform/sys/msg/user/status/read", {ids: ids.toString()}, function (data) {
+                                if (data.code == 0) {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'success'
+                                    });
+                                    self.pageData();
+                                    self.unreadData();
+                                } else {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
+            },
+            readAll: function () {
+                var self = this;
+                self.$confirm('您确定要标记全部消息为已读吗？ ', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "/platform/sys/msg/user/status/readAll", {}, function (data) {
+                                if (data.code == 0) {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'success'
+                                    });
+                                    self.pageData();
+                                    self.unreadData();
+                                } else {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
+            },
+            delMore: function () {
+                var self = this;
+                if (self.selectData.length == 0) {
+                    self.$message({
+                        message: "请选择消息",
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                var ids = [];
+                self.selectData.forEach(function (val) {
+                    ids.push(val.id);
+                });
+                self.$confirm('您确定要删除选中的 '+ids.length+' 条消息？ ', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "/platform/sys/msg/user/delete", {ids: ids.toString()}, function (data) {
+                                if (data.code == 0) {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'success'
+                                    });
+                                    self.pageData();
+                                    self.unreadData();
+                                } else {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
+            }
         },
         created: function () {
             this.pageData();
