@@ -1,4 +1,4 @@
-NutzWk 基于Nutz的开源企业级开发框架
+NutzWk 开源企业级微服务开发框架
 ======
 
 [![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
