@@ -2,9 +2,10 @@
 layout("/layouts/platform.html"){
 #-->
 <style>
-    .el-upload input[type=file]{
+    .el-upload input[type=file] {
         display: none;
     }
+
     .avatar-uploader .el-upload {
         border: 1px dashed #d9d9d9;
         border-radius: 6px;
@@ -12,9 +13,11 @@ layout("/layouts/platform.html"){
         position: relative;
         overflow: hidden;
     }
+
     .avatar-uploader .el-upload:hover {
         border-color: #409EFF;
     }
+
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
@@ -23,13 +26,14 @@ layout("/layouts/platform.html"){
         line-height: 128px;
         text-align: center;
     }
+
     .avatar {
         width: 128px;
         height: 128px;
         display: block;
     }
 </style>
-<div id="app">
+<div id="app" v-cloak>
     <el-row class="header navbar bg-white shadow">
         <div class="btn-group tool-button mt5">
             <el-button size="medium" @click="openAdd"><i class="ti-plus"></i> 添加站点</el-button>
@@ -84,11 +88,11 @@ layout("/layouts/platform.html"){
         <el-pagination
                 @size-change="pageSizeChange"
                 @current-change="pageNumberChange"
-                :current-page="pageNumber"
+                :current-page="pageForm.pageNumber"
                 :page-sizes="[10, 20, 30, 50]"
-                :page-size="pageSize"
+                :page-size="pageForm.pageSize"
                 layout="total, sizes, prev, pager, next, jumper"
-                :total="totalCount">
+                :total="pageForm.totalCount">
         </el-pagination>
     </el-row>
     <!-- 弹出框 -->
@@ -96,182 +100,32 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="新增站点"
             :visible.sync="addDialogVisible"
-            width="40%">
-        <el-form :model="form" ref="addForm" :rules="formRules" label-width="80px">
-        <el-tabs v-model="activeName">
-            <el-tab-pane label="基本信息" name="base">
-                <el-form-item prop="id" label="站点编码">
-                    <el-input maxlength="100" placeholder="站点编码"
-                              v-model="form.id"
-                              auto-complete="off" tabindex="1" type="text"></el-input>
-                </el-form-item>
-                <el-form-item prop="site_name" label="站点名称">
-                    <el-input maxlength="100" placeholder="站点名称"
-                              v-model="form.site_name"
-                              auto-complete="off" tabindex="2" type="text"></el-input>
-                </el-form-item>
-                <el-form-item prop="site_domain" label="域名地址">
-                    <el-input  placeholder="http://"
-                              v-model="form.site_domain"
-                              auto-complete="off" tabindex="3" type="text"></el-input>
-                </el-form-item>
-                <el-form-item prop="site_icp" label="备案号">
-                    <el-input maxlength="100" placeholder="备案号"
-                              v-model="form.site_icp"
-                              auto-complete="off" tabindex="4" type="text"></el-input>
-                </el-form-item>
-
-                <el-form-item label="LOGO">
-                    <el-upload
-                            class="avatar-uploader"
-                            tabindex="5"
-                            action="${base}/open/file/upload/image"
-                            name="Filedata"
-                            :show-file-list="false"
-                            :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'site_logo')}">
-
-                        <img v-if="form.site_logo" :src="form.site_logo" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
-                </el-form-item>
-
-                <el-form-item label="手机版Logo">
-                    <el-upload
-                            class="avatar-uploader"
-                            tabindex="6"
-                            action="${base}/open/file/upload/image"
-                            name="Filedata"
-                            :show-file-list="false"
-                            :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'site_wap_logo')}">
-
-                        <img v-if="form.site_wap_logo" :src="form.site_wap_logo" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
-                </el-form-item>
-
-                <el-form-item prop="footer_content" label="底部信息">
-                    <el-input maxlength="100" placeholder="底部信息"
-                              v-model="form.footer_content"
-                              auto-complete="off" tabindex="7" type="textarea"></el-input>
-                </el-form-item>
-            </el-tab-pane>
-            <el-tab-pane label="联系方式" name="contact">
-                <el-form-item prop="site_qq" label="客服QQ">
-                    <el-input maxlength="100" placeholder="客服QQ"
-                              v-model="form.site_qq"
-                              auto-complete="off" tabindex="1" type="text"></el-input>
-                </el-form-item>
-                <el-form-item prop="site_email" label="网站邮箱">
-                    <el-input maxlength="100" placeholder="网站邮箱"
-                              v-model="form.site_email"
-                              auto-complete="off" tabindex="2" type="text"></el-input>
-                </el-form-item>
-                <el-form-item prop="site_tel" label="客服电话">
-                    <el-input maxlength="100" placeholder="客服电话"
-                              v-model="form.site_tel"
-                              auto-complete="off" tabindex="3" type="text"></el-input>
-                </el-form-item>
-                <el-form-item prop="weibo_name" label="微博名称">
-                    <el-input maxlength="100" placeholder="微博名称"
-                              v-model="form.weibo_name"
-                              auto-complete="off" tabindex="4" type="text"></el-input>
-                </el-form-item>
-                <el-form-item prop="weibo_url" label="微博地址">
-                    <el-input maxlength="100" placeholder="微博地址"
-                              v-model="form.weibo_url"
-                              auto-complete="off" tabindex="5" type="text"></el-input>
-                </el-form-item>
-
-                <el-form-item label="微博二维码">
-                    <el-upload
-                            class="avatar-uploader"
-                            tabindex="5"
-                            action="${base}/open/file/upload/image"
-                            name="Filedata"
-                            :show-file-list="false"
-                            :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'weibo_qrcode')}">
-
-                        <img v-if="form.weibo_qrcode" :src="form.weibo_qrcode" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                        <div class="el-upload__tip" slot="tip">请上传您的微博二维码</div>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item prop="wechat_name" label="微信名称">
-                    <el-input maxlength="100" placeholder="微信名称"
-                              v-model="form.wechat_name"
-                              auto-complete="off" tabindex="6" type="text"></el-input>
-                </el-form-item>
-                <el-form-item prop="wechat_id" label="微信帐号">
-                    <el-input maxlength="100" placeholder="微信帐号"
-                              v-model="form.wechat_id"
-                              auto-complete="off" tabindex="7" type="text"></el-input>
-                </el-form-item>
-
-                <el-form-item label="微信二维码">
-                    <el-upload
-                            class="avatar-uploader"
-                            tabindex="5"
-                            action="${base}/open/file/upload/image"
-                            name="Filedata"
-                            :show-file-list="false"
-                            :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'wechat_qrcode')}">
-
-                        <img v-if="form.wechat_qrcode" :src="form.wechat_qrcode" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                        <div class="el-upload__tip" slot="tip">请上传您的微信二维码</div>
-                    </el-upload>
-                </el-form-item>
-            </el-tab-pane>
-            <el-tab-pane label="SEO优化" name="seo">
-                <el-form-item prop="seo_keywords" label="网页关键词">
-                    <el-input maxlength="100" placeholder="网页关键词"
-                              v-model="form.seo_keywords"
-                              auto-complete="off" tabindex="1" type="text"></el-input>
-                </el-form-item>
-                <el-form-item prop="seo_description" label="网页描述">
-                    <el-input maxlength="100" placeholder="网页描述"
-                              v-model="form.seo_description"
-                              auto-complete="off" tabindex="2" type="textarea" maxlength="120"></el-input>
-                </el-form-item>
-            </el-tab-pane>
-        </el-tabs>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-                    <el-button @click="addDialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="doAdd">确 定</el-button>
-                  </span>
-    </el-dialog>
-
-    <!-- 修改 -->
-    <el-dialog
-            title="修改站点"
-            :visible.sync="editDialogVisible"
-            width="40%">
-        <el-form :model="form" ref="editForm" :rules="formRules" label-width="80px">
-            <el-tabs v-model="activeName">
+            width="50%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" label-width="100px">
+            <el-tabs v-model="activeName" type="card">
                 <el-tab-pane label="基本信息" name="base">
                     <el-form-item prop="id" label="站点编码">
                         <el-input maxlength="100" placeholder="站点编码"
-                                  v-model="form.id"
+                                  v-model="formData.id"
                                   auto-complete="off" tabindex="1" type="text"></el-input>
                     </el-form-item>
                     <el-form-item prop="site_name" label="站点名称">
                         <el-input maxlength="100" placeholder="站点名称"
-                                  v-model="form.site_name"
+                                  v-model="formData.site_name"
                                   auto-complete="off" tabindex="2" type="text"></el-input>
                     </el-form-item>
                     <el-form-item prop="site_domain" label="域名地址">
-                        <el-input  placeholder="http://"
-                                   v-model="form.site_domain"
-                                   auto-complete="off" tabindex="3" type="text"></el-input>
+                        <el-input placeholder="http://"
+                                  v-model="formData.site_domain"
+                                  auto-complete="off" tabindex="3" type="text"></el-input>
                     </el-form-item>
                     <el-form-item prop="site_icp" label="备案号">
                         <el-input maxlength="100" placeholder="备案号"
-                                  v-model="form.site_icp"
+                                  v-model="formData.site_icp"
                                   auto-complete="off" tabindex="4" type="text"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="LOGO">
+                    <el-form-item label="PC版Logo">
                         <el-upload
                                 class="avatar-uploader"
                                 tabindex="5"
@@ -280,7 +134,7 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'site_logo')}">
 
-                            <img v-if="form.site_logo" :src="form.site_logo" class="avatar">
+                            <img v-if="formData.site_logo" :src="formData.site_logo" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
@@ -294,41 +148,41 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'site_wap_logo')}">
 
-                            <img v-if="form.site_wap_logo" :src="form.site_wap_logo" class="avatar">
+                            <img v-if="formData.site_wap_logo" :src="formData.site_wap_logo" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
 
                     <el-form-item prop="footer_content" label="底部信息">
                         <el-input maxlength="100" placeholder="底部信息"
-                                  v-model="form.footer_content"
+                                  v-model="formData.footer_content"
                                   auto-complete="off" tabindex="7" type="textarea"></el-input>
                     </el-form-item>
                 </el-tab-pane>
                 <el-tab-pane label="联系方式" name="contact">
                     <el-form-item prop="site_qq" label="客服QQ">
                         <el-input maxlength="100" placeholder="客服QQ"
-                                  v-model="form.site_qq"
+                                  v-model="formData.site_qq"
                                   auto-complete="off" tabindex="1" type="text"></el-input>
                     </el-form-item>
                     <el-form-item prop="site_email" label="网站邮箱">
                         <el-input maxlength="100" placeholder="网站邮箱"
-                                  v-model="form.site_email"
+                                  v-model="formData.site_email"
                                   auto-complete="off" tabindex="2" type="text"></el-input>
                     </el-form-item>
                     <el-form-item prop="site_tel" label="客服电话">
                         <el-input maxlength="100" placeholder="客服电话"
-                                  v-model="form.site_tel"
+                                  v-model="formData.site_tel"
                                   auto-complete="off" tabindex="3" type="text"></el-input>
                     </el-form-item>
                     <el-form-item prop="weibo_name" label="微博名称">
                         <el-input maxlength="100" placeholder="微博名称"
-                                  v-model="form.weibo_name"
+                                  v-model="formData.weibo_name"
                                   auto-complete="off" tabindex="4" type="text"></el-input>
                     </el-form-item>
                     <el-form-item prop="weibo_url" label="微博地址">
                         <el-input maxlength="100" placeholder="微博地址"
-                                  v-model="form.weibo_url"
+                                  v-model="formData.weibo_url"
                                   auto-complete="off" tabindex="5" type="text"></el-input>
                     </el-form-item>
 
@@ -341,19 +195,19 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'weibo_qrcode')}">
 
-                            <img v-if="form.weibo_qrcode" :src="form.weibo_qrcode" class="avatar">
+                            <img v-if="formData.weibo_qrcode" :src="formData.weibo_qrcode" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             <div class="el-upload__tip" slot="tip">请上传您的微博二维码</div>
                         </el-upload>
                     </el-form-item>
                     <el-form-item prop="wechat_name" label="微信名称">
                         <el-input maxlength="100" placeholder="微信名称"
-                                  v-model="form.wechat_name"
+                                  v-model="formData.wechat_name"
                                   auto-complete="off" tabindex="6" type="text"></el-input>
                     </el-form-item>
                     <el-form-item prop="wechat_id" label="微信帐号">
                         <el-input maxlength="100" placeholder="微信帐号"
-                                  v-model="form.wechat_id"
+                                  v-model="formData.wechat_id"
                                   auto-complete="off" tabindex="7" type="text"></el-input>
                     </el-form-item>
 
@@ -366,7 +220,7 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'wechat_qrcode')}">
 
-                            <img v-if="form.wechat_qrcode" :src="form.wechat_qrcode" class="avatar">
+                            <img v-if="formData.wechat_qrcode" :src="formData.wechat_qrcode" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             <div class="el-upload__tip" slot="tip">请上传您的微信二维码</div>
                         </el-upload>
@@ -375,12 +229,162 @@ layout("/layouts/platform.html"){
                 <el-tab-pane label="SEO优化" name="seo">
                     <el-form-item prop="seo_keywords" label="网页关键词">
                         <el-input maxlength="100" placeholder="网页关键词"
-                                  v-model="form.seo_keywords"
+                                  v-model="formData.seo_keywords"
                                   auto-complete="off" tabindex="1" type="text"></el-input>
                     </el-form-item>
                     <el-form-item prop="seo_description" label="网页描述">
                         <el-input maxlength="100" placeholder="网页描述"
-                                  v-model="form.seo_description"
+                                  v-model="formData.seo_description"
+                                  auto-complete="off" tabindex="2" type="textarea" maxlength="120"></el-input>
+                    </el-form-item>
+                </el-tab-pane>
+            </el-tabs>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+
+    <!-- 修改 -->
+    <el-dialog
+            title="修改站点"
+            :visible.sync="editDialogVisible"
+            width="50%">
+        <el-form :model="formData" ref="editForm" :rules="formRules" label-width="100px">
+            <el-tabs v-model="activeName" type="card">
+                <el-tab-pane label="基本信息" name="base">
+                    <el-form-item prop="id" label="站点编码">
+                        <el-input maxlength="100" placeholder="站点编码"
+                                  v-model="formData.id"
+                                  auto-complete="off" tabindex="1" type="text"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="site_name" label="站点名称">
+                        <el-input maxlength="100" placeholder="站点名称"
+                                  v-model="formData.site_name"
+                                  auto-complete="off" tabindex="2" type="text"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="site_domain" label="域名地址">
+                        <el-input placeholder="http://"
+                                  v-model="formData.site_domain"
+                                  auto-complete="off" tabindex="3" type="text"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="site_icp" label="备案号">
+                        <el-input maxlength="100" placeholder="备案号"
+                                  v-model="formData.site_icp"
+                                  auto-complete="off" tabindex="4" type="text"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="LOGO">
+                        <el-upload
+                                class="avatar-uploader"
+                                tabindex="5"
+                                action="${base}/open/file/upload/image"
+                                name="Filedata"
+                                :show-file-list="false"
+                                :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'site_logo')}">
+
+                            <img v-if="formData.site_logo" :src="formData.site_logo" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                    </el-form-item>
+
+                    <el-form-item label="手机版Logo">
+                        <el-upload
+                                class="avatar-uploader"
+                                tabindex="6"
+                                action="${base}/open/file/upload/image"
+                                name="Filedata"
+                                :show-file-list="false"
+                                :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'site_wap_logo')}">
+
+                            <img v-if="formData.site_wap_logo" :src="formData.site_wap_logo" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                    </el-form-item>
+
+                    <el-form-item prop="footer_content" label="底部信息">
+                        <el-input maxlength="100" placeholder="底部信息"
+                                  v-model="formData.footer_content"
+                                  auto-complete="off" tabindex="7" type="textarea"></el-input>
+                    </el-form-item>
+                </el-tab-pane>
+                <el-tab-pane label="联系方式" name="contact">
+                    <el-form-item prop="site_qq" label="客服QQ">
+                        <el-input maxlength="100" placeholder="客服QQ"
+                                  v-model="formData.site_qq"
+                                  auto-complete="off" tabindex="1" type="text"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="site_email" label="网站邮箱">
+                        <el-input maxlength="100" placeholder="网站邮箱"
+                                  v-model="formData.site_email"
+                                  auto-complete="off" tabindex="2" type="text"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="site_tel" label="客服电话">
+                        <el-input maxlength="100" placeholder="客服电话"
+                                  v-model="formData.site_tel"
+                                  auto-complete="off" tabindex="3" type="text"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="weibo_name" label="微博名称">
+                        <el-input maxlength="100" placeholder="微博名称"
+                                  v-model="formData.weibo_name"
+                                  auto-complete="off" tabindex="4" type="text"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="weibo_url" label="微博地址">
+                        <el-input maxlength="100" placeholder="微博地址"
+                                  v-model="formData.weibo_url"
+                                  auto-complete="off" tabindex="5" type="text"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="微博二维码">
+                        <el-upload
+                                class="avatar-uploader"
+                                tabindex="5"
+                                action="${base}/open/file/upload/image"
+                                name="Filedata"
+                                :show-file-list="false"
+                                :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'weibo_qrcode')}">
+
+                            <img v-if="formData.weibo_qrcode" :src="formData.weibo_qrcode" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            <div class="el-upload__tip" slot="tip">请上传您的微博二维码</div>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item prop="wechat_name" label="微信名称">
+                        <el-input maxlength="100" placeholder="微信名称"
+                                  v-model="formData.wechat_name"
+                                  auto-complete="off" tabindex="6" type="text"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="wechat_id" label="微信帐号">
+                        <el-input maxlength="100" placeholder="微信帐号"
+                                  v-model="formData.wechat_id"
+                                  auto-complete="off" tabindex="7" type="text"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="微信二维码">
+                        <el-upload
+                                class="avatar-uploader"
+                                tabindex="5"
+                                action="${base}/open/file/upload/image"
+                                name="Filedata"
+                                :show-file-list="false"
+                                :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'wechat_qrcode')}">
+
+                            <img v-if="formData.wechat_qrcode" :src="formData.wechat_qrcode" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            <div class="el-upload__tip" slot="tip">请上传您的微信二维码</div>
+                        </el-upload>
+                    </el-form-item>
+                </el-tab-pane>
+                <el-tab-pane label="SEO优化" name="seo">
+                    <el-form-item prop="seo_keywords" label="网页关键词">
+                        <el-input maxlength="100" placeholder="网页关键词"
+                                  v-model="formData.seo_keywords"
+                                  auto-complete="off" tabindex="1" type="text"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="seo_description" label="网页描述">
+                        <el-input maxlength="100" placeholder="网页描述"
+                                  v-model="formData.seo_description"
                                   auto-complete="off" tabindex="2" type="textarea" maxlength="120"></el-input>
                     </el-form-item>
                 </el-tab-pane>
@@ -392,154 +396,37 @@ layout("/layouts/platform.html"){
                   </span>
     </el-dialog>
 </div>
-<!--<header class="header navbar bg-white shadow">-->
-    <!--<div class="btn-group tool-button">-->
-        <!--<a class="btn btn-primary navbar-btn" href="${base}/platform/cms/site/add" data-pjax><i class="ti-plus"></i> 添加站点</a>-->
-    <!--</div>-->
-<!--</header>-->
-<!--<div class=panel-body style="padding-top: 50px;">-->
-    <!--<div class="table-responsive no-border">-->
-        <!--<input id="unitid" type="hidden">-->
-        <!--<table class="table table-bordered table-striped mg-t datatable">-->
-            <!--<thead>-->
-            <!--<tr>-->
-                <!--<th>站点编码</th>-->
-                <!--<th>站点名称</th>-->
-                <!--<th>域名地址</th>-->
-                <!--<th>操作</th>-->
-        <!--</table>-->
-    <!--</div>-->
-<!--</div>-->
-<!--<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">-->
-    <!--<div class="modal-dialog">-->
-        <!--<div class="modal-content">-->
-            <!--<div class="modal-header">-->
-                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>-->
-                <!--<h4 class="modal-title">删除</h4>-->
-            <!--</div>-->
-            <!--<div class="modal-body">-->
-                <!--<div class="row">-->
-                    <!--<div class="col-xs-12">-->
-                        <!--删除后无法恢复，确定删除吗？ <br/>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="modal-footer">-->
-                <!--<button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>-->
-                <!--<button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</div>-->
-<!--<script language="JavaScript">-->
-    <!--var datatable;-->
-    <!--function initDatatable() {-->
-        <!--datatable = $('.datatable').DataTable({-->
-            <!--"dom": '<"toolbar">frtip',-->
-            <!--"searching": false,-->
-            <!--"processing": false,-->
-            <!--"serverSide": true,-->
-            <!--"select": true,-->
-            <!--"ordering": true,-->
-            <!--"language": {-->
-                <!--"url": "${base}/assets/plugins/datatables/cn.json"-->
-            <!--},-->
-            <!--"preDrawCallback": function () {-->
-                <!--sublime.showLoadingbar($(".main-content"));-->
-            <!--},-->
-            <!--"drawCallback": function () {-->
-                <!--sublime.closeLoadingbar($(".main-content"));-->
-            <!--},-->
-            <!--"ajax": {-->
-                <!--"url": "${base}/platform/cms/site/data",-->
-                <!--"type": "post",-->
-                <!--"data": function (d) {-->
-                <!--}-->
-            <!--},-->
-            <!--"order": [[0, "desc"]],-->
-            <!--"columns": [-->
-                <!--{"data": "id", "bSortable": true},-->
-                <!--{"data": "site_name", "bSortable": true},-->
-                <!--{"data": "site_domain", "bSortable": true}-->
-            <!--],-->
-            <!--"columnDefs": [-->
-                <!--{-->
-                    <!--"render": function (data, type, row) {-->
-                        <!--return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +-->
-                                <!--' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +-->
-                                <!--'<li><a href="${base}/platform/cms/site/edit/' + row.id + '" data-pjax>修改</a></li>' +-->
-                                <!--'<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +-->
-                                <!--'</ul></div>';-->
-                    <!--},-->
-                    <!--"targets": 3-->
-                <!--}-->
-            <!--]-->
-        <!--});-->
-        <!--datatable.on('click', 'tr', function () {-->
-            <!--$(this).toggleClass('selected');-->
-        <!--});-->
-        <!--$("#searchBtn").on('click', function () {-->
-            <!--datatable.ajax.reload();-->
-        <!--});-->
-    <!--}-->
-    <!--function del(id) {-->
-        <!--var dialog = $("#dialogDelete");-->
-        <!--dialog.modal("show");-->
-        <!--dialog.find("#ok").unbind("click");-->
-        <!--dialog.find("#ok").bind("click", function (event) {-->
-            <!--var btn = $(this);-->
-            <!--btn.button("loading");-->
-            <!--$.post("${base}/platform/cms/site/delete/" + id, {}, function (data) {-->
-                <!--if (data.code == 0) {-->
-                    <!--datatable.ajax.reload(null,false);-->
-                <!--} else {-->
-                    <!--Toast.error(data.msg);-->
-                <!--}-->
-                <!--//重置按钮状态，关闭提示框-->
-                <!--btn.button("reset");-->
-                <!--dialog.modal("hide");-->
-            <!--}, "json");-->
-        <!--});-->
-    <!--}-->
-    <!--$(function () {-->
-        <!--initDatatable();-->
-    <!--});-->
-<!--</script>-->
 <script>
-    var site = new Vue({
+    new Vue({
         el: "#app",
         data: function () {
             return {
                 addDialogVisible: false,
                 editDialogVisible: false,
                 tableData: [],
-                pageSize: 10,
-                pageNumber: 1,
-                pageOrderName: "",
-                pageOrderBy: "",
-                totalCount: 0,
-                search:{
-                    siteName:"",
-                    siteDomain:""
+                pageForm: {
+                    siteName: "",
+                    siteDomain: "",
+                    pageSize: 10,
+                    pageNumber: 1,
+                    pageOrderName: "",
+                    pageOrderBy: "",
+                    totalCount: 0
                 },
-                activeName:"base",
-                form: {
+                activeName: "base",
+                formData: {
                     id: "",
                     site_name: "",
                     site_domain: "",
                     site_logo: ""
                 },
-                imageUrl:"",
+                imageUrl: "",
                 formRules: {
                     id: [
                         {required: true, message: '请输入站点编码', trigger: 'blur'},
                     ],
                     site_name: [
                         {required: true, message: '请输入站点名', trigger: 'blur'},
-                    ],
-                    site_domain: [
-                        {required: true, message: '请输入站点域名', trigger: 'blur'},
-                        {type:"url", message: '请输入合法的地址', trigger: 'blur'},
                     ],
                     site_email: [
                         {type: "email", message: '请输入正确的邮箱地址', trigger: 'blur'},
@@ -553,21 +440,21 @@ layout("/layouts/platform.html"){
         methods: {
             openAdd: function () {
                 this.addDialogVisible = true;
-                this.form = {};//打开新增窗口,表单先清空
+                this.formData = {};//打开新增窗口,表单先清空
             },
             doAdd: function () {
                 var self = this;
                 var url = base + "/platform/cms/site/addDo";
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
-                        $.post(url, self.form, function (data) {
+                        $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
                                     type: 'success'
                                 });
                                 self.addDialogVisible = false;
-                                self.activeName="base";
+                                self.activeName = "base";
                                 self.pageData();//重新加载分页数据
                             } else {
                                 self.$message({
@@ -584,14 +471,14 @@ layout("/layouts/platform.html"){
                 var url = base + "/platform/cms/site/editDo";
                 self.$refs["editForm"].validate(function (valid) {
                     if (valid) {
-                        $.post(url, self.form, function (data) {
+                        $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
                                     type: 'success'
                                 });
                                 self.editDialogVisible = false;
-                                self.activeName="base";
+                                self.activeName = "base";
                                 self.pageData();//重新加载分页数据
                             } else {
                                 self.$message({
@@ -604,47 +491,39 @@ layout("/layouts/platform.html"){
                 });
             },
             pageOrder: function (column) {//按字段排序
-                this.pageOrderName = column.prop;
-                this.pageOrderBy = column.order;
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
                 this.pageData();
             },
             pageNumberChange: function (val) {//页码更新操作
-                this.pageNumber = val;
+                this.pageForm.pageNumber = val;
                 this.pageData();
             },
             pageSizeChange: function (val) {//分页大小更新操作
-                this.pageSize = val;
+                this.pageForm.pageSize = val;
                 this.pageData();
             },
-            beforeImageUpload:function(file){
-                console.log(arguments);
+            beforeImageUpload: function (file) {
+
             },
-            handleLogoSuccess:function(response, file, fileList,attrName){
-                if(response.code==0){
+            handleLogoSuccess: function (response, file, fileList, attrName) {
+                if (response.code == 0) {
                     // 对象属性直接赋值不会触发试图更新，采用 Vue.set 、this.$set或者Object.assign({}，this.obj)创建新对象
                     // 或者也可以定义一个 refresh 属性 ，当数据发生改变时，该属性同时变化，也会触发视图更新
-                    // this.form.site_logo =response.data;
-                    this.$set(this.form,attrName,response.data);
-                }else{
-                    this.$set(this.form,attrName,"");
+                    // this.formData.site_logo =response.data;
+                    this.$set(this.formData, attrName, response.data);
+                } else {
+                    this.$set(this.formData, attrName, "");
                 }
-                console.log(this.form);
             },
             pageData() {//加载分页数据
                 var self = this;
                 sublime.showLoadingbar();//显示loading
-                $.post(base + "/platform/cms/site/data", {
-                    pageNumber: self.pageNumber,
-                    pageSize: self.pageSize,
-                    pageOrderName: self.pageOrderName,
-                    pageOrderBy: self.pageOrderBy,
-                    siteName: self.search.siteName,
-                    siteDomain: self.search.siteDomain
-                }, function (data) {
+                $.post(base + "/platform/cms/site/data", self.pageForm, function (data) {
                     sublime.closeLoadingbar();//关闭loading
                     if (data.code == 0) {
                         self.tableData = data.data.list;
-                        self.totalCount = data.data.totalCount;
+                        self.pageForm.totalCount = data.data.totalCount;
                     } else {
                         self.$message({
                             message: data.msg,
@@ -658,7 +537,7 @@ layout("/layouts/platform.html"){
                 if ("edit" == command.type) {
                     $.post(base + "/platform/cms/site/edit/" + command.id, {}, function (data) {
                         if (data.code == 0) {
-                            self.form = data.data;//加载后台表单数据
+                            self.formData = data.data;//加载后台表单数据
                             self.editDialogVisible = true;//打开编辑窗口
                         } else {
                             self.$message({
