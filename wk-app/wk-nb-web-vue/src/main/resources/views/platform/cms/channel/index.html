@@ -1,185 +1,650 @@
-<%
+<!--#
 layout("/layouts/platform.html"){
-%>
-<header class="header navbar bg-white shadow">
-    <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/channel/add/${siteid}" data-pjax><i class="ti-plus"></i>新建栏目</a>
-    </div>
-    <div class="btn-group tool-button">
-        <a id="goto" style="display: none" href="${base}/platform/cms/channel/${siteid}" data-pjax></a>
-        <select id="siteid" class="form-control" onchange="goto()">
-            <%for(o in siteList){%>
-            <option value="${o.id}" <%if(o.id==siteid){%>selected<%}%>>${o.site_name}</option>
-            <%}%>
-        </select>
-    </div>
-    <div class="pull-right">
-        <div class="btn-group tool-button">
-            <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/channel/sort/${siteid}" data-pjax><i class="ti-share"></i> 栏目排序</a>
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <el-button size="medium" @click="openAdd">
+                <i class="ti-plus"></i>
+                新建栏目
+            </el-button>
         </div>
-    </div>
-</header>
-<div class="content-wrap">
-    <div class="wrapper" style="min-height:500px;">
-        <div class="row mb15">
-            <div class="col-lg-12">
-                <table id="treeTable" class="table no-m">
-                    <thead>
-                    <tr>
-                        <th class="col-md-2 pd-l-lg">
-                            <span class="pd-l-sm ml20"></span>栏目名称
-                        </th>
-                        <th class="col-md-1">栏目标识</th>
-                        <th class="col-md-1">栏目类型</th>
-                        <th class="col-md-1">URL</th>
-                        <th class="col-md-1">打开方式</th>
-                        <th class="col-md-1">启用状态</th>
-                        <th class="col-md-2">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <% for(obj in list){
-                    %>
-                    <tr data-tt-id="${obj.id!}" data-tt-parent-id="${obj.parentId!}" data-tt-branch="${obj.hasChildren!}">
-                        <td>
-                            <span class="pd-l-sm"></span> ${obj.name!}
-                        </td>
-                        <td>${obj.code!}</td>
-                        <td><%if(obj.type=="article"){%>文章<%}%><%if(obj.type=="photo"){%>相册<%}%></td>
-                        <td>${obj.url!}</td>
-                        <td>${obj.target!}</td>
-                        <td><%if(false==obj.disabled){%><i id="disable_${obj.id!}" class="fa fa-circle text-success ml5"></i><%}else{%><i id="disable_${obj.id!}" class="fa fa-circle text-danger ml5"></i><%}%></td>
-                        <td>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                    <i class="ti-settings"></i>
-                                    <span class="ti-angle-down"></span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="${base}/platform/cms/channel/edit/${obj.id!}" data-pjax>修改</a></li>
-                                    <li><a href="javascript:;" onclick="del('${obj.id!}')">删除</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="${base}/platform/cms/channel/add/${siteid}?pid=${obj.id!}" data-pjax>添加子栏目</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="javascript:;" onclick="enableRole('${obj.id!}')">启用</a></li>
-                                    <li><a href="javascript:;" onclick="disableRole('${obj.id!}')">禁用</a></li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    <%
-                    } %>
-                    </tbody>
-                </table>
-            </div>
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="openSort">
+                排序
+            </el-button>
         </div>
-    </div>
-</div>
-<a class="exit-offscreen"></a>
-<!-- 排序 -->
-<div id="dialogSort" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table :data="treeData" style="width: 100%" :row-style="treeTableShowTr" size="small"
+                  :highlight-current-row="true">
+            <el-table-column label="栏目名称" header-align="center" prop="name"
+                             width="200" :show-overflow-tooltip="true" align="left">
+                <template slot-scope="scope">
+                    <span v-for="(space, levelIndex) in treeTablePath(scope.row.path)" class="ms-tree-space"></span>
+                    <span v-if="treeTableIconShow(scope.row)" @click="treeTableChild(scope.row.id)"
+                          style="cursor: pointer">
+                        <span v-if="!scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right" title="展开"></span>
 
-        </div>
-    </div>
-</div>
-<!-- 删除 -->
-<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">删除菜单</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        删除后无法恢复，请谨慎操作！
-                        <br/>确定要删除吗？
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
-                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- 详情 -->
-<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+                        <span v-if="scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right expanded" title="关闭"></span>
+                        <i v-if="scope.row.icon!=''" :class="scope.row.icon"></i>
+                        {{ scope.row.name }}
+                    </span>
+                    <span v-if="!treeTableIconShow(scope.row)">
+                        <span class="ms-tree-space"></span>
+                        <i v-if="scope.row.icon!=''" :class="scope.row.icon"></i>
+                        {{ scope.row.name }}
+                    </span>
+                </template>
+            </el-table-column>
 
-        </div>
-    </div>
+
+            <el-table-column label="栏目标识" header-align="center" prop="permission"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="URL" header-align="center" prop="href"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="栏目类型" header-align="center" prop="type"
+                             :show-overflow-tooltip="true" align="center">
+                <template slot-scope="scope">
+                    <i v-if="scope.row.type=='article'" style="font-weight: bold">文章</i>
+                    <i v-if="scope.row.type=='photo'">相册</i>
+                </template>
+            </el-table-column>
+
+
+            <el-table-column label="启用状态" header-align="center" prop="disabled" align="center"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <i v-if="scope.row.disabled"
+                       class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="!scope.row.disabled"
+                       class="fa fa-circle text-success ml5"></i>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="操作" header-align="center" prop="id"
+                             :show-overflow-tooltip="true" align="center" width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item v-if="scope.row.type=='menu'"
+                                              :command="{type:'add',id:scope.row.id,name:scope.row.name}">
+                                添加子栏目
+                            </el-dropdown-item>
+                            <el-dropdown-item divided
+                                              :command="{type:'enable',id:scope.row.id,name:scope.row.name,row:scope.row}">
+                                启用
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                                    :command="{type:'disable',id:scope.row.id,name:scope.row.name,row:scope.row}">
+                                禁用
+                            </el-dropdown-item>
+                            <el-dropdown-item divided
+                                              :command="{type:'edit',id:scope.row.id,name:scope.row.name}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'delete',id:scope.row.id,name:scope.row.name}"
+                                              v-if="scope.row.path!='0001'">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+
+    </el-row>
+    <el-dialog
+            title="新建栏目"
+            :visible.sync="addDialogVisible"
+            width="50%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="parentId" label="上级栏目" label-width="80px">
+                <el-cascader v-if="!isAddFromSub"
+                             style="width: 100%"
+                             tabindex="1"
+                             :options="menuOptions"
+                             :show-all-levels="false"
+                             v-model="parentMenu"
+                             :fetch-suggestions="menuQuery"
+                             @active-item-change="menuChange"
+                             @change="menuChange2"
+                             @select="menuSelect"
+                             placeholder="不选择则为顶级"
+                ></el-cascader>
+                <el-input v-if="isAddFromSub" type="text" v-model="formData.parentName" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item prop="name" label="栏目名称">
+                <el-input maxlength="100" placeholder="栏目名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="code" label="栏目标识">
+                <el-input maxlength="100" placeholder="栏目标识"
+                          v-model="formData.code"
+                          auto-complete="off" tabindex="4" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="href" label="URL">
+                <el-input maxlength="100" placeholder="URL"
+                          v-model="formData.href"
+                          auto-complete="off" tabindex="6" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="target" label="打开方式">
+                <el-radio-group v-model="formData.target">
+                    <el-radio label="_blank">新页面</el-radio>
+                    <el-radio label="_self">本页面</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="addDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doAdd">确 定</el-button>
+        </span>
+    </el-dialog>
+    <el-dialog
+            title="修改菜单"
+            :visible.sync="editMenuDialogVisible"
+            width="50%">
+        <el-form :model="formData" ref="editMenuForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="parentId" label="上级菜单" label-width="80px">
+                <el-input type="text" v-model="formData.parentName" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item prop="name" label="菜单名称">
+                <el-input maxlength="100" placeholder="菜单名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="aliasName" label="菜单别名">
+                <el-input maxlength="100" placeholder="菜单名称"
+                          v-model="formData.aliasName"
+                          auto-complete="off" tabindex="4" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="permission" label="权限标识">
+                <el-input maxlength="100" placeholder="权限标识,如 sys.manager.menu"
+                          v-model="formData.permission"
+                          auto-complete="off" tabindex="5" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="href" label="URL">
+                <el-input maxlength="100" placeholder="URL"
+                          v-model="formData.href"
+                          auto-complete="off" tabindex="6" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="icon" label="图标">
+                <el-input maxlength="100" placeholder="图标"
+                          v-model="formData.icon"
+                          auto-complete="off" tabindex="7" type="text"></el-input>
+                <span :class="formData.icon"></span>
+            </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+            <el-form-item prop="type" label="数据权限">
+                <el-radio-group @change="formRadioChange" v-model="formData.children" size="mini">
+                    <el-radio label="false">无</el-radio>
+                    <el-radio label="true">有</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item
+                    v-if="formData.children=='true'"
+                    v-for="(menu, index) in formData.buttons"
+                    :label="'权限' + (index+1)"
+                    :key="menu.key"
+                    :prop="'buttons[' + index + ']'"
+                    :rules="{required: true,validator: validateMenu,trigger: ['blur','change']}"
+            >
+                <el-row :gutter="2">
+                    <el-col :span="6">
+                        <el-input v-model="menu.name" placeholder="权限名称"></el-input>
+                    </el-col>
+                    <el-col :span="13">
+                        <el-input v-model="menu.permission" placeholder="权限标识,如 sys.manager.menu.add"></el-input>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-button @click.prevent="formRemoveMenu(menu)" icon="el-icon-delete" size="small"></el-button>
+                    </el-col>
+                </el-row>
+            </el-form-item>
+            <el-row v-if="formData.children=='true'" style="text-align: right;padding-right: 17px;">
+                <el-button size="small" @click="formAddMenu" icon="el-icon-circle-plus">添加</el-button>
+            </el-row>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="editMenuDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doEditMenu">确 定</el-button>
+        </span>
+    </el-dialog>
+    <el-dialog
+            title="菜单排序"
+            :visible.sync="sortDialogVisible"
+            width="50%">
+        <el-tree
+                ref="sortMenuTree"
+                :data="sortMenuData"
+                draggable
+                :allow-drop="sortAllowDrop"
+                node-key="id"
+                :props="defaultProps"
+        >
+            <span class="custom-tree-node" slot-scope="scope">
+                <span>{{ scope.node.label }}</span>
+            </span>
+        </el-tree>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="sortDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doSort">确 定</el-button>
+        </span>
+    </el-dialog>
 </div>
 <script>
-    var treeTable;
-    function goto() {
-        $("#goto").attr("href","${base}/platform/cms/channel/"+$("#siteid").val());
-        $("#goto").trigger("click");
-    }
-    $(function () {
-        $("#dialogDetail").on("hidden.bs.modal", function() {
-            $(this).removeData("bs.modal");
-        });
-        $("#dialogSort").on("hidden.bs.modal", function() {
-            $(this).removeData("bs.modal");
-        });
-        treeTable= $("#treeTable").treetable({
-            expandable: true,
-            onNodeExpand : function(){
-                var node = this;
-                var rows = "<tr data-tt-id=\"loading\" data-tt-parent-id=\""+node.id+"\" data-tt-branch=\"false\"><td colspan='5'><img src=\""+base+"/assets/img/loading.gif\"/>loading</td></tr>";
-                treeTable.treetable("loadBranch", node, rows);
-                $.post("${base}/platform/cms/channel/child/"+node.id,{}, function(data){
-                    treeTable.treetable("unloadBranch", node);
-                    treeTable.treetable("loadBranch", node, data);
-                });
+    new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                addDialogVisible: false,
+                editMenuDialogVisible: false,
+                editDataDialogVisible: false,
+                sortDialogVisible: false,
+                isAddFromSub: false,
+                tableData: [],//后台取出的数据
+                treeData: [],//格式化tableData用于显示的数据
+                formData: {
+                    id: "",
+                    parentId: "",
+                    parentName: "",
+                    type: "article",
+                    target:"_blank"
+                },
+                formRules: {
+                    name: [
+                        {required: true, message: '菜单名称', trigger: 'blur'}
+                    ],
+                    code: [
+                        {required: true, message: '菜单标识', trigger: ['blur', 'change']}
+                    ]
+                },
+                menuOptions: [],
+                parentMenu: [],
+                sortMenuData: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
             }
-        });
-    });
-    function enableRole(id) {
-        $.post("${base}/platform/cms/channel/enable/" + id, {}, function (data) {
-            if (data.code == 0) {
-                $("#disable_" + id).attr("class", "fa fa-circle text-success ml5");
-            } else {
-                Toast.error(data.msg);
-            }
-        }, "json");
-    }
-    function disableRole(id) {
-        $.post("${base}/platform/cms/channel/disable/" + id, {}, function (data) {
-            if (data.code == 0) {
-                $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
-            } else {
-                Toast.error(data.msg);
-            }
-        }, "json");
-    }
-    function del(id){
-        var dialog = $("#dialogDelete");
-        dialog.modal("show");
-        dialog.find("#ok").unbind("click");
-        dialog.find("#ok").bind("click", function(event){
-            var btn = $(this);
-            btn.button("loading");
-            $.post("${base}/platform/cms/channel/delete/"+id,{},function(data){
-                //重置按钮状态，关闭提示框
-                dialog.modal("hide");
-                if(data.code==0){
-                    Toast.success(data.msg);
-                    treeTable.treetable("removeNode", id);
-                    //从表格中移除此行
-                }else{
-                    Toast.error(data.msg);
+        },
+        methods: {
+            //验证动态添加行数据
+            validateMenu: function (rule, value, callback) {
+                if (value.name == '') {
+                    callback(new Error('权限名称不能为空'));
+                } else if (value.permission == '') {
+                    callback(new Error('权限标识不能为空'));
+                } else {
+                    callback();
                 }
-                btn.button("reset");
-            },"json");
-        });
-    }
-</script>
+            },
+            menuLoadTree: function (val, cb) {
+                var url = base + "/platform/sys/menu/tree";
+                $.post(url, {pid: val}, function (data) {
+                    if (data.code == 0) {
+                        cb(data.data);
+                    }
+                }, "json");
+            },
+            menuQuery: function (queryString, cb) {
+                cb(this.menuOptions);
+            },
+            menuSelect: function (val) {
+            },
+            menuTree: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.value) {
+                        obj.children = data;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.menuTree(obj.children, data, pid);
+                    }
+                });
+            },
+            menuChange2: function (val) {
+                var self = this;
+                if (val[0] == "root") {
+                    self.parentMenu = [];
+                }
+            },
+            menuChange: function (val) {
+                var self = this;
+                var pid = val[val.length - 1];
+                self.parentMenu = val;
+                self.menuLoadTree(pid, function (tree) {
+                    self.menuTree(self.menuOptions, tree, pid);
+                });
+            },
+            formRadioChange: function (val) {
+                this.formData.children = val;
+                if ("true" == val) {
+                    this.formData.buttons = [{
+                        name: '',
+                        permission: '',
+                        key: Date.now()
+                    }];
+                } else {
+                    this.formData.buttons = [];
+                }
+            },
+            formRemoveMenu: function (menu) {
+                var index = this.formData.buttons.indexOf(menu);
+                if (index !== -1) {
+                    this.formData.buttons.splice(index, 1);
+                }
+            },
+            formAddMenu: function () {
+                this.formData.buttons.push({
+                    name: '',
+                    permission: '',
+                    key: Date.now()
+                });
+            },
+            //排序树加载
+            sortMenuLoad: function () {
+                var self = this;
+                $.post(base + "/platform/sys/menu/menuAll", {}, function (data) {
+                    if (data.code == 0) {
+                        self.sortMenuData = data.data;
+                    }
+                }, "json");
+            },
+            //排序树控制不可跨级拖拽
+            sortAllowDrop: function (moveNode, inNode, type) {
+                if (moveNode.data.parentId == inNode.data.parentId) {
+                    return type == 'prev';
+                }
+            },
+            //打开排序功能
+            openSort: function () {
+                this.sortDialogVisible = true;
+                this.sortMenuLoad();
+            },
+            //递归获取所有的ID值
+            getTreeIds: function (ids, data) {
+                var self = this;
+                data.forEach(function (obj) {
+                    ids.push(obj.id);
+                    if (obj.children && obj.children.length > 0) {
+                        self.getTreeIds(ids, obj.children);
+                    }
+                });
+            },
+            //提交排序后的数据
+            doSort: function () {
+                var self = this;
+                var ids = [];
+                self.getTreeIds(ids, self.sortMenuData);
+                $.post(base + "/platform/sys/menu/sortDo", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.sortDialogVisible = false;
+                        self.treeTableChild("");
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            openAdd: function () {
+                var self = this;
+                self.isAddFromSub = false;
+                self.addDialogVisible = true;
+                self.parentMenu = [];
+                //表单还原为初始值
+                self.formData = {
+                    id: "",
+                    parentId: "",
+                    parentName: "",
+                    type: "article",
+                    target: "_blank",
+                };
+                if (this.$refs["addForm"])
+                    this.$refs["addForm"].resetFields();
+                self.menuLoadTree("", function (val) {
+                    self.menuOptions = val;
+                });
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "/platform/sys/menu/addDo";
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        if (!self.isAddFromSub) {//如果不是添加子菜单，则从级联选择框取父节点ID
+                            self.formData.parentId = self.parentMenu[self.parentMenu.length - 1] || "";
+                        }
+                        $.post(url, {
+                            menu: JSON.stringify(self.formData),
+                            buttons: JSON.stringify(self.formData.buttons)
+                        }, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                                self.treeTableChild("");
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEditMenu: function () {
+                var self = this;
+                var url = base + "/platform/sys/menu/editMenuDo";
+                self.$refs["editMenuForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, {
+                            menu: JSON.stringify(self.formData),
+                            buttons: JSON.stringify(self.formData.buttons)
+                        }, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editMenuDialogVisible = false;
+                                self.treeTableChild("");
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEditData: function () {
+                var self = this;
+                var url = base + "/platform/sys/menu/editDataDo";
+                self.$refs["editDataForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData2, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDataDialogVisible = false;
+                                self.treeTableChild("");
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            // 显示层级
+            treeTablePath: function (path) {
+                return path.length / 4 - 1;
+            },
+            // 显示行
+            treeTableShowTr: function (row, index) {
+                var parentIndex = this.treeData.findIndex(function (value) {
+                    return value.id === row.row.parentId;
+                });
+                var show = (row.row.parentId ? (this.treeData[parentIndex].expanded && this.treeData[parentIndex]._show) : true);
+                row.row._show = show;
+                return show ? '' : 'display:none;'
+            },
+            treeDataChildren: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.id) {//找到这条数据追加下级数据
+                        obj.children = data;
+                        obj.expanded = !obj.expanded;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.treeDataChildren(obj.children, data, pid);
+                    }
+                });
+            },
+            // 展开下级
+            treeTableChild: function (pid) {
+                var self = this;
+                var url = base + "/platform/sys/menu/child";
+                $.post(url, {pid: pid}, function (data) {
+                    if (data.code == 0) {
+                        if (pid != undefined && pid != "") {
+                            self.treeDataChildren(self.tableData, data.data, pid);
+                        } else {
+                            self.tableData = data.data;
+                        }
+                        self.treeData = sublime.treeToArray(self.tableData);
+                    }
+                }, "json");
 
-<%}%>
+            },
+            // 点击展开和关闭的时候，图标的切换
+            treeTableIconShow: function (record) {
+                return record.hasChildren;
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("add" == command.type) {
+                    self.openAdd();
+                    self.formData.parentId = command.id;
+                    self.formData.parentName = command.name;
+                    self.isAddFromSub = true;
+                }
+                if ("editMenu" == command.type) {
+                    $.post(base + "/platform/sys/menu/editMenu/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.editMenuDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("editData" == command.type) {
+                    $.post(base + "/platform/sys/menu/editData/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData2 = data.data;//加载后台表单数据
+                            self.editDataDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("enable" == command.type || "disable" == command.type) {
+                    $.post(base + "/platform/sys/menu/" + command.type + "/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.$message({
+                                message: data.msg,
+                                type: 'success'
+                            });
+                            if ("disable" == command.type) {
+                                command.row.disabled = true;
+                            }
+                            if ("enable" == command.type) {
+                                command.row.disabled = false;
+                            }
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除 ' + command.name, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/sys/menu/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.treeTableChild("");
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            }
+
+        },
+        created: function () {
+            this.treeTableChild("");
+        }
+    });
+</script>
+<!--#
+}
+#-->

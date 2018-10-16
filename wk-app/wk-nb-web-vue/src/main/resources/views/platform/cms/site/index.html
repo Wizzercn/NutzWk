@@ -75,7 +75,7 @@ layout("/layouts/platform.html"){
                             <el-dropdown-item :command="{type:'edit',id:scope.row.id}">
                                 修改
                             </el-dropdown-item>
-                            <el-dropdown-item :command="{type:'delete',id:scope.row.id}">
+                            <el-dropdown-item :command="{type:'delete',id:scope.row.id,name:scope.row.site_name}">
                                 删除
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -548,7 +548,7 @@ layout("/layouts/platform.html"){
                     }, "json");
                 }
                 if ("delete" == command.type) {
-                    self.$confirm('此操作将删除 ' + command.id, '提示', {
+                    self.$confirm('此操作将删除站点 ' + command.name, '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning',

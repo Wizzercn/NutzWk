@@ -1,7 +1,6 @@
 package cn.wizzer.app.web.modules.controllers.platform.cms;
 
 import cn.wizzer.app.cms.modules.models.Cms_channel;
-import cn.wizzer.app.cms.modules.models.Cms_site;
 import cn.wizzer.app.cms.modules.services.CmsChannelService;
 import cn.wizzer.app.cms.modules.services.CmsSiteService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
@@ -46,16 +45,6 @@ public class CmsChannelController {
     @Ok("beetl:/platform/cms/channel/index.html")
     @RequiresPermissions("cms.content.channel")
     public void index(String siteid, HttpServletRequest req) {
-        List<Cms_site> siteList = cmsSiteService.query();
-        if (Strings.isBlank(siteid) && siteList.size() > 0) {
-            siteid = siteList.get(0).getId();
-        }
-        Cnd cnd = Cnd.NEW();
-        cnd.and("siteid", "=", Strings.sNull(siteid));
-        cnd.and(Cnd.exps("parentId", "=", "").or("parentId", "is", null));
-        cnd.asc("location").asc("path");
-        req.setAttribute("list", cmsChannelService.query(cnd));
-        req.setAttribute("siteList", siteList);
         req.setAttribute("siteid", Strings.sNull(siteid));
     }
 
@@ -205,11 +194,11 @@ public class CmsChannelController {
     @At("/sortDo/?")
     @Ok("json")
     @RequiresPermissions("cms.content.channel.sort")
-    public Object sortDo(String siteid,@Param("ids") String ids, HttpServletRequest req) {
+    public Object sortDo(String siteid, @Param("ids") String ids, HttpServletRequest req) {
         try {
             String[] menuIds = StringUtils.split(ids, ",");
             int i = 0;
-            cmsChannelService.dao().execute(Sqls.create("update cms_channel set location=0 where siteid=@siteid").setParam("siteid",siteid));
+            cmsChannelService.dao().execute(Sqls.create("update cms_channel set location=0 where siteid=@siteid").setParam("siteid", siteid));
             for (String s : menuIds) {
                 if (!Strings.isBlank(s)) {
                     cmsChannelService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", s));
