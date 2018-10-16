@@ -6,16 +6,11 @@ NutzWk 基于Nutz的开源企业级开发框架
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![PowerByNutz](https://img.shields.io/badge/PowerBy-Nutz-green.svg)](https://github.com/nutzam/nutz)
 
-[![Backers on Open Collective](https://opencollective.com/nutzwk/backers/badge.svg)](#backers)
-[![Sponsors on Open Collective](https://opencollective.com/nutzwk/sponsors/badge.svg)](#sponsors) 
-
 在线演示地址
 ======
 https://nutzwk.wizzer.cn/                 NutzWk v3.x、v4.x、v5.x
 
-https://vue.wizzer.cn                     NutzWk v3.x-vue
-
-需要NutzWk 开发培训视频的请联系作者
+https://wizzer.cn/donation                捐赠者列表
 
 # 前言
 
