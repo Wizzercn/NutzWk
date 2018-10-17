@@ -27,9 +27,7 @@ import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by wizzer on 2016/6/28.
@@ -136,15 +134,24 @@ public class CmsChannelController {
     }
 
     @At("/edit/?")
-    @Ok("beetl:/platform/cms/channel/edit.html")
+    @Ok("json")
     @RequiresPermissions("cms.content.channel")
     public Object edit(String id, HttpServletRequest req) {
-        Cms_channel channel = cmsChannelService.fetch(id);
-        if (channel != null) {
-            req.setAttribute("parentMenu", cmsChannelService.fetch(channel.getParentId()));
-            req.setAttribute("siteid", channel.getSiteid());
+        try {
+            Cms_channel channel = cmsChannelService.fetch(id);
+            NutMap map = Lang.obj2nutmap(channel);
+            map.put("parentName", "无");
+            map.put("siteName", "无");
+            if (Strings.isNotBlank(channel.getParentId())) {
+                map.put("parentName", cmsChannelService.fetch(channel.getParentId()).getName());
+            }
+            if (Strings.isNotBlank(channel.getSiteid())) {
+                map.put("siteName", cmsSiteService.fetch(channel.getSiteid()).getSite_name());
+            }
+            return Result.success().addData(map);
+        } catch (Exception e) {
+            return Result.error();
         }
-        return channel;
     }
 
     @At
@@ -157,9 +164,9 @@ public class CmsChannelController {
             channel.setOpAt(Times.getTS());
             cmsChannelService.updateIgnoreNull(channel);
             cmsChannelService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -173,9 +180,9 @@ public class CmsChannelController {
             req.setAttribute("name", channel.getName());
             cmsChannelService.deleteAndChild(channel);
             cmsChannelService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -188,9 +195,9 @@ public class CmsChannelController {
             req.setAttribute("name", cmsChannelService.fetch(menuId).getName());
             cmsChannelService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", menuId));
             cmsChannelService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -203,33 +210,45 @@ public class CmsChannelController {
             req.setAttribute("name", cmsChannelService.fetch(menuId).getName());
             cmsChannelService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", menuId));
             cmsChannelService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
     @At("/sort/?")
-    @Ok("beetl:/platform/cms/channel/sort.html")
+    @Ok("json")
     @RequiresPermissions("cms.content.channel")
-    public void sort(String siteid, HttpServletRequest req) {
-        List<Cms_channel> list = cmsChannelService.query(Cnd.where("siteid", "=", siteid).asc("location").asc("path"));
-        List<Cms_channel> firstMenus = new ArrayList<>();
-        Map<String, List<Cms_channel>> secondMenus = new HashMap<>();
-        for (Cms_channel menu : list) {
-            if (menu.getPath().length() > 4) {
-                List<Cms_channel> s = secondMenus.get(StringUtil.getParentId(menu.getPath()));
-                if (s == null) s = new ArrayList<>();
-                s.add(menu);
-                secondMenus.put(StringUtil.getParentId(menu.getPath()), s);
-            } else if (menu.getPath().length() == 4) {
-                firstMenus.add(menu);
+    public Object sort(String siteid, HttpServletRequest req) {
+        try {
+            List<Cms_channel> list = cmsChannelService.query(Cnd.where("siteid", "=", siteid).asc("location").asc("path"));
+            NutMap menuMap = NutMap.NEW();
+            for (Cms_channel unit : list) {
+                List<Cms_channel> list1 = menuMap.getList(unit.getParentId(), Cms_channel.class);
+                if (list1 == null) {
+                    list1 = new ArrayList<>();
+                }
+                list1.add(unit);
+                menuMap.put(unit.getParentId(), list1);
             }
+            return Result.success().addData(getTree(menuMap, ""));
+        } catch (Exception e) {
+            return Result.error();
         }
-        req.setAttribute("firstMenus", firstMenus);
-        req.setAttribute("secondMenus", secondMenus);
-        req.setAttribute("siteid", siteid);
-        cmsChannelService.clearCache();
+    }
+
+    private List<NutMap> getTree(NutMap menuMap, String pid) {
+        List<NutMap> treeList = new ArrayList<>();
+        List<Cms_channel> subList = menuMap.getList(pid, Cms_channel.class);
+        for (Cms_channel menu : subList) {
+            NutMap map = Lang.obj2nutmap(menu);
+            map.put("label", menu.getName());
+            if (menu.isHasChildren() || (menuMap.get(menu.getId()) != null)) {
+                map.put("children", getTree(menuMap, menu.getId()));
+            }
+            treeList.add(map);
+        }
+        return treeList;
     }
 
     @At("/sortDo/?")
@@ -239,7 +258,7 @@ public class CmsChannelController {
         try {
             String[] menuIds = StringUtils.split(ids, ",");
             int i = 0;
-            cmsChannelService.dao().execute(Sqls.create("update cms_channel set location=0 where siteid=@siteid").setParam("siteid", siteid));
+            cmsChannelService.execute(Sqls.create("update cms_channel set location=0 where siteid=@siteid").setParam("siteid", siteid));
             for (String s : menuIds) {
                 if (!Strings.isBlank(s)) {
                     cmsChannelService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", s));
@@ -247,9 +266,9 @@ public class CmsChannelController {
                 }
             }
             cmsChannelService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 

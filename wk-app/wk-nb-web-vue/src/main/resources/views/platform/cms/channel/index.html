@@ -8,7 +8,7 @@ layout("/layouts/platform.html"){
                 <i class="ti-plus"></i>
                 新建栏目
             </el-button>
-            <el-select v-model="site.id" placeholder="请选择">
+            <el-select size="medium" v-model="site.id" placeholder="请选择" @change="siteChange">
                 <el-option
                         v-for="item in sites"
                         :key="item.value"
@@ -37,12 +37,10 @@ layout("/layouts/platform.html"){
 
                         <span v-if="scope.row.expanded"
                               class="el-tree-node__expand-icon el-icon-caret-right expanded" title="关闭"></span>
-                        <i v-if="scope.row.icon!=''" :class="scope.row.icon"></i>
                         {{ scope.row.name }}
                     </span>
                     <span v-if="!treeTableIconShow(scope.row)">
                         <span class="ms-tree-space"></span>
-                        <i v-if="scope.row.icon!=''" :class="scope.row.icon"></i>
                         {{ scope.row.name }}
                     </span>
                 </template>
@@ -60,7 +58,7 @@ layout("/layouts/platform.html"){
             <el-table-column label="栏目类型" header-align="center" prop="type"
                              :show-overflow-tooltip="true" align="center">
                 <template slot-scope="scope">
-                    <i v-if="scope.row.type=='article'" style="font-weight: bold">文章</i>
+                    <i v-if="scope.row.type=='article'">文章</i>
                     <i v-if="scope.row.type=='photo'">相册</i>
                 </template>
             </el-table-column>
@@ -109,8 +107,9 @@ layout("/layouts/platform.html"){
                 </template>
             </el-table-column>
         </el-table>
-
     </el-row>
+
+
     <el-dialog
             title="新建栏目"
             :visible.sync="addDialogVisible"
@@ -174,40 +173,44 @@ layout("/layouts/platform.html"){
             <el-button type="primary" @click="doAdd">确 定</el-button>
         </span>
     </el-dialog>
-    
+
     <el-dialog
-            title="修改菜单"
-            :visible.sync="editMenuDialogVisible"
+            title="修改栏目"
+            :visible.sync="editDialogVisible"
             width="50%">
-        <el-form :model="formData" ref="editMenuForm" :rules="formRules" size="small" label-width="80px">
-            <el-form-item prop="parentId" label="上级菜单" label-width="80px">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item label="所属站点" label-width="80px">
+                {{formData.siteName}}
+            </el-form-item>
+            <el-form-item prop="parentId" label="上级栏目" label-width="80px">
                 <el-input type="text" v-model="formData.parentName" :disabled="true"></el-input>
             </el-form-item>
-            <el-form-item prop="name" label="菜单名称">
-                <el-input maxlength="100" placeholder="菜单名称"
+            <el-form-item prop="name" label="栏目名称">
+                <el-input maxlength="100" placeholder="栏目名称"
                           v-model="formData.name"
                           auto-complete="off" tabindex="3" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="aliasName" label="菜单别名">
-                <el-input maxlength="100" placeholder="菜单名称"
-                          v-model="formData.aliasName"
+            <el-form-item prop="code" label="栏目标识">
+                <el-input maxlength="100" placeholder="栏目标识"
+                          v-model="formData.code"
                           auto-complete="off" tabindex="4" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="permission" label="权限标识">
-                <el-input maxlength="100" placeholder="权限标识,如 sys.manager.menu"
-                          v-model="formData.permission"
-                          auto-complete="off" tabindex="5" type="text"></el-input>
+            <el-form-item prop="type" label="栏目类型">
+                <el-radio-group v-model="formData.type">
+                    <el-radio label="article">文章</el-radio>
+                    <el-radio label="photo">相册</el-radio>
+                </el-radio-group>
             </el-form-item>
-            <el-form-item prop="href" label="URL">
+            <el-form-item prop="url" label="URL">
                 <el-input maxlength="100" placeholder="URL"
-                          v-model="formData.href"
+                          v-model="formData.url"
                           auto-complete="off" tabindex="6" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="icon" label="图标">
-                <el-input maxlength="100" placeholder="图标"
-                          v-model="formData.icon"
-                          auto-complete="off" tabindex="7" type="text"></el-input>
-                <span :class="formData.icon"></span>
+            <el-form-item prop="target" label="打开方式">
+                <el-radio-group v-model="formData.target">
+                    <el-radio label="_blank">新页面</el-radio>
+                    <el-radio label="_self">本页面</el-radio>
+                </el-radio-group>
             </el-form-item>
             <el-form-item prop="disabled" label="启用状态">
                 <el-switch
@@ -216,39 +219,10 @@ layout("/layouts/platform.html"){
                         inactive-color="#13ce66">
                 </el-switch>
             </el-form-item>
-            <el-form-item prop="type" label="数据权限">
-                <el-radio-group @change="formRadioChange" v-model="formData.children" size="mini">
-                    <el-radio label="false">无</el-radio>
-                    <el-radio label="true">有</el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item
-                    v-if="formData.children=='true'"
-                    v-for="(menu, index) in formData.buttons"
-                    :label="'权限' + (index+1)"
-                    :key="menu.key"
-                    :prop="'buttons[' + index + ']'"
-                    :rules="{required: true,validator: validateMenu,trigger: ['blur','change']}"
-            >
-                <el-row :gutter="2">
-                    <el-col :span="6">
-                        <el-input v-model="menu.name" placeholder="权限名称"></el-input>
-                    </el-col>
-                    <el-col :span="13">
-                        <el-input v-model="menu.permission" placeholder="权限标识,如 sys.manager.menu.add"></el-input>
-                    </el-col>
-                    <el-col :span="4">
-                        <el-button @click.prevent="formRemoveMenu(menu)" icon="el-icon-delete" size="small"></el-button>
-                    </el-col>
-                </el-row>
-            </el-form-item>
-            <el-row v-if="formData.children=='true'" style="text-align: right;padding-right: 17px;">
-                <el-button size="small" @click="formAddMenu" icon="el-icon-circle-plus">添加</el-button>
-            </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
-            <el-button @click="editMenuDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="doEditMenu">确 定</el-button>
+            <el-button @click="editDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doEdit">确 定</el-button>
         </span>
     </el-dialog>
     <el-dialog
@@ -277,22 +251,21 @@ layout("/layouts/platform.html"){
     new Vue({
         el: "#app",
         data: function () {
-            var sites=[];
+            var sites = [];
             <!--#for(o in siteList){#-->
-            sites.push({value:"${o.id!}",label:"${o.site_name!}"});
+            sites.push({value: "${o.id!}", label: "${o.site_name!}"});
             <!--#}#-->
-            var site={id:"",site_name:""};
+            var site = {id: "", site_name: ""};
             <!--#if(!isEmpty(site)){#-->
-                site={id:"${site.id}",site_name:"${site.site_name}"};
+            site = {id: "${site.id}", site_name: "${site.site_name}"};
             <!--#}#-->
             return {
                 addDialogVisible: false,
-                editMenuDialogVisible: false,
-                editDataDialogVisible: false,
+                editDialogVisible: false,
                 sortDialogVisible: false,
                 isAddFromSub: false,
-                sites:sites,
-                site:site,
+                sites: sites,
+                site: site,
                 tableData: [],//后台取出的数据
                 treeData: [],//格式化tableData用于显示的数据
                 formData: {
@@ -300,7 +273,7 @@ layout("/layouts/platform.html"){
                     parentId: "",
                     parentName: "",
                     type: "article",
-                    target:"_blank"
+                    target: "_blank"
                 },
                 formRules: {
                     name: [
@@ -331,8 +304,8 @@ layout("/layouts/platform.html"){
                 }
             },
             menuLoadTree: function (val, cb) {
-                var self=this;
-                var url = base + "/platform/cms/channel/tree/"+self.site.id;
+                var self = this;
+                var url = base + "/platform/cms/channel/tree/" + self.site.id;
                 $.post(url, {pid: val}, function (data) {
                     if (data.code == 0) {
                         cb(data.data);
@@ -396,7 +369,7 @@ layout("/layouts/platform.html"){
             //排序树加载
             sortMenuLoad: function () {
                 var self = this;
-                $.post(base + "/platform/sys/menu/menuAll", {}, function (data) {
+                $.post(base + "/platform/cms/channel/sort/" + self.site.id, {}, function (data) {
                     if (data.code == 0) {
                         self.sortMenuData = data.data;
                     }
@@ -428,7 +401,7 @@ layout("/layouts/platform.html"){
                 var self = this;
                 var ids = [];
                 self.getTreeIds(ids, self.sortMenuData);
-                $.post(base + "/platform/cms/channel/sortDo", {ids: ids.toString()}, function (data) {
+                $.post(base + "/platform/cms/channel/sortDo/" + self.site.id, {ids: ids.toString()}, function (data) {
                     if (data.code == 0) {
                         self.$message({
                             message: data.msg,
@@ -471,7 +444,7 @@ layout("/layouts/platform.html"){
                         if (!self.isAddFromSub) {//如果不是添加子菜单，则从级联选择框取父节点ID
                             self.formData.parentId = self.parentMenu[self.parentMenu.length - 1] || "";
                         }
-                        self.formData.siteid=self.site.id;
+                        self.formData.siteid = self.site.id;
                         $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
@@ -490,44 +463,18 @@ layout("/layouts/platform.html"){
                     }
                 });
             },
-            doEditMenu: function () {
+            doEdit: function () {
                 var self = this;
-                var url = base + "/platform/sys/menu/editMenuDo";
-                self.$refs["editMenuForm"].validate(function (valid) {
+                var url = base + "/platform/cms/channel/editDo";
+                self.$refs["editForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
-                        $.post(url, {
-                            menu: JSON.stringify(self.formData),
-                            buttons: JSON.stringify(self.formData.buttons)
-                        }, function (data) {
+                        $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
                                     type: 'success'
                                 });
-                                self.editMenuDialogVisible = false;
-                                self.treeTableChild("");
-                            } else {
-                                self.$message({
-                                    message: data.msg,
-                                    type: 'error'
-                                });
-                            }
-                        }, "json");
-                    }
-                });
-            },
-            doEditData: function () {
-                var self = this;
-                var url = base + "/platform/sys/menu/editDataDo";
-                self.$refs["editDataForm"].validate(function (valid) {
-                    if (valid) {//表单验证通过
-                        $.post(url, self.formData2, function (data) {
-                            if (data.code == 0) {
-                                self.$message({
-                                    message: data.msg,
-                                    type: 'success'
-                                });
-                                self.editDataDialogVisible = false;
+                                self.editDialogVisible = false;
                                 self.treeTableChild("");
                             } else {
                                 self.$message({
@@ -566,7 +513,7 @@ layout("/layouts/platform.html"){
             // 展开下级
             treeTableChild: function (pid) {
                 var self = this;
-                var url = base + "/platform/cms/channel/child/"+self.site.id;
+                var url = base + "/platform/cms/channel/child/" + self.site.id;
                 $.post(url, {pid: pid}, function (data) {
                     if (data.code == 0) {
                         if (pid != undefined && pid != "") {
@@ -591,24 +538,11 @@ layout("/layouts/platform.html"){
                     self.formData.parentName = command.name;
                     self.isAddFromSub = true;
                 }
-                if ("editMenu" == command.type) {
-                    $.post(base + "/platform/sys/menu/editMenu/" + command.id, {}, function (data) {
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/cms/channel/edit/" + command.id, {}, function (data) {
                         if (data.code == 0) {
                             self.formData = data.data;//加载后台表单数据
-                            self.editMenuDialogVisible = true;//打开编辑窗口
-                        } else {
-                            self.$message({
-                                message: data.msg,
-                                type: 'error'
-                            });
-                        }
-                    }, "json");
-                }
-                if ("editData" == command.type) {
-                    $.post(base + "/platform/sys/menu/editData/" + command.id, {}, function (data) {
-                        if (data.code == 0) {
-                            self.formData2 = data.data;//加载后台表单数据
-                            self.editDataDialogVisible = true;//打开编辑窗口
+                            self.editDialogVisible = true;//打开编辑窗口
                         } else {
                             self.$message({
                                 message: data.msg,
@@ -618,7 +552,7 @@ layout("/layouts/platform.html"){
                     }, "json");
                 }
                 if ("enable" == command.type || "disable" == command.type) {
-                    $.post(base + "/platform/sys/menu/" + command.type + "/" + command.id, {}, function (data) {
+                    $.post(base + "/platform/cms/channel/" + command.type + "/" + command.id, {}, function (data) {
                         if (data.code == 0) {
                             self.$message({
                                 message: data.msg,
@@ -639,13 +573,13 @@ layout("/layouts/platform.html"){
                     }, "json");
                 }
                 if ("delete" == command.type) {
-                    self.$confirm('此操作将删除 ' + command.name, '提示', {
+                    self.$confirm('此操作将删除栏目 ' + command.name, '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning',
                         callback: function (a, b) {
                             if ("confirm" == a) {//确认后再执行
-                                $.post(base + "/platform/sys/menu/delete/" + command.id, {}, function (data) {
+                                $.post(base + "/platform/cms/channel/delete/" + command.id, {}, function (data) {
                                     if (data.code == 0) {
                                         self.$message({
                                             message: data.msg,
@@ -663,8 +597,10 @@ layout("/layouts/platform.html"){
                         }
                     });
                 }
+            },
+            siteChange: function (val) {
+                window.location.href="${base}/platform/cms/channel/"+val;
             }
-
         },
         created: function () {
             this.treeTableChild("");
