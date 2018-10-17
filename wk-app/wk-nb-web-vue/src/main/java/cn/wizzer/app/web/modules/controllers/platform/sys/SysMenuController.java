@@ -52,7 +52,7 @@ public class SysMenuController {
         List<NutMap> treeList = new ArrayList<>();
         Cnd cnd = Cnd.NEW();
         if (Strings.isBlank(pid)) {
-            cnd.and("parentId", "=", "").or("parentId", "is", null);
+            cnd.and(Cnd.exps("parentId", "=", "").or("parentId", "is", null));
         } else {
             cnd.and("parentId", "=", pid);
         }
@@ -82,7 +82,7 @@ public class SysMenuController {
             }
             Cnd cnd = Cnd.NEW();
             if (Strings.isBlank(pid)) {
-                cnd.and("parentId", "=", "").or("parentId", "is", null);
+                cnd.and(Cnd.exps("parentId", "=", "").or("parentId", "is", null));
             } else {
                 cnd.and("parentId", "=", pid);
             }

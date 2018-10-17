@@ -8,6 +8,14 @@ layout("/layouts/platform.html"){
                 <i class="ti-plus"></i>
                 新建栏目
             </el-button>
+            <el-select v-model="site.id" placeholder="请选择">
+                <el-option
+                        v-for="item in sites"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
         </div>
         <div class="pull-right offscreen-right mt5">
             <el-button size="medium" @click="openSort">
@@ -41,11 +49,11 @@ layout("/layouts/platform.html"){
             </el-table-column>
 
 
-            <el-table-column label="栏目标识" header-align="center" prop="permission"
+            <el-table-column label="栏目标识" header-align="center" prop="code"
                              :show-overflow-tooltip="true">
             </el-table-column>
 
-            <el-table-column label="URL" header-align="center" prop="href"
+            <el-table-column label="URL" header-align="center" prop="url"
                              :show-overflow-tooltip="true">
             </el-table-column>
 
@@ -77,8 +85,7 @@ layout("/layouts/platform.html"){
                             <span class="ti-angle-down"></span>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item v-if="scope.row.type=='menu'"
-                                              :command="{type:'add',id:scope.row.id,name:scope.row.name}">
+                            <el-dropdown-item :command="{type:'add',id:scope.row.id,name:scope.row.name}">
                                 添加子栏目
                             </el-dropdown-item>
                             <el-dropdown-item divided
@@ -109,6 +116,9 @@ layout("/layouts/platform.html"){
             :visible.sync="addDialogVisible"
             width="50%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="siteid" label="所属站点">
+                <span>{{site.site_name}}</span>
+            </el-form-item>
             <el-form-item prop="parentId" label="上级栏目" label-width="80px">
                 <el-cascader v-if="!isAddFromSub"
                              style="width: 100%"
@@ -134,9 +144,15 @@ layout("/layouts/platform.html"){
                           v-model="formData.code"
                           auto-complete="off" tabindex="4" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="href" label="URL">
+            <el-form-item prop="type" label="栏目类型">
+                <el-radio-group v-model="formData.type">
+                    <el-radio label="article">文章</el-radio>
+                    <el-radio label="photo">相册</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item prop="url" label="URL">
                 <el-input maxlength="100" placeholder="URL"
-                          v-model="formData.href"
+                          v-model="formData.url"
                           auto-complete="off" tabindex="6" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="target" label="打开方式">
@@ -158,6 +174,7 @@ layout("/layouts/platform.html"){
             <el-button type="primary" @click="doAdd">确 定</el-button>
         </span>
     </el-dialog>
+    
     <el-dialog
             title="修改菜单"
             :visible.sync="editMenuDialogVisible"
@@ -260,12 +277,22 @@ layout("/layouts/platform.html"){
     new Vue({
         el: "#app",
         data: function () {
+            var sites=[];
+            <!--#for(o in siteList){#-->
+            sites.push({value:"${o.id!}",label:"${o.site_name!}"});
+            <!--#}#-->
+            var site={id:"",site_name:""};
+            <!--#if(!isEmpty(site)){#-->
+                site={id:"${site.id}",site_name:"${site.site_name}"};
+            <!--#}#-->
             return {
                 addDialogVisible: false,
                 editMenuDialogVisible: false,
                 editDataDialogVisible: false,
                 sortDialogVisible: false,
                 isAddFromSub: false,
+                sites:sites,
+                site:site,
                 tableData: [],//后台取出的数据
                 treeData: [],//格式化tableData用于显示的数据
                 formData: {
@@ -277,10 +304,10 @@ layout("/layouts/platform.html"){
                 },
                 formRules: {
                     name: [
-                        {required: true, message: '菜单名称', trigger: 'blur'}
+                        {required: true, message: '栏目名称', trigger: 'blur'}
                     ],
                     code: [
-                        {required: true, message: '菜单标识', trigger: ['blur', 'change']}
+                        {required: true, message: '栏目标识', trigger: ['blur', 'change']}
                     ]
                 },
                 menuOptions: [],
@@ -304,7 +331,8 @@ layout("/layouts/platform.html"){
                 }
             },
             menuLoadTree: function (val, cb) {
-                var url = base + "/platform/sys/menu/tree";
+                var self=this;
+                var url = base + "/platform/cms/channel/tree/"+self.site.id;
                 $.post(url, {pid: val}, function (data) {
                     if (data.code == 0) {
                         cb(data.data);
@@ -400,7 +428,7 @@ layout("/layouts/platform.html"){
                 var self = this;
                 var ids = [];
                 self.getTreeIds(ids, self.sortMenuData);
-                $.post(base + "/platform/sys/menu/sortDo", {ids: ids.toString()}, function (data) {
+                $.post(base + "/platform/cms/channel/sortDo", {ids: ids.toString()}, function (data) {
                     if (data.code == 0) {
                         self.$message({
                             message: data.msg,
@@ -437,16 +465,14 @@ layout("/layouts/platform.html"){
             },
             doAdd: function () {
                 var self = this;
-                var url = base + "/platform/sys/menu/addDo";
+                var url = base + "/platform/cms/channel/addDo";
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
                         if (!self.isAddFromSub) {//如果不是添加子菜单，则从级联选择框取父节点ID
                             self.formData.parentId = self.parentMenu[self.parentMenu.length - 1] || "";
                         }
-                        $.post(url, {
-                            menu: JSON.stringify(self.formData),
-                            buttons: JSON.stringify(self.formData.buttons)
-                        }, function (data) {
+                        self.formData.siteid=self.site.id;
+                        $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
@@ -540,7 +566,7 @@ layout("/layouts/platform.html"){
             // 展开下级
             treeTableChild: function (pid) {
                 var self = this;
-                var url = base + "/platform/sys/menu/child";
+                var url = base + "/platform/cms/channel/child/"+self.site.id;
                 $.post(url, {pid: pid}, function (data) {
                     if (data.code == 0) {
                         if (pid != undefined && pid != "") {

@@ -1,6 +1,7 @@
 package cn.wizzer.app.web.modules.controllers.platform.cms;
 
 import cn.wizzer.app.cms.modules.models.Cms_channel;
+import cn.wizzer.app.cms.modules.models.Cms_site;
 import cn.wizzer.app.cms.modules.services.CmsChannelService;
 import cn.wizzer.app.cms.modules.services.CmsSiteService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
@@ -8,13 +9,16 @@ import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
@@ -44,16 +48,76 @@ public class CmsChannelController {
     @At(value = {"", "/?"})
     @Ok("beetl:/platform/cms/channel/index.html")
     @RequiresPermissions("cms.content.channel")
-    public void index(String siteid, HttpServletRequest req) {
-        req.setAttribute("siteid", Strings.sNull(siteid));
+    public void index(String siteId, HttpServletRequest req) {
+        Cms_site site = null;
+        List<Cms_site> siteList = cmsSiteService.query();
+        if (Strings.isBlank(siteId) && siteList.size() > 0) {
+            site = siteList.get(0);
+        }
+        if (Strings.isNotBlank(siteId)) {
+            site = cmsSiteService.fetch(siteId);
+        }
+        req.setAttribute("siteList", siteList);
+        req.setAttribute("site", site);
     }
 
-    @At("/add/?")
-    @Ok("beetl:/platform/cms/channel/add.html")
-    @RequiresPermissions("cms.content.channel")
-    public Object add(String siteid, @Param("pid") String pid, HttpServletRequest req) {
-        req.setAttribute("siteid", siteid);
-        return Strings.isBlank(pid) ? null : cmsChannelService.fetch(pid);
+    @At("/child/?")
+    @Ok("json")
+    @RequiresAuthentication
+    public Object child(String siteId, @Param("pid") String pid, HttpServletRequest req) {
+        List<Cms_channel> list = new ArrayList<>();
+        List<NutMap> treeList = new ArrayList<>();
+        Cnd cnd = Cnd.NEW();
+        if (Strings.isBlank(pid)) {
+            cnd.and(Cnd.exps("parentId", "=", "").or("parentId", "is", null));
+        } else {
+            cnd.and("parentId", "=", pid);
+        }
+        cnd.and("siteid", "=", siteId);
+        cnd.asc("location").asc("path");
+        list = cmsChannelService.query(cnd);
+        for (Cms_channel channel : list) {
+            if (cmsChannelService.count(Cnd.where("parentId", "=", channel.getId())) > 0) {
+                channel.setHasChildren(true);
+            }
+            NutMap map = Lang.obj2nutmap(channel);
+            map.addv("expanded", false);
+            map.addv("children", new ArrayList<>());
+            treeList.add(map);
+        }
+        return Result.success().addData(treeList);
+    }
+
+    @At("/tree/?")
+    @Ok("json")
+    @RequiresAuthentication
+    public Object tree(String siteId, @Param("pid") String pid, HttpServletRequest req) {
+        try {
+            List<NutMap> treeList = new ArrayList<>();
+            if (Strings.isBlank(pid)) {
+                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单");
+                treeList.add(root);
+            }
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isBlank(pid)) {
+                cnd.and(Cnd.exps("parentId", "=", "").or("parentId", "is", null));
+            } else {
+                cnd.and("parentId", "=", pid);
+            }
+            cnd.and("siteid", "=", siteId);
+            cnd.asc("location").asc("path");
+            List<Cms_channel> list = cmsChannelService.query(cnd);
+            for (Cms_channel menu : list) {
+                NutMap map = NutMap.NEW().addv("value", menu.getId()).addv("label", menu.getName());
+                if (menu.isHasChildren()) {
+                    map.addv("children", new ArrayList<>());
+                }
+                treeList.add(map);
+            }
+            return Result.success().addData(treeList);
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
     @At
@@ -65,9 +129,9 @@ public class CmsChannelController {
             channel.setOpBy(StringUtil.getPlatformUid());
             cmsChannelService.save(channel, parentId);
             cmsChannelService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -143,29 +207,6 @@ public class CmsChannelController {
         } catch (Exception e) {
             return Result.error("system.error");
         }
-    }
-
-    @At("/tree/?")
-    @Ok("json")
-    @RequiresPermissions("cms.content.channel")
-    public Object tree(String siteid, @Param("pid") String pid) {
-        List<Cms_channel> list = cmsChannelService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).and("siteid", "=", siteid).asc("location").asc("path"));
-        List<Map<String, Object>> tree = new ArrayList<>();
-        for (Cms_channel channel : list) {
-            Map<String, Object> obj = new HashMap<>();
-            obj.put("id", channel.getId());
-            obj.put("text", channel.getName());
-            obj.put("children", channel.isHasChildren());
-            tree.add(obj);
-        }
-        return tree;
-    }
-
-    @At("/child/?")
-    @Ok("beetl:/platform/cms/channel/child.html")
-    @RequiresPermissions("cms.content.channel")
-    public Object child(String id) {
-        return cmsChannelService.query(Cnd.where("parentId", "=", id).asc("location").asc("path"));
     }
 
     @At("/sort/?")
