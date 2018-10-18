@@ -110,7 +110,7 @@ layout("/layouts/platform.html"){
                                 width="35">
                         </el-table-column>
 
-                        <el-table-column label="文章标题" header-align="center" prop="title"
+                        <el-table-column label="文章标题" header-align="left" prop="title"
                                          :show-overflow-tooltip="true">
                         </el-table-column>
 
@@ -326,12 +326,16 @@ layout("/layouts/platform.html"){
                 if (this.$refs["addForm"])
                     this.$refs["addForm"].resetFields();
                 UM.getEditor("content");
+                setTimeout(function () {
+                    UM.getEditor('content').setContent("",false);
+                },200);
             },
             doAdd: function () {
                 var self = this;
                 var url = base + "/platform/cms/article/addDo/"+self.site.id;
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
+                        self.formData.content=UM.getEditor("content").getContent();
                         self.formData.siteid = self.site.id;
                         self.formData.channelId = self.pageForm.channelId;
                         self.formData.time_param=JSON.stringify(self.formData.time);
@@ -354,7 +358,42 @@ layout("/layouts/platform.html"){
                 });
             },
             delMore: function () {
-
+                var self = this;
+                if (self.selectData.length == 0) {
+                    self.$message({
+                        message: "请选择消息",
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                var ids = [];
+                self.selectData.forEach(function (val) {
+                    ids.push(val.id);
+                });
+                self.$confirm('您确定要删除选中的 '+ids.length+' 条消息？ ', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "/platform/cms/article/delete", {ids: ids.toString()}, function (data) {
+                                if (data.code == 0) {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'success'
+                                    });
+                                    self.pageData();
+                                    self.unreadData();
+                                } else {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
             },
             pageOrder: function (column) {//按字段排序
                 this.pageForm.pageOrderName = column.prop;

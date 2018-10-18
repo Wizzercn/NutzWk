@@ -511,6 +511,7 @@ layout("/layouts/platform.html"){
                 if (this.$refs["addForm"])
                     this.$refs["addForm"].resetFields();
                 UM.getEditor("note");
+                UM.getEditor('note').setContent("",false);
             },
             doAdd: function () {
                 var self = this;

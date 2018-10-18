@@ -170,10 +170,10 @@ public class CmsArticleController {
             article.setStatus(0);
             cmsArticleService.updateIgnoreNull(article);
             cmsArticleService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -187,9 +187,9 @@ public class CmsArticleController {
             req.setAttribute("title", cmsArticleService.fetch(id).getTitle());
             cmsArticleService.update(org.nutz.dao.Chain.make("disabled", false).add("status", 0), Cnd.where("id", "=", id));
             cmsArticleService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -202,9 +202,9 @@ public class CmsArticleController {
             req.setAttribute("title", cmsArticleService.fetch(id).getTitle());
             cmsArticleService.update(org.nutz.dao.Chain.make("disabled", true).add("status", 0), Cnd.where("id", "=", id));
             cmsArticleService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -222,9 +222,9 @@ public class CmsArticleController {
                 req.setAttribute("id", oneId);
             }
             cmsArticleService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 }
