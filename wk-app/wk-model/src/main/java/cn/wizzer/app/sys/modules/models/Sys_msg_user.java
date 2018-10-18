@@ -35,7 +35,7 @@ public class Sys_msg_user extends BaseModel implements Serializable {
 
     @Column
     @Comment("读取时间")
-    @ColDefine(type = ColType.INT)
+    //Long不要用ColDefine定义,兼容oracle/mysql,支持2038年以后的时间戳
     private Long readAt;
 
     @One(field = "msgId")

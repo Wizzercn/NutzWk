@@ -25,7 +25,7 @@ public abstract class BaseModel implements Serializable {
     @Column
     @Comment("操作时间")
     @Prev(els = @EL("$me.now()"))
-    @ColDefine(type = ColType.INT)
+    //Long不要用ColDefine定义,兼容oracle/mysql,支持2038年以后的时间戳
     private Long opAt;
 
     @Column

@@ -1,295 +1,451 @@
-<%
+<!--#
 layout("/layouts/platform.html"){
-%>
-<aside class="sidebar-250 canvas-right bg-default ">
-    <header class="header navbar clearfix bb bg-default pl0 pr0">
-        <p class="navbar-text"><i class="fa fa-sitemap mr5"></i> 栏目列表</p>
-        <p>
-            <a id="goto" style="display: none" href="${base}/platform/cms/article/${siteid}" data-pjax></a>
-            <select id="siteid" style="padding-left: 10px;margin-top: 15px;" onchange="goto()">
-                <%for(o in siteList){%>
-                <option value="${o.id}"
-                <%if(o.id==siteid){%>selected<%}%>>${o.site_name}</option>
-                <%}%>
-            </select>
-        </p>
-    </header>
-    <div class="content-wrap no-p">
-        <div class="wrapper2">
-            <div class="m5">
-                <div id="jsTree"></div>
-            </div>
-        </div>
-    </div>
-</aside>
-<section class="content-wrap bg-white">
-<header class="header navbar bg-white shadow">
-    <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/cms/article/add/${siteid}" data-pjax
-           id="addLink"><i class="ti-plus"></i> 添加文章</a>
-        <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除文章</button>
-    </div>
-    <div class="pull-right offscreen-right">
-        <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i
-                class="fa fa-sliders"></i> 筛选
-        </button>
-    </div>
-</header>
-<div class="panel-body" style="padding-top: 50px;">
-    <div class="table-responsive no-border">
-        <input id="channelId" type="hidden">
-        <table class="table table-bordered table-striped mg-t datatable" style="padding-top: 10px;">
-            <thead>
-            <tr>
-                <th>文章标题</th>
-                <th>作者</th>
-                <th>发布时间</th>
-                <th>截至时间</th>
-                <th>发布状态</th>
-                <th>操作</th>
-        </table>
-    </div>
-</div>
-</section>
+#-->
+<style>
+    .left_aside {
+        width: 200px;
+        background-color: #eaecf6;
+        height: 500px;
+    }
 
-<div class="cd-panel from-right">
-    <header class="cd-panel-header">
-        <h4>高级筛选</h4>
-        <a href="javascript:;" class="cd-panel-close text-center"><i class="ti-close"></i> </a>
-    </header>
-    <div class="cd-panel-container">
-        <div class="cd-panel-content shadow">
-            <div class="form-group">
-                <label for="title">文章标题</label>
-                <input type="text" id="title" name="title" class="form-control" placeholder="文章标题" autofocus>
-            </div>
-            <button id="searchBtn" type="button" class="btn btn-default">查询</button>
-        </div>
-    </div>
-</div>
-<!-- 删除 -->
-<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">删除文章</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        删除文章后无法恢复，确定删除吗？ <br/>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
-                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- 详情 -->
-<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    .left_tree {
+        margin-top: 10px;
+        margin-left: 10px;
+        background-color: #eaecf6;
+    }
 
+    .note {
+        width: 100%;
+        height: 320px;
+    }
+
+    .el-upload input[type=file] {
+        display: none;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 128px;
+        height: 128px;
+        line-height: 128px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 128px;
+        height: 128px;
+        display: block;
+    }
+</style>
+<link href="${base!}/assets/platform/plugins/umeditor/themes/default/css/umeditor.min.css" type="text/css"
+      rel="stylesheet">
+<script src="${base!}/assets/platform/plugins/umeditor/umeditor.config.js"></script>
+<script src="${base!}/assets/platform/plugins/umeditor/umeditor.js"></script>
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <span>站点：</span>
+            <el-select size="medium" v-model="site.id" placeholder="请选择" @change="siteChange">
+                <el-option
+                        v-for="item in sites"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+            <el-button size="medium" @click="openAdd">
+                <i class="ti-plus"></i>
+                新建文章
+            </el-button>
         </div>
-    </div>
+        <div class="btn-group tool-button mt5">
+            <el-input placeholder="请输入标题" v-model="pageForm.searchKeyword" @keyup.enter.native="doSearch">
+                <el-button slot="append" icon="el-icon-search" @click="doSearch"></el-button>
+            </el-input>
+        </div>
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="delMore" type="danger" :disabled="selectData.length==0">删除</el-button>
+        </div>
+    </el-row>
+    <el-row style="padding-top: 50px;">
+        <section class="el-container">
+            <aside class="el-aside left_aside">
+                <el-tree
+                        @node-click="treeClick"
+                        class="left_tree"
+                        :data="channelData"
+                        node-key="id"
+                        :props="defaultProps">
+                </el-tree>
+            </aside>
+            <main class="el-main">
+                <el-breadcrumb separator-class="el-icon-arrow-right">
+                    <el-breadcrumb-item>{{site.site_name}}</el-breadcrumb-item>
+                    <el-breadcrumb-item>{{pageForm.channelName||'所有栏目'}}</el-breadcrumb-item>
+                </el-breadcrumb>
+                <el-row style="margin-top: 5px;">
+                    <el-table
+                            :data="tableData"
+                            @sort-change='pageOrder'
+                            size="small"
+                            header-align="center"
+                            style="width: 100%"
+                            @selection-change="handleSelectionChange"
+                    >
+                        <el-table-column
+                                type="selection"
+                                width="35">
+                        </el-table-column>
+
+                        <el-table-column label="文章标题" header-align="center" prop="title"
+                                         :show-overflow-tooltip="true">
+                        </el-table-column>
+
+                        <el-table-column label="发布时间" header-align="center" prop="publishAt"
+                                         width="120">
+                            <template slot-scope="scope">
+                                {{formatAt(scope.row.publishAt)}}
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column label="发布状态" header-align="center" prop="disabled"
+                                         width="120">
+                            <template slot-scope="scope">
+                                <el-switch
+                                        v-model="scope.row.disabled"
+                                        active-color="#ff4949"
+                                        inactive-color="#13ce66">
+                                </el-switch>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="id"
+                                label="操作"
+                                width="120">
+                            <template slot-scope="scope">
+                                <el-dropdown @command="dropdownCommand">
+                                    <el-button size="mini">
+                                        <i class="ti-settings"></i>
+                                        <span class="ti-angle-down"></span>
+                                    </el-button>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item divided
+                                                          :command="{type:'enable',id:scope.row.id,row:scope.row}">
+                                            启用
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :command="{type:'disable',id:scope.row.id,row:scope.row}">
+                                            禁用
+                                        </el-dropdown-item>
+                                        <el-dropdown-item divided :command="{type:'edit',id:scope.row.id}">
+                                            修改
+                                        </el-dropdown-item>
+                                        <el-dropdown-item
+                                                :command="{type:'delete',id:scope.row.id,title:scope.row.title}">
+                                            删除
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-row>
+                <el-row class="el-pagination-container">
+                    <el-pagination
+                            @size-change="pageSizeChange"
+                            @current-change="pageNumberChange"
+                            :current-page="pageForm.pageNumber"
+                            :page-sizes="[10, 20, 30, 50]"
+                            :page-size="pageForm.pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="pageForm.totalCount">
+                    </el-pagination>
+                </el-row>
+            </main>
+        </section>
+    </el-row>
+
+    <el-dialog
+            title="新建文章"
+            :visible.sync="addDialogVisible"
+            width="60%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="title" label="文章标题">
+                <el-input maxlength="255" placeholder="文章标题"
+                          v-model="formData.title"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="author" label="文章作者">
+                <el-input maxlength="50" placeholder="文章作者"
+                          v-model="formData.author"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="info" label="文章简介">
+                <el-input type="textarea" v-model="formData.info"></el-input>
+            </el-form-item>
+            <el-form-item prop="url" label="URL">
+                <el-input maxlength="50" placeholder="URL"
+                          v-model="formData.url"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="publishAt" label="发布时间">
+                <el-date-picker
+                        format="yyyy-MM-dd HH:mm:ss"
+                        value-format="timestamp"
+                        v-model="formData.time"
+                        type="datetimerange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+
+            <el-form-item prop="disabled" label="发布状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+            <el-form-item prop="picurl" label="标题图">
+                <el-upload
+                        class="avatar-uploader"
+                        tabindex="5"
+                        action="${base}/open/file/upload/image"
+                        name="Filedata"
+                        :show-file-list="false"
+                        :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picurl')}">
+
+                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+            </el-form-item>
+            <el-form-item prop="content" label="文章内容">
+                <!---->
+                <script type="text/plain" id="content" class="note"></script>
+                <!---->
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                <el-button @click="addDialogVisible = false"> 取 消 </el-button>
+                <el-button type="primary" @click="doAdd"> 确 定 </el-button>
+        </span>
+    </el-dialog>
 </div>
-<script language="JavaScript">
-    var datatable;
-    function goto() {
-        $("#goto").attr("href", "${base}/platform/cms/article/" + $("#siteid").val());
-        $("#goto").trigger("click");
-    }
-    function initDatatable() {
-        datatable = $('.datatable').DataTable({
-            "dom": '<"toolbar">frtip',
-            "searching": false,
-            "processing": false,
-            "serverSide": true,
-            "select": true,
-            "ordering": true,
-            "language": {
-                "url": "${base}/assets/plugins/datatables/cn.json"
-            },
-            "preDrawCallback": function () {
-                sublime.showLoadingbar($(".main-content"));
-            },
-            "drawCallback": function () {
-                sublime.closeLoadingbar($(".main-content"));
-            },
-            "ajax": {
-                "url": "${base}/platform/cms/article/data/${siteid}",
-                "type": "post",
-                "data": function (d) {
-                    d.channelId = $('#channelId').val();
-                    d.title = $('#title').val();
-                }
-            },
-            "order": [[2, "desc"]],
-            "columns": [
-                {"data": "title", "bSortable": true},
-                {"data": "author", "bSortable": true},
-                {"data": "publishAt", "bSortable": true},
-                {"data": "endAt", "bSortable": true},
-                {"data": "disabled", "bSortable": true}
-            ],
-            "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                            ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                            '<li><a href="${base}/platform/cms/article/edit/' + row.id + '" data-pjax>修改</a></li>' +
-                            '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
-                            '<li class="divider"></li>' +
-                            '<li><a href="javascript:;" onclick="enable(\'' + row.id + '\')">发布</a></li>' +
-                            '<li><a href="javascript:;" onclick="disable(\'' + row.id + '\')">取消发布</a></li>' +
-                            '</ul></div>';
-                    },
-                    "targets": 5
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var sites = [];
+            <!--#for(o in siteList){#-->
+            sites.push({value: "${o.id!}", label: "${o.site_name!}"});
+            <!--#}#-->
+            var site = {id: "", site_name: ""};
+            <!--#if(!isEmpty(site)){#-->
+            site = {id: "${site.id}", site_name: "${site.site_name}"};
+            <!--#}#-->
+            return {
+                addDialogVisible: false,
+                sites: sites,
+                site: site,
+                selectData: [],
+                pageForm: {
+                    siteId: site.id,
+                    channelId: "",
+                    channelName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "",
+                    pageOrderBy: ""
                 },
-                {
-                    "render": function (data, type, row) {
-                        if (!data) {
-                            return '<i id="disable_' + row.id + '" class="fa fa-circle text-success ml5"></i>';
-                        } else {
-                            return '<i id="disable_' + row.id + '" class="fa fa-circle text-danger ml5"></i>';
-                        }
-                    },
-                    "targets": 4
+                channelData: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
                 },
-                {
-                    "render": function (data, type, row) {
-                        if (data) {
-                            return moment(parseInt(data * 1000)).format("YYYY-MM-DD");
-                        }
-                        return '';
-                    },
-                    "targets": 3
+                tableData: [],
+                formData: {
+                    id: "",
                 },
-                {
-                    "render": function (data, type, row) {
-                        if (data) {
-                            return moment(parseInt(data * 1000)).format("YYYY-MM-DD");
-                        }
-                        return '';
-                    },
-                    "targets": 2
-                }
-            ]
-        });
-        datatable.on('click', 'tr', function () {
-            $(this).toggleClass('selected');
-        });
-        $("#searchBtn").on('click', function () {
-            datatable.ajax.reload();
-        });
-    }
-    var unitTreeTable;
-    var selected = [];
-    function initTreeView() {
-        $("#jsTree").jstree({
-            plugins: ["wholerow"],
-            core: {
-                data: {
-                    url: function (node) {
-                        return node.id === "#" ? "${base}/platform/cms/article/tree/${siteid}" : "${base}/platform/cms/article/tree/${siteid}?pid=" + node.id
-                    }
+                formRules: {
+                    title: [
+                        {required: true, message: '标题', trigger: 'blur'}
+                    ],
+                    info:[
+                        { required: false, message: '请输入文章作者', trigger: 'blur' },
+                        { min: 0, max: 500, message: '长度500个字符以内', trigger: 'blur' }
+                    ]
                 },
-                multiple: false
             }
-        }).on("select_node.jstree", function (node, selected) {
-            var id = selected.selected;
-            $("#channelId").val(id);
-            $("#searchForm").find("input[type='text']").val("");
-            if (datatable) {
-                $(".cd-panel-content").find("input").val("");
-                datatable.ajax.reload();
-            } else {
-                initDatatable();
-            }
-            $("#addLink").attr("href", "${base}/platform/cms/article/add/${siteid}?channelId=" + id);
-        }).on("loaded.jstree", function (node, jstree) {
-            $('#jsTree').jstree('open_all');
-        }).on('ready.jstree', function (e, data) {
-            $('#jsTree').jstree('select_node', "${channelId}", true);
-            $("#${channelId}").find("div:first").addClass("jstree-wholerow-clicked");
-        });
-    }
-    function del(id) {
-        var dialog = $("#dialogDelete");
-        dialog.modal("show");
-        dialog.find("#ok").unbind("click");
-        dialog.find("#ok").bind("click", function (event) {
-            var btn = $(this);
-            btn.button("loading");
-            $.post("${base}/platform/cms/article/delete/" + id, {}, function (data) {
-                if (data.code == 0) {
-                    datatable.ajax.reload(null, false);
-                } else {
-                    Toast.error(data.msg);
-                }
-                //重置按钮状态，关闭提示框
-                btn.button("reset");
-                dialog.modal("hide");
-            }, "json");
-        });
-    }
-    function delCheck() {
-        var chks = datatable.rows('.selected').data();
-        if (chks.length > 0) {
-            var ids = [];
-            $.each(datatable.rows('.selected').data(), function (i, n) {
-                ids.push(n.id);
-            });
-            var dialog = $("#dialogDelete");
-            dialog.modal("show");
-            dialog.find("#ok").unbind("click");
-            dialog.find("#ok").bind("click", function (event) {
-                var btn = $(this);
-                btn.button("loading");
-                $.post("${base}/platform/cms/article/delete", {ids: ids.toString()}, function (data) {
+        },
+        methods: {
+            siteChange: function (val) {
+                window.location.href = "${base}/platform/cms/article/" + val;
+            },
+            channelLoad: function () {
+                var self = this;
+                $.post(base + "/platform/cms/article/tree/" + self.site.id, {}, function (data) {
                     if (data.code == 0) {
-                        datatable.ajax.reload(null, false);
-                    } else {
-                        Toast.error(data.msg);
+                        self.channelData = data.data;
                     }
-                    btn.button("reset");
-                    dialog.modal("hide");
                 }, "json");
-            });
-        } else {
-            Toast.warning("请先选择要删除的文章！");
+            },
+            openAdd: function () {
+                var self = this;
+                if (self.pageForm.channelId == "") {
+                    self.$message({
+                        message: "请在左侧选定一个栏目",
+                        type: 'error'
+                    });
+                    return false;
+                }
+                this.addDialogVisible = true;
+                this.formData = {
+                    id: "",
+                    author:"${@shiro.getPrincipalProperty('username')}",
+                    time:[
+                        moment().format("x"),
+                        moment("2099-12-31 23:59:59").format("x")
+                    ]
+                };//打开新增窗口,表单先清空
+                if (this.$refs["addForm"])
+                    this.$refs["addForm"].resetFields();
+                UM.getEditor("content");
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "/platform/cms/article/addDo/"+self.site.id;
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        self.formData.siteid = self.site.id;
+                        self.formData.channelId = self.pageForm.channelId;
+                        self.formData.time_param=JSON.stringify(self.formData.time);
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            delMore: function () {
+
+            },
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/cms/article/data/" + self.site.id, self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            doSearch: function () {
+                this.pageData();
+            },
+            treeClick: function (data, node, obj) {
+                this.pageForm.channelId = data.id;
+                this.pageForm.channelName = data.name;
+                this.pageData();
+            },
+            handlePicSuccess: function (response, file, fileList, attrName) {
+                if (response.code == 0) {
+                    // 对象属性直接赋值不会触发试图更新，采用 Vue.set 、this.$set或者Object.assign({}，this.obj)创建新对象
+                    // 或者也可以定义一个 refresh 属性 ，当数据发生改变时，该属性同时变化，也会触发视图更新
+                    // this.formData.site_logo =response.data;
+                    this.$set(this.formData, attrName, response.data);
+                } else {
+                    this.$set(this.formData, attrName, "");
+                }
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除文章： ' + command.title, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/cms/article/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.doSearch();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            }
+        },
+        created: function () {
+            this.channelLoad();
+            this.pageData();
         }
-    }
-    function enable(id) {
-        $.post("${base}/platform/cms/article/enable/" + id, {}, function (data) {
-            if (data.code == 0) {
-                $("#disable_" + id).attr("class", "fa fa-circle text-success ml5");
-            } else {
-                Toast.error(data.msg);
-            }
-        }, "json");
-    }
-    function disable(id) {
-        $.post("${base}/platform/cms/article/disable/" + id, {}, function (data) {
-            if (data.code == 0) {
-                $("#disable_" + id).attr("class", "fa fa-circle text-danger ml5");
-            } else {
-                Toast.error(data.msg);
-            }
-        }, "json");
-    }
-    $(document).ready(function () {
-        initTreeView();
-        initDatatable();
-        $("#dialogDetail").on("hidden.bs.modal", function () {
-            $(this).removeData("bs.modal");
-        });
     });
-
 </script>
-
-<%}%>
+<!--#
+}
+#-->

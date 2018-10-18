@@ -4,10 +4,8 @@ layout("/layouts/platform.html"){
 <div id="app" v-cloak>
     <el-row class="header navbar bg-white shadow">
         <div class="btn-group tool-button mt5">
-            <el-button size="medium" @click="openAdd">
-                <i class="ti-plus"></i>
-                新建栏目
-            </el-button>
+
+            <span>站点：</span>
             <el-select size="medium" v-model="site.id" placeholder="请选择" @change="siteChange">
                 <el-option
                         v-for="item in sites"
@@ -16,6 +14,10 @@ layout("/layouts/platform.html"){
                         :value="item.value">
                 </el-option>
             </el-select>
+            <el-button size="medium" @click="openAdd">
+                <i class="ti-plus"></i>
+                新建栏目
+            </el-button>
         </div>
         <div class="pull-right offscreen-right mt5">
             <el-button size="medium" @click="openSort">

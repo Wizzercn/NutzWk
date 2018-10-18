@@ -82,7 +82,6 @@ public class Sys_user extends BaseModel implements Serializable {
     @Column
     @Comment("登陆时间")
     @J4EIgnore
-    @ColDefine(type = ColType.INT)
     private Long loginAt;
 
     @Column

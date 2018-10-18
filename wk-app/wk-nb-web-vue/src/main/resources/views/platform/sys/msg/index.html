@@ -6,6 +6,11 @@ layout("/layouts/platform.html"){
         background-color: #546478;
         color: #ffffff;
     }
+
+    .note {
+        width: 100%;
+        height: 320px;
+    }
 </style>
 <link href="${base!}/assets/platform/plugins/umeditor/themes/default/css/umeditor.min.css" type="text/css"
       rel="stylesheet">
@@ -90,7 +95,8 @@ layout("/layouts/platform.html"){
                     label="未读用户"
                     header-align="center" align="center">
                 <template slot-scope="scope">
-                    <el-button size="small" @click="viewUserList('unread',scope.row.id)">{{scope.row.unread_num}}</el-button>
+                    <el-button size="small" @click="viewUserList('unread',scope.row.id)">{{scope.row.unread_num}}
+                    </el-button>
                 </template>
             </el-table-column>
             <el-table-column
@@ -344,7 +350,7 @@ layout("/layouts/platform.html"){
             </el-form-item>
             <el-form-item prop="note" label="消息内容">
                 <!---->
-                <script type="text/plain" id="note" style="width:100%;height:320px;"></script>
+                <script type="text/plain" id="note" class="note"></script>
                 <!---->
             </el-form-item>
         </el-form>
@@ -394,18 +400,18 @@ layout("/layouts/platform.html"){
                 selectTableData: [
                     {loginname: 'xxx', realname: "xx", unitname: "ccccccc"}
                 ],
-                userTableData:[],
-                selectUsers:[],
-                viewTableData:[],
-                viewUserTitle:"",
+                userTableData: [],
+                selectUsers: [],
+                viewTableData: [],
+                viewUserTitle: "",
                 viewPageForm: {
                     pageNumber: 1,
                     pageSize: 10,
                     totalCount: 0,
                     pageOrderName: "loginname",
                     pageOrderBy: "descending",
-                    type:"",
-                    id:""
+                    type: "",
+                    id: ""
                 },
             }
         },
@@ -452,7 +458,7 @@ layout("/layouts/platform.html"){
                 this.selectPageForm.pageSize = val;
                 this.selectPageData();
             },
-            doSelectSearch:function(){
+            doSelectSearch: function () {
                 this.selectPageForm.pageNumber = 1;
                 this.selectPageData();
             },
@@ -489,8 +495,8 @@ layout("/layouts/platform.html"){
             clearSelect: function () {
                 this.userTableData = [];
             },
-            doSelect: function(){
-                var self=this;
+            doSelect: function () {
+                var self = this;
                 this.selectDialogVisible = false;
                 this.selectUsers.forEach(function (o) {
                     self.userTableData.push(o);
@@ -510,13 +516,13 @@ layout("/layouts/platform.html"){
                 var self = this;
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {
-                        var users=[];
-                        if(self.selectUsers){
+                        var users = [];
+                        if (self.selectUsers) {
                             self.selectUsers.forEach(function (o) {
                                 users.push(o.loginname);
                             });
                         }
-                        if(self.formData.type=='user'&&users.length==0){
+                        if (self.formData.type == 'user' && users.length == 0) {
                             self.$message({
                                 message: "请选择用户",
                                 type: 'error'
@@ -572,17 +578,17 @@ layout("/layouts/platform.html"){
                     }
                 }, "json");
             },
-            viewUserList:function (type,id) {
-                var self=this;
-                if("all"==type){
-                    self.viewUserTitle="全部用户";
+            viewUserList: function (type, id) {
+                var self = this;
+                if ("all" == type) {
+                    self.viewUserTitle = "全部用户";
                 }
-                if("unread"==type){
-                    self.viewUserTitle="未读用户";
+                if ("unread" == type) {
+                    self.viewUserTitle = "未读用户";
                 }
-                self.viewDialogVisible=true;
-                self.viewPageForm.type=type;
-                self.viewPageForm.id=id;
+                self.viewDialogVisible = true;
+                self.viewPageForm.type = type;
+                self.viewPageForm.id = id;
                 self.viewPageLoad();
             },
             dropdownCommand: function (command) {//监听下拉框事件

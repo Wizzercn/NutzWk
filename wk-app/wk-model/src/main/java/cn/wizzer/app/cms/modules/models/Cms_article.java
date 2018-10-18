@@ -31,6 +31,10 @@ public class Cms_article extends BaseModel implements Serializable {
     private String shopid;
 
     @Column
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String channelId;
+
+    @Column
     @Comment("文章标题")
     @ColDefine(type = ColType.VARCHAR, width = 120)
     private String title;
@@ -67,12 +71,12 @@ public class Cms_article extends BaseModel implements Serializable {
 
     @Column
     @Comment("发布时间")
-    @ColDefine(type = ColType.INT)
+    //Long不要用ColDefine定义,兼容oracle/mysql,支持2038年以后的时间戳
     private Long publishAt;
 
     @Column
     @Comment("截至时间")
-    @ColDefine(type = ColType.INT)
+    //Long不要用ColDefine定义,兼容oracle/mysql,支持2038年以后的时间戳
     private Long endAt;
 
     @Column
@@ -94,10 +98,6 @@ public class Cms_article extends BaseModel implements Serializable {
             @SQL(db = DB.ORACLE, value = "SELECT COALESCE(MAX(location),0)+1 FROM cms_article")
     })
     private Integer location;
-
-    @Column
-    @ColDefine(type = ColType.VARCHAR, width = 32)
-    private String channelId;
 
     @One(field = "channelId")
     private Cms_channel channel;

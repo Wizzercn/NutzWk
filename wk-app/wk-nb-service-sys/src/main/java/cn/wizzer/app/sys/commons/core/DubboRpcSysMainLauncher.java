@@ -694,7 +694,7 @@ public class DubboRpcSysMainLauncher {
             user.setLoginAt(0L);
             user.setLoginCount(0);
             user.setEmail("wizzer@qq.com");
-            user.setLoginTheme("palette.css");
+            user.setLoginTheme("palette.3.css");
             user.setLoginBoxed(false);
             user.setLoginScroll(false);
             user.setLoginSidebar(false);

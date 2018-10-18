@@ -61,7 +61,7 @@ public class DubboRpcCmsMainLauncher {
         } catch (Exception e) {
         }
         //初始化主键值到redis
-        initRedisIg();
+        //initRedisIg();
     }
 
     /**

@@ -6,21 +6,19 @@ import cn.wizzer.app.cms.modules.models.Cms_site;
 import cn.wizzer.app.cms.modules.services.CmsArticleService;
 import cn.wizzer.app.cms.modules.services.CmsChannelService;
 import cn.wizzer.app.cms.modules.services.CmsSiteService;
-import cn.wizzer.app.sys.modules.models.Sys_user;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.subject.Subject;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.adaptor.WhaleAdaptor;
@@ -32,9 +30,7 @@ import org.nutz.mvc.annotation.Param;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by wizzer on 2016/6/28.
@@ -56,64 +52,79 @@ public class CmsArticleController {
     @At(value = {"", "/?"})
     @Ok("beetl:/platform/cms/article/index.html")
     @RequiresPermissions("cms.content.article")
-    public void index(String siteid, @Param("channelId") String channelId, HttpServletRequest req) {
+    public void index(String siteId, HttpServletRequest req) {
+        Cms_site site = null;
         List<Cms_site> siteList = cmsSiteService.query();
-        if (Strings.isBlank(siteid) && siteList.size() > 0) {
-            siteid = siteList.get(0).getId();
+        if (Strings.isBlank(siteId) && siteList.size() > 0) {
+            site = siteList.get(0);
+        }
+        if (Strings.isNotBlank(siteId)) {
+            site = cmsSiteService.fetch(siteId);
         }
         req.setAttribute("siteList", siteList);
-        req.setAttribute("siteid", Strings.sNull(siteid));
-        req.setAttribute("channelId", Strings.sNull(channelId));
+        req.setAttribute("site", site);
     }
 
     @At("/tree/?")
     @Ok("json")
     @RequiresPermissions("cms.content.article")
     public Object tree(String siteid, @Param("pid") String pid) {
-        List<Cms_channel> list = cmsChannelService.query(Cnd.where("parentId", "=", Strings.sBlank(pid)).and("siteid", "=", siteid).asc("location").asc("path"));
-        List<Map<String, Object>> tree = new ArrayList<>();
+        try {
+            List<Cms_channel> list = cmsChannelService.query(Cnd.where("siteid", "=", siteid).asc("location").asc("path"));
+            NutMap menuMap = NutMap.NEW();
+            for (Cms_channel channel : list) {
+                List<Cms_channel> list1 = menuMap.getList(channel.getParentId(), Cms_channel.class);
+                if (list1 == null) {
+                    list1 = new ArrayList<>();
+                }
+                list1.add(channel);
+                menuMap.put(channel.getParentId(), list1);
+            }
+            return Result.success().addData(getTree(menuMap, ""));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    private List<NutMap> getTree(NutMap menuMap, String pid) {
+        List<NutMap> treeList = new ArrayList<>();
         if (Strings.isBlank(pid)) {
-            Map<String, Object> obj = new HashMap<>();
-            obj.put("id", "0");
-            obj.put("text", "所有栏目");
-            obj.put("children", false);
-            tree.add(obj);
+            NutMap root = NutMap.NEW().addv("value", "root").addv("label", "所有栏目");
+            treeList.add(root);
         }
-        for (Cms_channel channel : list) {
-            Map<String, Object> obj = new HashMap<>();
-            obj.put("id", channel.getId());
-            obj.put("text", channel.getName());
-            obj.put("children", channel.isHasChildren());
-            tree.add(obj);
+        List<Cms_channel> subList = menuMap.getList(pid, Cms_channel.class);
+        for (Cms_channel channel : subList) {
+            NutMap map = Lang.obj2nutmap(channel);
+            map.put("label", channel.getName());
+            if (channel.isHasChildren() || (menuMap.get(channel.getId()) != null)) {
+                map.put("children", getTree(menuMap, channel.getId()));
+            }
+            treeList.add(map);
         }
-        return tree;
+        return treeList;
     }
 
     @At("/data/?")
     @Ok("json:full")
     @RequiresPermissions("cms.content.article")
-    public Object data(String siteid, @Param("channelId") String channelId, @Param("title") String title, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        cnd.and("siteid", "=", siteid);
-        if (!Strings.isBlank(channelId) && !"0".equals(channelId)) {
-            cnd.and("channelId", "like", "%" + channelId + "%");
+    public Object data(String siteid, @Param("channelId") String channelId,
+                       @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            cnd.and("siteid", "=", siteid);
+            if (!Strings.isBlank(channelId) && !"root".equals(channelId)) {
+                cnd.and("channelId", "=", channelId);
+            }
+            if (!Strings.isBlank(searchKeyword)) {
+                cnd.and("title", "like", "%" + searchKeyword + "%");
+            }
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+            }
+            return Result.success().addData(cmsArticleService.listPageLinks(pageNumber, pageSize, cnd, "unit"));
+        } catch (Exception e) {
+            return Result.error();
         }
-        if (!Strings.isBlank(title)) {
-            cnd.and("title", "like", "%" + title + "%");
-        }
-        return cmsArticleService.data(length, start, draw, order, columns, cnd, null);
-    }
-
-    @At("/add/?")
-    @Ok("beetl:/platform/cms/article/add.html")
-    @RequiresPermissions("cms.content.article")
-    public void add(String siteid, @Param("channelId") String channelId, HttpServletRequest req) {
-        req.setAttribute("channel", channelId != null && !"0".equals(channelId) ? cmsChannelService.fetch(channelId) : null);
-        Subject subject = SecurityUtils.getSubject();
-        Sys_user user = (Sys_user) subject.getPrincipal();
-        req.setAttribute("username", user == null ? "" : user.getUsername());
-        req.setAttribute("siteid", siteid);
-        req.setAttribute("channelId", channelId);
     }
 
     @At("/addDo/?")
@@ -121,11 +132,10 @@ public class CmsArticleController {
     @RequiresPermissions("cms.content.article.add")
     @SLog(tag = "添加文章", msg = "文章标题:${args[1].title}")
     @AdaptBy(type = WhaleAdaptor.class)
-    public Object addDo(String siteid, @Param("..") Cms_article article, @Param("beginDate") String beginDate, @Param("endDate") String endDate, HttpServletRequest req) {
+    public Object addDo(String siteid, @Param("..") Cms_article article, @Param("time_param") long[] time, HttpServletRequest req) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            article.setPublishAt(Times.parse(sdf, beginDate).getTime() / 1000);
-            article.setEndAt(Times.parse(sdf, endDate).getTime() / 1000);
+            article.setPublishAt(time[0] / 1000);
+            article.setEndAt(time[1] / 1000);
             article.setSiteid(siteid);
             article.setStatus(0);
             article.setOpBy(StringUtil.getPlatformUid());
