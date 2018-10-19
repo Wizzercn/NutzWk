@@ -17,7 +17,6 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
-import org.nutz.lang.Times;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -28,7 +27,6 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,7 +119,7 @@ public class CmsArticleController {
             if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
                 cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
             }
-            return Result.success().addData(cmsArticleService.listPageLinks(pageNumber, pageSize, cnd, "unit"));
+            return Result.success().addData(cmsArticleService.listPage(pageNumber, pageSize, cnd, "^(id|siteid|title|author|disabled|publishAt|endAt|location|view_num)$"));
         } catch (Exception e) {
             return Result.error();
         }
@@ -141,20 +139,22 @@ public class CmsArticleController {
             article.setOpBy(StringUtil.getPlatformUid());
             cmsArticleService.insert(article);
             cmsArticleService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
     @At("/edit/?")
-    @Ok("beetl:/platform/cms/article/edit.html")
+    @Ok("json")
     @RequiresPermissions("cms.content.article")
     public Object edit(String id, HttpServletRequest req) {
-        Cms_article article = cmsArticleService.fetch(id);
-        req.setAttribute("channel", article != null ? cmsChannelService.fetch(article.getChannelId()) : null);
-        req.setAttribute("siteid", article != null ? article.getSiteid() : "");
-        return article;
+        try {
+            Cms_article article = cmsArticleService.fetch(id);
+            return Result.success().addData(article);
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
     @At
@@ -162,12 +162,12 @@ public class CmsArticleController {
     @RequiresPermissions("cms.content.article.edit")
     @SLog(tag = "修改文章", msg = "文章标题:${args[0].title}")
     @AdaptBy(type = WhaleAdaptor.class)
-    public Object editDo(@Param("..") Cms_article article, @Param("beginDate") String beginDate, @Param("endDate") String endDate, HttpServletRequest req) {
+    public Object editDo(@Param("..") Cms_article article, @Param("time_param") long[] time, HttpServletRequest req) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            article.setPublishAt(Times.parse(sdf, beginDate).getTime() / 1000);
-            article.setEndAt(Times.parse(sdf, endDate).getTime() / 1000);
+            article.setPublishAt(time[0] / 1000);
+            article.setEndAt(time[1] / 1000);
             article.setStatus(0);
+            article.setOpBy(StringUtil.getPlatformUid());
             cmsArticleService.updateIgnoreNull(article);
             cmsArticleService.clearCache();
             return Result.success();

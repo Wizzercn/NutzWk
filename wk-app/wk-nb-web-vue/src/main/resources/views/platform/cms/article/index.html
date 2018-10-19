@@ -115,20 +115,17 @@ layout("/layouts/platform.html"){
                         </el-table-column>
 
                         <el-table-column label="发布时间" header-align="center" prop="publishAt"
-                                         width="120">
+                                         width="240">
                             <template slot-scope="scope">
-                                {{formatAt(scope.row.publishAt)}}
+                                {{formatAt(scope.row.publishAt)}} - {{formatAt(scope.row.endAt)}}
                             </template>
                         </el-table-column>
 
-                        <el-table-column label="发布状态" header-align="center" prop="disabled"
+                        <el-table-column label="发布状态" header-align="center" align="center" prop="disabled"
                                          width="120">
                             <template slot-scope="scope">
-                                <el-switch
-                                        v-model="scope.row.disabled"
-                                        active-color="#ff4949"
-                                        inactive-color="#13ce66">
-                                </el-switch>
+                                <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                                <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
                             </template>
                         </el-table-column>
 
@@ -143,6 +140,9 @@ layout("/layouts/platform.html"){
                                         <span class="ti-angle-down"></span>
                                     </el-button>
                                     <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item :command="{type:'view',id:scope.row.id}">
+                                            预览
+                                        </el-dropdown-item>
                                         <el-dropdown-item divided
                                                           :command="{type:'enable',id:scope.row.id,row:scope.row}">
                                             启用
@@ -179,10 +179,10 @@ layout("/layouts/platform.html"){
     </el-row>
 
     <el-dialog
-            title="新建文章"
-            :visible.sync="addDialogVisible"
+            :title="dialogTitle"
+            :visible.sync="dialogVisible"
             width="60%">
-        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+        <el-form :model="formData" ref="dialogForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="title" label="文章标题">
                 <el-input maxlength="255" placeholder="文章标题"
                           v-model="formData.title"
@@ -234,14 +234,35 @@ layout("/layouts/platform.html"){
                 </el-upload>
             </el-form-item>
             <el-form-item prop="content" label="文章内容">
-                <!---->
+                <!--一个页面中不能出现两个umeditor对象,所以新建和修改用同一个dialog来做吧-->
                 <script type="text/plain" id="content" class="note"></script>
                 <!---->
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-                <el-button @click="addDialogVisible = false"> 取 消 </el-button>
-                <el-button type="primary" @click="doAdd"> 确 定 </el-button>
+                <el-button @click="dialogVisible = false"> 取 消 </el-button>
+                <el-button type="primary" @click="doSave"> 确 定 </el-button>
+        </span>
+    </el-dialog>
+
+    <el-dialog
+            title="预览文章"
+            :visible.sync="viewDialogVisible"
+            width="60%">
+        <el-row style="text-align: center">
+            <h4>{{formData.title}}</h4>
+        </el-row>
+        <el-row>
+            <span>作者：{{formData.author}}</span>
+            <span>发布时间：{{formatAt(formData.publishAt)}} - {{formatAt(formData.endAt)}}</span>
+        </el-row>
+        <el-row style="margin-top: 5px !important;margin-bottom: 5px !important;border-bottom: 1px solid #DDD;">
+        </el-row>
+        <el-row>
+            <span v-html="formData.content"></span>
+        </el-row>
+        <span slot="footer" class="dialog-footer">
+                <el-button @click="viewDialogVisible = false"> 关 闭 </el-button>
         </span>
     </el-dialog>
 </div>
@@ -258,7 +279,9 @@ layout("/layouts/platform.html"){
             site = {id: "${site.id}", site_name: "${site.site_name}"};
             <!--#}#-->
             return {
-                addDialogVisible: false,
+                dialogVisible: false,
+                viewDialogVisible: false,
+                dialogTitle: "新建文章",
                 sites: sites,
                 site: site,
                 selectData: [],
@@ -286,11 +309,12 @@ layout("/layouts/platform.html"){
                     title: [
                         {required: true, message: '标题', trigger: 'blur'}
                     ],
-                    info:[
-                        { required: false, message: '请输入文章作者', trigger: 'blur' },
-                        { min: 0, max: 500, message: '长度500个字符以内', trigger: 'blur' }
+                    info: [
+                        {required: false, message: '请输入文章作者', trigger: 'blur'},
+                        {min: 0, max: 500, message: '长度500个字符以内', trigger: 'blur'}
                     ]
                 },
+                action: "add"
             }
         },
         methods: {
@@ -314,38 +338,73 @@ layout("/layouts/platform.html"){
                     });
                     return false;
                 }
-                this.addDialogVisible = true;
-                this.formData = {
+                self.dialogVisible = true;
+                self.dialogTitle = "新建文章";
+                self.action = "add";
+                self.formData = {
                     id: "",
-                    author:"${@shiro.getPrincipalProperty('username')}",
-                    time:[
+                    author: "${@shiro.getPrincipalProperty('username')}",
+                    time: [
                         moment().format("x"),
                         moment("2099-12-31 23:59:59").format("x")
                     ]
                 };//打开新增窗口,表单先清空
-                if (this.$refs["addForm"])
-                    this.$refs["addForm"].resetFields();
+                if (self.$refs["dialogForm"])
+                    self.$refs["dialogForm"].resetFields();
                 UM.getEditor("content");
                 setTimeout(function () {
-                    UM.getEditor('content').setContent("",false);
-                },200);
+                    UM.getEditor("content").setContent("", false);
+                }, 200);
+            },
+            doSave: function () {
+                if ("add" == this.action) {
+                    this.doAdd();
+                }
+                if ("edit" == this.action) {
+                    this.doEdit();
+                }
             },
             doAdd: function () {
                 var self = this;
-                var url = base + "/platform/cms/article/addDo/"+self.site.id;
-                self.$refs["addForm"].validate(function (valid) {
+                var url = base + "/platform/cms/article/addDo/" + self.site.id;
+                self.$refs["dialogForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
-                        self.formData.content=UM.getEditor("content").getContent();
+                        self.formData.content = UM.getEditor("content").getContent();
                         self.formData.siteid = self.site.id;
                         self.formData.channelId = self.pageForm.channelId;
-                        self.formData.time_param=JSON.stringify(self.formData.time);
+                        self.formData.time_param = JSON.stringify(self.formData.time);
                         $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
                                     type: 'success'
                                 });
-                                self.addDialogVisible = false;
+                                self.dialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                var url = base + "/platform/cms/article/editDo";
+                self.$refs["dialogForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        self.formData.content = UM.getEditor("content").getContent();
+                        self.formData.time_param = JSON.stringify(self.formData.time);
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.dialogVisible = false;
                                 self.pageData();
                             } else {
                                 self.$message({
@@ -370,7 +429,7 @@ layout("/layouts/platform.html"){
                 self.selectData.forEach(function (val) {
                     ids.push(val.id);
                 });
-                self.$confirm('您确定要删除选中的 '+ids.length+' 条消息？ ', '提示', {
+                self.$confirm('您确定要删除选中的 ' + ids.length + ' 条消息？ ', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning',
@@ -452,6 +511,63 @@ layout("/layouts/platform.html"){
             },
             dropdownCommand: function (command) {//监听下拉框事件
                 var self = this;
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/cms/article/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.formData.time = [
+                                self.formData.publishAt * 1000,
+                                self.formData.endAt * 1000
+                            ];
+                            self.dialogVisible = true;//打开编辑窗口
+                            self.dialogTitle = "修改文章";
+                            self.action = "edit";
+                            UM.getEditor("content");
+                            setTimeout(function () {
+                                UM.getEditor("content").setContent("" + self.formData.content, false);
+                            }, 200);
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("view" == command.type) {
+                    $.post(base + "/platform/cms/article/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.viewDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("enable" == command.type || "disable" == command.type) {
+                    $.post(base + "/platform/cms/article/" + command.type + "/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.$message({
+                                message: data.msg,
+                                type: 'success'
+                            });
+                            if ("disable" == command.type) {
+                                command.row.disabled = true;
+                            }
+                            if ("enable" == command.type) {
+                                command.row.disabled = false;
+                            }
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
                 if ("delete" == command.type) {
                     self.$confirm('此操作将删除文章： ' + command.title, '提示', {
                         confirmButtonText: '确定',
