@@ -77,7 +77,10 @@ layout("/layouts/platform.html"){
             </el-input>
         </div>
         <div class="pull-right offscreen-right mt5">
-            <el-button size="medium" @click="delMore" type="danger" :disabled="selectData.length==0">删除</el-button>
+            <el-button size="medium" @click="delMore" type="danger" :disabled="selectData.length==0">
+                <i class="el-icon-delete"></i>
+                删除
+            </el-button>
         </div>
     </el-row>
     <el-row style="padding-top: 50px;">
@@ -104,6 +107,7 @@ layout("/layouts/platform.html"){
                             header-align="center"
                             style="width: 100%"
                             @selection-change="handleSelectionChange"
+                            :default-sort="{prop: 'publishAt', order: 'descending'}"
                     >
                         <el-table-column
                                 type="selection"
@@ -114,7 +118,7 @@ layout("/layouts/platform.html"){
                                          :show-overflow-tooltip="true">
                         </el-table-column>
 
-                        <el-table-column label="发布时间" header-align="center" prop="publishAt"
+                        <el-table-column sortable label="发布时间" header-align="center" prop="publishAt"
                                          width="240">
                             <template slot-scope="scope">
                                 {{formatAt(scope.row.publishAt)}} - {{formatAt(scope.row.endAt)}}
@@ -293,8 +297,8 @@ layout("/layouts/platform.html"){
                     pageNumber: 1,
                     pageSize: 10,
                     totalCount: 0,
-                    pageOrderName: "",
-                    pageOrderBy: ""
+                    pageOrderName: "publishAt",
+                    pageOrderBy: "descending"
                 },
                 channelData: [],
                 defaultProps: {
@@ -442,7 +446,6 @@ layout("/layouts/platform.html"){
                                         type: 'success'
                                     });
                                     self.pageData();
-                                    self.unreadData();
                                 } else {
                                     self.$message({
                                         message: data.msg,

@@ -80,11 +80,9 @@ layout("/layouts/platform.html"){
                           auto-complete="off" tabindex="1" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="configValue" label="参数值">
-                <el-form-item prop="configValue">
-                    <el-input maxlength="100" placeholder="参数值"
-                              v-model="formData.configValue"
-                              auto-complete="off" tabindex="2" type="text"></el-input>
-                </el-form-item>
+                <el-input maxlength="100" placeholder="参数值"
+                          v-model="formData.configValue"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="note" label="说 明">
                 <el-input type="textarea" v-model="formData.note"></el-input>
