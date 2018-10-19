@@ -85,7 +85,7 @@ layout("/layouts/platform.html"){
             title="新建分类"
             :visible.sync="addDialogVisible"
             width="40%">
-        <el-form :model="formData" ref="addForm" :rules="formRules" label-width="80px">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="name" label="分类名称">
                 <el-input maxlength="100" placeholder="分类名称"
                           v-model="formData.name"
@@ -107,7 +107,7 @@ layout("/layouts/platform.html"){
             title="修改分类"
             :visible.sync="editDialogVisible"
             width="40%">
-        <el-form :model="formData" ref="editForm" :rules="formRules" label-width="80px">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="name" label="分类名称">
                 <el-input maxlength="100" placeholder="分类名称"
                           v-model="formData.name"
@@ -308,13 +308,13 @@ layout("/layouts/platform.html"){
                         type: 'warning',
                         callback: function (a, b) {
                             if ("confirm" == a) {//确认后再执行
-                                $.post(base + "/platform/cms/article/delete/" + command.id, {}, function (data) {
+                                $.post(base + "/platform/cms/link/class/delete/" + command.id, {}, function (data) {
                                     if (data.code == 0) {
                                         self.$message({
                                             message: data.msg,
                                             type: 'success'
                                         });
-                                        self.doSearch();
+                                        self.pageData();
                                     } else {
                                         self.$message({
                                             message: data.msg,

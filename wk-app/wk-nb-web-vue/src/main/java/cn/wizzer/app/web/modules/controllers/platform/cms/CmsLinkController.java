@@ -5,10 +5,9 @@ import cn.wizzer.app.cms.modules.models.Cms_link_class;
 import cn.wizzer.app.cms.modules.services.CmsLinkClassService;
 import cn.wizzer.app.cms.modules.services.CmsLinkService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.util.StringUtils;
@@ -19,7 +18,10 @@ import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.adaptor.WhaleAdaptor;
-import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.AdaptBy;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -38,24 +40,20 @@ public class CmsLinkController {
     @Reference
     private CmsLinkService cmsLinkService;
 
-    @At({"", "/index/","/index/?"})
+    @At({"", "/?"})
     @Ok("beetl:/platform/cms/link/link/index.html")
     @RequiresPermissions("cms.link.link")
     public void index(String classId, HttpServletRequest req) {
+        Cms_link_class classObj = null;
         List<Cms_link_class> list = cmsLinkClassService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(classId)) {
-            classId = list.get(0).getId();
+            classObj = list.get(0);
+        }
+        if (Strings.isNotBlank(classId)) {
+            classObj = cmsLinkClassService.fetch(classId);
         }
         req.setAttribute("list", list);
-        req.setAttribute("classId", Strings.sBlank(classId));
-    }
-
-    @At({"/add/","/add/?"})
-    @Ok("beetl:/platform/cms/link/link/add.html")
-    @RequiresPermissions("cms.link.link")
-    public void add(String classId, HttpServletRequest req) {
-        req.setAttribute("classId", Strings.sBlank(classId));
-        req.setAttribute("list", cmsLinkClassService.query(Cnd.NEW()));
+        req.setAttribute("classObj", classObj);
     }
 
     @At
@@ -67,21 +65,21 @@ public class CmsLinkController {
         try {
             link.setOpBy(StringUtil.getPlatformUid());
             cmsLinkService.insert(link);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
     @At("/edit/?")
-    @Ok("beetl:/platform/cms/link/link/edit.html")
+    @Ok("json")
     @RequiresPermissions("cms.link.link")
     public Object edit(String id, HttpServletRequest req) {
-        Cms_link link = cmsLinkService.fetch(id);
-        List<Cms_link_class> list = cmsLinkClassService.query(Cnd.NEW());
-        req.setAttribute("list", list);
-        req.setAttribute("classId", Strings.sBlank(link.getClassId()));
-        return link;
+        try {
+            return Result.success().addData(cmsLinkService.fetch(id));
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
     @At
@@ -92,9 +90,9 @@ public class CmsLinkController {
     public Object editDo(@Param("..") Cms_link link, HttpServletRequest req) {
         try {
             cmsLinkService.updateIgnoreNull(link);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -111,22 +109,29 @@ public class CmsLinkController {
                 cmsLinkService.delete(oneId);
                 req.setAttribute("id", oneId);
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
     @At({"/data/", "/data/?"})
     @Ok("json:full")
     @RequiresPermissions("cms.link.link")
-    public Object data(String classId, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        if (!Strings.isBlank(classId)) {
+    public Object data(String classId, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Cnd cnd = Cnd.NEW();
             cnd.and("classId", "=", classId);
+            if (!Strings.isBlank(searchName) && !Strings.isBlank(searchKeyword)) {
+                cnd.and(searchName, "like", "%" + searchKeyword + "%");
+            }
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+            }
+            return Result.success().addData(cmsLinkService.listPage(pageNumber, pageSize, cnd));
+        } catch (Exception e) {
+            return Result.error();
         }
-        return cmsLinkService.data(length, start, draw, order, columns, cnd, null);
     }
-
 
 }

@@ -101,7 +101,7 @@ layout("/layouts/platform.html"){
             title="新增站点"
             :visible.sync="addDialogVisible"
             width="50%">
-        <el-form :model="formData" ref="addForm" :rules="formRules" label-width="100px">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="100px">
             <el-tabs v-model="activeName" type="card">
                 <el-tab-pane label="基本信息" name="base">
                     <el-form-item prop="id" label="站点编码">
@@ -251,7 +251,7 @@ layout("/layouts/platform.html"){
             title="修改站点"
             :visible.sync="editDialogVisible"
             width="50%">
-        <el-form :model="formData" ref="editForm" :rules="formRules" label-width="100px">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="100px">
             <el-tabs v-model="activeName" type="card">
                 <el-tab-pane label="基本信息" name="base">
                     <el-form-item prop="id" label="站点编码">
