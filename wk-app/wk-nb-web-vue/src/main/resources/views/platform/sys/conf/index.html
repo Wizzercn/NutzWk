@@ -62,11 +62,11 @@ layout("/layouts/platform.html"){
         <el-pagination
                 @size-change="pageSizeChange"
                 @current-change="pageNumberChange"
-                :current-page="pageNumber"
+                :current-page="pageForm.pageNumber"
                 :page-sizes="[10, 20, 30, 50]"
-                :page-size="pageSize"
+                :page-size="pageForm.pageSize"
                 layout="total, sizes, prev, pager, next, jumper"
-                :total="totalCount">
+                :total="pageForm.totalCount">
         </el-pagination>
     </el-row>
     <el-dialog
@@ -126,11 +126,13 @@ layout("/layouts/platform.html"){
                 addDialogVisible: false,
                 editDialogVisible: false,
                 tableData: [],
-                pageSize: 10,
-                pageNumber: 1,
-                pageOrderName: "",
-                pageOrderBy: "",
-                totalCount: 0,
+                pageForm:{
+                    pageSize: 10,
+                    pageNumber: 1,
+                    pageOrderName: "",
+                    pageOrderBy: "",
+                    totalCount: 0,
+                },
                 formData: {
                     configKey: "",
                     configValue: "",
@@ -198,31 +200,26 @@ layout("/layouts/platform.html"){
                 });
             },
             pageOrder: function (column) {//按字段排序
-                this.pageOrderName = column.prop;
-                this.pageOrderBy = column.order;
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
                 this.pageData();
             },
             pageNumberChange: function (val) {//页码更新操作
-                this.pageNumber = val;
+                this.pageForm.pageNumber = val;
                 this.pageData();
             },
             pageSizeChange: function (val) {//分页大小更新操作
-                this.pageSize = val;
+                this.pageForm.pageSize = val;
                 this.pageData();
             },
             pageData: function () {//加载分页数据
                 var self = this;
                 sublime.showLoadingbar();//显示loading
-                $.post(base + "/platform/sys/conf/data", {
-                    pageNumber: self.pageNumber,
-                    pageSize: self.pageSize,
-                    pageOrderName: self.pageOrderName,
-                    pageOrderBy: self.pageOrderBy
-                }, function (data) {
+                $.post(base + "/platform/sys/conf/data", self.pageForm, function (data) {
                     sublime.closeLoadingbar();//关闭loading
                     if (data.code == 0) {
                         self.tableData = data.data.list;
-                        self.totalCount = data.data.totalCount;
+                        self.pageForm.totalCount = data.data.totalCount;
                     } else {
                         self.$message({
                             message: data.msg,

@@ -1,130 +1,467 @@
-<%
+<!--#
 layout("/layouts/platform.html"){
-%>
-<header class="header navbar bg-white shadow">
-    <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/wx/conf/account/add" data-pjax><i class="ti-plus"></i> 添加帐号</a>
-    </div>
-</header>
-<div class=panel-body style="padding-top: 50px;">
-    <div class="table-responsive no-border">
-        <input id="unitid" type="hidden">
-        <table class="table table-bordered table-striped mg-t datatable">
-            <thead>
-            <tr>
-                <th>公众号</th>
-                <th>Appid</th>
-                <th>Appsecret</th>
-                <th>Token</th>
-                <th>微信支付</th>
-                <th>操作</th>
-        </table>
-    </div>
-</div>
-<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">删除</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        删除后无法恢复，确定删除吗？ <br/>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
-                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
-            </div>
+#-->
+<style>
+    .el-upload input[type=file] {
+        display: none;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 128px;
+        height: 128px;
+        line-height: 128px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 128px;
+        height: 128px;
+        display: block;
+    }
+</style>
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <span>分类：</span>
+            <el-select size="medium" v-model="pageForm.classId" placeholder="请选择" @change="change">
+                <el-option
+                        v-for="item in classs"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+            <el-button size="medium" @click="openAdd">
+                <i class="ti-plus"></i>
+                新建链接
+            </el-button>
         </div>
-    </div>
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="delMore" type="danger" :disabled="selectData.length==0">
+                <i class="el-icon-delete"></i>
+                删除
+            </el-button>
+        </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                @selection-change="handleSelectionChange"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+        >
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+
+            <el-table-column label="链接名称" header-align="left" prop="name"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="链接类型" header-align="left" prop="type"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <span v-if="'txt'==scope.row.type">文字</span>
+                    <span v-if="'img'==scope.row.type">图片</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="链接地址" header-align="left" prop="url"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="打开方式" header-align="left" prop="target"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column sortable label="创建时间" header-align="center" align="center" prop="opAt">
+                <template slot-scope="scope">
+                    {{formatAt(scope.row.opAt)}}
+                </template>
+            </el-table-column>
+
+            <el-table-column
+                    prop="id"
+                    label="操作"
+                    width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item :command="{type:'edit',id:scope.row.id}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                                    :command="{type:'delete',id:scope.row.id,name:scope.row.name}">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+
+    <el-dialog
+            title="新建链接"
+            :visible.sync="addDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="classId" label="所属分类">
+                <span>{{pageForm.className}}</span>
+            </el-form-item>
+            <el-form-item prop="name" label="链接名称">
+                <el-input maxlength="100" placeholder="链接名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="type" label="链接类型">
+                <el-radio-group v-model="formData.type" @change="typeChange">
+                    <el-radio label="txt">文字</el-radio>
+                    <el-radio label="img">图片</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="链接图片" v-if="'img'==formData.type">
+                <el-upload
+                        class="avatar-uploader"
+                        tabindex="5"
+                        action="${base}/open/file/upload/image"
+                        name="Filedata"
+                        :show-file-list="false"
+                        :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'picurl')}">
+
+                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+            </el-form-item>
+            <el-form-item prop="url" label="链接地址">
+                <el-input maxlength="100" placeholder="链接地址"
+                          v-model="formData.url"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="target" label="打开方式">
+                <el-radio-group v-model="formData.target">
+                    <el-radio label="_blank">新页面</el-radio>
+                    <el-radio label="_self">本页面</el-radio>
+                </el-radio-group>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+
+    <el-dialog
+            title="修改链接"
+            :visible.sync="editDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="name" label="链接名称">
+                <el-input maxlength="100" placeholder="链接名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="type" label="链接类型">
+                <el-radio-group v-model="formData.type" @change="typeChange">
+                    <el-radio label="txt">文字</el-radio>
+                    <el-radio label="img">图片</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="链接图片" v-if="'img'==formData.type">
+                <el-upload
+                        class="avatar-uploader"
+                        tabindex="5"
+                        action="${base}/open/file/upload/image"
+                        name="Filedata"
+                        :show-file-list="false"
+                        :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'picurl')}">
+
+                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+            </el-form-item>
+            <el-form-item prop="url" label="链接地址">
+                <el-input maxlength="100" placeholder="链接地址"
+                          v-model="formData.url"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="target" label="打开方式">
+                <el-radio-group v-model="formData.target">
+                    <el-radio label="_blank">新页面</el-radio>
+                    <el-radio label="_self">本页面</el-radio>
+                </el-radio-group>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doEdit">确 定</el-button>
+                  </span>
+    </el-dialog>
 </div>
-<script language="JavaScript">
-    var datatable;
-    function initDatatable() {
-        datatable = $('.datatable').DataTable({
-            "dom": '<"toolbar">frtip',
-            "searching": false,
-            "processing": false,
-            "serverSide": true,
-            "select": true,
-            "ordering": true,
-            "language": {
-                "url": "${base}/assets/plugins/datatables/cn.json"
-            },
-            "preDrawCallback": function () {
-                sublime.showLoadingbar($(".main-content"));
-            },
-            "drawCallback": function () {
-                sublime.closeLoadingbar($(".main-content"));
-            },
-            "ajax": {
-                "url": "${base}/platform/wx/conf/account/data",
-                "type": "post",
-                "data": function (d) {
-                }
-            },
-            "order": [[0, "desc"]],
-            "columns": [
-                {"data": "appname", "bSortable": true},
-                {"data": "appid", "bSortable": true},
-                {"data": "appsecret", "bSortable": true},
-                {"data": "token", "bSortable": true},
-                {"data": "payEnabled", "bSortable": true}
-            ],
-            "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        if(data)
-                            return "启用";
-                        return "禁用";
-                    },
-                    "targets": 4
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var classs = [];
+            <!--#for(o in list){#-->
+            classs.push({value: "${o.id!}", label: "${o.name!}"});
+            <!--#}#-->
+            return {
+                classs: classs,
+                addDialogVisible: false,
+                editDialogVisible: false,
+                selectData: [],
+                pageForm: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending",
+                    classId: "${classObj.id!}",
+                    className: "${classObj.name!}"
                 },
-                {
-                    "render": function (data, type, row) {
-                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="${base}/platform/wx/conf/account/edit/' + row.id + '" data-pjax>修改</a></li>' +
-                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
-                                '</ul></div>';
-                    },
-                    "targets": 5
+                tableData: [],
+                formData: {},
+                formRules: {
+                    name: [
+                        {required: true, message: '分类名称', trigger: 'blur'}
+                    ]
+                },
+            }
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/cms/link/link/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            openAdd: function () {
+                var self = this;
+                self.addDialogVisible = true;
+                self.formData = {
+                    id: "",
+                    target: "_blank",
+                    url: "javascript:void(0);",
+                    type: "txt",
+                    classId: "${classObj.id!}"
+                };//打开新增窗口,表单先清空
+                if (self.$refs["addForm"])
+                    self.$refs["addForm"].resetFields();
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "/platform/cms/link/link/addDo";
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                var url = base + "/platform/cms/link/link/editDo";
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            delMore: function () {
+                var self = this;
+                if (self.selectData.length == 0) {
+                    self.$message({
+                        message: "请选择消息",
+                        type: 'warning'
+                    });
+                    return false;
                 }
-            ]
-        });
-        datatable.on('click', 'tr', function () {
-            $(this).toggleClass('selected');
-        });
-        $("#searchBtn").on('click', function () {
-            datatable.ajax.reload();
-        });
-    }
-    function del(id) {
-        var dialog = $("#dialogDelete");
-        dialog.modal("show");
-        dialog.find("#ok").unbind("click");
-        dialog.find("#ok").bind("click", function (event) {
-            var btn = $(this);
-            btn.button("loading");
-            $.post("${base}/platform/wx/conf/account/delete/" + id, {}, function (data) {
-                if (data.code == 0) {
-                    datatable.ajax.reload(null,false);
+                var ids = [];
+                self.selectData.forEach(function (val) {
+                    ids.push(val.id);
+                });
+                self.$confirm('您确定要删除选中的 ' + ids.length + ' 条数据？ ', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "/platform/cms/link/link/delete", {ids: ids.toString()}, function (data) {
+                                if (data.code == 0) {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'success'
+                                    });
+                                    self.pageData();
+                                } else {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/cms/link/link/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.editDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除： ' + command.name, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/cms/link/link/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.pageData();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            },
+            handleLogoSuccess: function (response, file, fileList, attrName) {
+                if (response.code == 0) {
+                    // 对象属性直接赋值不会触发试图更新，采用 Vue.set 、this.$set或者Object.assign({}，this.obj)创建新对象
+                    // 或者也可以定义一个 refresh 属性 ，当数据发生改变时，该属性同时变化，也会触发视图更新
+                    this.$set(this.formData, attrName, response.data);
                 } else {
-                    Toast.error(data.msg);
+                    this.$set(this.formData, attrName, "");
                 }
-                //重置按钮状态，关闭提示框
-                btn.button("reset");
-                dialog.modal("hide");
-            }, "json");
-        });
-    }
-    $(function () {
-        initDatatable();
+            },
+            typeChange: function (val) {
+                if ("txt" == val) {//类型变化了要清除数据
+                    this.formData.picurl = "";
+                }
+            },
+            change: function (val) {
+                window.location.href = "${base}/platform/cms/link/link/" + val;
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
     });
 </script>
-
-<%}%>
+<!--#
+}
+#-->

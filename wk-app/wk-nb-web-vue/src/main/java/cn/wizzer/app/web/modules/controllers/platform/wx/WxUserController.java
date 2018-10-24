@@ -7,8 +7,6 @@ import cn.wizzer.app.wx.modules.models.Wx_user;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.app.wx.modules.services.WxUserService;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.vdurmont.emoji.EmojiParser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -19,7 +17,9 @@ import org.nutz.json.Json;
 import org.nutz.lang.*;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
 import org.nutz.weixin.spi.WxApi2;
 import org.nutz.weixin.spi.WxResp;
 
@@ -46,26 +46,34 @@ public class WxUserController {
     @Ok("beetl:/platform/wx/user/index.html")
     @RequiresPermissions("wx.user.list")
     public void index(String wxid, HttpServletRequest req) {
+        Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
-            wxid = list.get(0).getId();
+            wxConfig = list.get(0);
         }
-        req.setAttribute("wxid", wxid);
+        if (Strings.isNotBlank(wxid)) {
+            wxConfig = wxConfigService.fetch(wxid);
+        }
+        req.setAttribute("wxConfig", wxConfig);
         req.setAttribute("wxList", list);
     }
 
-    @At({"/data/", "/data/?"})
+    @At
     @Ok("json:full")
     @RequiresPermissions("wx.user.list")
-    public Object data(String wxid, @Param("nickname") String nickname, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        if (!Strings.isBlank(wxid)) {
-            cnd.and("wxid", "=", wxid);
+    public Object data(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            if (!Strings.isBlank(wxid)) {
+                cnd.and("wxid", "=", wxid);
+            }
+            if (Strings.isNotBlank(searchName) && !Strings.isNotBlank(searchKeyword)) {
+                cnd.and(searchName, "like", "%" + searchKeyword + "%");
+            }
+            return Result.success().addData(wxUserService.listPage(pageNumber, pageSize, cnd));
+        } catch (Exception e) {
+            return Result.error();
         }
-        if (!Strings.isBlank(nickname)) {
-            cnd.and("nickname", "like", "%" + nickname + "%");
-        }
-        return wxUserService.data(length, start, draw, order, columns, cnd, null);
     }
 
     @At({"/down/", "/down/?"})
@@ -81,12 +89,6 @@ public class WxUserController {
                 public void invoke(int index, String _ele, int length)
                         throws ExitLoop, ContinueLoop, LoopException {
                     WxResp resp = wxApi2.user_info(_ele, "zh_CN");
-                    log.info(Json.toJson(resp));
-                    log.debug(index
-                            + " : "
-                            + _ele
-                            + ", nickname: "
-                            + resp.user().getNickname());
                     Wx_user usr = Json.fromJson(Wx_user.class, Json.toJson(resp.user()));
                     usr.setOpAt(Times.getTS());
                     usr.setNickname(EmojiParser.parseToAliases(usr.getNickname(), EmojiParser.FitzpatrickAction.REMOVE));
@@ -96,10 +98,10 @@ public class WxUserController {
                         wxUserService.insert(usr);
                 }
             });
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
-            return Result.error("system.error");
+            log.error(e.getMessage(), e);
+            return Result.error();
         }
     }
 }
