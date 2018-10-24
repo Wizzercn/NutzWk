@@ -1,59 +1,11 @@
 <!--#
 layout("/layouts/platform.html"){
 #-->
-<style>
-    .el-upload input[type=file] {
-        display: none;
-    }
-
-    .avatar-uploader .el-upload {
-        border: 1px dashed #d9d9d9;
-        border-radius: 6px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .avatar-uploader .el-upload:hover {
-        border-color: #409EFF;
-    }
-
-    .avatar-uploader-icon {
-        font-size: 28px;
-        color: #8c939d;
-        width: 128px;
-        height: 128px;
-        line-height: 128px;
-        text-align: center;
-    }
-
-    .avatar {
-        width: 128px;
-        height: 128px;
-        display: block;
-    }
-</style>
 <div id="app" v-cloak>
     <el-row class="header navbar bg-white shadow">
         <div class="btn-group tool-button mt5">
-            <span>分类：</span>
-            <el-select size="medium" v-model="pageForm.classId" placeholder="请选择" @change="change">
-                <el-option
-                        v-for="item in classs"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                </el-option>
-            </el-select>
             <el-button size="medium" @click="openAdd">
-                <i class="ti-plus"></i>
-                新建链接
-            </el-button>
-        </div>
-        <div class="pull-right offscreen-right mt5">
-            <el-button size="medium" @click="delMore" type="danger" :disabled="selectData.length==0">
-                <i class="el-icon-delete"></i>
-                删除
+                新增公众号
             </el-button>
         </div>
     </el-row>
@@ -64,37 +16,31 @@ layout("/layouts/platform.html"){
                 size="small"
                 header-align="center"
                 style="width: 100%"
-                @selection-change="handleSelectionChange"
                 :default-sort="{prop: 'opAt', order: 'descending'}"
         >
-            <el-table-column
-                    type="selection"
-                    width="35">
-            </el-table-column>
 
-            <el-table-column label="链接名称" header-align="left" prop="name"
+            <el-table-column label="公众号名称" header-align="left" prop="appname"
                              :show-overflow-tooltip="true">
             </el-table-column>
 
-            <el-table-column label="链接类型" header-align="left" prop="type"
+
+            <el-table-column label="AppId" header-align="left" prop="appid"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="AppSecret" header-align="left" prop="appsecret"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="Token" header-align="left" prop="token"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="微信支付" header-align="left" prop="payEnabled"
                              :show-overflow-tooltip="true">
                 <template slot-scope="scope">
-                    <span v-if="'txt'==scope.row.type">文字</span>
-                    <span v-if="'img'==scope.row.type">图片</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column label="链接地址" header-align="left" prop="url"
-                             :show-overflow-tooltip="true">
-            </el-table-column>
-
-            <el-table-column label="打开方式" header-align="left" prop="target"
-                             :show-overflow-tooltip="true">
-            </el-table-column>
-
-            <el-table-column sortable label="创建时间" header-align="center" align="center" prop="opAt">
-                <template slot-scope="scope">
-                    {{formatAt(scope.row.opAt)}}
+                    <span v-if="scope.row.payEnabled">已配置</span>
+                    <span v-if="!scope.row.payEnabled">未配置</span>
                 </template>
             </el-table-column>
 
@@ -120,6 +66,7 @@ layout("/layouts/platform.html"){
                     </el-dropdown>
                 </template>
             </el-table-column>
+
         </el-table>
     </el-row>
     <el-row class="el-pagination-container">
@@ -135,47 +82,78 @@ layout("/layouts/platform.html"){
     </el-row>
 
     <el-dialog
-            title="新建链接"
+            title="新增公众号"
             :visible.sync="addDialogVisible"
-            width="40%">
-        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
-            <el-form-item prop="classId" label="所属分类">
-                <span>{{pageForm.className}}</span>
+            width="60%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="120px">
+            <el-form-item label="配置URL">
+                ${AppDomain!}${base!}/open/weixin/api/{{formData.id}}
+                <el-alert
+                        title="URL需为公网可访问地址，[系统] - [系统管理] - [系统参数] - 修改 AppDomain 配置项"
+                        type="success">
+                </el-alert>
             </el-form-item>
-            <el-form-item prop="name" label="链接名称">
-                <el-input maxlength="100" placeholder="链接名称"
-                          v-model="formData.name"
+
+            <el-form-item prop="id" label="唯一标识">
+                <el-input maxlength="100" placeholder="公众号名称"
+                          v-model="formData.id"
                           auto-complete="off" tabindex="1" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="type" label="链接类型">
-                <el-radio-group v-model="formData.type" @change="typeChange">
-                    <el-radio label="txt">文字</el-radio>
-                    <el-radio label="img">图片</el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item label="链接图片" v-if="'img'==formData.type">
-                <el-upload
-                        class="avatar-uploader"
-                        tabindex="5"
-                        action="${base}/open/file/upload/image"
-                        name="Filedata"
-                        :show-file-list="false"
-                        :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'picurl')}">
 
-                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                </el-upload>
+            <el-form-item prop="appname" label="公众号名称">
+                <el-input maxlength="100" placeholder="公众号名称"
+                          v-model="formData.appname"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="url" label="链接地址">
-                <el-input maxlength="100" placeholder="链接地址"
-                          v-model="formData.url"
+
+            <el-form-item prop="appid" label="Appid">
+                <el-input maxlength="100" placeholder="Appid"
+                          v-model="formData.appid"
                           auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="target" label="打开方式">
-                <el-radio-group v-model="formData.target">
-                    <el-radio label="_blank">新页面</el-radio>
-                    <el-radio label="_self">本页面</el-radio>
+
+            <el-form-item prop="appsecret" label="Appsecret">
+                <el-input maxlength="100" placeholder="Appsecret"
+                          v-model="formData.appsecret"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="token" label="Token">
+                <el-input maxlength="100" placeholder="Token"
+                          v-model="formData.token"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="encodingAESKey" label="EncodingAESKey">
+                <el-input maxlength="100" placeholder="EncodingAESKey"
+                          v-model="formData.encodingAESKey"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="payEnabled" label="微信支付">
+                <el-radio-group v-model="formData.payEnabled" @change="payEnabledChange">
+                    <el-radio :label="true">配置</el-radio>
+                    <el-radio :label="false">不配置</el-radio>
                 </el-radio-group>
+            </el-form-item>
+            <el-form-item label="配置授权目录" v-if="formData.payEnabled">
+                ${AppDomain!}${base!}/open/pay/
+                <el-alert
+                        title="请在微信支付后台添加支付授权目录"
+                        type="success">
+                </el-alert>
+            </el-form-item>
+
+            <el-form-item class="is-required" prop="wxpay_mchid" label="商户号Mchid" v-if="formData.payEnabled">
+                <el-input maxlength="100" placeholder="商户号Mchid"
+                          v-model="formData.payInfo.wxpay_mchid"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item class="is-required" prop="wxpay_key" label="商户Key" v-if="formData.payEnabled">
+                <el-input maxlength="100" placeholder="商户Key"
+                          v-model="formData.payInfo.wxpay_key"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -185,44 +163,78 @@ layout("/layouts/platform.html"){
     </el-dialog>
 
     <el-dialog
-            title="修改链接"
+            title="修改公众号"
             :visible.sync="editDialogVisible"
-            width="40%">
-        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
-            <el-form-item prop="name" label="链接名称">
-                <el-input maxlength="100" placeholder="链接名称"
-                          v-model="formData.name"
+            width="60%">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="120px">
+            <el-form-item label="配置URL">
+                ${AppDomain!}${base!}/open/weixin/api/{{formData.id}}
+                <el-alert
+                        title="URL需为公网可访问地址，[系统] - [系统管理] - [系统参数] - 修改 AppDomain 配置项"
+                        type="success">
+                </el-alert>
+            </el-form-item>
+
+            <el-form-item prop="id" label="唯一标识">
+                <el-input maxlength="100" placeholder="公众号名称"
+                          v-model="formData.id"
                           auto-complete="off" tabindex="1" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="type" label="链接类型">
-                <el-radio-group v-model="formData.type" @change="typeChange">
-                    <el-radio label="txt">文字</el-radio>
-                    <el-radio label="img">图片</el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item label="链接图片" v-if="'img'==formData.type">
-                <el-upload
-                        class="avatar-uploader"
-                        tabindex="5"
-                        action="${base}/open/file/upload/image"
-                        name="Filedata"
-                        :show-file-list="false"
-                        :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'picurl')}">
 
-                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                </el-upload>
+            <el-form-item prop="appname" label="公众号名称">
+                <el-input maxlength="100" placeholder="公众号名称"
+                          v-model="formData.appname"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="url" label="链接地址">
-                <el-input maxlength="100" placeholder="链接地址"
-                          v-model="formData.url"
+
+            <el-form-item prop="appid" label="Appid">
+                <el-input maxlength="100" placeholder="Appid"
+                          v-model="formData.appid"
                           auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="target" label="打开方式">
-                <el-radio-group v-model="formData.target">
-                    <el-radio label="_blank">新页面</el-radio>
-                    <el-radio label="_self">本页面</el-radio>
+
+            <el-form-item prop="appsecret" label="Appsecret">
+                <el-input maxlength="100" placeholder="Appsecret"
+                          v-model="formData.appsecret"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="token" label="Token">
+                <el-input maxlength="100" placeholder="Token"
+                          v-model="formData.token"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="encodingAESKey" label="EncodingAESKey">
+                <el-input maxlength="100" placeholder="EncodingAESKey"
+                          v-model="formData.encodingAESKey"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="payEnabled" label="微信支付">
+                <el-radio-group v-model="formData.payEnabled" @change="payEnabledChange">
+                    <el-radio :label="true">配置</el-radio>
+                    <el-radio :label="false">不配置</el-radio>
                 </el-radio-group>
+            </el-form-item>
+            <el-form-item label="配置授权目录" v-if="formData.payEnabled">
+                ${AppDomain!}${base!}/open/pay/
+                <el-alert
+                        title="请在微信支付后台添加支付授权目录"
+                        type="success">
+                </el-alert>
+            </el-form-item>
+
+            <el-form-item class="is-required" prop="wxpay_mchid" label="商户号Mchid" v-if="formData.payEnabled">
+                <el-input maxlength="100" placeholder="商户号Mchid"
+                          v-model="formData.payInfo.wxpay_mchid"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item class="is-required" prop="wxpay_key" label="商户Key" v-if="formData.payEnabled">
+                <el-input maxlength="100" placeholder="商户Key"
+                          v-model="formData.payInfo.wxpay_key"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -235,15 +247,32 @@ layout("/layouts/platform.html"){
     new Vue({
         el: "#app",
         data: function () {
-            var classs = [];
-            <!--#for(o in list){#-->
-            classs.push({value: "${o.id!}", label: "${o.name!}"});
-            <!--#}#-->
+            var self = this;
+            var validateId = function (rule, value, callback) {
+                var regex = new RegExp("^[A-Za-z]+$");
+                if (!regex.test(value)) {
+                    callback(new Error('唯一标识只可为字母'));
+                } else {
+                    callback();
+                }
+            };
+            var validateMchid = function (rule, value, callback) {
+                if (self.formData.payInfo.wxpay_mchid && self.formData.payInfo.wxpay_mchid != "") {
+                    callback();
+                } else {
+                    callback(new Error('请输入商户号'));
+                }
+            };
+            var validateKey = function (rule, value, callback) {
+                if (self.formData.payInfo.wxpay_key && self.formData.payInfo.wxpay_key != "") {
+                    callback();
+                } else {
+                    callback(new Error('请输入商户key'));
+                }
+            };
             return {
-                classs: classs,
                 addDialogVisible: false,
                 editDialogVisible: false,
-                selectData: [],
                 pageForm: {
                     searchName: "",
                     searchKeyword: "",
@@ -252,14 +281,32 @@ layout("/layouts/platform.html"){
                     totalCount: 0,
                     pageOrderName: "opAt",
                     pageOrderBy: "descending",
-                    classId: "${classObj.id!}",
-                    className: "${classObj.name!}"
                 },
                 tableData: [],
                 formData: {},
                 formRules: {
-                    name: [
-                        {required: true, message: '分类名称', trigger: 'blur'}
+                    id: [
+                        {required: true, message: '公众号唯一标识', trigger: ['blur', 'change']},
+                        {min: 0, max: 32, message: '长度在 32 个字符以内', trigger: ['blur', 'change']},
+                        {validator: validateId, trigger: ['blur', 'change']}
+                    ],
+                    appname: [
+                        {required: true, message: '微信公众号名称', trigger: 'blur'}
+                    ],
+                    appid: [
+                        {required: true, message: 'Appid', trigger: 'blur'}
+                    ],
+                    appsecret: [
+                        {required: true, message: 'Appsecret', trigger: 'blur'}
+                    ],
+                    token: [
+                        {required: true, message: 'Token', trigger: 'blur'}
+                    ],
+                    wxpay_mchid: [
+                        {validator: validateMchid, trigger: 'blur'}
+                    ],
+                    wxpay_key: [
+                        {validator: validateKey, trigger: 'blur'}
                     ]
                 },
             }
@@ -281,7 +328,7 @@ layout("/layouts/platform.html"){
             pageData: function () {//加载分页数据
                 var self = this;
                 sublime.showLoadingbar();//显示loading
-                $.post(base + "/platform/cms/link/link/data", self.pageForm, function (data) {
+                $.post(base + "/platform/wx/conf/account/data", self.pageForm, function (data) {
                     sublime.closeLoadingbar();//关闭loading
                     if (data.code == 0) {
                         self.tableData = data.data.list;
@@ -302,24 +349,28 @@ layout("/layouts/platform.html"){
             handleSelectionChange: function (val) {
                 this.selectData = val;
             },
+            payEnabledChange: function (val) {
+                if (!val) {
+                    this.formData.payInfo = {};
+                }
+            },
             openAdd: function () {
                 var self = this;
                 self.addDialogVisible = true;
                 self.formData = {
                     id: "",
-                    target: "_blank",
-                    url: "javascript:void(0);",
-                    type: "txt",
-                    classId: "${classObj.id!}"
-                };//打开新增窗口,表单先清空
-                if (self.$refs["addForm"])
-                    self.$refs["addForm"].resetFields();
+                    payEnabled: false,
+                    payInfo: {}
+                };
+                if (this.$refs["addForm"])
+                    this.$refs["addForm"].resetFields();
             },
             doAdd: function () {
                 var self = this;
-                var url = base + "/platform/cms/link/link/addDo";
+                var url = base + "/platform/wx/conf/account/addDo";
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
+                        self.formData.payInfo = JSON.stringify(self.formData.payInfo);
                         $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
@@ -340,9 +391,10 @@ layout("/layouts/platform.html"){
             },
             doEdit: function () {
                 var self = this;
-                var url = base + "/platform/cms/link/link/editDo";
+                var url = base + "/platform/wx/conf/account/editDo";
                 self.$refs["editForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
+                        self.formData.payInfo = JSON.stringify(self.formData.payInfo);
                         $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
@@ -361,49 +413,13 @@ layout("/layouts/platform.html"){
                     }
                 });
             },
-            delMore: function () {
-                var self = this;
-                if (self.selectData.length == 0) {
-                    self.$message({
-                        message: "请选择消息",
-                        type: 'warning'
-                    });
-                    return false;
-                }
-                var ids = [];
-                self.selectData.forEach(function (val) {
-                    ids.push(val.id);
-                });
-                self.$confirm('您确定要删除选中的 ' + ids.length + ' 条数据？ ', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning',
-                    callback: function (a, b) {
-                        if ("confirm" == a) {//确认后再执行
-                            $.post(base + "/platform/cms/link/link/delete", {ids: ids.toString()}, function (data) {
-                                if (data.code == 0) {
-                                    self.$message({
-                                        message: data.msg,
-                                        type: 'success'
-                                    });
-                                    self.pageData();
-                                } else {
-                                    self.$message({
-                                        message: data.msg,
-                                        type: 'error'
-                                    });
-                                }
-                            }, "json");
-                        }
-                    }
-                });
-            },
             dropdownCommand: function (command) {//监听下拉框事件
                 var self = this;
                 if ("edit" == command.type) {
-                    $.post(base + "/platform/cms/link/link/edit/" + command.id, {}, function (data) {
+                    $.post(base + "/platform/wx/conf/account/edit/" + command.id, {}, function (data) {
                         if (data.code == 0) {
                             self.formData = data.data;//加载后台表单数据
+                            self.formData.payInfo = JSON.parse(data.data.payInfo);
                             self.editDialogVisible = true;//打开编辑窗口
                         } else {
                             self.$message({
@@ -420,7 +436,7 @@ layout("/layouts/platform.html"){
                         type: 'warning',
                         callback: function (a, b) {
                             if ("confirm" == a) {//确认后再执行
-                                $.post(base + "/platform/cms/link/link/delete/" + command.id, {}, function (data) {
+                                $.post(base + "/platform/wx/conf/account/delete/" + command.id, {}, function (data) {
                                     if (data.code == 0) {
                                         self.$message({
                                             message: data.msg,
@@ -438,23 +454,6 @@ layout("/layouts/platform.html"){
                         }
                     });
                 }
-            },
-            handleLogoSuccess: function (response, file, fileList, attrName) {
-                if (response.code == 0) {
-                    // 对象属性直接赋值不会触发试图更新，采用 Vue.set 、this.$set或者Object.assign({}，this.obj)创建新对象
-                    // 或者也可以定义一个 refresh 属性 ，当数据发生改变时，该属性同时变化，也会触发视图更新
-                    this.$set(this.formData, attrName, response.data);
-                } else {
-                    this.$set(this.formData, attrName, "");
-                }
-            },
-            typeChange: function (val) {
-                if ("txt" == val) {//类型变化了要清除数据
-                    this.formData.picurl = "";
-                }
-            },
-            change: function (val) {
-                window.location.href = "${base}/platform/cms/link/link/" + val;
             }
         },
         created: function () {

@@ -56,6 +56,10 @@ public class WxConfigController {
     @SLog(tag = "添加帐号", msg = "帐号名称:${args[0].appname}")
     public Object addDo(@Param("..") Wx_config conf, HttpServletRequest req) {
         try {
+            int num = wxConfigService.count(Cnd.where("id", "=", conf.getId()));
+            if (num > 0) {
+                return Result.error("唯一标识已存在,请更换");
+            }
             conf.setOpBy(StringUtil.getPlatformUid());
             wxConfigService.insert(conf);
             return Result.success("system.success");
