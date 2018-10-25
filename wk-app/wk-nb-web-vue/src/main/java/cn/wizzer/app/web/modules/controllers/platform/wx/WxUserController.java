@@ -67,7 +67,7 @@ public class WxUserController {
             if (!Strings.isBlank(wxid)) {
                 cnd.and("wxid", "=", wxid);
             }
-            if (Strings.isNotBlank(searchName) && !Strings.isNotBlank(searchKeyword)) {
+            if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
                 cnd.and(searchName, "like", "%" + searchKeyword + "%");
             }
             return Result.success().addData(wxUserService.listPage(pageNumber, pageSize, cnd));
@@ -76,14 +76,12 @@ public class WxUserController {
         }
     }
 
-    @At({"/down/", "/down/?"})
+    @At("/down/?")
     @Ok("json")
     @RequiresPermissions("wx.user.list.sync")
-    @SLog(tag = "同步微信会员", msg = "公众号:${args[1].getAttribute('appname')}")
+    @SLog(tag = "同步微信会员", msg = "公众号唯一标识:${args[0]}")
     public Object down(String wxid, HttpServletRequest req) {
         try {
-            Wx_config config = wxConfigService.fetch(wxid);
-            req.setAttribute("appname", config.getAppname());
             WxApi2 wxApi2 = wxService.getWxApi2(wxid);
             wxApi2.user_get(new Each<String>() {
                 public void invoke(int index, String _ele, int length)
@@ -94,7 +92,7 @@ public class WxUserController {
                     usr.setNickname(EmojiParser.parseToAliases(usr.getNickname(), EmojiParser.FitzpatrickAction.REMOVE));
                     usr.setSubscribeAt(resp.user().getSubscribe_time());
                     usr.setWxid(wxid);
-                    if (wxUserService.fetch(Cnd.where("wxid", "=", wxid).and("openid", "=", usr.getOpenid())) == null)
+                    if (wxUserService.count(Cnd.where("wxid", "=", wxid).and("openid", "=", usr.getOpenid())) == 0)
                         wxUserService.insert(usr);
                 }
             });

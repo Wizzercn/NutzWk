@@ -14,8 +14,20 @@ layout("/layouts/platform.html"){
                 </el-option>
             </el-select>
         </div>
+
+        <div class="btn-group tool-button mt5">
+            <el-input placeholder="请输入内容" v-model="pageForm.searchKeyword" @keyup.enter.native="doSearch">
+                <el-select v-model="pageForm.searchName" slot="prepend" placeholder="查询类型" style="width: 120px;">
+                    <el-option label="昵称" value="nickname"></el-option>
+                    <el-option label="openid" value="openid"></el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="doSearch"></el-button>
+            </el-input>
+        </div>
+
         <div class="pull-right offscreen-right mt5">
             <el-button size="medium">
+                <i class="el-icon-download"></i>
                 同步会员资料
             </el-button>
         </div>
@@ -34,24 +46,36 @@ layout("/layouts/platform.html"){
                     width="35">
             </el-table-column>
 
-            <el-table-column label="链接名称" header-align="left" prop="name"
+            <el-table-column label="会员openid" header-align="left" prop="openid"
                              :show-overflow-tooltip="true">
             </el-table-column>
 
-            <el-table-column label="链接类型" header-align="left" prop="type"
+            <el-table-column label="昵称" header-align="left" prop="nickname"
                              :show-overflow-tooltip="true">
                 <template slot-scope="scope">
-                    <span v-if="'txt'==scope.row.type">文字</span>
-                    <span v-if="'img'==scope.row.type">图片</span>
+                    <img v-if="scope.row.headimgurl!=''" src="{{scope.row.headimgurl}}" width="50" height="50">
+                    <span>{{scope.row.nickname}}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column label="链接地址" header-align="left" prop="url"
+            <el-table-column label="性别" header-align="left" prop="sex"
                              :show-overflow-tooltip="true">
             </el-table-column>
 
-            <el-table-column label="打开方式" header-align="left" prop="target"
+            <el-table-column label="区域" header-align="left" prop="id"
                              :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    {{scope.row.country}} - {{scope.row.province}} - {{scope.row.city}}
+                </template>
+            </el-table-column>
+
+
+            <el-table-column label="是否关注" header-align="left" prop="subscribe"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <i v-if="scope.row.subscribe" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="!scope.row.subscribe" class="fa fa-circle text-success ml5"></i>
+                </template>
             </el-table-column>
 
             <el-table-column sortable label="关注时间" header-align="center" align="center" prop="opAt">
@@ -129,6 +153,10 @@ layout("/layouts/platform.html"){
                         });
                     }
                 }, "json");
+            },
+            doSearch:function(){
+                this.pageForm.pageNumber = 1;
+                this.pageData();
             },
             formatAt: function (val) {
                 if (val > 0)
