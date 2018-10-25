@@ -115,6 +115,7 @@ public class SysLogServiceImpl extends BaseServiceImpl<Sys_log> implements SysLo
     public Pagination data(String[] date, String type, String pageOrderName, String pageOrderBy, int pageNumber, int pageSize) {
         String tableName = Times.format("yyyyMM", new Date());
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("select sl.* from (");
         if (date == null || date.length == 0) {
             stringBuilder.append(" select * from sys_log_" + tableName);
             if (Strings.isNotBlank(type)) {
@@ -140,13 +141,13 @@ public class SysLogServiceImpl extends BaseServiceImpl<Sys_log> implements SysLo
                         stringBuilder.append(" and opAt>=" + Times.d2TS(Times.D(date[0])));
                         stringBuilder.append(" and opAt<=" + Times.d2TS(Times.D(date[1])));
                         if (i < m2) {
-                            stringBuilder.append(" UNION ");
+                            stringBuilder.append(" UNION ALL ");
                         }
                     }
                 }
             }
         }
-        stringBuilder.append(" order by " + pageOrderName + " " + pageOrderBy);
+        stringBuilder.append(")sl order by sl." + pageOrderName + " " + pageOrderBy);
         return this.listPage(pageNumber, pageSize, Sqls.create(stringBuilder.toString()));
     }
 }

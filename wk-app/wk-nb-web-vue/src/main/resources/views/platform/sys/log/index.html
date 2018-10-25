@@ -149,7 +149,7 @@ layout("/layouts/platform.html"){
                     },
                     shortcuts: [{
                         text: '最近一周',
-                        onClick(picker) {
+                        onClick:function(picker) {
                             var end = new Date();
                             var start = new Date();
                             var temp = moment().add(-1, 'weeks').valueOf();
@@ -158,7 +158,7 @@ layout("/layouts/platform.html"){
                         }
                     }, {
                         text: '最近一个月',
-                        onClick(picker) {
+                        onClick:function(picker) {
                             var end = new Date();
                             var start = new Date();
                             var temp = moment().add(-1, 'months').valueOf();
@@ -167,7 +167,7 @@ layout("/layouts/platform.html"){
                         }
                     }, {
                         text: '最近三个月',
-                        onClick(picker) {
+                        onClick:function(picker) {
                             var end = new Date();
                             var start = new Date();
                             var temp = moment().add(-3, 'months').valueOf();
