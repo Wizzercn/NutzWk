@@ -26,7 +26,7 @@ layout("/layouts/platform.html"){
         </div>
 
         <div class="pull-right offscreen-right mt5">
-            <el-button size="medium">
+            <el-button size="medium" @click="openUp">
                 <i class="el-icon-download"></i>
                 同步会员资料
             </el-button>
@@ -46,20 +46,24 @@ layout("/layouts/platform.html"){
                     width="35">
             </el-table-column>
 
-            <el-table-column label="会员openid" header-align="left" prop="openid"
-                             :show-overflow-tooltip="true">
+            <el-table-column label="会员openid" header-align="left" prop="openid" width="222">
             </el-table-column>
 
             <el-table-column label="昵称" header-align="left" prop="nickname"
                              :show-overflow-tooltip="true">
                 <template slot-scope="scope">
-                    <img v-if="scope.row.headimgurl!=''" src="{{scope.row.headimgurl}}" width="50" height="50">
+                    <img v-if="scope.row.headimgurl!=''" :src="scope.row.headimgurl" width="30" height="30">
                     <span>{{scope.row.nickname}}</span>
                 </template>
             </el-table-column>
 
             <el-table-column label="性别" header-align="left" prop="sex"
-                             :show-overflow-tooltip="true">
+                             :show-overflow-tooltip="true" width="80">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.sex==1">男</span>
+                    <span v-if="scope.row.sex==2">女</span>
+                    <span v-if="scope.row.sex==0">未知</span>
+                </template>
             </el-table-column>
 
             <el-table-column label="区域" header-align="left" prop="id"
@@ -71,10 +75,10 @@ layout("/layouts/platform.html"){
 
 
             <el-table-column label="是否关注" header-align="left" prop="subscribe"
-                             :show-overflow-tooltip="true">
+                             :show-overflow-tooltip="true" width="80">
                 <template slot-scope="scope">
-                    <i v-if="scope.row.subscribe" class="fa fa-circle text-danger ml5"></i>
-                    <i v-if="!scope.row.subscribe" class="fa fa-circle text-success ml5"></i>
+                    <i v-if="!scope.row.subscribe" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="scope.row.subscribe" class="fa fa-circle text-success ml5"></i>
                 </template>
             </el-table-column>
 
@@ -97,7 +101,18 @@ layout("/layouts/platform.html"){
                 :total="pageForm.totalCount">
         </el-pagination>
     </el-row>
-
+    <el-dialog
+            title="同步用户资料"
+            :visible.sync="upDialogVisible"
+            width="40%">
+        <el-row style="text-align: center">
+            <el-progress type="circle" :percentage="progressNum" :status="progressStatus"></el-progress>
+        </el-row>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="upDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doUp">同 步</el-button>
+                  </span>
+    </el-dialog>
 </div>
 <script>
     new Vue({
@@ -109,8 +124,7 @@ layout("/layouts/platform.html"){
             <!--#}#-->
             return {
                 wxConfigs: wxConfigs,
-                addDialogVisible: false,
-                editDialogVisible: false,
+                upDialogVisible: false,
                 pageForm: {
                     searchName: "",
                     searchKeyword: "",
@@ -122,6 +136,8 @@ layout("/layouts/platform.html"){
                     wxid: "${wxConfig.id!}",
                 },
                 tableData: [],
+                progressNum: 0,
+                progressStatus: ""
             }
         },
         methods: {
@@ -154,7 +170,7 @@ layout("/layouts/platform.html"){
                     }
                 }, "json");
             },
-            doSearch:function(){
+            doSearch: function () {
                 this.pageForm.pageNumber = 1;
                 this.pageData();
             },
@@ -166,31 +182,35 @@ layout("/layouts/platform.html"){
             handleSelectionChange: function (val) {
                 this.selectData = val;
             },
-            openTb: function () {
-
+            openUp: function () {
+                this.upDialogVisible = true;
             },
-            doAdd: function () {
+            doUp: function () {
                 var self = this;
-                var url = base + "/platform/cms/link/link/addDo";
-                self.$refs["addForm"].validate(function (valid) {
-                    if (valid) {//表单验证通过
-                        $.post(url, self.formData, function (data) {
-                            if (data.code == 0) {
-                                self.$message({
-                                    message: data.msg,
-                                    type: 'success'
-                                });
-                                self.addDialogVisible = false;
-                                self.pageData();
-                            } else {
-                                self.$message({
-                                    message: data.msg,
-                                    type: 'error'
-                                });
-                            }
-                        }, "json");
+                var t = setInterval(function () {
+                    self.progressNum += 10;
+                    if (self.progressNum >= 100) {
+                        window.clearInterval(t);
                     }
-                });
+                }, 400);
+                var url = base + "/platform/wx/user/down/" + self.pageForm.wxid;
+                $.post(url, {}, function (data) {
+                    if (data.code == 0) {
+                        self.progressStatus = "success";
+                        self.upDialogVisible = false;
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.pageData();
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                        self.progressStatus = "exception";
+                    }
+                }, "json");
             },
             change: function (val) {
                 window.location.href = "${base}/platform/wx/user/index/" + val;
@@ -199,7 +219,8 @@ layout("/layouts/platform.html"){
         created: function () {
             this.pageData();
         }
-    });
+    })
+    ;
 </script>
 <!--#
 }
