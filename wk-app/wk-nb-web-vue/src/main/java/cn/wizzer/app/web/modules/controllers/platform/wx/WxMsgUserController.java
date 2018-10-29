@@ -2,15 +2,13 @@ package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
-import cn.wizzer.app.wx.modules.models.Wx_msg;
 import cn.wizzer.app.wx.modules.models.Wx_msg_reply;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.app.wx.modules.services.WxMsgReplyService;
 import cn.wizzer.app.wx.modules.services.WxMsgService;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
@@ -52,63 +50,40 @@ public class WxMsgUserController {
     @Ok("beetl:/platform/wx/msg/user/index.html")
     @RequiresPermissions("wx.user.list")
     public void index(String wxid, HttpServletRequest req) {
+        Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
-            wxid = list.get(0).getId();
+            wxConfig = list.get(0);
         }
-        req.setAttribute("wxid", wxid);
+        if (Strings.isNotBlank(wxid)) {
+            wxConfig = wxConfigService.fetch(wxid);
+        }
+        req.setAttribute("wxConfig", wxConfig);
         req.setAttribute("wxList", list);
     }
 
-    @At({"/data/", "/data/?"})
+    @At
     @Ok("json:full")
     @RequiresPermissions("wx.user.list")
-    public Object data(String wxid, @Param("nickname") String nickname, @Param("content") String content, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+    public Object data(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
             cnd.and("wxid", "=", wxid);
         }
-        if (!Strings.isBlank(nickname)) {
-            cnd.and("nickname", "like", "%" + nickname + "%");
+        if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
+            cnd.and(searchName, "like", "%" + searchKeyword + "%");
         }
-        if (!Strings.isBlank(content)) {
-            cnd.and("content", "like", "%" + content + "%");
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
         }
-        return wxMsgService.data(length, start, draw, order, columns, cnd, null);
+        return Result.success().addData(wxMsgService.listPageLinks(pageNumber, pageSize, cnd, "reply"));
     }
 
-    @At({"/reply/?"})
-    @Ok("beetl:/platform/wx/msg/user/reply.html")
-    @RequiresPermissions("wx.user.list")
-    public Object reply(String id, @Param("type") int type, HttpServletRequest req) {
-        Wx_msg msg = wxMsgService.fetch(id);
-        req.setAttribute("wxid", msg.getWxid());
-        req.setAttribute("type", type);
-        return msg;
-    }
-
-
-    @At("/replyData/?")
-    @Ok("json:full")
-    @RequiresPermissions("wx.user.list")
-    public Object replyData(String wxid, @Param("openid") String openid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        if (!Strings.isBlank(wxid)) {
-            cnd.and("wxid", "=", wxid);
-        }
-        if (!Strings.isBlank(openid)) {
-            cnd.and("openid", "=", openid);
-        }
-        cnd.desc("opAt");
-        return wxMsgService.data(5, start, draw, order, columns, cnd, "reply");
-    }
-
-
-    @At("/replyDo")
+    @At({"/replyDo/?"})
     @Ok("json")
     @RequiresPermissions("wx.user.list.sync")
-    @SLog(tag = "回复微信", msg = "微信昵称:${args[1]}")
-    public Object down(@Param("id") String id, @Param("nickname") String nickname, @Param("wxid") String wxid, @Param("openid") String openid, @Param("content") String content, HttpServletRequest req) {
+    @SLog(tag = "回复微信", msg = "微信昵称:${args[2]}")
+    public Object replyDo(String wxid, @Param("msgid") String msgid, @Param("nickname") String nickname, @Param("openid") String openid, @Param("replyContent") String content, HttpServletRequest req) {
         try {
             Wx_config config = wxConfigService.fetch(wxid);
             WxApi2 wxApi2 = wxService.getWxApi2(wxid);
@@ -126,16 +101,16 @@ public class WxMsgUserController {
             Wx_msg_reply reply = new Wx_msg_reply();
             reply.setContent(content);
             reply.setType("text");
-            reply.setMsgid(id);
+            reply.setMsgid(msgid);
             reply.setOpenid(openid);
             reply.setWxid(wxid);
             Wx_msg_reply reply1 = wxMsgReplyService.insert(reply);
             if (reply1 != null) {
-                wxMsgService.update(org.nutz.dao.Chain.make("replyId", reply1.getId()), Cnd.where("id", "=", id));
+                wxMsgService.update(org.nutz.dao.Chain.make("replyId", reply1.getId()), Cnd.where("id", "=", msgid));
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 }

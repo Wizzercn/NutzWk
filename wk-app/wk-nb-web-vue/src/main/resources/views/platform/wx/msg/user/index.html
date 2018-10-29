@@ -1,149 +1,238 @@
-<%
+<!--#
 layout("/layouts/platform.html"){
-%>
-<header class="header navbar bg-white shadow">
-    <a href="${base}/platform/wx/msg/user/${wxid!}" data-pjax id="_reload"></a>
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <span>微信公众号：</span>
+            <el-select size="medium" v-model="pageForm.wxid" placeholder="请选择" @change="change">
+                <el-option
+                        v-for="item in wxConfigs"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+        </div>
 
-    <div class="btn-group" style="padding-top: 5px;">
-        <div >
-            <select id="wxid" name="wxid" class="form-control">
-                <% for(o in wxList){
-                %>
-                <option value="${o.id}" <%if(o.id==wxid){%>selected<%}%>>${o.appname}</option>
-                <%
-                } %>
-            </select>
+        <div class="btn-group tool-button mt5">
+            <el-input placeholder="请输入内容" v-model="pageForm.searchKeyword" @keyup.enter.native="doSearch">
+                <el-select v-model="pageForm.searchName" slot="prepend" placeholder="查询类型" style="width: 120px;">
+                    <el-option label="昵称" value="nickname"></el-option>
+                    <el-option label="内容" value="content"></el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="doSearch"></el-button>
+            </el-input>
         </div>
-    </div>
-    <div class="pull-right">
-        <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i
-                class="fa fa-sliders"></i> 筛选
-        </button>
-    </div>
-</header>
-<div class=panel-body style="padding-top: 50px;">
-    <div class="table-responsive no-border">
-        <table class="table table-bordered table-striped mg-t datatable">
-            <thead>
-            <tr>
-                <th>Openid</th>
-                <th>昵称</th>
-                <th>消息内容</th>
-                <th>接收时间</th>
-                <th>回复状态</th>
-                <th>操作</th>
-        </table>
-    </div>
-    <div class="cd-panel from-right">
-        <header class="cd-panel-header">
-            <h4>高级筛选</h4>
-        </header>
-        <div class="cd-panel-container">
-            <div class="cd-panel-content shadow">
-                <div class="form-group">
-                    <label for="nickname">昵称</label>
-                    <input type="text" id="nickname" name="nickname" onclick="this.value=''" class="form-control" placeholder="昵称">
-                </div>
-                <div class="form-group">
-                    <label for="content">内容</label>
-                    <input type="text" id="content" name="content" onclick="this.value=''" class="form-control" placeholder="内容">
-                </div>
-                <button id="searchBtn" type="button" class="btn btn-default">查询</button>
-            </div>
-        </div>
-    </div>
-<div id="dialogDetail" class="modal fade bs-modal" tabindex="-3" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        </div>
-    </div>
+
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+        >
+
+            <el-table-column type="expand">
+                <template slot-scope="scope">
+                    <el-form label-position="left" inline class="el-table-expand" size="mini">
+                        <el-form-item label="回复内容">
+                            <span v-if="scope.row.replyId && scope.row.replyId!=''">{{ scope.row.reply.content }}</span>
+                        </el-form-item>
+                        <el-form-item label="回复时间">
+                            <span v-if="scope.row.replyId && scope.row.replyId!=''">
+                                {{ formatAt(scope.row.reply.opAt) }}</span>
+                        </el-form-item>
+                    </el-form>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="昵称" header-align="left" prop="nickname"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <img v-if="scope.row.headimgurl!=''" :src="scope.row.headimgurl" width="30" height="30">
+                    <span>{{scope.row.nickname}}</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="消息类型" header-align="left" prop="type" width="80">
+
+            </el-table-column>
+
+            <el-table-column label="消息内容" header-align="left" prop="content"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+
+            <el-table-column label="是否回复" header-align="left" prop="replyId"
+                             :show-overflow-tooltip="true" width="120">
+                <template slot-scope="scope">
+                    <span v-if="!scope.row.replyId || scope.row.replyId==''">未回复
+                     <el-button size="mini" round @click="openReply(scope.row)">回复</el-button>
+                    </span>
+                    <span v-if="scope.row.replyId && scope.row.replyId!=''">已回复</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column sortable label="接收时间" header-align="center" align="center" prop="opAt">
+                <template slot-scope="scope">
+                    {{formatAt(scope.row.opAt)}}
+                </template>
+            </el-table-column>
+
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+    <el-dialog
+            title="回复消息"
+            :visible.sync="replyDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="dialogForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item label="消息内容">
+                {{formData.msgContent}}
+            </el-form-item>
+
+            <el-form-item label="回复内容" prop="replyContent">
+                <el-input type="textarea" v-model="formData.replyContent"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="replyDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doReply">回 复</el-button>
+                  </span>
+    </el-dialog>
 </div>
-<script language="JavaScript">
-    var datatable;
-    function initDatatable() {
-        datatable = $('.datatable').DataTable({
-            "dom": '<"toolbar">frtip',
-            "searching": false,
-            "processing": false,
-            "serverSide": true,
-            "select": true,
-            "ordering": true,
-            "language": {
-                "url": "${base}/assets/plugins/datatables/cn.json"
-            },
-            "preDrawCallback": function () {
-                sublime.showLoadingbar($(".main-content"));
-            },
-            "drawCallback": function () {
-                sublime.closeLoadingbar($(".main-content"));
-            },
-            "ajax": {
-                "url": "${base}/platform/wx/msg/user/data/${wxid!}",
-                "type": "post",
-                "data": function (d) {
-                    d.nickname = $('#nickname').val();
-                    d.content=$('#content').val();
-                }
-            },
-            "order": [[3, "desc"]],
-            "columns": [
-                {"data": "openid", "bSortable": true},
-                {"data": "nickname", "bSortable": true},
-                {"data": "content", "bSortable": true},
-                {"data": "opAt", "bSortable": true},
-                {"data": "replyId", "bSortable": true}
-            ],
-            "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        if (data) {
-                            return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss");
-                        }
-                        return '';
-                    },
-                    "targets": 3
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var wxConfigs = [];
+            <!--#for(o in wxList){#-->
+            wxConfigs.push({value: "${o.id!}", label: "${o.appname!}"});
+            <!--#}#-->
+            return {
+                wxConfigs: wxConfigs,
+                replyDialogVisible: false,
+                pageForm: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending",
+                    wxid: "${wxConfig.id!}",
                 },
-                {
-                    "render": function (data, type, row) {
-                        if (data) {
-                            return '已回复';
-                        }
-                        return '未回复';
-                    },
-                    "targets": 4
+                tableData: [],
+                formData: {
+                    msgid: "",
+                    replyContent: "",
+                    msgContent: "",
+                    openid:"",
+                    nickname:""
                 },
-                {
-                    "render": function (data, type, row) {
-                        var str='<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">';
-                        if (!row.replyId||row.replyId==0) {
-                            str+='<li><a href="${base}/platform/wx/msg/user/reply/' + row.id + '?type=1"  data-toggle="modal" data-target="#dialogDetail">回复</a></li>';
-                        }
-                        str+= '<li><a href="${base}/platform/wx/msg/user/reply/' + row.id + '?type=0"  data-toggle="modal" data-target="#dialogDetail">查看</a></li>' +
-                                '</ul></div>';
-                        return str;
-                    },
-                    "targets": 5
-                }
-            ]
-        });
-        datatable.on('click', 'tr', function () {
-            $(this).toggleClass('selected');
-        });
-        $("#searchBtn").on('click', function () {
-            datatable.ajax.reload();
-        });
-    }
-    $(function () {
-        initDatatable();
-        $("#wxid").on("change",function(){
-            $("#_reload").attr("href","${base}/platform/wx/msg/user/"+$(this).val());
-            $("#_reload").trigger("click");
-        });
-        $("#dialogDetail").on("hidden.bs.modal", function() {
-            $(this).removeData("bs.modal");
-        });
-    });
+                formRules: {
+                    replyContent: [
+                        {required: true, message: '回复内容', trigger: 'blur'}
+                    ],
+                },
+            }
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/wx/msg/user/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            doSearch: function () {
+                this.pageForm.pageNumber = 1;
+                this.pageData();
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            openReply: function (obj) {
+                this.replyDialogVisible = true;
+                this.formData.msgid = obj.id;
+                this.formData.msgContent = obj.content;
+                this.formData.openid = obj.openid;
+                this.formData.nickname = obj.nickname;
+            },
+            doReply: function () {
+                var self = this;
+                var url = base + "/platform/wx/msg/user/replyDo/" + self.pageForm.wxid;
+                self.$refs["dialogForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.replyDialogVisible = false;
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            change: function (val) {
+                window.location.href = "${base}/platform/wx/msg/user/" + val;
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
+    })
+    ;
 </script>
-
-<%}%>
+<!--#
+}
+#-->

@@ -2,6 +2,7 @@ package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_user;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
@@ -69,6 +70,9 @@ public class WxUserController {
             }
             if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
                 cnd.and(searchName, "like", "%" + searchKeyword + "%");
+            }
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
             }
             return Result.success().addData(wxUserService.listPage(pageNumber, pageSize, cnd));
         } catch (Exception e) {

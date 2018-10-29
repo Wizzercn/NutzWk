@@ -41,10 +41,6 @@ layout("/layouts/platform.html"){
                 style="width: 100%"
                 :default-sort="{prop: 'subscribeAt', order: 'descending'}"
         >
-            <el-table-column
-                    type="selection"
-                    width="35">
-            </el-table-column>
 
             <el-table-column label="会员openid" header-align="left" prop="openid" width="222">
             </el-table-column>
@@ -82,7 +78,7 @@ layout("/layouts/platform.html"){
                 </template>
             </el-table-column>
 
-            <el-table-column sortable label="关注时间" header-align="center" align="center" prop="opAt">
+            <el-table-column sortable label="关注时间" header-align="center" align="center" prop="subscribeAt">
                 <template slot-scope="scope">
                     {{formatAt(scope.row.subscribeAt)}}
                 </template>
@@ -105,7 +101,13 @@ layout("/layouts/platform.html"){
             title="同步用户资料"
             :visible.sync="upDialogVisible"
             width="40%">
-        <el-row style="text-align: center">
+        <el-row>
+            <el-alert
+                    title="微信公众号后台配置好接入地址之后,只需做一次手动同步操作即可"
+                    type="success">
+            </el-alert>
+        </el-row>
+        <el-row style="padding-top:5px;text-align: center">
             <el-progress type="circle" :percentage="progressNum" :status="progressStatus"></el-progress>
         </el-row>
         <span slot="footer" class="dialog-footer">
