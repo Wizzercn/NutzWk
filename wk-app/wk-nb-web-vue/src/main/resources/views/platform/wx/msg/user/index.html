@@ -51,7 +51,7 @@ layout("/layouts/platform.html"){
             </el-table-column>
 
             <el-table-column label="昵称" header-align="left" prop="nickname"
-                             :show-overflow-tooltip="true">
+                             :show-overflow-tooltip="true" width="180">
                 <template slot-scope="scope">
                     <img v-if="scope.row.headimgurl!=''" :src="scope.row.headimgurl" width="30" height="30">
                     <span>{{scope.row.nickname}}</span>
@@ -101,6 +101,9 @@ layout("/layouts/platform.html"){
             :visible.sync="replyDialogVisible"
             width="40%">
         <el-form :model="formData" ref="dialogForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item label="微信昵称">
+                {{formData.nickname}}
+            </el-form-item>
             <el-form-item label="消息内容">
                 {{formData.msgContent}}
             </el-form-item>

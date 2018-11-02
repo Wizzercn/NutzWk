@@ -1,146 +1,254 @@
-<%
+<!--#
 layout("/layouts/platform.html"){
-%>
-<header class="header navbar bg-white shadow">
-    <a href="${base}/platform/wx/msg/mass/${wxid!}" data-pjax id="_reload"></a>
-    <a class="btn btn-primary navbar-btn" href="${base}/platform/wx/msg/mass/news/${wxid!}" data-pjax><i class="ti-book"></i> 素材管理</a>
-    <div class="btn-group" style="padding-top: 5px;">
-        <div >
-            <select id="wxid" name="wxid" class="form-control">
-                <% for(o in wxList){
-                %>
-                <option value="${o.id}" <%if(o.id==wxid){%>selected<%}%>>${o.appname}</option>
-                <%
-                } %>
-            </select>
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <span>微信公众号：</span>
+            <el-select size="medium" v-model="pageForm.wxid" placeholder="请选择" @change="change">
+                <el-option
+                        v-for="item in wxConfigs"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
         </div>
-    </div>
-    <div class="pull-right">
-        <div class="btn-group tool-button">
-            <a class="btn btn-info navbar-btn" href="${base}/platform/wx/msg/mass/send/${wxid!}" data-pjax><i class="ti-export"></i> 群发消息</a>
+        <div class="pull-right mt5">
+            <el-button size="medium"
+                       @click="window.location='${base!}/platform/wx/msg/mass/news/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->'">
+                <i class="ti-book"></i> 图文素材
+            </el-button>
+
+            <el-button size="medium" @click="openSend"><i class="ti-export"></i> 群发消息</el-button>
         </div>
-    </div>
-</header>
-<div class=panel-body style="padding-top: 50px;">
-    <div class="table-responsive no-border">
-        <input id="unitid" type="hidden">
-        <table class="table table-bordered table-striped mg-t datatable">
-            <thead>
-            <tr>
-                <th>群发名称</th>
-                <th>发送类型</th>
-                <th>发送范围</th>
-                <th>发送状态</th>
-                <th>发送时间</th>
-                <th>操作</th>
-        </table>
-    </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+        >
+
+            <el-table-column type="expand">
+                <template slot-scope="scope">
+                    <el-form label-position="left" inline class="el-table-expand" size="mini">
+                        <el-form-item label="回复内容">
+                            <span v-if="scope.row.replyId && scope.row.replyId!=''">{{ scope.row.reply.content }}</span>
+                        </el-form-item>
+                        <el-form-item label="回复时间">
+                            <span v-if="scope.row.replyId && scope.row.replyId!=''">
+                                {{ formatAt(scope.row.reply.opAt) }}</span>
+                        </el-form-item>
+                    </el-form>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="昵称" header-align="left" prop="nickname"
+                             :show-overflow-tooltip="true" width="180">
+                <template slot-scope="scope">
+                    <img v-if="scope.row.headimgurl!=''" :src="scope.row.headimgurl" width="30" height="30">
+                    <span>{{scope.row.nickname}}</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="消息类型" header-align="left" prop="type" width="80">
+
+            </el-table-column>
+
+            <el-table-column label="消息内容" header-align="left" prop="content"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+
+            <el-table-column label="是否回复" header-align="left" prop="replyId"
+                             :show-overflow-tooltip="true" width="120">
+                <template slot-scope="scope">
+                    <span v-if="!scope.row.replyId || scope.row.replyId==''">未回复
+                     <el-button size="mini" round @click="openReply(scope.row)">回复</el-button>
+                    </span>
+                    <span v-if="scope.row.replyId && scope.row.replyId!=''">已回复</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column sortable label="接收时间" header-align="center" align="center" prop="opAt">
+                <template slot-scope="scope">
+                    {{formatAt(scope.row.opAt)}}
+                </template>
+            </el-table-column>
+
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+
+
+    <el-dialog
+            title="群发消息"
+            :visible.sync="sendDialogVisible"
+            width="60%">
+        <el-form :model="formData" ref="dialogForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="name" label="群发名称">
+                <el-input maxlength="255" placeholder="群发名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="type" label="群发类型">
+                <el-radio-group name="type" v-model="formData.type" size="medium">
+                    <el-radio label="text" >纯文字</el-radio>
+                    <el-radio label="image" >图片</el-radio>
+                    <el-radio label="news" >图文消息</el-radio>
+                </el-radio-group>
+            </el-form-item>
+
+            <el-form-item class="is-required" v-if="formData.type=='text'" label="发送内容" prop="content">
+                <el-input type="textarea" v-model="formData.content"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="sendDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doSend">回 复</el-button>
+                  </span>
+    </el-dialog>
 </div>
-<div id="dialogDetail" class="modal fade bs-modal" tabindex="-3" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        </div>
-    </div>
-</div>
-<script language="JavaScript">
-    var datatable;
-    function initDatatable() {
-        datatable = $('.datatable').DataTable({
-            "dom": '<"toolbar">frtip',
-            "searching": false,
-            "processing": false,
-            "serverSide": true,
-            "select": true,
-            "ordering": true,
-            "language": {
-                "url": "${base}/assets/plugins/datatables/cn.json"
-            },
-            "preDrawCallback": function () {
-                sublime.showLoadingbar($(".main-content"));
-            },
-            "drawCallback": function () {
-                sublime.closeLoadingbar($(".main-content"));
-            },
-            "ajax": {
-                "url": "${base}/platform/wx/msg/mass/massData/${wxid!}",
-                "type": "post",
-                "data": function (d) {
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var wxConfigs = [];
+            <!--#for(o in wxList){#-->
+            wxConfigs.push({value: "${o.id!}", label: "${o.appname!}"});
+            <!--#}#-->
+            var self=this;
+            var validateText=function (rule, value, callback) {
+                if (self.formData.type=="text"&&self.formData.content=="") {
+                    callback(new Error('请输入纯文本内容'));
+                } else {
+                    callback();
                 }
+            };
+            return {
+                wxConfigs: wxConfigs,
+                sendDialogVisible: false,
+                pageForm: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending",
+                    wxid: "${wxConfig.id!}",
+                },
+                tableData: [],
+                formData: {},
+                formRules: {
+                    name: [
+                        {required: true, message: '群发名称', trigger: 'blur'}
+                    ],
+                    content: [
+                        {required: false, message: '文本内容', trigger: 'blur'},
+                        {validator: validateText, trigger: ['blur', 'change']}
+                    ],
+                },
+            }
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
             },
-            "order": [[4, "desc"]],
-            "columns": [
-                {"data": "name", "bSortable": true},
-                {"data": "type", "bSortable": true},
-                {"data": "scope", "bSortable": true},
-                {"data": "status", "bSortable": true},
-                {"data": "opAt", "bSortable": true}
-            ],
-            "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        if (data=='text') {
-                            return '文本';
-                        }
-                        return '图文';
-                    },
-                    "targets": 1
-                },
-                {
-                    "render": function (data, type, row) {
-                        if (data=='all') {
-                            return '全部会员';
-                        }
-                        return '会员列表';
-                    },
-                    "targets": 2
-                },
-                {
-                    "render": function (data, type, row) {
-                        if (data==1) {
-                            return '发送成功';
-                        }
-                        return '发送失败';
-                    },
-                    "targets": 3
-                },
-                {
-                    "render": function (data, type, row) {
-                        if (data) {
-                            return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss");
-                        }
-                        return '';
-                    },
-                    "targets": 4
-                },
-                {
-                    "render": function (data, type, row) {
-                        var str='<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">';
-                        str+= '<li><a href="${base}/platform/wx/msg/mass/sendDetail/' + row.id + '"  data-toggle="modal" data-target="#dialogDetail">查看</a></li>' +
-                                '</ul></div>';
-                        return str;
-                    },
-                    "targets": 5
-                }
-            ]
-        });
-        datatable.on('click', 'tr', function () {
-            $(this).toggleClass('selected');
-        });
-        $("#searchBtn").on('click', function () {
-            datatable.ajax.reload();
-        });
-    }
-    $(function () {
-        initDatatable();
-        $("#wxid").on("change",function(){
-            $("#_reload").attr("href","${base}/platform/wx/msg/mass/"+$(this).val());
-            $("#_reload").trigger("click");
-        });
-        $("#dialogDetail").on("hidden.bs.modal", function() {
-            $(this).removeData("bs.modal");
-        });
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/wx/msg/mass/massData", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            doSearch: function () {
+                this.pageForm.pageNumber = 1;
+                this.pageData();
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            openSend: function (obj) {
+                this.formData = {
+                    type: "text",
+                    content:""
+                };
+                if (this.$refs["dialogForm"])
+                    this.$refs["dialogForm"].resetFields();
+                this.sendDialogVisible = true;
+            },
+            doSend: function () {
+                var self = this;
+                var url = base + "/platform/wx/msg/user/replyDo/" + self.pageForm.wxid;
+                self.$refs["dialogForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.replyDialogVisible = false;
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            change: function (val) {
+                window.location.href = "${base}/platform/wx/msg/mass/" + val;
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
     });
 </script>
-
-<%}%>
+<!--#
+}
+#-->

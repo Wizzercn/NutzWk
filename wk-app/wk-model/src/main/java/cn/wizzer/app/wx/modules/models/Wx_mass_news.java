@@ -25,9 +25,14 @@ public class Wx_mass_news extends BaseModel implements Serializable {
     private String sys_unit_id;
 
     @Column
-    @Comment("缩略图")
+    @Comment("缩略图ID")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String thumb_media_id;
+
+    @Column
+    @Comment("缩略图URL")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String picurl;
 
     @Column
     @Comment("作者")
@@ -62,8 +67,8 @@ public class Wx_mass_news extends BaseModel implements Serializable {
     @Column
     @Comment("排序字段")
     @Prev({
-            @SQL(db= DB.MYSQL,value = "SELECT IFNULL(MAX(location),0)+1 FROM wx_mass_news"),
-            @SQL(db= DB.ORACLE,value = "SELECT COALESCE(MAX(location),0)+1 FROM wx_mass_news")
+            @SQL(db = DB.MYSQL, value = "SELECT IFNULL(MAX(location),0)+1 FROM wx_mass_news"),
+            @SQL(db = DB.ORACLE, value = "SELECT COALESCE(MAX(location),0)+1 FROM wx_mass_news")
     })
     private Integer location;
 
@@ -89,6 +94,14 @@ public class Wx_mass_news extends BaseModel implements Serializable {
 
     public void setThumb_media_id(String thumb_media_id) {
         this.thumb_media_id = thumb_media_id;
+    }
+
+    public String getPicurl() {
+        return picurl;
+    }
+
+    public void setPicurl(String picurl) {
+        this.picurl = picurl;
     }
 
     public String getAuthor() {

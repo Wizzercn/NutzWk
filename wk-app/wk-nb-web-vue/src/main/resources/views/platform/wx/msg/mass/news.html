@@ -1,132 +1,391 @@
-<%
+<!--#
 layout("/layouts/platform.html"){
-%>
-<header class="header navbar bg-white shadow">
-    <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/wx/msg/mass/addNews/${wxid!}"  data-toggle="modal" data-target="#dialogDetail"><i class="ti-plus"></i> 添加图文</a>
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/wx/msg/mass/${wxid!}" data-pjax><i
-                class="ti-angle-left"></i> 返回</a>
-    </div>
-</header>
-<div class=panel-body style="padding-top: 50px;">
-    <div class="table-responsive no-border">
-        <table class="table table-bordered table-striped mg-t datatable">
-            <thead>
-            <tr>
-                <th>标题</th>
-                <th>创建时间</th>
-                <th>操作</th>
-        </table>
-    </div>
-</div>
-<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">删除</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        删除后无法恢复，确定删除吗？ <br/>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
-                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
-            </div>
+#-->
+<style>
+
+    .note {
+        width: 100%;
+        height: 320px;
+    }
+
+    .el-upload input[type=file] {
+        display: none;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        display: block;
+    }
+</style>
+<link href="${base!}/assets/platform/plugins/umeditor/themes/default/css/umeditor.min.css" type="text/css"
+      rel="stylesheet">
+<script src="${base!}/assets/platform/plugins/umeditor/umeditor.configwx.js"></script>
+<script src="${base!}/assets/platform/plugins/umeditor/umeditor.js"></script>
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <el-button size="medium" @click="window.location='${base!}/platform/wx/msg/mass/${wxid!}'"><i
+                    class="el-icon-back"></i> 返回
+            </el-button>
         </div>
-    </div>
-</div>
-<div id="dialogDetail" class="modal fade bs-modal" tabindex="-3" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" style="min-width: 850px;">
-        <div class="modal-content" style="min-width: 850px;">
+        <div class="pull-right mt5">
+
+            <el-button size="medium" @click="openAdd"><i class="el-icon-plus"></i> 新建图文</el-button>
         </div>
-    </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+        >
+
+
+            <el-table-column label="" header-align="left" prop="picurl"
+                             :show-overflow-tooltip="true" width="56">
+                <template slot-scope="scope">
+                    <img v-if="scope.row.picurl!=''" :src="scope.row.picurl" width="30" height="30">
+                </template>
+            </el-table-column>
+
+
+            <el-table-column label="标题" header-align="left" prop="title" :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="作者" header-align="left" prop="author" :show-overflow-tooltip="true" width="120">
+            </el-table-column>
+
+
+
+            <el-table-column sortable label="添加时间" header-align="center" align="center" prop="opAt">
+                <template slot-scope="scope">
+                    {{formatAt(scope.row.opAt)}}
+                </template>
+            </el-table-column>
+
+            <el-table-column
+                    prop="id"
+                    label="操作"
+                    width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item :command="{type:'view',id:scope.row.id}">
+                                预览
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                                    :command="{type:'delete',id:scope.row.id,title:scope.row.title}">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+
+    <el-dialog
+            title="新建图文"
+            :visible.sync="addDialogVisible"
+            width="60%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="title" label="标题">
+                <el-input maxlength="255" placeholder="标题"
+                          v-model="formData.title"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="author" label="作者">
+                <el-input maxlength="50" placeholder="作者"
+                          v-model="formData.author"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+
+            <el-form-item prop="picurl" label="缩略图(64kb以内)">
+                <el-upload
+                        class="avatar-uploader"
+                        tabindex="5"
+                        action="${base}/platform/wx/msg/mass/uploadThumb/${wxid!}"
+                        name="Filedata"
+                        :show-file-list="false"
+                        :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picurl')}">
+                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+            </el-form-item>
+
+            <el-form-item prop="digest" label="摘要">
+                <el-input type="textarea" v-model="formData.digest"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="content_source_url" label="原文链接">
+                <el-checkbox v-model="checkedSourceUrl">原文链接</el-checkbox>
+                <el-input v-if="checkedSourceUrl" maxlength="50" placeholder="原文链接"
+                          v-model="formData.url"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="show_cover_pic" label="显示封面">
+                <el-checkbox v-model="formData.show_cover_pic" true-label="1" false-label="0">显示封面</el-checkbox>
+                <el-alert v-if="formData.show_cover_pic=='1'"
+                        title="会自动使用文章中第一张图片作为封面图"
+                        type="info"
+                        close-text="知道了">
+                </el-alert>
+            </el-form-item>
+
+
+            <el-form-item prop="content" label="文章内容">
+                <!--一个页面中不能出现两个umeditor对象,所以新建和修改用同一个dialog来做吧-->
+                <script type="text/plain" id="content" class="note"></script>
+                <!---->
+                <el-alert style="margin-top: 5px;"
+                          title="注意：具备微信支付权限的公众号，可以使用a标签，其他公众号不能使用"
+                          type="info"
+                          close-text="知道了">
+                </el-alert>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                <el-button @click="addDialogVisible = false"> 取 消 </el-button>
+                <el-button type="primary" @click="doAdd"> 确 定 </el-button>
+        </span>
+    </el-dialog>
+
+    <el-dialog
+            title="预览图文"
+            :visible.sync="viewDialogVisible"
+            width="60%">
+        <el-row style="text-align: center">
+            <h4><img v-if="formData.picurl" :src="formData.picurl" width="30" height="30" /> {{formData.title}}</h4>
+        </el-row>
+        <el-row>
+            <span>作者：{{formData.author}}</span>
+        </el-row>
+        <el-row style="margin-top: 5px !important;margin-bottom: 5px !important;border-bottom: 1px solid #DDD;">
+        </el-row>
+        <el-row>
+            <span v-html="formData.content"></span>
+        </el-row>
+        <span slot="footer" class="dialog-footer">
+                <el-button @click="viewDialogVisible = false"> 关 闭 </el-button>
+        </span>
+    </el-dialog>
 </div>
-<script language="JavaScript">
-    var datatable;
-    function initDatatable() {
-        datatable = $('.datatable').DataTable({
-            "dom": '<"toolbar">frtip',
-            "searching": false,
-            "processing": false,
-            "serverSide": true,
-            "select": true,
-            "ordering": true,
-            "language": {
-                "url": "${base}/assets/plugins/datatables/cn.json"
-            },
-            "preDrawCallback": function () {
-                sublime.showLoadingbar($(".main-content"));
-            },
-            "drawCallback": function () {
-                sublime.closeLoadingbar($(".main-content"));
-            },
-            "ajax": {
-                "url": "${base}/platform/wx/msg/mass/newsData/${wxid!}",
-                "type": "post",
-                "data": function (d) {
-                }
-            },
-            "order": [[1, "desc"]],
-            "columns": [
-                {"data": "title", "bSortable": true},
-                {"data": "opAt", "bSortable": true}
-            ],
-            "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        if (data) {
-                            return moment(parseInt(data*1000)).format("YYYY-MM-DD HH:mm:ss");
-                        }
-                        return '';
-                    },
-                    "targets": 1
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                addDialogVisible: false,
+                viewDialogVisible:false,
+                checkedSourceUrl:false,
+                pageForm: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending",
+                    wxid: "${wxid!}",
                 },
-                {
-                    "render": function (data, type, row) {
-                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">'+
-                                '<li><a href="${base}/platform/wx/msg/mass/newsDetail/' + row.id + '"  data-toggle="modal" data-target="#dialogDetail">查看</a></li>'+
-                                '<li><a href="javascript:;" onclick="del(\''+row.id+'\')">删除</a></li>'+
-                                '</ul></div>';
-                    },
-                    "targets": 2
-                }
-            ]
-        });
-        datatable.on('click', 'tr', function () {
-            $(this).toggleClass('selected');
-        });
-    }
-    function del(id) {
-        var dialog = $("#dialogDelete");
-        dialog.modal("show");
-        dialog.find("#ok").unbind("click");
-        dialog.find("#ok").bind("click", function (event) {
-            var btn = $(this);
-            btn.button("loading");
-            $.post("${base}/platform/wx/msg/mass/deleteNews/" + id, {}, function (data) {
-                if (data.code == 0) {
-                    datatable.ajax.reload(null,false);
+                tableData: [],
+                formData: {},
+                formRules: {
+                    title: [
+                        {required: true, message: '标题', trigger: 'blur'}
+                    ],
+                    picurl: [
+                        {required: true, message: '缩略图', trigger: 'blur'}
+                    ],
+                },
+            }
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/wx/msg/mass/newsData/${wxid!}", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            doSearch: function () {
+                this.pageForm.pageNumber = 1;
+                this.pageData();
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            handlePicSuccess: function (response, file, fileList, attrName) {
+                if (response.code == 0) {
+                    // 对象属性直接赋值不会触发试图更新，采用 Vue.set 、this.$set或者Object.assign({}，this.obj)创建新对象
+                    // 或者也可以定义一个 refresh 属性 ，当数据发生改变时，该属性同时变化，也会触发视图更新
+                    // this.formData.site_logo =response.data;
+                    this.$set(this.formData, "picurl", response.data.picurl);
+                    this.$set(this.formData, "thumb_media_id", response.data.id);
                 } else {
-                    Toast.error(data.msg);
+                    this.$set(this.formData, "picurl", "");
+                    this.$set(this.formData, "thumb_media_id", "");
                 }
-                //重置按钮状态，关闭提示框
-                btn.button("reset");
-                dialog.modal("hide");
-            }, "json");
-        });
-    }
-    $(function () {
-        initDatatable();
-        $("#dialogDetail").on("hidden.bs.modal", function() {
-            $(this).removeData("bs.modal");
-        });
+            },
+            openAdd: function (obj) {
+                var self = this;
+                self.addDialogVisible = true;
+                if (self.$refs["addForm"])
+                    self.$refs["addForm"].resetFields();
+                self.formData= {
+                    wxid: self.pageForm.wxid,
+                    show_cover_pic:"0",
+                    digest:""
+                };
+                UM.getEditor("content");
+                setTimeout(function () {
+                    UM.getEditor("content").setContent("", false);
+                }, 200);
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "/platform/wx/msg/mass/addDo";
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        self.formData.content=UM.getEditor("content").getContent();
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.addDialogVisible = false;
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("view" == command.type) {
+                    $.post(base + "/platform/wx/msg/mass/newsDetail/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.viewDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除文章： ' + command.title, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/wx/msg/mass/deleteNews/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.pageData();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            },
+            change: function (val) {
+                window.location.href = "${base}/platform/wx/msg/user/" + val;
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
     });
 </script>
-
-<%}%>
+<!--#
+}
+#-->

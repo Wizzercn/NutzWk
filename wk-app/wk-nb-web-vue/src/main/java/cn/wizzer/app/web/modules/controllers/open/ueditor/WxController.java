@@ -55,7 +55,7 @@ public class WxController {
                 }
                 nutMap.addv("name", tf.getName());
                 nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", resp.get("url"));
+                nutMap.addv("url", Strings.sNull(resp.get("url")).replace("http://","https://"));
                 nutMap.addv("originalName", tf.getSubmittedFileName());
                 nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
                 nutMap.addv("size", tf.getSize());
@@ -65,6 +65,7 @@ public class WxController {
                     return "<script>" + callback + "(" + Json.toJson(nutMap) + ")</script>";
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return Json.toJson(nutMap.addv("state", "FAIL"));
         }
     }

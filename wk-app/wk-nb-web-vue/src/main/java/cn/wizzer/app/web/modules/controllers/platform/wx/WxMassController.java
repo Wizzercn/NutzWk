@@ -1,7 +1,10 @@
 package cn.wizzer.app.web.modules.controllers.platform.wx;
 
+import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.DateUtil;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_mass;
@@ -12,8 +15,6 @@ import cn.wizzer.app.wx.modules.services.WxMassNewsService;
 import cn.wizzer.app.wx.modules.services.WxMassSendService;
 import cn.wizzer.app.wx.modules.services.WxMassService;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -21,7 +22,9 @@ import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
+import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
+import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -35,7 +38,10 @@ import org.nutz.weixin.spi.WxApi2;
 import org.nutz.weixin.spi.WxResp;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -63,42 +69,50 @@ public class WxMassController {
     @At({"/", "/?"})
     @Ok("beetl:/platform/wx/msg/mass/index.html")
     @RequiresPermissions("wx.msg.mass")
-    public void index(String wxid, HttpServletRequest req) {
+    public void index(String wxid, HttpServletRequest req, HttpSession session) {
+        Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
-            wxid = list.get(0).getId();
+            wxConfig = list.get(0);
         }
-        req.setAttribute("wxid", wxid);
+        if (Strings.isNotBlank(wxid)) {
+            wxConfig = wxConfigService.fetch(wxid);
+        }
+        req.setAttribute("wxConfig", wxConfig);
         req.setAttribute("wxList", list);
     }
 
-    @At({"/massData/", "/massData/?"})
+    @At
     @Ok("json:full")
     @RequiresPermissions("wx.msg.mass")
-    public Object massData(String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+    public Object massData(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
-        if (!Strings.isBlank(wxid)) {
+        if (Strings.isNotBlank(wxid)) {
             cnd.and("wxid", "=", wxid);
         }
-        return wxMassService.data(length, start, draw, order, columns, cnd, null);
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        }
+        return Result.success().addData(wxMassService.listPage(pageNumber, pageSize, cnd));
     }
 
     @At("/news/?")
     @Ok("beetl:/platform/wx/msg/mass/news.html")
     @RequiresPermissions("wx.msg.mass")
-    public void news(String wxid, HttpServletRequest req) {
+    public void news(String wxid, HttpServletRequest req, HttpSession session) {
         req.setAttribute("wxid", wxid);
+        session.setAttribute("wxid", wxid);
     }
 
     @At("/newsData/?")
     @Ok("json:full")
     @RequiresPermissions("wx.msg.mass")
-    public Object newsData(String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+    public Object newsData(String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
             cnd.and("wxid", "=", wxid);
         }
-        return wxMassNewsService.data(length, start, draw, order, columns, cnd, null);
+        return Result.success().addData(wxMassNewsService.listPage(pageNumber, pageSize, cnd));
     }
 
     @At("/deleteNews/?")
@@ -109,19 +123,12 @@ public class WxMassController {
         try {
             req.setAttribute("title", wxMassNewsService.fetch(id).getTitle());
             wxMassNewsService.delete(id);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
-    @At("/addNews/?")
-    @Ok("beetl:/platform/wx/msg/mass/add.html")
-    @RequiresPermissions("wx.msg.mass")
-    public void add(String wxid, HttpServletRequest req) {
-        req.setAttribute("wxid", wxid);
-        req.getSession().setAttribute("wxid", wxid);
-    }
 
     @At
     @Ok("json")
@@ -131,17 +138,21 @@ public class WxMassController {
         try {
             news.setOpBy(StringUtil.getPlatformUid());
             wxMassNewsService.insert(news);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
     @At("/newsDetail/?")
-    @Ok("beetl:/platform/wx/msg/mass/detail.html")
+    @Ok("json")
     @RequiresPermissions("wx.msg.mass")
     public Object newsDetail(String id, HttpServletRequest req) {
-        return wxMassNewsService.fetch(id);
+        try {
+            return Result.success().addData(wxMassNewsService.fetch(id));
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
     @AdaptBy(type = UploadAdaptor.class, args = {"ioc:imageUpload"})
@@ -164,7 +175,12 @@ public class WxMassController {
                 if (resp.errcode() != 0) {
                     return Result.error(resp.errmsg());
                 }
-                return Result.success("上传成功", resp.get("thumb_media_id"));
+                String s = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1);
+                String uri = "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
+                String f = Globals.AppUploadPath + uri;
+                Files.write(new File(f), tf.getInputStream());
+                return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("thumb_media_id"))
+                        .addv("picurl", Globals.AppUploadBase + uri));
             }
         } catch (Exception e) {
             return Result.error("系统错误");
@@ -234,10 +250,10 @@ public class WxMassController {
             send.setErrMsg(resp.getString("errmsg"));
             send.setStatus(resp.errcode() == 0 ? 1 : 2);
             wxMassSendService.insert(send);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
