@@ -2,13 +2,28 @@
 layout("/layouts/platform.html"){
 #-->
 <div id="app" v-cloak>
-    <el-dialog title="xxxx" :visible.sync="showDialog" append-to-body>
-        xxxxx
-        <br>
-        <br>
-        <br>
-    </el-dialog>
-    <el-button @click="open">Open</el-button>
+    <el-row style="padding:20px 20px 20px 20px;">
+        <el-alert
+                title="物联网卡(三大运营商4G卡、NB卡)，全网最低价，微信号：LJL568"
+                type="success"
+                close-text="知道了">
+        </el-alert>
+
+    </el-row>
+    <el-row style="padding:20px 20px 20px 20px;">
+        <el-alert
+                title="短信平台(通知类短信、营销类短信)，全网最低价，微信号：LJL568"
+                type="warning"
+                close-text="知道了">
+        </el-alert>
+    </el-row>
+    <el-row style="padding:20px 20px 20px 20px;">
+        <el-alert
+                title="NutzWk 系列软件订制开发、培训、合作，可联系作者，QQ：11624317，微信号：wizzer ，QQ交流群：24457628"
+                type="error"
+                close-text="知道了">
+        </el-alert>
+    </el-row>
 </div>
 <script>
     new Vue({
