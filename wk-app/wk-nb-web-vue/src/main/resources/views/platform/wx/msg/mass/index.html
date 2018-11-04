@@ -107,20 +107,99 @@ layout("/layouts/platform.html"){
             </el-form-item>
 
             <el-form-item prop="type" label="群发类型">
-                <el-radio-group name="type" v-model="formData.type" size="medium">
-                    <el-radio label="text" >纯文字</el-radio>
-                    <el-radio label="image" >图片</el-radio>
-                    <el-radio label="news" >图文消息</el-radio>
+                <el-radio-group v-model="formData.type" size="medium">
+                    <el-radio label="text">纯文字</el-radio>
+                    <el-radio label="image">图片</el-radio>
+                    <el-radio label="news">图文消息</el-radio>
                 </el-radio-group>
             </el-form-item>
 
             <el-form-item class="is-required" v-if="formData.type=='text'" label="发送内容" prop="content">
                 <el-input type="textarea" v-model="formData.content"></el-input>
             </el-form-item>
+
+            <el-form-item prop="scope" label="发送范围">
+                <el-radio-group v-model="formData.scope" size="medium">
+                    <el-radio label="all">全部会员</el-radio>
+                    <el-radio label="some">部分会员</el-radio>
+                </el-radio-group>
+            </el-form-item>
+
+            <el-form-item class="is-required" v-if="formData.scope=='some'" label="选择会员" prop="receivers">
+                <el-button size="medium" @click="openSel">选择会员</el-button>
+                <el-input style="margin-top: 5px;" type="textarea" v-model="formData.receivers"></el-input>
+                <el-alert style="margin-top: 5px;"
+                          title="openid必须2个以上,1万个以内并且使用英文,符号分割"
+                          type="success">
+                </el-alert>
+            </el-form-item>
+
         </el-form>
         <span slot="footer" class="dialog-footer">
                     <el-button @click="sendDialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="doSend">回 复</el-button>
+                    <el-button type="primary" @click="doSend">发 送</el-button>
+                  </span>
+    </el-dialog>
+
+    <el-dialog
+            title="选择会员"
+            :visible.sync="selDialogVisible"
+            width="70%">
+        <el-table
+                :data="tableData2"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                :default-sort="{prop: 'subscribeAt', order: 'descending'}"
+                @selection-change="handleSelectionChange"
+        >
+
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+
+            <el-table-column label="会员openid" header-align="left" prop="openid" width="222">
+            </el-table-column>
+
+            <el-table-column label="昵称" header-align="left" prop="nickname"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <img v-if="scope.row.headimgurl!=''" :src="scope.row.headimgurl" width="30" height="30">
+                    <span>{{scope.row.nickname}}</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="性别" header-align="left" prop="sex"
+                             :show-overflow-tooltip="true" width="80">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.sex==1">男</span>
+                    <span v-if="scope.row.sex==2">女</span>
+                    <span v-if="scope.row.sex==0">未知</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="区域" header-align="left" prop="id"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    {{scope.row.country}} - {{scope.row.province}} - {{scope.row.city}}
+                </template>
+            </el-table-column>
+
+        </el-table>
+        <el-pagination
+                @size-change="pageSizeChange2"
+                @current-change="pageNumberChange2"
+                :current-page="pageForm2.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm2.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm2.totalCount">
+        </el-pagination>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="selDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doSel">确 定</el-button>
                   </span>
     </el-dialog>
 </div>
@@ -132,10 +211,17 @@ layout("/layouts/platform.html"){
             <!--#for(o in wxList){#-->
             wxConfigs.push({value: "${o.id!}", label: "${o.appname!}"});
             <!--#}#-->
-            var self=this;
-            var validateText=function (rule, value, callback) {
-                if (self.formData.type=="text"&&self.formData.content=="") {
+            var self = this;
+            var validateText = function (rule, value, callback) {
+                if (self.formData.type == "text" && self.formData.content == "") {
                     callback(new Error('请输入纯文本内容'));
+                } else {
+                    callback();
+                }
+            };
+            var validateSome = function (rule, value, callback) {
+                if (self.formData.scope == "some" && self.formData.receivers == "") {
+                    callback(new Error('请输入选择会员或输入会员openid'));
                 } else {
                     callback();
                 }
@@ -143,6 +229,7 @@ layout("/layouts/platform.html"){
             return {
                 wxConfigs: wxConfigs,
                 sendDialogVisible: false,
+                selDialogVisible: false,
                 pageForm: {
                     searchName: "",
                     searchKeyword: "",
@@ -153,7 +240,18 @@ layout("/layouts/platform.html"){
                     pageOrderBy: "descending",
                     wxid: "${wxConfig.id!}",
                 },
+                pageForm2: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending",
+                    wxid: "${wxConfig.id!}",
+                },
                 tableData: [],
+                tableData2: [],
                 formData: {},
                 formRules: {
                     name: [
@@ -163,7 +261,12 @@ layout("/layouts/platform.html"){
                         {required: false, message: '文本内容', trigger: 'blur'},
                         {validator: validateText, trigger: ['blur', 'change']}
                     ],
+                    receivers: [
+                        {required: false, message: '文本内容', trigger: 'blur'},
+                        {validator: validateSome, trigger: ['blur', 'change']}
+                    ],
                 },
+                selectData: []
             }
         },
         methods: {
@@ -200,6 +303,40 @@ layout("/layouts/platform.html"){
                 this.pageForm.pageNumber = 1;
                 this.pageData();
             },
+            pageOrder2: function (column) {//按字段排序
+                this.pageForm2.pageOrderName = column.prop;
+                this.pageForm2.pageOrderBy = column.order;
+                this.pageData2();
+            },
+            pageNumberChange2: function (val) {//页码更新操作
+                this.pageForm2.pageNumber = val;
+                this.pageData2();
+            },
+            pageSizeChange2: function (val) {//分页大小更新操作
+                this.pageForm2.pageSize = val;
+                this.pageData2();
+            },
+            pageData2: function () {//加载分页数据
+                var self = this;
+                $.post(base + "/platform/wx/user/data", self.pageForm2, function (data) {
+                    if (data.code == 0) {
+                        self.tableData2 = data.data.list;
+                        self.pageForm2.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            doSearch2: function () {
+                this.pageForm2.pageNumber = 1;
+                this.pageData2();
+            },
+            handleSelectionChange: function (val) {
+                this.multipleSelection = val;
+            },
             formatAt: function (val) {
                 if (val > 0)
                     return moment(val * 1000).format("YYYY-MM-DD HH:mm");
@@ -208,10 +345,27 @@ layout("/layouts/platform.html"){
             handleSelectionChange: function (val) {
                 this.selectData = val;
             },
+            openSel: function () {
+                this.selDialogVisible = true;
+                this.pageData2();
+            },
+            doSel: function () {
+                var self=this;
+                self.selDialogVisible = false;
+                var openids=[];
+                if(self.selectData&&self.selectData.length>0){
+                    this.selectData.forEach(function (o) {
+                        openids.push(o.openid);
+                    });
+                }
+                self.formData.receivers+=openids.toString();
+            },
             openSend: function (obj) {
                 this.formData = {
                     type: "text",
-                    content:""
+                    content: "",
+                    scope: "all",
+                    receivers: ""
                 };
                 if (this.$refs["dialogForm"])
                     this.$refs["dialogForm"].resetFields();
