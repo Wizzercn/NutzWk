@@ -152,6 +152,7 @@ layout("/layouts/platform.html"){
                         tabindex="5"
                         action="${base}/platform/wx/msg/mass/uploadImage/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"
                         name="Filedata"
+                        :before-upload="beforeImageUpload"
                         :show-file-list="false"
                         :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picurl')}">
                     <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
@@ -190,12 +191,21 @@ layout("/layouts/platform.html"){
             title="选择会员"
             :visible.sync="selDialogVisible"
             width="70%">
+        <div class="btn-group tool-button">
+            <el-input placeholder="请输入内容" v-model="pageForm2.searchKeyword" @keyup.enter.native="doSearch2">
+                <el-select v-model="pageForm2.searchName" slot="prepend" placeholder="查询类型" style="width: 120px;">
+                    <el-option label="昵称" value="nickname"></el-option>
+                    <el-option label="openid" value="openid"></el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="doSearch2"></el-button>
+            </el-input>
+        </div>
         <el-table
                 :data="tableData2"
                 @sort-change='pageOrder'
                 size="small"
                 header-align="center"
-                style="width: 100%"
+                style="width: 100%;padding-top: 5px;"
                 :default-sort="{prop: 'subscribeAt', order: 'descending'}"
                 @selection-change="handleSelectionChange"
         >
@@ -265,8 +275,10 @@ layout("/layouts/platform.html"){
                 }
             };
             var validateSome = function (rule, value, callback) {
-                if (self.formData.scope == "some" && self.formData.receivers == "") {
+                if (self.formData.scope == "some" && self.formData.receivers.length == 0) {
                     callback(new Error('请输入选择会员或输入会员openid'));
+                } else if (self.formData.scope == "some" && self.formData.receivers.length < 2) {
+                    callback(new Error('openid必须大于2个'));
                 } else {
                     callback();
                 }
@@ -286,12 +298,12 @@ layout("/layouts/platform.html"){
                     wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                 },
                 pageForm2: {
-                    searchName: "",
+                    searchName: "nickname",
                     searchKeyword: "",
                     pageNumber: 1,
                     pageSize: 10,
                     totalCount: 0,
-                    pageOrderName: "opAt",
+                    pageOrderName: "subscribeAt",
                     pageOrderBy: "descending",
                     wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                 },
@@ -394,6 +406,18 @@ layout("/layouts/platform.html"){
                     this.$set(this.formData, "media_id", "");
                 }
             },
+            beforeImageUpload:function(file) {
+                var isLt2M = file.size / 1024 / 1024 < 2;
+                if ("image/jpeg"!=file.type&&"image/png"!=file.type) {
+                    this.$message.error('上传图片只能是 JPG 或 PNG 格式');
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB');
+                    return false;
+                }
+                return true;
+            },
             formatAt: function (val) {
                 if (val > 0)
                     return moment(val * 1000).format("YYYY-MM-DD HH:mm");
@@ -407,23 +431,21 @@ layout("/layouts/platform.html"){
                 this.pageData2();
             },
             doSel: function () {
-                var self=this;
+                var self = this;
                 self.selDialogVisible = false;
-                var openids=[];
-                if(self.selectData&&self.selectData.length>0){
-                    this.selectData.forEach(function (o) {
-                        openids.push(o.openid);
+                if (self.selectData && self.selectData.length > 0) {
+                    self.selectData.forEach(function (o) {
+                        self.formData.receivers.push(o.openid);
                     });
                 }
-                self.formData.receivers+=openids.toString();
             },
             openSend: function (obj) {
                 this.formData = {
-                    wxid:"<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                     type: "text",
                     content: "",
                     scope: "all",
-                    receivers: ""
+                    receivers: []
                 };
                 if (this.$refs["dialogForm"])
                     this.$refs["dialogForm"].resetFields();
@@ -434,7 +456,7 @@ layout("/layouts/platform.html"){
                 var url = base + "/platform/wx/msg/mass/sendDo";
                 self.$refs["dialogForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
-                        self.formData.openids=JSON.stringify(self.formData.receivers);
+                        self.formData.receivers = self.formData.receivers.toString();
                         $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.sendDialogVisible = false;

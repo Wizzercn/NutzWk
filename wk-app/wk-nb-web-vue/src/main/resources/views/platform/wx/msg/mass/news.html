@@ -149,6 +149,7 @@ layout("/layouts/platform.html"){
                         action="${base}/platform/wx/msg/mass/uploadThumb/${wxid!}"
                         name="Filedata"
                         :show-file-list="false"
+                        :before-upload="beforeImageUpload"
                         :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picurl')}">
                     <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -296,6 +297,18 @@ layout("/layouts/platform.html"){
                     this.$set(this.formData, "picurl", "");
                     this.$set(this.formData, "thumb_media_id", "");
                 }
+            },
+            beforeImageUpload:function(file) {
+                var isLt2M = file.size / 1024 < 64;
+                if ("image/jpeg"!=file.type&&"image/png"!=file.type) {
+                    this.$message.error('缩略图只能是 JPG 或 PNG 格式');
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error('缩略图大小不能超过 64KB');
+                    return false;
+                }
+                return true;
             },
             openAdd: function (obj) {
                 var self = this;

@@ -239,12 +239,12 @@ public class WxMassController {
     @Ok("json")
     @RequiresPermissions("wx.msg.mass.pushNews")
     @SLog(tag = "群发消息", msg = "群发名称:${args[0].name}")
-    public Object sendDo(@Param("..") Wx_mass mass, @Param("content") String content, @Param("openids") String[] openids, HttpServletRequest req) {
+    public Object sendDo(@Param("..") Wx_mass mass, @Param("receivers") String openids, HttpServletRequest req) {
         try {
             WxApi2 wxApi2 = wxService.getWxApi2(mass.getWxid());
             WxOutMsg outMsg = new WxOutMsg();
             if ("news".equals(mass.getType())) {
-                String[] ids = StringUtils.split(content, ",");
+                String[] ids = StringUtils.split(openids, ",");
                 int i = 0;
                 for (String id : ids) {
                     wxMassNewsService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", id));
@@ -259,7 +259,7 @@ public class WxMassController {
                 outMsg.setMsgType("mpnews");
             }
             if ("text".equals(mass.getType())) {
-                outMsg.setContent(content);
+                outMsg.setContent(mass.getContent());
                 outMsg.setMsgType("text");
             }
             if ("image".equals(mass.getType())) {
@@ -270,7 +270,14 @@ public class WxMassController {
             if ("all".equals(mass.getScope())) {
                 resp = wxApi2.mass_sendall(true, null, outMsg);
             } else {
-                resp = wxApi2.mass_send(Arrays.asList(openids), outMsg);
+                String[] ids = StringUtils.split(openids, ",");
+                resp = wxApi2.mass_send(Arrays.asList(ids), outMsg);
+            }
+            log.debug(resp);
+            int status = resp.errcode() == 0 ? 1 : 2;
+            String errmsg = resp.getString("errmsg");
+            if (status != 1) {
+                return Result.error(errmsg);
             }
             mass.setStatus(resp.errcode() == 0 ? 1 : 2);
             Wx_mass wxMass = wxMassService.insert(mass);
@@ -280,10 +287,10 @@ public class WxMassController {
             send.setErrCode(String.valueOf(resp.errcode()));
             send.setMsgId(resp.getString("msg_id"));
             if (!"all".equals(mass.getScope())) {
-                send.setReceivers(content);
+                send.setReceivers(openids);
             }
-            send.setErrMsg(resp.getString("errmsg"));
-            send.setStatus(resp.errcode() == 0 ? 1 : 2);
+            send.setErrMsg(errmsg);
+            send.setStatus(status);
             wxMassSendService.insert(send);
             return Result.success();
         } catch (Exception e) {
