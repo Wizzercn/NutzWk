@@ -31,12 +31,17 @@ public class Wx_mass extends BaseModel implements Serializable {
     @Column
     @Comment("群发类型")
     @ColDefine(type = ColType.VARCHAR, width = 20)
-    private String type;
+    private String type;//text image news
 
     @Column
     @Comment("媒体文件ID")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String media_id;
+
+    @Column
+    @Comment("图片地址")//type=image
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String picurl;
 
     @Column
     @Comment("Scope")
@@ -91,6 +96,14 @@ public class Wx_mass extends BaseModel implements Serializable {
 
     public void setMedia_id(String media_id) {
         this.media_id = media_id;
+    }
+
+    public String getPicurl() {
+        return picurl;
+    }
+
+    public void setPicurl(String picurl) {
+        this.picurl = picurl;
     }
 
     public String getScope() {

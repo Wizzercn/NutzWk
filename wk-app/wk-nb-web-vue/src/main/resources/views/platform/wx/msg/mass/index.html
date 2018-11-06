@@ -1,6 +1,38 @@
 <!--#
 layout("/layouts/platform.html"){
 #-->
+<style>
+    .el-upload input[type=file] {
+        display: none;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        display: block;
+    }
+</style>
 <div id="app" v-cloak>
     <el-row class="header navbar bg-white shadow">
         <div class="btn-group tool-button mt5">
@@ -112,6 +144,19 @@ layout("/layouts/platform.html"){
                     <el-radio label="image">图片</el-radio>
                     <el-radio label="news">图文消息</el-radio>
                 </el-radio-group>
+            </el-form-item>
+
+            <el-form-item v-if="formData.type=='image'" prop="picurl" label="发送图片(2M以内)">
+                <el-upload
+                        class="avatar-uploader"
+                        tabindex="5"
+                        action="${base}/platform/wx/msg/mass/uploadImage/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"
+                        name="Filedata"
+                        :show-file-list="false"
+                        :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picurl')}">
+                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
             </el-form-item>
 
             <el-form-item class="is-required" v-if="formData.type=='text'" label="发送内容" prop="content">
@@ -238,7 +283,7 @@ layout("/layouts/platform.html"){
                     totalCount: 0,
                     pageOrderName: "opAt",
                     pageOrderBy: "descending",
-                    wxid: "${wxConfig.id!}",
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                 },
                 pageForm2: {
                     searchName: "",
@@ -248,7 +293,7 @@ layout("/layouts/platform.html"){
                     totalCount: 0,
                     pageOrderName: "opAt",
                     pageOrderBy: "descending",
-                    wxid: "${wxConfig.id!}",
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                 },
                 tableData: [],
                 tableData2: [],
@@ -337,6 +382,18 @@ layout("/layouts/platform.html"){
             handleSelectionChange: function (val) {
                 this.multipleSelection = val;
             },
+            handlePicSuccess: function (response, file, fileList, attrName) {
+                if (response.code == 0) {
+                    // 对象属性直接赋值不会触发试图更新，采用 Vue.set 、this.$set或者Object.assign({}，this.obj)创建新对象
+                    // 或者也可以定义一个 refresh 属性 ，当数据发生改变时，该属性同时变化，也会触发视图更新
+                    // this.formData.site_logo =response.data;
+                    this.$set(this.formData, "picurl", response.data.picurl);
+                    this.$set(this.formData, "media_id", response.data.id);
+                } else {
+                    this.$set(this.formData, "picurl", "");
+                    this.$set(this.formData, "media_id", "");
+                }
+            },
             formatAt: function (val) {
                 if (val > 0)
                     return moment(val * 1000).format("YYYY-MM-DD HH:mm");
@@ -362,6 +419,7 @@ layout("/layouts/platform.html"){
             },
             openSend: function (obj) {
                 this.formData = {
+                    wxid:"<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                     type: "text",
                     content: "",
                     scope: "all",
@@ -373,12 +431,13 @@ layout("/layouts/platform.html"){
             },
             doSend: function () {
                 var self = this;
-                var url = base + "/platform/wx/msg/user/replyDo/" + self.pageForm.wxid;
+                var url = base + "/platform/wx/msg/mass/sendDo";
                 self.$refs["dialogForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
+                        self.formData.openids=JSON.stringify(self.formData.receivers);
                         $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
-                                self.replyDialogVisible = false;
+                                self.sendDialogVisible = false;
                                 self.$message({
                                     message: data.msg,
                                     type: 'success'

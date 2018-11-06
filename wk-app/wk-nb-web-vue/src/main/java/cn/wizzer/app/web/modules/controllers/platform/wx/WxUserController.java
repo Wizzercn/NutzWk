@@ -10,6 +10,7 @@ import cn.wizzer.app.wx.modules.services.WxUserService;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.vdurmont.emoji.EmojiParser;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -61,7 +62,7 @@ public class WxUserController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("wx.user.list")
+    @RequiresAuthentication
     public Object data(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();

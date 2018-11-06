@@ -32,10 +32,10 @@ https://wizzer.cn/donation                捐赠者列表
 
 ## NutzWk 5.x 运行必备环境：
 
-*   JDK 8 171 + 
+*   JDK 8 181 + 或 OpenJDK 11 +
 *   Maven 3.5.3 +
 *   Redis 4.0.8 +
-*   MySql 5.7 +
+*   MySql 5.7 + 或 MariaDB 10.3.10 +
 *   Zookeeper 3.4.11 +
 
 ## NutzWk 5.x 技术选型：
@@ -45,7 +45,7 @@ https://wizzer.cn/donation                捐赠者列表
 *   安全框架：Shiro
 *   任务调度：Quartz
 *   数据库连接池：Druid 
-*   支持数据库：MySql、Oracle、SqlServer、达梦等
+*   支持数据库：MySql、MariaDB、Oracle、SqlServer、达梦等
 *   缓存框架：Redis、Ehcache、Wkcache
 *   订阅发布：Redis
 *   可扩展功能：WebSocket-Nutz、消息队列-Rabbitmq、搜索引擎-Elasticsearch、工作流-Activiti等

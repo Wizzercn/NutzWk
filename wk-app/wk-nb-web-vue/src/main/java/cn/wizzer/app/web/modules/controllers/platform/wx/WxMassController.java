@@ -189,6 +189,38 @@ public class WxMassController {
         }
     }
 
+    @AdaptBy(type = UploadAdaptor.class, args = {"ioc:imageUpload"})
+    @POST
+    @At("/uploadImage/?")
+    @Ok("json")
+    @RequiresPermissions("wx.msg.mass")
+    @SuppressWarnings("deprecation")
+    //AdaptorErrorContext必须是最后一个参数
+    public Object uploadImage(String wxid, @Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
+        try {
+            if (err != null && err.getAdaptorErr() != null) {
+                return NutMap.NEW().addv("code", 1).addv("msg", "文件不合法");
+            } else if (tf == null) {
+                return Result.error("空文件");
+            } else {
+                WxApi2 wxApi2 = wxService.getWxApi2(wxid);
+                WxResp resp = wxApi2.add_material("image", tf.getFile());
+                if (resp.errcode() != 0) {
+                    return Result.error(resp.errmsg());
+                }
+                String uri = "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
+                String f = Globals.AppUploadPath + uri;
+                Files.write(new File(f), tf.getInputStream());
+                return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("media_id"))
+                        .addv("picurl", Globals.AppUploadBase + uri));
+            }
+        } catch (Exception e) {
+            return Result.error("系统错误");
+        } catch (Throwable e) {
+            return Result.error("图片格式错误");
+        }
+    }
+
     @At("/send/?")
     @Ok("beetl:/platform/wx/msg/mass/send.html")
     @RequiresPermissions("wx.msg.mass")
@@ -207,7 +239,7 @@ public class WxMassController {
     @Ok("json")
     @RequiresPermissions("wx.msg.mass.pushNews")
     @SLog(tag = "群发消息", msg = "群发名称:${args[0].name}")
-    public Object sendDo(@Param("..") Wx_mass mass, @Param("content") String content, @Param("openids") String openids, HttpServletRequest req) {
+    public Object sendDo(@Param("..") Wx_mass mass, @Param("content") String content, @Param("openids") String[] openids, HttpServletRequest req) {
         try {
             WxApi2 wxApi2 = wxService.getWxApi2(mass.getWxid());
             WxOutMsg outMsg = new WxOutMsg();
@@ -230,12 +262,15 @@ public class WxMassController {
                 outMsg.setContent(content);
                 outMsg.setMsgType("text");
             }
+            if ("image".equals(mass.getType())) {
+                outMsg.setMedia_id(mass.getMedia_id());
+                outMsg.setMsgType("image");
+            }
             WxResp resp;
             if ("all".equals(mass.getScope())) {
                 resp = wxApi2.mass_sendall(true, null, outMsg);
             } else {
-                String[] ids = StringUtils.split(openids, ",");
-                resp = wxApi2.mass_send(Arrays.asList(ids), outMsg);
+                resp = wxApi2.mass_send(Arrays.asList(openids), outMsg);
             }
             mass.setStatus(resp.errcode() == 0 ? 1 : 2);
             Wx_mass wxMass = wxMassService.insert(mass);
