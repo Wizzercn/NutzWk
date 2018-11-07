@@ -95,7 +95,7 @@ layout("/layouts/platform.html"){
             </el-table-column>
 
             <el-table-column label="发送日志" header-align="left" prop="id"
-                             :show-overflow-tooltip="true" >
+                             :show-overflow-tooltip="true">
                 <template slot-scope="scope">
                     <span v-if="scope.row.massSend">{{scope.row.massSend.errMsg}}</span>
                 </template>
@@ -211,7 +211,7 @@ layout("/layouts/platform.html"){
         </el-form>
         <span slot="footer" class="dialog-footer">
                     <el-button @click="sendDialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="doSend">发 送</el-button>
+                    <el-button type="primary" @click="doSend" :disabled="sendBtnDisabled">发 送</el-button>
                   </span>
     </el-dialog>
 
@@ -374,6 +374,7 @@ layout("/layouts/platform.html"){
                 sendDialogVisible: false,
                 selDialogVisible: false,
                 newsDialogVisible: false,
+                sendBtnDisabled: false,
                 pageForm: {
                     searchName: "",
                     searchKeyword: "",
@@ -615,12 +616,13 @@ layout("/layouts/platform.html"){
                     content: "",
                     scope: "all",
                     receivers: [],
-                    picurl:"",
+                    picurl: "",
                     newsids: []
                 };
                 if (this.$refs["dialogForm"])
                     this.$refs["dialogForm"].resetFields();
                 this.sendDialogVisible = true;
+                this.sendBtnDisabled = false;
             },
             doSend: function () {
                 var self = this;
@@ -632,6 +634,7 @@ layout("/layouts/platform.html"){
                         });
                         self.formData.receivers = self.formData.receivers.toString();
                         self.formData.newsids = self.formData.newsids.toString();
+                        self.sendBtnDisabled = true;
                         $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.sendDialogVisible = false;
@@ -646,6 +649,7 @@ layout("/layouts/platform.html"){
                                     type: 'error'
                                 });
                             }
+                            self.sendBtnDisabled = false;
                         }, "json");
                     }
                 });
