@@ -239,12 +239,12 @@ public class WxMassController {
     @Ok("json")
     @RequiresPermissions("wx.msg.mass.pushNews")
     @SLog(tag = "群发消息", msg = "群发名称:${args[0].name}")
-    public Object sendDo(@Param("..") Wx_mass mass, @Param("receivers") String openids, HttpServletRequest req) {
+    public Object sendDo(@Param("..") Wx_mass mass, @Param("receivers") String openids, @Param("newsids") String newsids, HttpServletRequest req) {
         try {
             WxApi2 wxApi2 = wxService.getWxApi2(mass.getWxid());
             WxOutMsg outMsg = new WxOutMsg();
             if ("news".equals(mass.getType())) {
-                String[] ids = StringUtils.split(openids, ",");
+                String[] ids = StringUtils.split(newsids, ",");
                 int i = 0;
                 for (String id : ids) {
                     wxMassNewsService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", id));
@@ -253,6 +253,7 @@ public class WxMassController {
                 List<Wx_mass_news> newsList = wxMassNewsService.query(Cnd.where("id", "in", ids).asc("location"));
                 List<WxMassArticle> articles = Json.fromJsonAsList(WxMassArticle.class, Json.toJson(newsList));
                 WxResp resp = wxApi2.uploadnews(articles);
+                log.debug(resp);
                 String media_id = resp.media_id();
                 mass.setMedia_id(media_id);
                 outMsg.setMedia_id(media_id);

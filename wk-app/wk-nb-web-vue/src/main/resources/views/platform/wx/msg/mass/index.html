@@ -146,6 +146,19 @@ layout("/layouts/platform.html"){
                 </el-radio-group>
             </el-form-item>
 
+            <el-form-item class="is-required" v-if="formData.type=='news'" prop="newsids" label="图文消息">
+                <el-button size="mini" @click="openNews">选择图文</el-button>
+                <el-button size="mini" @click="clearNews">清除图文</el-button>
+                <el-tree style="padding-top: 10px;"
+                        :data="newsTreeData"
+                         :allow-drop="sortAllowDrop"
+                        node-key="id"
+                        default-expand-all
+                        draggable>
+                </el-tree>
+
+            </el-form-item>
+
             <el-form-item v-if="formData.type=='image'" prop="picurl" label="发送图片(2M以内)">
                 <el-upload
                         class="avatar-uploader"
@@ -172,7 +185,7 @@ layout("/layouts/platform.html"){
             </el-form-item>
 
             <el-form-item class="is-required" v-if="formData.scope=='some'" label="选择会员" prop="receivers">
-                <el-button size="medium" @click="openSel">选择会员</el-button>
+                <el-button size="mini" @click="openSel">选择会员</el-button>
                 <el-input style="margin-top: 5px;" type="textarea" v-model="formData.receivers"></el-input>
                 <el-alert style="margin-top: 5px;"
                           title="openid必须2个以上,1万个以内并且使用英文,符号分割"
@@ -202,7 +215,7 @@ layout("/layouts/platform.html"){
         </div>
         <el-table
                 :data="tableData2"
-                @sort-change='pageOrder'
+                @sort-change='pageOrder2'
                 size="small"
                 header-align="center"
                 style="width: 100%;padding-top: 5px;"
@@ -257,6 +270,50 @@ layout("/layouts/platform.html"){
                     <el-button type="primary" @click="doSel">确 定</el-button>
                   </span>
     </el-dialog>
+
+    <el-dialog
+            title="选择图文消息"
+            :visible.sync="newsDialogVisible"
+            width="50%">
+        <el-table
+                :data="tableData3"
+                @sort-change='pageOrder3'
+                size="small"
+                header-align="center"
+                style="width: 100%;padding-top: 5px;"
+                :default-sort="{prop: 'subscribeAt', order: 'descending'}"
+                @selection-change="handleSelectionChangeNews"
+        >
+
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+
+            <el-table-column label="标题" header-align="left" prop="title" :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column sortable label="添加时间" header-align="center" align="center" prop="opAt">
+                <template slot-scope="scope">
+                    {{formatAt(scope.row.opAt)}}
+                </template>
+            </el-table-column>
+
+        </el-table>
+        <el-pagination
+                @size-change="pageSizeChange3"
+                @current-change="pageNumberChange3"
+                :current-page="pageForm3.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm3.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm3.totalCount">
+        </el-pagination>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="newsDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doNews">确 定</el-button>
+                  </span>
+    </el-dialog>
 </div>
 <script>
     new Vue({
@@ -283,10 +340,18 @@ layout("/layouts/platform.html"){
                     callback();
                 }
             };
+            var validateNews = function (rule, value, callback) {
+                if (self.formData.type == "news" && self.newsTreeData.length == 0) {
+                    callback(new Error('请选择图文消息'));
+                } else {
+                    callback();
+                }
+            };
             return {
                 wxConfigs: wxConfigs,
                 sendDialogVisible: false,
                 selDialogVisible: false,
+                newsDialogVisible: false,
                 pageForm: {
                     searchName: "",
                     searchKeyword: "",
@@ -307,8 +372,19 @@ layout("/layouts/platform.html"){
                     pageOrderBy: "descending",
                     wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                 },
+                pageForm3: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending",
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                },
                 tableData: [],
                 tableData2: [],
+                tableData3: [],
                 formData: {},
                 formRules: {
                     name: [
@@ -322,8 +398,14 @@ layout("/layouts/platform.html"){
                         {required: false, message: '文本内容', trigger: 'blur'},
                         {validator: validateSome, trigger: ['blur', 'change']}
                     ],
+                    newsids: [
+                        {required: false, message: '图文消息', trigger: 'blur'},
+                        {validator: validateNews, trigger: ['blur', 'change']}
+                    ],
                 },
-                selectData: []
+                selectData: [],
+                selectNews: [],
+                newsTreeData:[]
             }
         },
         methods: {
@@ -391,8 +473,32 @@ layout("/layouts/platform.html"){
                 this.pageForm2.pageNumber = 1;
                 this.pageData2();
             },
-            handleSelectionChange: function (val) {
-                this.multipleSelection = val;
+            pageOrder3: function (column) {//按字段排序
+                this.pageForm3.pageOrderName = column.prop;
+                this.pageForm3.pageOrderBy = column.order;
+                this.pageData3();
+            },
+            pageNumberChange3: function (val) {//页码更新操作
+                this.pageForm3.pageNumber = val;
+                this.pageData3();
+            },
+            pageSizeChange3: function (val) {//分页大小更新操作
+                this.pageForm3.pageSize = val;
+                this.pageData3();
+            },
+            pageData3: function () {//加载分页数据
+                var self = this;
+                $.post(base + "/platform/wx/msg/mass/newsData/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->", self.pageForm3, function (data) {
+                    if (data.code == 0) {
+                        self.tableData3 = data.data.list;
+                        self.pageForm3.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
             },
             handlePicSuccess: function (response, file, fileList, attrName) {
                 if (response.code == 0) {
@@ -426,6 +532,15 @@ layout("/layouts/platform.html"){
             handleSelectionChange: function (val) {
                 this.selectData = val;
             },
+            handleSelectionChangeNews: function (val) {
+                this.selectNews = val;
+            },
+            //排序树控制不可跨级拖拽
+            sortAllowDrop: function (moveNode, inNode, type) {
+                if (moveNode.data.parentId == inNode.data.parentId) {
+                    return type == 'prev';
+                }
+            },
             openSel: function () {
                 this.selDialogVisible = true;
                 this.pageData2();
@@ -439,13 +554,32 @@ layout("/layouts/platform.html"){
                     });
                 }
             },
+            openNews:function(){
+                this.newsDialogVisible = true;
+                this.pageData3();
+            },
+            doNews:function(){
+                var self = this;
+                self.newsDialogVisible = false;
+                if (self.selectNews && self.selectNews.length > 0) {
+                    self.selectNews.forEach(function (o) {
+                        self.formData.newsids.push(o.id);
+                        self.newsTreeData.push({id:o.id,label:o.title});
+                    });
+                }
+            },
+            clearNews:function(){
+                var self = this;
+                self.newsTreeData=[];
+            },
             openSend: function (obj) {
                 this.formData = {
                     wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                     type: "text",
                     content: "",
                     scope: "all",
-                    receivers: []
+                    receivers: [],
+                    newsids:[]
                 };
                 if (this.$refs["dialogForm"])
                     this.$refs["dialogForm"].resetFields();
@@ -456,7 +590,11 @@ layout("/layouts/platform.html"){
                 var url = base + "/platform/wx/msg/mass/sendDo";
                 self.$refs["dialogForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
+                        self.newsTreeData.forEach(function (o) {
+                            self.formData.newsids.push(o.id);
+                        });
                         self.formData.receivers = self.formData.receivers.toString();
+                        self.formData.newsids = self.formData.newsids.toString();
                         $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.sendDialogVisible = false;
