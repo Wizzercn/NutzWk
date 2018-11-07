@@ -93,7 +93,7 @@ public class WxMassController {
         if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
             cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
         }
-        return Result.success().addData(wxMassService.listPage(pageNumber, pageSize, cnd));
+        return Result.success().addData(wxMassService.listPageLinks(pageNumber, pageSize, cnd,"massSend"));
     }
 
     @At("/news/?")
@@ -298,18 +298,5 @@ public class WxMassController {
             e.printStackTrace();
             return Result.error();
         }
-    }
-
-    @At("/sendDetail/?")
-    @Ok("beetl:/platform/wx/msg/mass/sendDetail.html")
-    @RequiresPermissions("wx.msg.mass")
-    public Object sendDetail(String id, HttpServletRequest req) {
-        Wx_mass mass = wxMassService.fetch(id);
-        if ("news".equals(mass.getType())) {
-            String[] ids = StringUtils.split(mass.getContent(), ",");
-            req.setAttribute("news", wxMassNewsService.query(Cnd.where("id", "in", ids).asc("location")));
-        }
-        req.setAttribute("send", wxMassSendService.fetch(Cnd.where("massId", "=", mass.getId())));
-        return mass;
     }
 }

@@ -4,6 +4,7 @@ import cn.wizzer.framework.base.model.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by wizzer on 2016/7/1.
@@ -65,6 +66,9 @@ public class Wx_mass extends BaseModel implements Serializable {
 
     @One(field = "wxid")
     private Wx_config wxConfig;
+
+    @One(field = "id",key = "massId")
+    private Wx_mass_send massSend;
 
     public String getId() {
         return id;
@@ -152,5 +156,13 @@ public class Wx_mass extends BaseModel implements Serializable {
 
     public void setWxConfig(Wx_config wxConfig) {
         this.wxConfig = wxConfig;
+    }
+
+    public Wx_mass_send getMassSend() {
+        return massSend;
+    }
+
+    public void setMassSend(Wx_mass_send massSend) {
+        this.massSend = massSend;
     }
 }

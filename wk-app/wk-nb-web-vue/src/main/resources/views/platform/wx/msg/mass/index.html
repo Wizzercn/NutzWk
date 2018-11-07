@@ -64,49 +64,45 @@ layout("/layouts/platform.html"){
                 style="width: 100%"
                 :default-sort="{prop: 'opAt', order: 'descending'}"
         >
+            <el-table-column label="群发名称" header-align="left" prop="name">
 
-            <el-table-column type="expand">
+            </el-table-column>
+
+            <el-table-column label="群发类型" header-align="left" prop="type" width="120">
                 <template slot-scope="scope">
-                    <el-form label-position="left" inline class="el-table-expand" size="mini">
-                        <el-form-item label="回复内容">
-                            <span v-if="scope.row.replyId && scope.row.replyId!=''">{{ scope.row.reply.content }}</span>
-                        </el-form-item>
-                        <el-form-item label="回复时间">
-                            <span v-if="scope.row.replyId && scope.row.replyId!=''">
-                                {{ formatAt(scope.row.reply.opAt) }}</span>
-                        </el-form-item>
-                    </el-form>
+                    <span v-if="scope.row.type=='image'">图片</span>
+                    <span v-if="scope.row.type=='news'">图文消息</span>
+                    <span v-if="scope.row.type=='text'">文本消息</span>
                 </template>
             </el-table-column>
 
-            <el-table-column label="昵称" header-align="left" prop="nickname"
-                             :show-overflow-tooltip="true" width="180">
-                <template slot-scope="scope">
-                    <img v-if="scope.row.headimgurl!=''" :src="scope.row.headimgurl" width="30" height="30">
-                    <span>{{scope.row.nickname}}</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column label="消息类型" header-align="left" prop="type" width="80">
-
-            </el-table-column>
-
-            <el-table-column label="消息内容" header-align="left" prop="content"
-                             :show-overflow-tooltip="true">
-            </el-table-column>
-
-
-            <el-table-column label="是否回复" header-align="left" prop="replyId"
+            <el-table-column label="发送范围" header-align="left" prop="id"
                              :show-overflow-tooltip="true" width="120">
                 <template slot-scope="scope">
-                    <span v-if="!scope.row.replyId || scope.row.replyId==''">未回复
-                     <el-button size="mini" round @click="openReply(scope.row)">回复</el-button>
-                    </span>
-                    <span v-if="scope.row.replyId && scope.row.replyId!=''">已回复</span>
+                    <span v-if="scope.row.scope=='some'">部分会员</span>
+                    <span v-if="scope.row.scope=='all'">全部会员</span>
                 </template>
             </el-table-column>
 
-            <el-table-column sortable label="接收时间" header-align="center" align="center" prop="opAt">
+            <el-table-column label="发送状态" header-align="left" prop="id"
+                             :show-overflow-tooltip="true" width="120">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.massSend">
+                         <span v-if="scope.row.massSend.status==1">成功</span>
+                         <span v-if="scope.row.massSend.status!=1">失败</span>
+                    </span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="发送日志" header-align="left" prop="id"
+                             :show-overflow-tooltip="true" >
+                <template slot-scope="scope">
+                    <span v-if="scope.row.massSend">{{scope.row.massSend.errMsg}}</span>
+                </template>
+            </el-table-column>
+
+
+            <el-table-column sortable label="群发时间" header-align="center" align="center" prop="opAt">
                 <template slot-scope="scope">
                     {{formatAt(scope.row.opAt)}}
                 </template>
@@ -138,7 +134,7 @@ layout("/layouts/platform.html"){
                           auto-complete="off" tabindex="1" type="text"></el-input>
             </el-form-item>
 
-            <el-form-item prop="type" label="群发类型">
+            <el-form-item class="is-required" prop="type" label="群发类型">
                 <el-radio-group v-model="formData.type" size="medium">
                     <el-radio label="text">纯文字</el-radio>
                     <el-radio label="image">图片</el-radio>
@@ -149,14 +145,33 @@ layout("/layouts/platform.html"){
             <el-form-item class="is-required" v-if="formData.type=='news'" prop="newsids" label="图文消息">
                 <el-button size="mini" @click="openNews">选择图文</el-button>
                 <el-button size="mini" @click="clearNews">清除图文</el-button>
-                <el-tree style="padding-top: 10px;"
-                        :data="newsTreeData"
-                         :allow-drop="sortAllowDrop"
-                        node-key="id"
-                        default-expand-all
-                        draggable>
-                </el-tree>
 
+                <el-tree style="padding-top: 8px;"
+                         :data="newsTreeData"
+                         :allow-drop="sortAllowDrop"
+                         node-key="id"
+                         default-expand-all
+                         :expand-on-click-node="false"
+                         draggable>
+                    <span class="custom-tree-node" slot-scope="{ node, data }">
+                        <span>{{ node.label }}</span>
+                        <span>
+                          <el-button
+                                  type="text"
+                                  size="mini"
+                                  @click="remove(node, data)">
+                            Delete
+                          </el-button>
+                        </span>
+                    </span>
+                </el-tree>
+                <el-alert
+                        v-if="newsTreeData.length>0"
+                        style="padding:10px;height: 22px;"
+                        title="已选图文可拖拽排序"
+                        type="success"
+                        :closable="false">
+                </el-alert>
             </el-form-item>
 
             <el-form-item v-if="formData.type=='image'" prop="picurl" label="发送图片(2M以内)">
@@ -177,7 +192,7 @@ layout("/layouts/platform.html"){
                 <el-input type="textarea" v-model="formData.content"></el-input>
             </el-form-item>
 
-            <el-form-item prop="scope" label="发送范围">
+            <el-form-item class="is-required" prop="scope" label="发送范围">
                 <el-radio-group v-model="formData.scope" size="medium">
                     <el-radio label="all">全部会员</el-radio>
                     <el-radio label="some">部分会员</el-radio>
@@ -347,6 +362,13 @@ layout("/layouts/platform.html"){
                     callback();
                 }
             };
+            var validatePic = function (rule, value, callback) {
+                if (self.formData.type == "image" && self.formData.picurl == "") {
+                    callback(new Error('请上传图片'));
+                } else {
+                    callback();
+                }
+            };
             return {
                 wxConfigs: wxConfigs,
                 sendDialogVisible: false,
@@ -402,10 +424,14 @@ layout("/layouts/platform.html"){
                         {required: false, message: '图文消息', trigger: 'blur'},
                         {validator: validateNews, trigger: ['blur', 'change']}
                     ],
+                    picurl: [
+                        {required: false, message: '图片', trigger: 'blur'},
+                        {validator: validatePic, trigger: ['blur', 'change']}
+                    ],
                 },
                 selectData: [],
                 selectNews: [],
-                newsTreeData:[]
+                newsTreeData: []
             }
         },
         methods: {
@@ -512,9 +538,9 @@ layout("/layouts/platform.html"){
                     this.$set(this.formData, "media_id", "");
                 }
             },
-            beforeImageUpload:function(file) {
+            beforeImageUpload: function (file) {
                 var isLt2M = file.size / 1024 / 1024 < 2;
-                if ("image/jpeg"!=file.type&&"image/png"!=file.type) {
+                if ("image/jpeg" != file.type && "image/png" != file.type) {
                     this.$message.error('上传图片只能是 JPG 或 PNG 格式');
                     return false;
                 }
@@ -554,23 +580,33 @@ layout("/layouts/platform.html"){
                     });
                 }
             },
-            openNews:function(){
+            openNews: function () {
                 this.newsDialogVisible = true;
                 this.pageData3();
             },
-            doNews:function(){
+            doNews: function () {
                 var self = this;
                 self.newsDialogVisible = false;
                 if (self.selectNews && self.selectNews.length > 0) {
                     self.selectNews.forEach(function (o) {
                         self.formData.newsids.push(o.id);
-                        self.newsTreeData.push({id:o.id,label:o.title});
+                        self.newsTreeData.push({id: o.id, label: o.title});
                     });
                 }
             },
-            clearNews:function(){
+            clearNews: function () {
                 var self = this;
-                self.newsTreeData=[];
+                self.newsTreeData = [];
+            },
+            remove: function (node, data) {
+                var self = this;
+                //注意:对数组对象进行深度复制,否则原始对象不能进行删除操作
+                var temp = JSON.parse(JSON.stringify(self.newsTreeData));
+                var index = temp.findIndex(function (o) {
+                    return o.id == data.id;
+                });
+                temp.splice(index, 1);
+                self.newsTreeData = temp;
             },
             openSend: function (obj) {
                 this.formData = {
@@ -579,7 +615,8 @@ layout("/layouts/platform.html"){
                     content: "",
                     scope: "all",
                     receivers: [],
-                    newsids:[]
+                    picurl:"",
+                    newsids: []
                 };
                 if (this.$refs["dialogForm"])
                     this.$refs["dialogForm"].resetFields();
