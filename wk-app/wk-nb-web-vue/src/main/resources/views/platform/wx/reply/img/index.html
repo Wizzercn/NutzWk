@@ -1,6 +1,38 @@
 <!--#
 layout("/layouts/platform.html"){
 #-->
+<style>
+    .el-upload input[type=file] {
+        display: none;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        display: block;
+    }
+</style>
 <div id="app" v-cloak>
     <el-row class="header navbar bg-white shadow">
         <div class="btn-group tool-button mt5">
@@ -17,7 +49,7 @@ layout("/layouts/platform.html"){
         <div class="btn-group tool-button mt5">
             <el-button size="medium" @click="openAdd">
                 <i class="ti-plus"></i>
-                新建文本
+                新建图片
             </el-button>
         </div>
         <div class="pull-right offscreen-right mt5">
@@ -42,11 +74,14 @@ layout("/layouts/platform.html"){
                     width="35">
             </el-table-column>
 
-            <el-table-column label="标题" header-align="left" prop="title"
+            <el-table-column label="图片" header-align="left" prop="picurl"
                              :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <img v-if="scope.row.picurl!=''" :src="scope.row.picurl" width="50" height="50">
+                </template>
             </el-table-column>
 
-            <el-table-column label="内容" header-align="left" prop="content"
+            <el-table-column label="MediaId" header-align="left" prop="mediaId"
                              :show-overflow-tooltip="true">
             </el-table-column>
 
@@ -65,7 +100,7 @@ layout("/layouts/platform.html"){
                                 修改
                             </el-dropdown-item>
                             <el-dropdown-item
-                                    :command="{type:'delete',id:scope.row.id,title:scope.row.title}">
+                                    :command="{type:'delete',id:scope.row.id,picurl:scope.row.picurl}">
                                 删除
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -87,17 +122,22 @@ layout("/layouts/platform.html"){
     </el-row>
 
     <el-dialog
-            title="新建文本"
+            title="新建图片"
             :visible.sync="addDialogVisible"
-            width="40%">
+            width="30%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
-            <el-form-item prop="title" label="标题">
-                <el-input maxlength="100" placeholder="标题"
-                          v-model="formData.title"
-                          auto-complete="off" tabindex="1" type="text"></el-input>
-            </el-form-item>
-            <el-form-item prop="content" label="内容">
-                <el-input type="textarea" v-model="formData.content" tabindex="2"></el-input>
+            <el-form-item prop="picurl" label="发送图片(2M以内)">
+                <el-upload
+                        class="avatar-uploader"
+                        tabindex="5"
+                        action="${base}/platform/wx/msg/mass/uploadImage/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"
+                        name="Filedata"
+                        :before-upload="beforeImageUpload"
+                        :show-file-list="false"
+                        :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picurl')}">
+                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -107,17 +147,22 @@ layout("/layouts/platform.html"){
     </el-dialog>
 
     <el-dialog
-            title="修改文本"
+            title="修改图片"
             :visible.sync="editDialogVisible"
             width="40%">
         <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
-            <el-form-item prop="title" label="标题">
-                <el-input maxlength="100" placeholder="标题"
-                          v-model="formData.title"
-                          auto-complete="off" tabindex="1" type="text"></el-input>
-            </el-form-item>
-            <el-form-item prop="content" label="内容">
-                <el-input type="textarea" v-model="formData.content" tabindex="2"></el-input>
+            <el-form-item prop="picurl" label="发送图片(2M以内)">
+                <el-upload
+                        class="avatar-uploader"
+                        tabindex="5"
+                        action="${base}/platform/wx/msg/mass/uploadImage/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"
+                        name="Filedata"
+                        :before-upload="beforeImageUpload"
+                        :show-file-list="false"
+                        :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picurl')}">
+                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -154,11 +199,8 @@ layout("/layouts/platform.html"){
                     id: "",
                 },
                 formRules: {
-                    title: [
-                        {required: true, message: '标题', trigger: 'blur'}
-                    ],
-                    content: [
-                        {required: true, message: '内容', trigger: 'blur'}
+                    picurl: [
+                        {required: true, message: '图片', trigger: 'blur'}
                     ]
                 },
             }
@@ -180,7 +222,7 @@ layout("/layouts/platform.html"){
             pageData: function () {//加载分页数据
                 var self = this;
                 sublime.showLoadingbar();//显示loading
-                $.post(base + "/platform/wx/reply/txt/data", self.pageForm, function (data) {
+                $.post(base + "/platform/wx/reply/img/data", self.pageForm, function (data) {
                     sublime.closeLoadingbar();//关闭loading
                     if (data.code == 0) {
                         self.tableData = data.data.list;
@@ -207,13 +249,14 @@ layout("/layouts/platform.html"){
                 self.formData = {
                     id: "",
                     wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                    mediaId:""
                 };//打开新增窗口,表单先清空
                 if (self.$refs["addForm"])
                     self.$refs["addForm"].resetFields();
             },
             doAdd: function () {
                 var self = this;
-                var url = base + "/platform/wx/reply/txt/addDo";
+                var url = base + "/platform/wx/reply/img/addDo";
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
                         $.post(url, self.formData, function (data) {
@@ -236,7 +279,7 @@ layout("/layouts/platform.html"){
             },
             doEdit: function () {
                 var self = this;
-                var url = base + "/platform/wx/reply/txt/editDo";
+                var url = base + "/platform/wx/reply/img/editDo";
                 self.$refs["editForm"].validate(function (valid) {
                     if (valid) {//表单验证通过
                         $.post(url, self.formData, function (data) {
@@ -276,7 +319,7 @@ layout("/layouts/platform.html"){
                     type: 'warning',
                     callback: function (a, b) {
                         if ("confirm" == a) {//确认后再执行
-                            $.post(base + "/platform/wx/reply/txt/delete", {ids: ids.toString()}, function (data) {
+                            $.post(base + "/platform/wx/reply/img/delete", {ids: ids.toString()}, function (data) {
                                 if (data.code == 0) {
                                     self.$message({
                                         message: data.msg,
@@ -297,7 +340,7 @@ layout("/layouts/platform.html"){
             dropdownCommand: function (command) {//监听下拉框事件
                 var self = this;
                 if ("edit" == command.type) {
-                    $.post(base + "/platform/wx/reply/txt/edit/" + command.id, {}, function (data) {
+                    $.post(base + "/platform/wx/reply/img/edit/" + command.id, {}, function (data) {
                         if (data.code == 0) {
                             self.formData = data.data;//加载后台表单数据
                             self.editDialogVisible = true;//打开编辑窗口
@@ -310,13 +353,13 @@ layout("/layouts/platform.html"){
                     }, "json");
                 }
                 if ("delete" == command.type) {
-                    self.$confirm('此操作将删除： ' + command.title, '提示', {
+                    self.$confirm('此操作将删除图片： ' + command.picurl, '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning',
                         callback: function (a, b) {
                             if ("confirm" == a) {//确认后再执行
-                                $.post(base + "/platform/wx/reply/txt/delete/" + command.id, {}, function (data) {
+                                $.post(base + "/platform/wx/reply/img/delete/" + command.id, {}, function (data) {
                                     if (data.code == 0) {
                                         self.$message({
                                             message: data.msg,
@@ -335,8 +378,32 @@ layout("/layouts/platform.html"){
                     });
                 }
             },
+            handlePicSuccess: function (response, file, fileList, attrName) {
+                if (response.code == 0) {
+                    // 对象属性直接赋值不会触发试图更新，采用 Vue.set 、this.$set或者Object.assign({}，this.obj)创建新对象
+                    // 或者也可以定义一个 refresh 属性 ，当数据发生改变时，该属性同时变化，也会触发视图更新
+                    // this.formData.site_logo =response.data;
+                    this.$set(this.formData, "picurl", response.data.picurl);
+                    this.$set(this.formData, "mediaId", response.data.id);
+                } else {
+                    this.$set(this.formData, "picurl", "");
+                    this.$set(this.formData, "mediaId", "");
+                }
+            },
+            beforeImageUpload: function (file) {
+                var isLt2M = file.size / 1024 / 1024 < 2;
+                if ("image/jpeg" != file.type && "image/png" != file.type) {
+                    this.$message.error('上传图片只能是 JPG 或 PNG 格式');
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB');
+                    return false;
+                }
+                return true;
+            },
             change: function (val) {
-                window.location.href = "${base}/platform/wx/reply/txt/" + val;
+                window.location.href = "${base}/platform/wx/reply/img/" + val;
             }
         },
         created: function () {

@@ -3,7 +3,9 @@ package cn.wizzer.app.web.modules.controllers.platform.wx;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
+import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_reply_txt;
+import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.app.wx.modules.services.WxReplyTxtService;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
@@ -20,6 +22,8 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * Created by Wizzer on 2016/7/5.
@@ -31,19 +35,24 @@ public class WxReplyTxtController {
     @Inject
     @Reference
     private WxReplyTxtService wxReplyTxtService;
+    @Inject
+    @Reference
+    private WxConfigService wxConfigService;
 
-    @At("")
+    @At({"/", "/?"})
     @Ok("beetl:/platform/wx/reply/txt/index.html")
     @RequiresPermissions("wx.reply")
-    public void index() {
-
-    }
-
-    @At
-    @Ok("beetl:/platform/wx/reply/txt/add.html")
-    @RequiresPermissions("wx.reply")
-    public void add() {
-
+    public void index(String wxid, HttpServletRequest req, HttpSession session) {
+        Wx_config wxConfig = null;
+        List<Wx_config> list = wxConfigService.query(Cnd.NEW());
+        if (list.size() > 0 && Strings.isBlank(wxid)) {
+            wxConfig = list.get(0);
+        }
+        if (Strings.isNotBlank(wxid)) {
+            wxConfig = wxConfigService.fetch(wxid);
+        }
+        req.setAttribute("wxConfig", wxConfig);
+        req.setAttribute("wxList", list);
     }
 
     @At
@@ -114,8 +123,11 @@ public class WxReplyTxtController {
     @At
     @Ok("json:full")
     @RequiresPermissions("wx.reply")
-    public Object data(@Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+    public Object data(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
+        if (Strings.isNotBlank(wxid)) {
+            cnd.and("wxid", "=", wxid);
+        }
         if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
             cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
         }

@@ -25,6 +25,11 @@ public class Wx_reply_news extends BaseModel implements Serializable {
     private String sys_unit_id;
 
     @Column
+    @Comment("微信ID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String wxid;
+
+    @Column
     @Comment("标题")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String title;
@@ -106,5 +111,13 @@ public class Wx_reply_news extends BaseModel implements Serializable {
 
     public void setSys_unit_id(String sys_unit_id) {
         this.sys_unit_id = sys_unit_id;
+    }
+
+    public String getWxid() {
+        return wxid;
+    }
+
+    public void setWxid(String wxid) {
+        this.wxid = wxid;
     }
 }
