@@ -33,7 +33,15 @@ insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, i
 /* insertSysMenu16 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('7c040dfd8db347e5956a3bc1764653dc','234f8ec3c2bc42bf9f6202aecae36fd6','0002000300010003','删除文本','Delete','data','','','','0','0','wx.reply.txt.delete',NULL,'0','0','','1467473540','0')
 /* insertSysMenu17 */
-insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('17e1ee23ca1443f1bc886c2f5eb7c24b','4cd8e4e9519e4cff95465194fdcc8d88','000200030002','图文内容','News','menu','/platform/wx/reply/news','data-pjax','','1','0','wx.reply.news',NULL,'8','0','','1467471926','0')
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('234f8ec3c2bc42bf9f6202aecae36f99','4cd8e4e9519e4cff95465194fdcc8d88','000200030005','图片内容','Img','menu','/platform/wx/reply/img','data-pjax','','1','0','wx.reply.img',NULL,'8','0','','1467471884','0')
+/* insertSysMenu171 */
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('c3a44b478d3241b899b9c3f4611bc216','234f8ec3c2bc42bf9f6202aecae36f99','0002000300050001','添加图片','Add','data','','','','0','0','wx.reply.img.add',NULL,'0','0','','1467473460','0')
+/* insertSysMenu172 */
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('fd63a8e389e04ff3a86c3cea53a3b925','234f8ec3c2bc42bf9f6202aecae36f99','0002000300050002','修改图片','Edit','data','','','','0','0','wx.reply.img.edit',NULL,'0','0','','1467473519','0')
+/* insertSysMenu173 */
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('7c040dfd8db347e5956a3bc17646533c','234f8ec3c2bc42bf9f6202aecae36f99','0002000300050003','删除图片','Delete','data','','','','0','0','wx.reply.img.delete',NULL,'0','0','','1467473540','0')
+/* insertSysMenu17 */
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('17e1ee23ca1443f1bc886c2f5eb7c24b','4cd8e4e9519e4cff95465194fdcc8d88','000200030002','图文内容','News','menu','/platform/wx/reply/news','data-pjax','','1','0','wx.reply.news',NULL,'9','0','','1467471926','0')
 /* insertSysMenu18 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('2275cb125710414e91b617dd7c62f12c','17e1ee23ca1443f1bc886c2f5eb7c24b','0002000300020001','添加图文','add','data','','','','0','0','wx.reply.news.add',NULL,'0','0','','1467473585','0')
 /* insertSysMenu19 */
@@ -41,7 +49,7 @@ insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, i
 /* insertSysMenu20 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('fc52d5284b8f4522802383c1ef732242','17e1ee23ca1443f1bc886c2f5eb7c24b','0002000300020003','删除图文','Delete','data','','','','0','0','wx.reply.news.delete',NULL,'0','0','','1467473606','0')
 /* insertSysMenu21 */
-insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('2cb327ad59b140828fd26eb2a46cb948','4cd8e4e9519e4cff95465194fdcc8d88','000200030003','关注自动回复','Follow','menu','/platform/wx/reply/conf/follow','data-pjax','','1','0','wx.reply.follow',NULL,'9','0','','1467472280','0')
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('2cb327ad59b140828fd26eb2a46cb948','4cd8e4e9519e4cff95465194fdcc8d88','000200030003','关注自动回复','Follow','menu','/platform/wx/reply/conf/follow','data-pjax','','1','0','wx.reply.follow',NULL,'10','0','','1467472280','0')
 /* insertSysMenu22 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('dd965b2c1dfd493fb5efc7e4bcac99d4','2cb327ad59b140828fd26eb2a46cb948','0002000300030001','添加绑定','Add','data','','','','0','0','wx.reply.follow.add',NULL,'0','0','','1467474026','0')
 /* insertSysMenu23 */
@@ -49,7 +57,7 @@ insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, i
 /* insertSysMenu24 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('2a63040409094f1e9dc535dd78ce15b7','2cb327ad59b140828fd26eb2a46cb948','0002000300030003','删除绑定','Delete','data','','','','0','0','wx.reply.follow.delete',NULL,'0','0','','1467474080','0')
 /* insertSysMenu25 */
-insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('0706112ff5dc46e388064a99bcdb0561','4cd8e4e9519e4cff95465194fdcc8d88','000200030004','关键词回复','Keyword','menu','/platform/wx/reply/conf/keyword','data-pjax','','1','0','wx.reply.keyword',NULL,'10','0','','1467472362','0')
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('0706112ff5dc46e388064a99bcdb0561','4cd8e4e9519e4cff95465194fdcc8d88','000200030004','关键词回复','Keyword','menu','/platform/wx/reply/conf/keyword','data-pjax','','1','0','wx.reply.keyword',NULL,'11','0','','1467472362','0')
 /* insertSysMenu26 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('e864c78aba63448892cbcb6a3a7f4da7','0706112ff5dc46e388064a99bcdb0561','0002000300040001','添加绑定','Add','data','','','','0','0','wx.reply.keyword.add',NULL,'0','0','','1467474113','0')
 /* insertSysMenu27 */
@@ -57,9 +65,9 @@ insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, i
 /* insertSysMenu28 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('733d3f35d49f45af99ca9220048583ba','0706112ff5dc46e388064a99bcdb0561','0002000300040003','删除绑定','Delete','data','','','','0','0','wx.reply.keyword.delete',NULL,'0','0','','1467474136','0')
 /* insertSysMenu29 */
-insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('bcf64d623fdd4519ae345b7a08c071a1','b0edc6861a494b79b97990dc05f0a524','00020004','微信配置','Config','menu','','','fa fa-weixin','1','0','wx.conf',NULL,'11','1','','1467472498','0')
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('bcf64d623fdd4519ae345b7a08c071a1','b0edc6861a494b79b97990dc05f0a524','00020004','微信配置','Config','menu','','','fa fa-weixin','1','0','wx.conf',NULL,'12','1','','1467472498','0')
 /* insertSysMenu30 */
-insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('66cc21d7ce104dd6877cbce114c59fb3','bcf64d623fdd4519ae345b7a08c071a1','000200040001','帐号配置','Account','menu','/platform/wx/conf/account','data-pjax','','1','0','wx.conf.account',NULL,'12','0','','1467472624','0')
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('66cc21d7ce104dd6877cbce114c59fb3','bcf64d623fdd4519ae345b7a08c071a1','000200040001','帐号配置','Account','menu','/platform/wx/conf/account','data-pjax','','1','0','wx.conf.account',NULL,'13','0','','1467472624','0')
 /* insertSysMenu31 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('309dc29ad3c34408a68df8f867a5c9ff','66cc21d7ce104dd6877cbce114c59fb3','0002000400010001','添加帐号','Add','data','','','','0','0','wx.conf.account.add',NULL,'0','0','','1467474187','0')
 /* insertSysMenu32 */
@@ -67,7 +75,7 @@ insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, i
 /* insertSysMenu33 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('d568f4c2b687404e8aec7b9edcae5767','66cc21d7ce104dd6877cbce114c59fb3','0002000400010003','删除帐号','Delete','data','','','','0','0','wx.conf.account.delete',NULL,'0','0','','1467474209','0')
 /* insertSysMenu34 */
-insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('2fab774f8b6d40cb9d7e187babab2d91','bcf64d623fdd4519ae345b7a08c071a1','000200040002','菜单配置','Menu','menu','/platform/wx/conf/menu','data-pjax','','1','0','wx.conf.menu',NULL,'13','0','','1467472649','0')
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('2fab774f8b6d40cb9d7e187babab2d91','bcf64d623fdd4519ae345b7a08c071a1','000200040002','菜单配置','Menu','menu','/platform/wx/conf/menu','data-pjax','','1','0','wx.conf.menu',NULL,'14','0','','1467472649','0')
 /* insertSysMenu35 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, isShow, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('45d958ca78304f25b51f6c71cf66f6d8','2fab774f8b6d40cb9d7e187babab2d91','0002000400020001','添加菜单','Add','data','','','','0','0','wx.conf.menu.add',NULL,'0','0','','1467474283','0')
 /* insertSysMenu36 */

@@ -1,24 +1,25 @@
 package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_reply_txt;
 import cn.wizzer.app.wx.modules.services.WxReplyTxtService;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * Created by Wizzer on 2016/7/5.
@@ -53,17 +54,21 @@ public class WxReplyTxtController {
         try {
             txt.setOpBy(StringUtil.getPlatformUid());
             wxReplyTxtService.insert(txt);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
     @At("/edit/?")
-    @Ok("beetl:/platform/wx/reply/txt/edit.html")
+    @Ok("json")
     @RequiresPermissions("wx.reply")
     public Object edit(String id) {
-        return wxReplyTxtService.fetch(id);
+        try {
+            return Result.success().addData(wxReplyTxtService.fetch(id));
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
     @At
@@ -73,9 +78,9 @@ public class WxReplyTxtController {
     public Object editDo(@Param("..") Wx_reply_txt txt, HttpServletRequest req) {
         try {
             wxReplyTxtService.updateIgnoreNull(txt);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -87,9 +92,9 @@ public class WxReplyTxtController {
         try {
             req.setAttribute("title", wxReplyTxtService.fetch(id).getTitle());
             wxReplyTxtService.delete(id);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -97,20 +102,23 @@ public class WxReplyTxtController {
     @Ok("json")
     @RequiresPermissions("wx.reply.txt.delete")
     @SLog(tag = "删除回复文本", msg = "ID:${args[0]}")
-    public Object deletes(@Param("ids") String id, HttpServletRequest req) {
+    public Object deletes(@Param("ids") String ids, HttpServletRequest req) {
         try {
-            wxReplyTxtService.delete(StringUtils.split(id, ","));
-            return Result.success("system.success");
+            wxReplyTxtService.delete(StringUtils.split(ids, ","));
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
     @At
     @Ok("json:full")
     @RequiresPermissions("wx.reply")
-    public Object data(@Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+    public Object data(@Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
-        return wxReplyTxtService.data(length, start, draw, order, columns, cnd, null);
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        }
+        return Result.success().addData(wxReplyTxtService.listPage(pageNumber, pageSize, cnd));
     }
 }
