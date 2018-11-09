@@ -5,7 +5,6 @@ import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_reply;
-import cn.wizzer.app.wx.modules.models.Wx_reply_news;
 import cn.wizzer.app.wx.modules.services.*;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
@@ -48,7 +47,7 @@ public class WxReplyController {
     @Reference
     private WxConfigService wxConfigService;
 
-    @At({"/?","/?/index/?"})
+    @At({"/?", "/?/index/?"})
     @Ok("beetl:/platform/wx/reply/conf/index.html")
     @RequiresPermissions("wx.reply")
     public void index(String type, String wxid, HttpServletRequest req) {
@@ -63,16 +62,6 @@ public class WxReplyController {
         req.setAttribute("wxConfig", wxConfig);
         req.setAttribute("wxList", list);
         req.setAttribute("type", type);
-    }
-
-    @At("/?/add")
-    @Ok("beetl:/platform/wx/reply/conf/add.html")
-    @RequiresPermissions("wx.reply")
-    public void add(String type, @Param("wxid") String wxid, HttpServletRequest req) {
-        req.setAttribute("config", wxConfigService.fetch(wxid));
-        req.setAttribute("type", type);
-        req.setAttribute("wxid", wxid);
-
     }
 
     @At("/?/addDo")
@@ -95,14 +84,6 @@ public class WxReplyController {
             }
             reply.setOpBy(StringUtil.getPlatformUid());
             wxReplyService.insert(reply);
-            if ("news".equals(reply.getMsgType())) {
-                String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
-                int i = 0;
-                for (String id : newsIds) {
-                    wxReplyNewsService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", id));
-                    i++;
-                }
-            }
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -117,9 +98,9 @@ public class WxReplyController {
         if ("txt".equals(reply.getMsgType())) {
             req.setAttribute("txt", wxReplyTxtService.fetch(reply.getContent()));
         } else if ("news".equals(reply.getMsgType())) {
-            String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
-            List<Wx_reply_news> newsList = wxReplyNewsService.query(Cnd.where("id", "in", newsIds).asc("location"));
-            req.setAttribute("news", newsList);
+            req.setAttribute("txt", wxReplyTxtService.fetch(reply.getContent()));
+        } else if ("image".equals(reply.getMsgType())) {
+            req.setAttribute("image", wxReplyImgService.fetch(reply.getContent()));
         }
         req.setAttribute("type", reply.getType());
         req.setAttribute("wxid", reply.getWxid());
@@ -210,16 +191,16 @@ public class WxReplyController {
     @At("/?/selectData")
     @Ok("json:full")
     @RequiresPermissions("wx.reply")
-    public Object selectData(String type, @Param("wxid") String wxid, @Param("msgType") String msgType, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+    public Object selectData(String type, @Param("wxid") String wxid, @Param("msgType") String msgType) {
         try {
-            Cnd cnd = Cnd.NEW();
             if ("txt".equals(msgType)) {
-                return Result.success().addData(wxReplyTxtService.listPage(pageNumber, pageSize, cnd));
+                return Result.success().addData(wxReplyTxtService.query(Cnd.orderBy().desc("opAt")));
             } else if ("image".equals(msgType)) {
-                return Result.success().addData(wxReplyImgService.listPage(pageNumber, pageSize, cnd));
-            } else {
-                return Result.success().addData(wxReplyNewsService.listPage(pageNumber, pageSize, cnd));
+                return Result.success().addData(wxReplyImgService.query(Cnd.orderBy().desc("opAt")));
+            } else if ("news".equals(msgType)) {
+                return Result.success().addData(wxReplyNewsService.query(Cnd.orderBy().desc("opAt")));
             }
+            return Result.error();
         } catch (Exception e) {
             return Result.error();
         }

@@ -4,7 +4,6 @@ import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.utils.DateUtil;
 import cn.wizzer.app.web.commons.utils.ShiroUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
-import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionInfo;

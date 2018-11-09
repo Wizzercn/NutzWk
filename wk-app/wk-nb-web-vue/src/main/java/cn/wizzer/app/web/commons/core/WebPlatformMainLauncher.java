@@ -14,6 +14,7 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.*;
 
 /**
@@ -51,7 +52,7 @@ public class WebPlatformMainLauncher {
     }
 
     public void init() {
-
+        Mvcs.X_POWERED_BY="nutzwk 5.1.x <wizzer.cn>";
     }
 
     public void depose() {

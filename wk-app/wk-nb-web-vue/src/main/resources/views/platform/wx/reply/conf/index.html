@@ -106,7 +106,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="添加绑定"
             :visible.sync="addDialogVisible"
-            width="40%">
+            width="50%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="type" label="绑定事件">
                 <span v-if="formData.type=='follow'">关注触发</span>
@@ -118,14 +118,44 @@ layout("/layouts/platform.html"){
                           auto-complete="off" tabindex="1" type="text"></el-input>
             </el-form-item>
             <el-form-item class="is-required" prop="scope" label="绑定类型">
-                <el-radio-group v-model="formData.msgType" size="medium">
+                <el-radio-group @change="msgTypeChange" v-model="formData.msgType" size="medium">
                     <el-radio label="txt">文本</el-radio>
-                    <el-radio label="image">图片</el-radio>
                     <el-radio label="news">图文</el-radio>
+                    <el-radio label="image">图片</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item prop="content" label="内容">
-                <el-input type="textarea" v-model="formData.content" tabindex="2"></el-input>
+            <el-form-item v-if="formData.msgType=='txt'" class="is-required" label="绑定文本" prop="content">
+                <el-select v-model="formData.content" placeholder="请选择文本">
+                    <el-option
+                            v-for="item in txtList"
+                            :key="item.id"
+                            :label="item.title"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item v-if="formData.msgType=='news'" class="is-required" label="绑定图文" prop="content">
+                <el-select v-model="formData.content" placeholder="请选择图文">
+                    <el-option
+                            v-for="item in newsList"
+                            :key="item.id"
+                            :label="item.title"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item v-if="formData.msgType=='image'" class="is-required" label="绑定图片" prop="content">
+                <el-col :span="6" v-for="(o, index) in imageList" :key="o" :offset="index > 0 ? 3 : 0">
+                    <el-card style="width: 120px;height: 120px;">
+                        <img :src="base+o.picurl" style="height: 60px;"/>
+                        <div style="padding: 3px;">
+                            <span v-if="formData.content==o.id" style="font-size: 12px;color: red;">已选择</span>
+                            <div class="bottom clearfix">
+                                <el-button type="text" class="button" @click="imgClassSel(o.id)">选择</el-button>
+                            </div>
+                        </div>
+                    </el-card>
+                </el-col>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -135,9 +165,9 @@ layout("/layouts/platform.html"){
     </el-dialog>
 
     <el-dialog
-            title="修改文本"
+            title="修改绑定"
             :visible.sync="editDialogVisible"
-            width="40%">
+            width="50%">
         <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="title" label="标题">
                 <el-input maxlength="100" placeholder="标题"
@@ -175,6 +205,9 @@ layout("/layouts/platform.html"){
                 addDialogVisible: false,
                 editDialogVisible: false,
                 selectData: [],
+                txtList: [],
+                newsList: [],
+                imageList: [],
                 pageForm: {
                     wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                     searchName: "",
@@ -191,8 +224,11 @@ layout("/layouts/platform.html"){
                 },
                 formRules: {
                     keyword: [
-                        {required: false, message: '内容', trigger: 'blur'},
+                        {required: false, message: '关键词', trigger: 'blur'},
                         {validator: validateKeyword, trigger: ['blur', 'change']}
+                    ],
+                    content: [
+                        {required: true, message: '请选择发送内容', trigger: 'blur'}
                     ]
                 },
             }
@@ -243,10 +279,12 @@ layout("/layouts/platform.html"){
                     wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                     type: "${type!}",
                     msgType: "txt",
-                    keyword:""
+                    keyword: "",
+                    content:""
                 };//打开新增窗口,表单先清空
                 if (self.$refs["addForm"])
                     self.$refs["addForm"].resetFields();
+                self.msgTypeChange("txt");
             },
             doAdd: function () {
                 var self = this;
@@ -371,6 +409,44 @@ layout("/layouts/platform.html"){
                         }
                     });
                 }
+            },
+            msgTypeChange: function (val) {
+                var self = this;
+                self.formData.content = "";
+                if (val == "txt") {
+                    $.post(base + "/platform/wx/reply/conf/${type!}/selectData", {
+                        wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                        msgType: val
+                    }, function (data) {
+                        if (data.code == 0) {
+                            self.txtList = data.data;
+                        }
+                    }, "json");
+                }
+                if (val == "image") {
+                    $.post(base + "/platform/wx/reply/conf/${type!}/selectData", {
+                        wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                        msgType: val
+                    }, function (data) {
+                        if (data.code == 0) {
+                            self.imageList = data.data;
+                        }
+                    }, "json");
+                }
+                if (val == "news") {
+                    $.post(base + "/platform/wx/reply/conf/${type!}/selectData", {
+                        wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                        msgType: val
+                    }, function (data) {
+                        if (data.code == 0) {
+                            self.newsList = data.data;
+                        }
+                    }, "json");
+                }
+            },
+            imgClassSel: function (val) {
+                this.formData.content = val;
+                console.log(this.formData.content)
             },
             change: function (val) {
                 window.location.href = "${base}/platform/wx/reply/conf/${type!}/index/" + val;

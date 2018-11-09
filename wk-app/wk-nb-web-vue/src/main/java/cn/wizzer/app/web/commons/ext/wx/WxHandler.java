@@ -4,6 +4,7 @@ import cn.wizzer.app.wx.modules.models.*;
 import cn.wizzer.app.wx.modules.services.*;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.vdurmont.emoji.EmojiParser;
+import org.apache.commons.lang3.StringUtils;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -54,16 +55,19 @@ public class WxHandler extends AbstractWxHandler {
     private WxReplyTxtService wxReplyTxtService;
     @Inject
     @Reference
+    private WxReplyImgService wxReplyImgService;
+    @Inject
+    @Reference
     private WxMsgService wxMsgService;
     @Inject
     private WxService wxService;
 
     public boolean check(String signature, String timestamp, String nonce, String key) {
         Wx_config appInfo = wxConfigService.fetch(Cnd.where("id", "=", key));
-        if(appInfo!=null){
-            this.token=appInfo.getToken();
-            this.aeskey=appInfo.getEncodingAESKey();
-            this.appid=appInfo.getAppid();
+        if (appInfo != null) {
+            this.token = appInfo.getToken();
+            this.aeskey = appInfo.getEncodingAESKey();
+            this.appid = appInfo.getAppid();
             return Wxs.check(appInfo.getToken(), signature, timestamp, nonce);
         }
         return false;
@@ -90,8 +94,12 @@ public class WxHandler extends AbstractWxHandler {
                 String txtId = reply.getContent();
                 Wx_reply_txt txt = wxReplyTxtService.fetch(txtId);
                 return Wxs.respText(null, txt == null ? "" : txt.getContent());
+            } else if ("image".equals(reply.getMsgType())) {
+                String imgId = reply.getContent();
+                Wx_reply_img img = wxReplyImgService.fetch(imgId);
+                return Wxs.respImage(null, img.getMediaId());
             } else if ("news".equals(reply.getMsgType())) {
-                String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
+                String[] newsIds = StringUtils.split(Strings.sNull(reply.getContent()), ",");
                 List<WxArticle> list = new ArrayList<>();
                 List<Wx_reply_news> newsList = wxReplyNewsService.query(Cnd.where("id", "in", newsIds).asc("location"));
                 for (Wx_reply_news news : newsList) {
@@ -120,7 +128,7 @@ public class WxHandler extends AbstractWxHandler {
     public WxOutMsg eventClick(WxInMsg msg) {
         String eventKey = msg.getEventKey();
         log.debug("eventKey: " + eventKey);
-        Wx_reply reply=wxReplyService.fetch(Cnd.where("type","=","keyword").and("wxid","=",msg.getExtkey()).and("keyword","=",eventKey));
+        Wx_reply reply = wxReplyService.fetch(Cnd.where("type", "=", "keyword").and("wxid", "=", msg.getExtkey()).and("keyword", "=", eventKey));
         if (reply != null) {
             if ("txt".equals(reply.getMsgType())) {
                 String txtId = reply.getContent();
