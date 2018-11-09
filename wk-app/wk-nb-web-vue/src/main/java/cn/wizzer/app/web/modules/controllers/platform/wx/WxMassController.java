@@ -90,6 +90,9 @@ public class WxMassController {
         if (Strings.isNotBlank(wxid)) {
             cnd.and("wxid", "=", wxid);
         }
+        if (!Strings.isBlank(searchName) && !Strings.isBlank(searchKeyword)) {
+            cnd.and(searchName, "like", "%" + searchKeyword + "%");
+        }
         if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
             cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
         }
@@ -111,6 +114,9 @@ public class WxMassController {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
             cnd.and("wxid", "=", wxid);
+        }
+        if (!Strings.isBlank(searchName) && !Strings.isBlank(searchKeyword)) {
+            cnd.and(searchName, "like", "%" + searchKeyword + "%");
         }
         return Result.success().addData(wxMassNewsService.listPage(pageNumber, pageSize, cnd));
     }

@@ -39,7 +39,7 @@ public class WxReplyTxtController {
     @Reference
     private WxConfigService wxConfigService;
 
-    @At({"/", "/?"})
+    @At({"/", "/index/?"})
     @Ok("beetl:/platform/wx/reply/txt/index.html")
     @RequiresPermissions("wx.reply")
     public void index(String wxid, HttpServletRequest req, HttpSession session) {

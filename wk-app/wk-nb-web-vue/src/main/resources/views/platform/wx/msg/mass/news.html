@@ -294,6 +294,10 @@ layout("/layouts/platform.html"){
                     this.$set(this.formData, "picurl", response.data.picurl);
                     this.$set(this.formData, "thumb_media_id", response.data.id);
                 } else {
+                    this.$message({
+                        message: response.msg,
+                        type: 'error'
+                    });
                     this.$set(this.formData, "picurl", "");
                     this.$set(this.formData, "thumb_media_id", "");
                 }

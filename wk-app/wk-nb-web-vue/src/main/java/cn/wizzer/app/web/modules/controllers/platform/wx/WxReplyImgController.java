@@ -31,7 +31,6 @@ import org.nutz.weixin.spi.WxApi2;
 import org.nutz.weixin.spi.WxResp;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -52,10 +51,10 @@ public class WxReplyImgController {
     @Inject
     private WxService wxService;
 
-    @At({"/", "/?"})
+    @At({"/", "/index/?"})
     @Ok("beetl:/platform/wx/reply/img/index.html")
     @RequiresPermissions("wx.reply")
-    public void index(String wxid, HttpServletRequest req, HttpSession session) {
+    public void index(String wxid, HttpServletRequest req) {
         Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
