@@ -176,7 +176,7 @@ public class WxReplyNewsController {
                     return Result.error(resp.errmsg());
                 }
                 return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("media_id"))
-                        .addv("picurl", resp.get("url")));
+                        .addv("picurl", Strings.sNull(resp.get("url")).replace("http://", "https://")));
             }
         } catch (Exception e) {
             return Result.error("系统错误");
