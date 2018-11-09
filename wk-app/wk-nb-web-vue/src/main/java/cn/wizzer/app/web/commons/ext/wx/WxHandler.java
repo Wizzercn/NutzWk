@@ -134,8 +134,12 @@ public class WxHandler extends AbstractWxHandler {
                 String txtId = reply.getContent();
                 Wx_reply_txt txt = wxReplyTxtService.fetch(txtId);
                 return Wxs.respText(null, txt == null ? "" : txt.getContent());
+            } else if ("image".equals(reply.getMsgType())) {
+                String imgId = reply.getContent();
+                Wx_reply_img img = wxReplyImgService.fetch(imgId);
+                return Wxs.respImage(null, img.getMediaId());
             } else if ("news".equals(reply.getMsgType())) {
-                String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
+                String[] newsIds = StringUtils.split(Strings.sNull(reply.getContent()), ",");
                 List<WxArticle> list = new ArrayList<>();
                 List<Wx_reply_news> newsList = wxReplyNewsService.query(Cnd.where("id", "in", newsIds).asc("location"));
                 for (Wx_reply_news news : newsList) {
@@ -179,6 +183,10 @@ public class WxHandler extends AbstractWxHandler {
                 String txtId = reply.getContent();
                 Wx_reply_txt txt = wxReplyTxtService.fetch(txtId);
                 return Wxs.respText(null, txt == null ? "" : txt.getContent());
+            } else if ("image".equals(reply.getMsgType())) {
+                String imgId = reply.getContent();
+                Wx_reply_img img = wxReplyImgService.fetch(imgId);
+                return Wxs.respImage(null, img.getMediaId());
             } else if ("news".equals(reply.getMsgType())) {
                 String[] newsIds = Strings.sBlank(reply.getContent()).split(",");
                 List<WxArticle> list = new ArrayList<>();

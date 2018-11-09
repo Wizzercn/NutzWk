@@ -45,25 +45,40 @@ layout("/layouts/platform.html"){
             <el-table-column label="事件类型" header-align="left" prop="title"
                              :show-overflow-tooltip="true">
                 <template slot-scope="scope">
-                    <span v-if="formData.type=='follow'">关注触发</span>
-                    <span v-if="formData.type=='keyword'">关键词触发</span>
+                    <span v-if="scope.row.type=='follow'">关注触发</span>
+                    <span v-if="scope.row.type=='keyword'">关键词触发</span>
                 </template>
             </el-table-column>
-
-            <el-table-column label="关键词" header-align="left" prop="title"
+            <!--#if("keyword"==type){#-->
+            <el-table-column label="关键词" header-align="left" prop="type"
                              :show-overflow-tooltip="true">
                 <template slot-scope="scope">
-                    <span v-if="scope.row.type=='fllow'">无</span>
+                    <span v-if="scope.row.type=='follow'">无</span>
                     <span v-if="scope.row.type=='keyword'">{{scope.row.keyword}}</span>
                 </template>
             </el-table-column>
-
+            <!--#}#-->
             <el-table-column label="消息类型" header-align="left" prop="content"
                              :show-overflow-tooltip="true">
                 <template slot-scope="scope">
                     <span v-if="scope.row.msgType=='txt'">文本</span>
-                    <span v-if="scope.row.msgType=='iamge'">图片</span>
+                    <span v-if="scope.row.msgType=='image'">图片</span>
                     <span v-if="scope.row.msgType=='news'">图文</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="回复内容" header-align="left"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.msgType=='txt'">
+                        {{scope.row.replyTxt.title}}
+                    </span>
+                    <span v-if="scope.row.msgType=='image'">
+                        <img :src="base+scope.row.replyImg.picurl" width="35" height="35"/>
+                    </span>
+                    <span v-if="scope.row.msgType=='news'">
+                        {{scope.row.replyNews.title}}
+                    </span>
                 </template>
             </el-table-column>
 
@@ -82,7 +97,7 @@ layout("/layouts/platform.html"){
                                 修改
                             </el-dropdown-item>
                             <el-dropdown-item
-                                    :command="{type:'delete',id:scope.row.id,title:scope.row.title}">
+                                    :command="{type:'delete',id:scope.row.id}">
                                 删除
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -169,13 +184,54 @@ layout("/layouts/platform.html"){
             :visible.sync="editDialogVisible"
             width="50%">
         <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
-            <el-form-item prop="title" label="标题">
-                <el-input maxlength="100" placeholder="标题"
-                          v-model="formData.title"
+            <el-form-item prop="type" label="绑定事件">
+                <span v-if="formData.type=='follow'">关注触发</span>
+                <span v-if="formData.type=='keyword'">关键词触发</span>
+            </el-form-item>
+            <el-form-item class="is-required" v-if="formData.type=='keyword'" prop="keyword" label="关键词">
+                <el-input maxlength="100" placeholder="关键词"
+                          v-model="formData.keyword"
                           auto-complete="off" tabindex="1" type="text"></el-input>
             </el-form-item>
-            <el-form-item prop="content" label="内容">
-                <el-input type="textarea" v-model="formData.content" tabindex="2"></el-input>
+            <el-form-item class="is-required" prop="scope" label="绑定类型">
+                <el-radio-group @change="msgTypeChange" v-model="formData.msgType" size="medium">
+                    <el-radio label="txt">文本</el-radio>
+                    <el-radio label="news">图文</el-radio>
+                    <el-radio label="image">图片</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item v-if="formData.msgType=='txt'" class="is-required" label="绑定文本" prop="content">
+                <el-select v-model="formData.content" placeholder="请选择文本">
+                    <el-option
+                            v-for="item in txtList"
+                            :key="item.id"
+                            :label="item.title"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item v-if="formData.msgType=='news'" class="is-required" label="绑定图文" prop="content">
+                <el-select v-model="formData.content" placeholder="请选择图文">
+                    <el-option
+                            v-for="item in newsList"
+                            :key="item.id"
+                            :label="item.title"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item v-if="formData.msgType=='image'" class="is-required" label="绑定图片" prop="content">
+                <el-col :span="6" v-for="(o, index) in imageList" :key="o" :offset="index > 0 ? 3 : 0">
+                    <el-card style="width: 120px;height: 120px;">
+                        <img :src="base+o.picurl" style="height: 60px;"/>
+                        <div style="padding: 3px;">
+                            <span v-if="formData.content==o.id" style="font-size: 12px;color: red;">已选择</span>
+                            <div class="bottom clearfix">
+                                <el-button type="text" class="button" @click="imgClassSel(o.id)">选择</el-button>
+                            </div>
+                        </div>
+                    </el-card>
+                </el-col>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -231,6 +287,7 @@ layout("/layouts/platform.html"){
                         {required: true, message: '请选择发送内容', trigger: 'blur'}
                     ]
                 },
+                action: "add"
             }
         },
         methods: {
@@ -274,13 +331,14 @@ layout("/layouts/platform.html"){
             openAdd: function () {
                 var self = this;
                 self.addDialogVisible = true;
+                self.action = "add";
                 self.formData = {
                     id: "",
                     wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                     type: "${type!}",
                     msgType: "txt",
                     keyword: "",
-                    content:""
+                    content: ""
                 };//打开新增窗口,表单先清空
                 if (self.$refs["addForm"])
                     self.$refs["addForm"].resetFields();
@@ -376,6 +434,8 @@ layout("/layouts/platform.html"){
                         if (data.code == 0) {
                             self.formData = data.data;//加载后台表单数据
                             self.editDialogVisible = true;//打开编辑窗口
+                            self.action = "edit";
+                            self.msgTypeChange(self.formData.msgType);
                         } else {
                             self.$message({
                                 message: data.msg,
@@ -385,7 +445,7 @@ layout("/layouts/platform.html"){
                     }, "json");
                 }
                 if ("delete" == command.type) {
-                    self.$confirm('此操作将删除： ' + command.title, '提示', {
+                    self.$confirm('确定要删除？ ', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning',
@@ -412,7 +472,9 @@ layout("/layouts/platform.html"){
             },
             msgTypeChange: function (val) {
                 var self = this;
-                self.formData.content = "";
+                if ("add" == self.action) {
+                    self.formData.content = "";
+                }
                 if (val == "txt") {
                     $.post(base + "/platform/wx/reply/conf/${type!}/selectData", {
                         wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
@@ -446,7 +508,6 @@ layout("/layouts/platform.html"){
             },
             imgClassSel: function (val) {
                 this.formData.content = val;
-                console.log(this.formData.content)
             },
             change: function (val) {
                 window.location.href = "${base}/platform/wx/reply/conf/${type!}/index/" + val;

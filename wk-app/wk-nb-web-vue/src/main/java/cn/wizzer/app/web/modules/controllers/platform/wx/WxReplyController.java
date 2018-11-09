@@ -91,21 +91,22 @@ public class WxReplyController {
     }
 
     @At("/?/edit/?")
-    @Ok("beetl:/platform/wx/reply/conf/edit.html")
+    @Ok("json")
     @RequiresPermissions("wx.reply")
     public Object edit(String type, String id, HttpServletRequest req) {
-        Wx_reply reply = wxReplyService.fetch(id);
-        if ("txt".equals(reply.getMsgType())) {
-            req.setAttribute("txt", wxReplyTxtService.fetch(reply.getContent()));
-        } else if ("news".equals(reply.getMsgType())) {
-            req.setAttribute("txt", wxReplyTxtService.fetch(reply.getContent()));
-        } else if ("image".equals(reply.getMsgType())) {
-            req.setAttribute("image", wxReplyImgService.fetch(reply.getContent()));
+        try {
+            Wx_reply reply = wxReplyService.fetch(id);
+            if ("txt".equals(reply.getMsgType())) {
+                req.setAttribute("txt", wxReplyTxtService.fetch(reply.getContent()));
+            } else if ("news".equals(reply.getMsgType())) {
+                req.setAttribute("txt", wxReplyTxtService.fetch(reply.getContent()));
+            } else if ("image".equals(reply.getMsgType())) {
+                req.setAttribute("image", wxReplyImgService.fetch(reply.getContent()));
+            }
+            return Result.success().addData(reply);
+        } catch (Exception e) {
+            return Result.error();
         }
-        req.setAttribute("type", reply.getType());
-        req.setAttribute("wxid", reply.getWxid());
-        req.setAttribute("config", wxConfigService.fetch(reply.getWxid()));
-        return reply;
     }
 
     @At("/?/editDo")
@@ -173,19 +174,10 @@ public class WxReplyController {
             if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
                 cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
             }
-            return Result.success().addData(wxReplyService.listPage(pageNumber, pageSize, cnd));
+            return Result.success().addData(wxReplyService.listPageLinks(pageNumber, pageSize, cnd, "^(replyImg|replyTxt|replyNews)$"));
         } catch (Exception e) {
             return Result.error();
         }
-    }
-
-    @At("/?/select")
-    @Ok("beetl:/platform/wx/reply/conf/select.html")
-    @RequiresPermissions("wx.reply")
-    public void select(String type, @Param("wxid") String wxid, @Param("msgType") String msgType, HttpServletRequest req) {
-        req.setAttribute("type", type);
-        req.setAttribute("wxid", wxid);
-        req.setAttribute("msgType", msgType);
     }
 
     @At("/?/selectData")
