@@ -2,8 +2,10 @@ package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.cms.modules.services.CmsArticleService;
 import cn.wizzer.app.cms.modules.services.CmsChannelService;
+import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.DateUtil;
 import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
@@ -17,7 +19,9 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
+import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -30,6 +34,8 @@ import org.nutz.weixin.spi.WxApi2;
 import org.nutz.weixin.spi.WxResp;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -175,8 +181,12 @@ public class WxReplyNewsController {
                 if (resp.errcode() != 0) {
                     return Result.error(resp.errmsg());
                 }
+                String uri = "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
+                String f = Globals.AppUploadPath + uri;
+                Files.write(new File(f), tf.getInputStream());
                 return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("media_id"))
-                        .addv("picurl", Strings.sNull(resp.get("url")).replace("http://", "https://")));
+                        .addv("picurl", Strings.sNull(resp.get("url")).replace("http://", "https://"))
+                        .addv("picurl2", Globals.AppUploadBase + uri));
             }
         } catch (Exception e) {
             return Result.error("系统错误");

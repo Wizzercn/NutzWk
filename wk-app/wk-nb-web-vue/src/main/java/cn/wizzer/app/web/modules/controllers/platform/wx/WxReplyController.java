@@ -1,17 +1,13 @@
 package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_reply;
 import cn.wizzer.app.wx.modules.models.Wx_reply_news;
-import cn.wizzer.app.wx.modules.services.WxConfigService;
-import cn.wizzer.app.wx.modules.services.WxReplyNewsService;
-import cn.wizzer.app.wx.modules.services.WxReplyService;
-import cn.wizzer.app.wx.modules.services.WxReplyTxtService;
+import cn.wizzer.app.wx.modules.services.*;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -44,21 +40,28 @@ public class WxReplyController {
     private WxReplyNewsService wxReplyNewsService;
     @Inject
     @Reference
+    private WxReplyImgService wxReplyImgService;
+    @Inject
+    @Reference
     private WxReplyService wxReplyService;
     @Inject
     @Reference
     private WxConfigService wxConfigService;
 
-    @At("/?")
+    @At({"/?","/?/index/?"})
     @Ok("beetl:/platform/wx/reply/conf/index.html")
     @RequiresPermissions("wx.reply")
-    public void index(String type, @Param("wxid") String wxid, HttpServletRequest req) {
+    public void index(String type, String wxid, HttpServletRequest req) {
+        Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
-            wxid = list.get(0).getId();
+            wxConfig = list.get(0);
         }
+        if (Strings.isNotBlank(wxid)) {
+            wxConfig = wxConfigService.fetch(wxid);
+        }
+        req.setAttribute("wxConfig", wxConfig);
         req.setAttribute("wxList", list);
-        req.setAttribute("wxid", wxid);
         req.setAttribute("type", type);
     }
 
@@ -100,9 +103,9 @@ public class WxReplyController {
                     i++;
                 }
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -139,9 +142,9 @@ public class WxReplyController {
                     i++;
                 }
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -152,9 +155,9 @@ public class WxReplyController {
     public Object delete(String type, String id, HttpServletRequest req) {
         try {
             wxReplyService.delete(id);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -165,24 +168,34 @@ public class WxReplyController {
     public Object deletes(String type, @Param("ids") String id, HttpServletRequest req) {
         try {
             wxReplyService.delete(StringUtils.split(id, ","));
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
     @At("/?/data")
     @Ok("json:full")
     @RequiresPermissions("wx.reply")
-    public Object data(String type, @Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        if (!Strings.isBlank(type)) {
-            cnd.and("type", "=", type);
+    public Object data(String type, @Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            if (!Strings.isBlank(type)) {
+                cnd.and("type", "=", type);
+            }
+            if (!Strings.isBlank(wxid)) {
+                cnd.and("wxid", "=", wxid);
+            }
+            if (!Strings.isBlank(searchName) && !Strings.isBlank(searchKeyword)) {
+                cnd.and(searchName, "like", "%" + searchKeyword + "%");
+            }
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+            }
+            return Result.success().addData(wxReplyService.listPage(pageNumber, pageSize, cnd));
+        } catch (Exception e) {
+            return Result.error();
         }
-        if (!Strings.isBlank(wxid)) {
-            cnd.and("wxid", "=", wxid);
-        }
-        return wxReplyService.data(length, start, draw, order, columns, cnd, null);
     }
 
     @At("/?/select")
@@ -197,12 +210,18 @@ public class WxReplyController {
     @At("/?/selectData")
     @Ok("json:full")
     @RequiresPermissions("wx.reply")
-    public Object selectData(String type, @Param("msgType") String msgType, @Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        if ("txt".equals(msgType)) {
-            return wxReplyTxtService.data(length, start, draw, order, columns, cnd, null);
-        } else {
-            return wxReplyNewsService.data(length, start, draw, order, columns, cnd, null);
+    public Object selectData(String type, @Param("wxid") String wxid, @Param("msgType") String msgType, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            if ("txt".equals(msgType)) {
+                return Result.success().addData(wxReplyTxtService.listPage(pageNumber, pageSize, cnd));
+            } else if ("image".equals(msgType)) {
+                return Result.success().addData(wxReplyImgService.listPage(pageNumber, pageSize, cnd));
+            } else {
+                return Result.success().addData(wxReplyNewsService.listPage(pageNumber, pageSize, cnd));
+            }
+        } catch (Exception e) {
+            return Result.error();
         }
     }
 }

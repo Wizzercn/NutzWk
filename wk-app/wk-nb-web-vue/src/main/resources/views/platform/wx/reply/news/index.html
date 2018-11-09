@@ -82,10 +82,10 @@ layout("/layouts/platform.html"){
                              :show-overflow-tooltip="true">
             </el-table-column>
 
-            <el-table-column label="图片" header-align="left" prop="picUrl"
+            <el-table-column label="图片" header-align="left" prop="picUrl2"
                              :show-overflow-tooltip="true">
                 <template slot-scope="scope">
-                    <img v-if="scope.row.picUrl!=''" :src="scope.row.picUrl" width="50" height="50">
+                    <img v-if="scope.row.picUrl2!=''" :src="scope.row.picUrl2" width="50" height="50">
                 </template>
             </el-table-column>
 
@@ -142,7 +142,7 @@ layout("/layouts/platform.html"){
             <el-form-item prop="description" label="描述">
                 <el-input type="textarea" v-model="formData.description" tabindex="2"></el-input>
             </el-form-item>
-            <el-form-item prop="picUrl" label="上传图片(2M以内)">
+            <el-form-item prop="picUrl2" label="上传图片(2M以内)">
                 <el-upload
                         class="avatar-uploader"
                         tabindex="5"
@@ -150,8 +150,8 @@ layout("/layouts/platform.html"){
                         name="Filedata"
                         :before-upload="beforeImageUpload"
                         :show-file-list="false"
-                        :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picUrl')}">
-                    <img v-if="formData.picUrl" :src="formData.picUrl" class="avatar">
+                        :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picUrl2')}">
+                    <img v-if="formData.picUrl2" :src="formData.picUrl2" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
             </el-form-item>
@@ -207,7 +207,7 @@ layout("/layouts/platform.html"){
             <el-form-item prop="description" label="描述">
                 <el-input type="textarea" v-model="formData.description" tabindex="2"></el-input>
             </el-form-item>
-            <el-form-item prop="picUrl" label="上传图片(2M以内)">
+            <el-form-item prop="picUrl2" label="上传图片(2M以内)">
                 <el-upload
                         class="avatar-uploader"
                         tabindex="5"
@@ -215,8 +215,8 @@ layout("/layouts/platform.html"){
                         name="Filedata"
                         :before-upload="beforeImageUpload"
                         :show-file-list="false"
-                        :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picUrl')}">
-                    <img v-if="formData.picUrl" :src="formData.picUrl" class="avatar">
+                        :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picUrl2')}">
+                    <img v-if="formData.picUrl2" :src="formData.picUrl2" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
             </el-form-item>
@@ -353,6 +353,7 @@ layout("/layouts/platform.html"){
                     id: "",
                     wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                     picUrl: "",
+                    picUrl2: "",
                     url: ""
                 };//打开新增窗口,表单先清空
                 if (self.$refs["addForm"])
@@ -490,6 +491,7 @@ layout("/layouts/platform.html"){
                     // 或者也可以定义一个 refresh 属性 ，当数据发生改变时，该属性同时变化，也会触发视图更新
                     // this.formData.site_logo =response.data;
                     this.$set(this.formData, "picUrl", response.data.picurl);
+                    this.$set(this.formData, "picUrl2", response.data.picurl2);
                     this.$set(this.formData, "mediaId", response.data.id);
                 } else {
                     this.$message({
@@ -497,6 +499,7 @@ layout("/layouts/platform.html"){
                         type: 'error'
                     });
                     this.$set(this.formData, "picUrl", "");
+                    this.$set(this.formData, "picUrl2", "");
                     this.$set(this.formData, "mediaId", "");
                 }
             },

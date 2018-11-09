@@ -45,6 +45,11 @@ public class Wx_reply_news extends BaseModel implements Serializable {
     private String picUrl;
 
     @Column
+    @Comment("图片地址")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String picUrl2;
+
+    @Column
     @Comment("文章路径")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String url;
@@ -87,6 +92,14 @@ public class Wx_reply_news extends BaseModel implements Serializable {
 
     public void setPicUrl(String picUrl) {
         this.picUrl = picUrl;
+    }
+
+    public String getPicUrl2() {
+        return picUrl2;
+    }
+
+    public void setPicUrl2(String picUrl2) {
+        this.picUrl2 = picUrl2;
     }
 
     public String getUrl() {
