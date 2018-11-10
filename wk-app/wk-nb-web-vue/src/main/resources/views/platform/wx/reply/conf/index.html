@@ -250,8 +250,10 @@ layout("/layouts/platform.html"){
             <!--#}#-->
             var self = this;
             var validateKeyword = function (rule, value, callback) {
-                if (self.formData.type == "keyword" && self.formData.keyword == "") {
+                if (self.formData.type == "keyword" && (typeof(self.formData.keyword) == "undefined" || self.formData.keyword == "")) {
                     callback(new Error('请输入关键词'));
+                } else if (self.formData.type == "keyword" && self.formData.keyword.length > 20) {
+                    callback(new Error('关键词最大长度为20个字符'));
                 } else {
                     callback();
                 }

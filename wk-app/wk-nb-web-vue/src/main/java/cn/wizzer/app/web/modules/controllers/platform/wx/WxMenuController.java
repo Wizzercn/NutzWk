@@ -136,19 +136,6 @@ public class WxMenuController {
         }
     }
 
-    @At
-    @Ok("json")
-    @RequiresPermissions("wx.conf.menu")
-    public Object checkDo(@Param("wxid") String wxid, @Param("parentId") String parentId, HttpServletRequest req) {
-        int count = wxMenuService.count(Cnd.where("wxid", "=", Strings.sBlank(wxid)).and("parentId", "=", Strings.sBlank(parentId)));
-        if (Strings.isBlank(parentId) && count > 2) {
-            return Result.error("只可设置三个一级菜单");
-        }
-        if (!Strings.isBlank(parentId) && count > 4) {
-            return Result.error("只可设置五个二级菜单");
-        }
-        return Result.success("");
-    }
 
     @At
     @Ok("json")
@@ -158,6 +145,13 @@ public class WxMenuController {
         try {
             if (Strings.isBlank(menu.getWxid())) {
                 return Result.error("请选择公众号");
+            }
+            int count = wxMenuService.count(Cnd.where("wxid", "=", Strings.sBlank(menu.getWxid())).and("parentId", "=", Strings.sBlank(parentId)));
+            if (Strings.isBlank(parentId) && count > 2) {
+                return Result.error("只可设置三个一级菜单");
+            }
+            if (!Strings.isBlank(parentId) && count > 4) {
+                return Result.error("只可设置五个二级菜单");
             }
             menu.setOpBy(StringUtil.getPlatformUid());
             wxMenuService.save(menu, parentId);
@@ -227,11 +221,11 @@ public class WxMenuController {
         }
     }
 
-    @At("/pushMenu/?")
+    @At("/pushMenu")
     @Ok("json")
     @RequiresPermissions("wx.conf.menu.push")
     @SLog(tag = "推送菜单", msg = "公众号名称:${args[1].getAttribute('name')}")
-    public Object pushMenu(String wxid, HttpServletRequest req) {
+    public Object pushMenu(@Param("wxid") String wxid, HttpServletRequest req) {
         try {
             Wx_config config = wxConfigService.fetch(wxid);
             WxApi2 wxApi2 = wxService.getWxApi2(wxid);
@@ -326,6 +320,61 @@ public class WxMenuController {
         }
         cnd.and("type", "=", "keyword");
         return Result.success().addData(wxReplyService.query(cnd));
+    }
+
+    @At("/sort")
+    @Ok("json")
+    @RequiresPermissions("wx.conf.menu")
+    public Object sort(@Param("wxid") String wxid, HttpServletRequest req) {
+        try {
+            List<Wx_menu> list = wxMenuService.query(Cnd.where("wxid", "=", wxid).asc("location").asc("path"));
+            NutMap menuMap = NutMap.NEW();
+            for (Wx_menu unit : list) {
+                List<Wx_menu> list1 = menuMap.getList(unit.getParentId(), Wx_menu.class);
+                if (list1 == null) {
+                    list1 = new ArrayList<>();
+                }
+                list1.add(unit);
+                menuMap.put(unit.getParentId(), list1);
+            }
+            return Result.success().addData(getTree(menuMap, ""));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    private List<NutMap> getTree(NutMap menuMap, String pid) {
+        List<NutMap> treeList = new ArrayList<>();
+        List<Wx_menu> subList = menuMap.getList(pid, Wx_menu.class);
+        for (Wx_menu menu : subList) {
+            NutMap map = Lang.obj2nutmap(menu);
+            map.put("label", menu.getMenuName());
+            if (menu.isHasChildren() || (menuMap.get(menu.getId()) != null)) {
+                map.put("children", getTree(menuMap, menu.getId()));
+            }
+            treeList.add(map);
+        }
+        return treeList;
+    }
+
+    @At("/sortDo")
+    @Ok("json")
+    @RequiresPermissions("wx.conf.menu")
+    public Object sortDo(@Param("wxid") String wxid, @Param("ids") String ids, HttpServletRequest req) {
+        try {
+            String[] menuIds = StringUtils.split(ids, ",");
+            int i = 0;
+            wxMenuService.execute(Sqls.create("update wx_menu set location=0 where wxid=@wxid").setParam("wxid", wxid));
+            for (String s : menuIds) {
+                if (!Strings.isBlank(s)) {
+                    wxMenuService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", s));
+                    i++;
+                }
+            }
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
 }

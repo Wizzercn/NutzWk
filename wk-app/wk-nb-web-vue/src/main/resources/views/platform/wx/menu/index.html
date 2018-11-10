@@ -20,6 +20,15 @@ layout("/layouts/platform.html"){
                 新建菜单
             </el-button>
         </div>
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="pushMenu">
+                <i class="el-icon-upload"></i>
+                推送菜单
+            </el-button>
+            <el-button size="medium" @click="openSort">
+                排序
+            </el-button>
+        </div>
     </el-row>
     <el-row class="el-table-container">
         <el-table :data="treeData" style="width: 100%" :row-style="treeTableShowTr" size="small"
@@ -44,21 +53,23 @@ layout("/layouts/platform.html"){
                 </template>
             </el-table-column>
 
-            <el-table-column label="菜单类型" header-align="center" prop="menuType"
-                             :show-overflow-tooltip="true">
+            <el-table-column label="菜单类型" header-align="center" align="center" prop="menuType"
+                             :show-overflow-tooltip="true" width="120">
                 <template slot-scope="scope">
                     <span v-if="scope.row.menuType==''">菜单</span>
                     <span v-if="scope.row.menuType=='view'">链接</span>
                     <span v-if="scope.row.menuType=='click'">点击事件</span>
+                    <span v-if="scope.row.menuType=='miniprogram'">小程序</span>
                 </template>
             </el-table-column>
 
-            <el-table-column label="配置内容" header-align="center"
+            <el-table-column label="配置内容" header-align="left"
                              :show-overflow-tooltip="true">
                 <template slot-scope="scope">
                     <span v-if="scope.row.menuType==''">-</span>
                     <span v-if="scope.row.menuType=='view'">{{scope.row.url}}</span>
-                    <span v-if="scope.row.menuType=='click'">{{scope.row.menuKey}}</span>
+                    <span v-if="scope.row.menuType=='click'">绑定关键词: {{scope.row.menuKey}}</span>
+                    <span v-if="scope.row.menuType=='miniprogram'">小程序appid: {{scope.row.appid}}</span>
                 </template>
             </el-table-column>
 
@@ -117,6 +128,10 @@ layout("/layouts/platform.html"){
                           auto-complete="off" tabindex="1" type="text"></el-input>
                 <el-alert style="height: 30px;margin-top: 3px;"
                           title="一级菜单最多4个汉字，二级菜单最多7个汉字，多出来的部分将会以“...”代替"
+                          type="warning">
+                </el-alert>
+                <el-alert style="height: 30px;margin-top: 3px;"
+                          title="只可设置3个一级菜单，只可设置5个二级菜单"
                           type="warning">
                 </el-alert>
             </el-form-item>
@@ -187,22 +202,123 @@ layout("/layouts/platform.html"){
     </el-dialog>
 
     <el-dialog
-            title="修改文本"
+            title="修改菜单"
             :visible.sync="editDialogVisible"
-            width="40%">
+            width="50%">
         <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
-            <el-form-item prop="title" label="标题">
-                <el-input maxlength="100" placeholder="标题"
-                          v-model="formData.title"
-                          auto-complete="off" tabindex="1" type="text"></el-input>
+            <el-form-item prop="parentId" label="上级菜单" label-width="80px">
+                <el-cascader v-if="!isAddFromSub"
+                             style="width: 100%"
+                             tabindex="1"
+                             :options="menuOptions"
+                             :show-all-levels="false"
+                             v-model="parentMenu"
+                             :fetch-suggestions="menuQuery"
+                             @active-item-change="menuChange"
+                             @change="menuChange2"
+                             @select="menuSelect"
+                             placeholder="不选择则为顶级"
+                ></el-cascader>
+                <el-input v-if="isAddFromSub" type="text" v-model="formData.parentName" :disabled="true"></el-input>
             </el-form-item>
-            <el-form-item prop="content" label="内容">
-                <el-input type="textarea" v-model="formData.content" tabindex="2"></el-input>
+            <el-form-item prop="menuName" label="菜单名称">
+                <el-input maxlength="100" placeholder="菜单名称"
+                          v-model="formData.menuName"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+                <el-alert style="height: 30px;margin-top: 3px;"
+                          title="一级菜单最多4个汉字，二级菜单最多7个汉字，多出来的部分将会以“...”代替"
+                          type="warning">
+                </el-alert>
+                <el-alert style="height: 30px;margin-top: 3px;"
+                          title="只可设置3个一级菜单，只可设置5个二级菜单"
+                          type="warning">
+                </el-alert>
+            </el-form-item>
+            <el-form-item class="is-required" prop="menuType" label="菜单类型">
+                <el-radio-group v-model="formData.menuType" size="medium">
+                    <el-radio label="">菜单</el-radio>
+                    <el-radio label="view">链接</el-radio>
+                    <el-radio label="click">点击事件</el-radio>
+                    <el-radio label="miniprogram">小程序</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item v-if="formData.menuType=='view'">
+
+                <el-autocomplete
+                        style="width: 250px;"
+                        :fetch-suggestions="queryChannel"
+                        placeholder="请输入标题"
+                        @select="handleChannelSelect"
+                >
+                    <span slot="prepend">搜索栏目</span>
+                </el-autocomplete>
+                <el-autocomplete
+                        style="width: 250px;"
+                        :fetch-suggestions="queryArticle"
+                        placeholder="请输入标题"
+                        @select="handleArticleSelect"
+                >
+                    <span slot="prepend">搜索文章</span>
+                </el-autocomplete>
+            </el-form-item>
+            <el-form-item class="is-required" v-if="formData.menuType=='view'" prop="url" label="跳转链接">
+                <el-input placeholder="网址"
+                          v-model="formData.url"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+                <el-checkbox v-model="checked1" @change="checkedChange1">网页oauth2.0</el-checkbox>
+                <el-checkbox v-model="checked2" @change="checkedChange2">应用oauth2.0</el-checkbox>
+            </el-form-item>
+            <el-form-item class="is-required" v-if="formData.menuType=='miniprogram'" prop="url" label="url">
+                <el-input placeholder="小程序URL"
+                          v-model="formData.url"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item class="is-required" v-if="formData.menuType=='miniprogram'" prop="appid" label="appid">
+                <el-input placeholder="小程序appid"
+                          v-model="formData.appid"
+                          auto-complete="off" tabindex="4" type="text"></el-input>
+            </el-form-item>
+            <el-form-item class="is-required" v-if="formData.menuType=='miniprogram'" prop="pagepath" label="pagepath">
+                <el-input placeholder="小程序的页面路径"
+                          v-model="formData.pagepath"
+                          auto-complete="off" tabindex="5" type="text"></el-input>
+            </el-form-item>
+            <el-form-item v-if="formData.menuType=='click'" class="is-required" label="绑定事件" prop="menuKey">
+                <el-select v-model="formData.menuKey" placeholder="请选择关键词回复">
+                    <el-option
+                            v-for="item in keyList"
+                            :key="item.id"
+                            :label="item.value"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
             <el-button @click="editDialogVisible = false">取 消</el-button>
             <el-button type="primary" @click="doEdit">确 定</el-button>
+        </span>
+    </el-dialog>
+
+    <el-dialog
+            title="菜单排序"
+            :visible.sync="sortDialogVisible"
+            width="50%">
+        <el-tree
+                ref="sortMenuTree"
+                :data="sortMenuData"
+                draggable
+                :allow-drop="sortAllowDrop"
+                node-key="id"
+                :props="defaultProps"
+        >
+            <span class="custom-tree-node" slot-scope="scope">
+                <span>{{ scope.node.label }}</span>
+            </span>
+        </el-tree>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="sortDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doSort">确 定</el-button>
         </span>
     </el-dialog>
 </div>
@@ -222,15 +338,22 @@ layout("/layouts/platform.html"){
                     callback();
                 }
             };
+            var validateK = function (rule, value, callback) {
+                if (self.formData.menuType == 'click' && (typeof(self.formData.menuKey) == "undefined" || self.formData.menuKey == "")) {
+                    callback(new Error('请选择关键词'));
+                } else {
+                    callback();
+                }
+            };
             var validateA = function (rule, value, callback) {
-                if (self.formData.menuType == 'miniprogram' && (!self.formData.appid || self.formData.appid == "")) {
+                if (self.formData.menuType == 'miniprogram' && (typeof(self.formData.appid) == "undefined" || self.formData.appid == "")) {
                     callback(new Error('请输入正确的 appid'));
                 } else {
                     callback();
                 }
             };
             var validateP = function (rule, value, callback) {
-                if (self.formData.menuType == 'miniprogram' && (!self.formData.pagepath || self.formData.pagepath == "")) {
+                if (self.formData.menuType == 'miniprogram' && (typeof(self.formData.pagepath) == "undefined" || self.formData.pagepath == "")) {
                     callback(new Error('请输入正确的 pagepath'));
                 } else {
                     callback();
@@ -240,6 +363,7 @@ layout("/layouts/platform.html"){
                 wxConfigs: wxConfigs,
                 addDialogVisible: false,
                 editDialogVisible: false,
+                sortDialogVisible:false,
                 isAddFromSub: false,
                 checked1: false,
                 checked2: false,
@@ -265,6 +389,10 @@ layout("/layouts/platform.html"){
                         {required: false, message: '链接', trigger: 'blur'},
                         {validator: validateUrl, trigger: ['blur', 'change']}
                     ],
+                    menuKey: [
+                        {required: false, message: '绑定关键词', trigger: 'blur'},
+                        {validator: validateK, trigger: ['blur', 'change']}
+                    ],
                     appid: [
                         {required: false, message: '小程序的appid', trigger: 'blur'},
                         {validator: validateA, trigger: ['blur', 'change']}
@@ -276,7 +404,12 @@ layout("/layouts/platform.html"){
                 },
                 menuOptions: [],
                 parentMenu: [],
-                keyList: []
+                keyList: [],
+                sortMenuData: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
             }
         },
         methods: {
@@ -592,9 +725,86 @@ layout("/layouts/platform.html"){
                     if (data.code == 0) {
                         var res = [];
                         data.data.forEach(function (o) {
-                            res.push({value: o.keyword, id: o.id})
+                            res.push({value: o.keyword, id: o.keyword})
                         });
                         self.keyList = res;
+                    }
+                }, "json");
+            },
+            pushMenu: function () {
+                var self=this;
+                self.$confirm('确定要将菜单推送到微信平台？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "/platform/wx/conf/menu/pushMenu", { wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"}, function (data) {
+                                if (data.code == 0) {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'success'
+                                    });
+                                    self.treeTableChild("");
+                                } else {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
+            },
+            //排序树加载
+            sortMenuLoad: function () {
+                var self = this;
+                $.post(base + "/platform/wx/conf/menu/sort", {wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"}, function (data) {
+                    if (data.code == 0) {
+                        self.sortMenuData = data.data;
+                    }
+                }, "json");
+            },
+            //排序树控制不可跨级拖拽
+            sortAllowDrop: function (moveNode, inNode, type) {
+                if (moveNode.data.parentId == inNode.data.parentId) {
+                    return type == 'prev';
+                }
+            },
+            //打开排序功能
+            openSort: function () {
+                this.sortDialogVisible = true;
+                this.sortMenuLoad();
+            },
+            //递归获取所有的ID值
+            getTreeIds: function (ids, data) {
+                var self = this;
+                data.forEach(function (obj) {
+                    ids.push(obj.id);
+                    if (obj.children && obj.children.length > 0) {
+                        self.getTreeIds(ids, obj.children);
+                    }
+                });
+            },
+            //提交排序后的数据
+            doSort: function () {
+                var self = this;
+                var ids = [];
+                self.getTreeIds(ids, self.sortMenuData);
+                $.post(base + "/platform/wx/conf/menu/sortDo", {wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.sortDialogVisible = false;
+                        self.treeTableChild("");
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
                     }
                 }, "json");
             },
