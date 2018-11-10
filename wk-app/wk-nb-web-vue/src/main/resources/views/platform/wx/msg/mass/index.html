@@ -153,13 +153,13 @@ layout("/layouts/platform.html"){
                          default-expand-all
                          :expand-on-click-node="false"
                          draggable>
-                    <span class="custom-tree-node" slot-scope="{ node, data }">
-                        <span>{{ node.label }}</span>
+                    <span class="custom-tree-node" slot-scope="node">
+                        <span>{{ node.data.label }}</span>
                         <span>
                           <el-button
                                   type="text"
                                   size="mini"
-                                  @click="remove(node, data)">
+                                  @click="remove(node)">
                             Delete
                           </el-button>
                         </span>
@@ -603,8 +603,9 @@ layout("/layouts/platform.html"){
                 var self = this;
                 self.newsTreeData = [];
             },
-            remove: function (node, data) {
+            remove: function (node) {
                 var self = this;
+                var data=node.data;
                 //注意:对数组对象进行深度复制,否则原始对象不能进行删除操作
                 var temp = JSON.parse(JSON.stringify(self.newsTreeData));
                 var index = temp.findIndex(function (o) {
@@ -613,7 +614,7 @@ layout("/layouts/platform.html"){
                 temp.splice(index, 1);
                 self.newsTreeData = temp;
             },
-            openSend: function (obj) {
+            openSend: function () {
                 this.formData = {
                     wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
                     type: "text",

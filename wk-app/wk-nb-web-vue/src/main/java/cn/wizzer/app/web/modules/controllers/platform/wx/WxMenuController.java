@@ -11,17 +11,18 @@ import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.app.wx.modules.services.WxMenuService;
 import cn.wizzer.app.wx.modules.services.WxReplyService;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
@@ -66,36 +67,73 @@ public class WxMenuController {
     @Ok("beetl:/platform/wx/menu/index.html")
     @RequiresPermissions("wx.conf.menu")
     public void index(String wxid, HttpServletRequest req) {
+        Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
-            wxid = list.get(0).getId();
+            wxConfig = list.get(0);
         }
-        List<Wx_menu> menus = wxMenuService.query(Cnd.where("wxid", "=", wxid).asc("location").asc("path"));
-        List<Wx_menu> firstMenus = new ArrayList<>();
-        Map<String, List<Wx_menu>> secondMenus = new HashMap<>();
-        for (Wx_menu menu : menus) {
-            if (menu.getPath().length() > 4) {
-                List<Wx_menu> s = secondMenus.get(wxMenuService.getParentPath(menu.getPath()));
-                if (s == null) s = new ArrayList<>();
-                s.add(menu);
-                secondMenus.put(wxMenuService.getParentPath(menu.getPath()), s);
-            } else if (menu.getPath().length() == 4) {
-                firstMenus.add(menu);
-            }
+        if (Strings.isNotBlank(wxid)) {
+            wxConfig = wxConfigService.fetch(wxid);
         }
-        req.setAttribute("firstMenus", firstMenus);
-        req.setAttribute("secondMenus", secondMenus);
+        req.setAttribute("wxConfig", wxConfig);
         req.setAttribute("wxList", list);
-        req.setAttribute("wxid", Strings.sBlank(wxid));
     }
 
-    @At("/add/?")
-    @Ok("beetl:/platform/wx/menu/add.html")
-    @RequiresPermissions("wx.conf.menu")
-    public void add(String wxid, HttpServletRequest req) {
-        req.setAttribute("wxid", wxid);
-        req.setAttribute("menus", wxMenuService.query(Cnd.where("wxid", "=", wxid).and(Cnd.exps("parentId", "=", "").or("parentId", "is", null)).asc("location")));
-        req.setAttribute("config", wxConfigService.fetch(wxid));
+    @At("/child")
+    @Ok("json")
+    @RequiresAuthentication
+    public Object child(@Param("pid") String pid, HttpServletRequest req) {
+        List<Wx_menu> list = new ArrayList<>();
+        List<NutMap> treeList = new ArrayList<>();
+        Cnd cnd = Cnd.NEW();
+        if (Strings.isBlank(pid)) {
+            cnd.and(Cnd.exps("parentId", "=", "").or("parentId", "is", null));
+        } else {
+            cnd.and("parentId", "=", pid);
+        }
+        cnd.asc("location").asc("path");
+        list = wxMenuService.query(cnd);
+        for (Wx_menu menu : list) {
+            if (wxMenuService.count(Cnd.where("parentId", "=", menu.getId())) > 0) {
+                menu.setHasChildren(true);
+            }
+            NutMap map = Lang.obj2nutmap(menu);
+            map.addv("expanded", false);
+            map.addv("children", new ArrayList<>());
+            treeList.add(map);
+        }
+        return Result.success().addData(treeList);
+    }
+
+    @At("/tree")
+    @Ok("json")
+    @RequiresAuthentication
+    public Object tree(@Param("pid") String pid, HttpServletRequest req) {
+        try {
+            List<NutMap> treeList = new ArrayList<>();
+            if (Strings.isBlank(pid)) {
+                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单");
+                treeList.add(root);
+            }
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isBlank(pid)) {
+                cnd.and(Cnd.exps("parentId", "=", "").or("parentId", "is", null));
+            } else {
+                cnd.and("parentId", "=", pid);
+            }
+            cnd.asc("location").asc("path");
+            List<Wx_menu> list = wxMenuService.query(cnd);
+            for (Wx_menu menu : list) {
+                NutMap map = NutMap.NEW().addv("value", menu.getId()).addv("label", menu.getMenuName());
+                if (menu.isHasChildren()) {
+                    map.addv("children", new ArrayList<>());
+                }
+                treeList.add(map);
+            }
+            return Result.success().addData(treeList);
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
     @At
@@ -123,9 +161,9 @@ public class WxMenuController {
             }
             menu.setOpBy(StringUtil.getPlatformUid());
             wxMenuService.save(menu, parentId);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -143,19 +181,22 @@ public class WxMenuController {
                     i++;
                 }
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
     @At("/edit/?")
-    @Ok("beetl:/platform/wx/menu/edit.html")
+    @Ok("json")
     @RequiresPermissions("wx.conf.menu")
     public Object edit(String id, HttpServletRequest req) {
-        Wx_menu menu = wxMenuService.fetch(id);
-        req.setAttribute("config", wxConfigService.fetch(menu.getWxid()));
-        return wxMenuService.fetchLinks(menu, "wxConfig");
+        try {
+            Wx_menu menu = wxMenuService.fetch(id);
+            return Result.success().addData(menu);
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 
     @At
@@ -165,9 +206,9 @@ public class WxMenuController {
     public Object editDo(@Param("..") Wx_menu menu, HttpServletRequest req) {
         try {
             wxMenuService.updateIgnoreNull(menu);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -180,9 +221,9 @@ public class WxMenuController {
             Wx_menu menu = wxMenuService.fetch(id);
             req.setAttribute("menuName", menu.getMenuName());
             wxMenuService.deleteAndChild(menu);
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -269,49 +310,22 @@ public class WxMenuController {
             if (wxResp.errcode() != 0) {
                 return Result.error(wxResp.errmsg());
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
-    }
-
-
-    @At("/keyword/?")
-    @Ok("beetl:/platform/wx/menu/keyword.html")
-    @RequiresPermissions("wx.conf.menu")
-    public void keyword(String wxid, HttpServletRequest req) {
-        req.setAttribute("wxid", wxid);
     }
 
     @At("/keywordData")
     @Ok("json:full")
     @RequiresPermissions("wx.conf.menu")
-    public Object keywordData(@Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+    public Object data(@Param("wxid") String wxid) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
             cnd.and("wxid", "=", wxid);
-            cnd.and("type", "=", "keyword");
         }
-        return wxReplyService.data(length, start, draw, order, columns, cnd, null);
+        cnd.and("type", "=", "keyword");
+        return Result.success().addData(wxReplyService.query(cnd));
     }
 
-
-    @At("/cms/?")
-    @Ok("beetl:/platform/wx/menu/cms.html")
-    @RequiresPermissions("wx.conf.menu")
-    public void cms(String type, HttpServletRequest req) {
-        req.setAttribute("type", type);
-    }
-
-    @At("/cmsData/?")
-    @Ok("json:full")
-    @RequiresPermissions("wx.conf.menu")
-    public Object cmsData(String type, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
-        Cnd cnd = Cnd.NEW();
-        if ("channel".equals(type)) {
-            return cmsChannelService.data(length, start, draw, order, columns, cnd, null);
-        } else {
-            return cmsArticleService.data(length, start, draw, order, columns, cnd, null);
-        }
-    }
 }

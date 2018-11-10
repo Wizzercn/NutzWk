@@ -1,164 +1,612 @@
-<%
+<!--#
 layout("/layouts/platform.html"){
-%>
-<header class="header navbar bg-white shadow">
-    <div class="btn-group tool-button">
-        <a class="btn btn-primary navbar-btn" href="${base}/platform/wx/conf/menu/add/${wxid}" data-pjax><i class="ti-plus"></i> 添加菜单</a>
-        <a href="${base}/platform/wx/conf/menu/index/${wxid}" data-pjax id="_reload"></a>
-    </div>
-    <div class="btn-group">
-        <div >
-            <select id="wxid" name="wxid" class="form-control">
-                <% for(o in wxList){
-                %>
-                <option value="${o.id}" <%if(o.id==wxid){%>selected<%}%>>${o.appname}</option>
-                <%
-                } %>
-            </select>
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <span>微信公众号：</span>
+            <el-select size="medium" v-model="pageForm.wxid" placeholder="请选择" @change="change">
+                <el-option
+                        v-for="item in wxConfigs"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
         </div>
-    </div>
-    <div class="pull-right">
-        <div class="btn-group tool-button">
-            <button class="btn btn-primary navbar-btn" onclick="sort()"> 保存排序</button>
+        <div class="btn-group tool-button mt5">
+            <el-button size="medium" @click="openAdd">
+                <i class="ti-plus"></i>
+                新建菜单
+            </el-button>
         </div>
-        <div class="btn-group tool-button">
-            <button class="btn btn-primary navbar-btn" onclick="complete()"><i class="ti-share"></i> 推送到微信</button>
-        </div>
-    </div>
-</header>
-<div class="modal-body no-p">
-    <div class="panel">
-        <div class="panel-heading no-b">
-        </div>
-        <div class="panel-body" style="padding-top: 30px;">
-            
-            <div class="cf nestable-lists">
-                <div class="dd" id="nestable3">
-                    <% if(!isEmpty(firstMenus)){ %>
-                    <ol class="dd-list">
-                        <% for(firstMenu in firstMenus){ %>
-                        <li class="dd-item dd3-item" data-id="${firstMenu.id}">
-                            <div class="dd-handle dd3-handle">Drag</div>
-                            <div class="dd3-content">${firstMenu.menuName!} <span style="color: deepskyblue"> ${firstMenu.menuKey!}${firstMenu.url!}</span>
-                                <div class="btn-group pull-right"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                    <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">
-                                    <li><a href="${base}/platform/wx/conf/menu/edit/${firstMenu.id!}" data-pjax>修改</a></li>
-                                    <li><a href="javascript:;" onclick="del('${firstMenu.id!}')">删除</a></li>
-                                </ul></div>
-                            </div>
-                            <% if(!isEmpty(@secondMenus.get(firstMenu.path))){ %>
-                            <ol class="dd-list">
-                                <% for(secondMenu in @secondMenus.get(firstMenu.path)){  %>
-                                <li class="dd-item dd3-item" data-id="${secondMenu.id}">
-                                    <div class="dd-handle dd3-handle">Drag</div>
-                                    <div class="dd3-content">${secondMenu.menuName!}<span style="color: deepskyblue"> ${secondMenu.menuKey!}${secondMenu.url!}</span>
-                                        <div class="btn-group pull-right"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                            <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">
-                                            <li><a href="${base}/platform/wx/conf/menu/edit/${secondMenu.id!}" data-pjax>修改</a></li>
-                                            <li><a href="javascript:;" onclick="del('${secondMenu.id!}')">删除</a></li>
-                                        </ul></div>
-                                    </div>
-                                </li>
-                                <% }%>
-                            </ol>
-                            <% } %>
-                        </li>
-                        <% } %>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table :data="treeData" style="width: 100%" :row-style="treeTableShowTr" size="small"
+                  :highlight-current-row="true">
+            <el-table-column label="菜单名称" header-align="center" prop="name"
+                             width="200" :show-overflow-tooltip="true" align="left">
+                <template slot-scope="scope">
+                    <span v-for="(space, levelIndex) in treeTablePath(scope.row.path)" class="ms-tree-space"></span>
+                    <span v-if="treeTableIconShow(scope.row)" @click="treeTableChild(scope.row.id)"
+                          style="cursor: pointer">
+                        <span v-if="!scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right" title="展开"></span>
 
-                    </ol>
-                    <%}else{%>
-                    <ol class="dd-list" style="padding-top: 10px;">未配置</ol>
-                    <%}%>
-                </div>
-            </div>
+                        <span v-if="scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right expanded" title="关闭"></span>
+                        {{ scope.row.menuName }}
+                    </span>
+                    <span v-if="!treeTableIconShow(scope.row)">
+                        <span class="ms-tree-space"></span>
+                        {{ scope.row.menuName }}
+                    </span>
+                </template>
+            </el-table-column>
 
-        </div>
-    </div>
+            <el-table-column label="菜单类型" header-align="center" prop="menuType"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.menuType==''">菜单</span>
+                    <span v-if="scope.row.menuType=='view'">链接</span>
+                    <span v-if="scope.row.menuType=='click'">点击事件</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="配置内容" header-align="center"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.menuType==''">-</span>
+                    <span v-if="scope.row.menuType=='view'">{{scope.row.url}}</span>
+                    <span v-if="scope.row.menuType=='click'">{{scope.row.menuKey}}</span>
+                </template>
+            </el-table-column>
+
+
+            <el-table-column label="操作" header-align="center"
+                             :show-overflow-tooltip="true" align="center" width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item
+                                    :command="{type:'add',id:scope.row.id,name:scope.row.menuName}">
+                                添加子菜单
+                            </el-dropdown-item>
+                            <el-dropdown-item divided
+                                              :command="{type:'edit',id:scope.row.id,name:scope.row.menuName}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'delete',id:scope.row.id,name:scope.row.menuName}">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+
+    </el-row>
+
+    <el-dialog
+            title="新建菜单"
+            :visible.sync="addDialogVisible"
+            width="50%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="parentId" label="上级菜单" label-width="80px">
+                <el-cascader v-if="!isAddFromSub"
+                             style="width: 100%"
+                             tabindex="1"
+                             :options="menuOptions"
+                             :show-all-levels="false"
+                             v-model="parentMenu"
+                             :fetch-suggestions="menuQuery"
+                             @active-item-change="menuChange"
+                             @change="menuChange2"
+                             @select="menuSelect"
+                             placeholder="不选择则为顶级"
+                ></el-cascader>
+                <el-input v-if="isAddFromSub" type="text" v-model="formData.parentName" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item prop="menuName" label="菜单名称">
+                <el-input maxlength="100" placeholder="菜单名称"
+                          v-model="formData.menuName"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+                <el-alert style="height: 30px;margin-top: 3px;"
+                          title="一级菜单最多4个汉字，二级菜单最多7个汉字，多出来的部分将会以“...”代替"
+                          type="warning">
+                </el-alert>
+            </el-form-item>
+            <el-form-item class="is-required" prop="menuType" label="菜单类型">
+                <el-radio-group v-model="formData.menuType" size="medium">
+                    <el-radio label="">菜单</el-radio>
+                    <el-radio label="view">链接</el-radio>
+                    <el-radio label="click">点击事件</el-radio>
+                    <el-radio label="miniprogram">小程序</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item v-if="formData.menuType=='view'">
+
+                <el-autocomplete
+                        style="width: 250px;"
+                        :fetch-suggestions="queryChannel"
+                        placeholder="请输入标题"
+                        @select="handleChannelSelect"
+                >
+                    <span slot="prepend">搜索栏目</span>
+                </el-autocomplete>
+                <el-autocomplete
+                        style="width: 250px;"
+                        :fetch-suggestions="queryArticle"
+                        placeholder="请输入标题"
+                        @select="handleArticleSelect"
+                >
+                    <span slot="prepend">搜索文章</span>
+                </el-autocomplete>
+            </el-form-item>
+            <el-form-item class="is-required" v-if="formData.menuType=='view'" prop="url" label="跳转链接">
+                <el-input placeholder="网址"
+                          v-model="formData.url"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+                <el-checkbox v-model="checked1" @change="checkedChange1">网页oauth2.0</el-checkbox>
+                <el-checkbox v-model="checked2" @change="checkedChange2">应用oauth2.0</el-checkbox>
+            </el-form-item>
+            <el-form-item class="is-required" v-if="formData.menuType=='miniprogram'" prop="url" label="url">
+                <el-input placeholder="小程序URL"
+                          v-model="formData.url"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item class="is-required" v-if="formData.menuType=='miniprogram'" prop="appid" label="appid">
+                <el-input placeholder="小程序appid"
+                          v-model="formData.appid"
+                          auto-complete="off" tabindex="4" type="text"></el-input>
+            </el-form-item>
+            <el-form-item class="is-required" v-if="formData.menuType=='miniprogram'" prop="pagepath" label="pagepath">
+                <el-input placeholder="小程序的页面路径"
+                          v-model="formData.pagepath"
+                          auto-complete="off" tabindex="5" type="text"></el-input>
+            </el-form-item>
+            <el-form-item v-if="formData.menuType=='click'" class="is-required" label="绑定事件" prop="menuKey">
+                <el-select v-model="formData.menuKey" placeholder="请选择关键词回复">
+                    <el-option
+                            v-for="item in keyList"
+                            :key="item.id"
+                            :label="item.value"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="addDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doAdd">确 定</el-button>
+        </span>
+    </el-dialog>
+
+    <el-dialog
+            title="修改文本"
+            :visible.sync="editDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="title" label="标题">
+                <el-input maxlength="100" placeholder="标题"
+                          v-model="formData.title"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="content" label="内容">
+                <el-input type="textarea" v-model="formData.content" tabindex="2"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="editDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doEdit">确 定</el-button>
+        </span>
+    </el-dialog>
 </div>
-<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">删除菜单</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        删除后无法恢复，请谨慎操作！
-                        <br/>确定要删除吗？
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
-                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在删除...">确 定</button>
-            </div>
-        </div>
-    </div>
-</div>
-<script type="text/javascript">
-    function del(id){
-        var dialog = $("#dialogDelete");
-        dialog.modal("show");
-        dialog.find("#ok").unbind("click");
-        dialog.find("#ok").bind("click", function(event){
-            var btn = $(this);
-            btn.button("loading");
-            $.post("${base}/platform/wx/conf/menu/delete/"+id,{},function(data){
-                //重置按钮状态，关闭提示框
-                dialog.modal("hide");
-                if(data.code==0){
-                    Toast.success(data.msg);
-                    window.location.reload();
-                }else{
-                    Toast.error(data.msg);
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var wxConfigs = [];
+            <!--#for(o in wxList){#-->
+            wxConfigs.push({value: "${o.id!}", label: "${o.appname!}"});
+            <!--#}#-->
+            var self = this;
+            var validateUrl = function (rule, value, callback) {
+                if ((self.formData.menuType == 'view' || self.formData.menuType == 'miniprogram') && self.formData.url == "") {
+                    callback(new Error('请输入正确的URL路径'));
+                } else {
+                    callback();
                 }
-                btn.button("reset");
-            },"json");
-        });
-    }
-    var ids=[];
-    function getId(ob){
-        $.each(ob,function(i,o){
-            ids.push(o.id);
-            if(o.children){
-                getId(o.children);
+            };
+            var validateA = function (rule, value, callback) {
+                if (self.formData.menuType == 'miniprogram' && (!self.formData.appid || self.formData.appid == "")) {
+                    callback(new Error('请输入正确的 appid'));
+                } else {
+                    callback();
+                }
+            };
+            var validateP = function (rule, value, callback) {
+                if (self.formData.menuType == 'miniprogram' && (!self.formData.pagepath || self.formData.pagepath == "")) {
+                    callback(new Error('请输入正确的 pagepath'));
+                } else {
+                    callback();
+                }
+            };
+            return {
+                wxConfigs: wxConfigs,
+                addDialogVisible: false,
+                editDialogVisible: false,
+                isAddFromSub: false,
+                checked1: false,
+                checked2: false,
+                selectData: [],
+                pageForm: {
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending"
+                },
+                tableData: [],//后台取出的数据
+                treeData: [],//格式化tableData用于显示的数据
+                formData: {},
+                formRules: {
+                    menuName: [
+                        {required: true, message: '菜单名称', trigger: 'blur'}
+                    ],
+                    url: [
+                        {required: false, message: '链接', trigger: 'blur'},
+                        {validator: validateUrl, trigger: ['blur', 'change']}
+                    ],
+                    appid: [
+                        {required: false, message: '小程序的appid', trigger: 'blur'},
+                        {validator: validateA, trigger: ['blur', 'change']}
+                    ],
+                    pagepath: [
+                        {required: false, message: '小程序的pagepath', trigger: 'blur'},
+                        {validator: validateP, trigger: ['blur', 'change']}
+                    ]
+                },
+                menuOptions: [],
+                parentMenu: [],
+                keyList: []
             }
-        });
-    }
-    function sort(){
-        ids=[];
-        getId($("#nestable3").nestable('serialize'));
-        $.post("${base}/platform/wx/conf/menu/sortDo", {wxid:'${wxid}',ids: ids.toString()}, function (data) {
-            if (data.code == 0) {
-                Toast.success(data.msg);
-            } else {
-                Toast.error(data.msg);
-            }
-        }, "json");
-    }
-    function complete(){
-        sublime.showLoadingbar($(".main-content"));
-        $.post("${base}/platform/wx/conf/menu/pushMenu/${wxid}", {}, function (data) {
-            sublime.closeLoadingbar($(".main-content"));
-            if (data.code == 0) {
-                Toast.success(data.msg);
+        },
+        methods: {
+            // 显示层级
+            treeTablePath: function (path) {
+                return path.length / 4 - 1;
+            },
+            // 显示行
+            treeTableShowTr: function (row, index) {
+                var parentIndex = this.treeData.findIndex(function (value) {
+                    return value.id === row.row.parentId;
+                });
+                var show = (row.row.parentId ? (this.treeData[parentIndex].expanded && this.treeData[parentIndex]._show) : true);
+                row.row._show = show;
+                return show ? '' : 'display:none;'
+            },
+            treeDataChildren: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.id) {//找到这条数据追加下级数据
+                        obj.children = data;
+                        obj.expanded = !obj.expanded;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.treeDataChildren(obj.children, data, pid);
+                    }
+                });
+            },
+            // 展开下级
+            treeTableChild: function (pid) {
+                var self = this;
+                var url = base + "/platform/wx/conf/menu/child";
+                $.post(url, {pid: pid}, function (data) {
+                    if (data.code == 0) {
+                        if (pid != undefined && pid != "") {
+                            self.treeDataChildren(self.tableData, data.data, pid);
+                        } else {
+                            self.tableData = data.data;
+                        }
+                        self.treeData = sublime.treeToArray(self.tableData);
+                    }
+                }, "json");
 
-            } else {
-                Toast.error(data.msg);
+            },
+            // 点击展开和关闭的时候，图标的切换
+            treeTableIconShow: function (record) {
+                return record.hasChildren;
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            menuQuery: function (queryString, cb) {
+                cb(this.menuOptions);
+            },
+            menuSelect: function (val) {
+            },
+            menuTree: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.value) {
+                        obj.children = data;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.menuTree(obj.children, data, pid);
+                    }
+                });
+            },
+            menuChange2: function (val) {
+                var self = this;
+                if (val[0] == "root") {
+                    self.parentMenu = [];
+                }
+            },
+            menuChange: function (val) {
+                var self = this;
+                var pid = val[val.length - 1];
+                self.parentMenu = val;
+                self.menuLoadTree(pid, function (tree) {
+                    self.menuTree(self.menuOptions, tree, pid);
+                });
+            },
+            menuLoadTree: function (val, cb) {
+                var self = this;
+                var url = base + "/platform/wx/conf/menu/tree";
+                $.post(url, {pid: val}, function (data) {
+                    if (data.code == 0) {
+                        cb(data.data);
+                    }
+                }, "json");
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            openAdd: function () {
+                var self = this;
+                self.addDialogVisible = true;
+                self.isAddFromSub = false;
+                self.formData = {
+                    id: "",
+                    parentId: "",
+                    parentName: "",
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                    menuType: "",
+                    url: ""
+                };//打开新增窗口,表单先清空
+                if (self.$refs["addForm"])
+                    self.$refs["addForm"].resetFields();
+                self.menuLoadTree("", function (val) {
+                    self.menuOptions = val;
+                });
+                self.queryKeyword();
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "/platform/wx/conf/menu/addDo";
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        if (!self.isAddFromSub) {//如果不是添加子菜单，则从级联选择框取父节点ID
+                            self.formData.parentId = self.parentMenu[self.parentMenu.length - 1] || "";
+                        }
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                                self.treeTableChild("");
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                var url = base + "/platform/wx/conf/menu/editDo";
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDialogVisible = false;
+                                self.treeTableChild("");
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            delMore: function () {
+                var self = this;
+                if (self.selectData.length == 0) {
+                    self.$message({
+                        message: "请选择消息",
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                var ids = [];
+                self.selectData.forEach(function (val) {
+                    ids.push(val.id);
+                });
+                self.$confirm('您确定要删除选中的 ' + ids.length + ' 条数据？ ', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "/platform/wx/conf/menu/delete", {ids: ids.toString()}, function (data) {
+                                if (data.code == 0) {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'success'
+                                    });
+                                    self.treeTableChild("");
+                                } else {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("add" == command.type) {
+                    self.openAdd();
+                    self.formData.parentId = command.id;
+                    self.formData.parentName = command.name;
+                    self.isAddFromSub = true;
+                }
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/wx/conf/menu/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.editDialogVisible = true;//打开编辑窗口
+                            self.queryKeyword();
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除： ' + command.name, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/wx/conf/menu/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.treeTableChild("");
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            },
+            queryChannel: function (queryString, cb) {
+                $.post(base + "/platform/wx/reply/news/channel_data", {
+                    searchName: "name",
+                    searchKeyword: queryString,
+                    pageNumber: 1,
+                    pageSize: 10,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending"
+                }, function (data) {
+                    if (data.code == 0) {
+                        var res = [];
+                        data.data.list.forEach(function (o) {
+                            res.push({value: o.name, id: o.id})
+                        });
+                        cb(res);
+                    }
+                }, "json");
+            },
+            handleChannelSelect: function (val) {
+                var domain = "${AppDomain!}";
+                this.formData.url = domain + base + "/public/wx/cms/channel/" + val.id;
+            },
+            queryArticle: function (queryString, cb) {
+                $.post(base + "/platform/wx/reply/news/article_data", {
+                    searchName: "title",
+                    searchKeyword: queryString,
+                    pageNumber: 1,
+                    pageSize: 10,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending"
+                }, function (data) {
+                    if (data.code == 0) {
+                        var res = [];
+                        data.data.list.forEach(function (o) {
+                            res.push({value: o.title, id: o.id})
+                        });
+                        cb(res);
+                    }
+                }, "json");
+            },
+            handleArticleSelect: function (val) {
+                var domain = "${AppDomain!}";
+                this.formData.url = domain + base + "/public/wx/cms/article/" + val.id;
+            },
+            checkedChange1: function (val) {
+                if (this.checked1) {
+                    var str = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.appid!}<!--#}#-->&redirect_uri=$s&response_type=code&scope=snsapi_base&state=11624317#wechat_redirect";
+                    this.formData.url = str.replace("$s", encodeURIComponent(this.formData.url));
+                } else {
+                    var url = this.formData.url;
+                    var str = url.substring(url.indexOf("redirect_uri=") + 13, url.indexOf("&response_type="));
+                    this.formData.url = decodeURIComponent(str);
+                }
+            },
+            checkedChange2: function (val) {
+                if (this.checked2) {
+                    var str = "${AppDomain!}${base!}/public/wx/wechat/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->/oauth?goto_url=$s";
+                    this.formData.url = str.replace("$s", this.formData.url);
+                } else {
+                    var url = this.formData.url;
+                    this.formData.url = url.substring(url.indexOf("goto_url=") + 9);
+                }
+            },
+            queryKeyword: function () {
+                var self = this;
+                $.post(base + "/platform/wx/conf/menu/keywordData", {wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"}, function (data) {
+                    if (data.code == 0) {
+                        var res = [];
+                        data.data.forEach(function (o) {
+                            res.push({value: o.keyword, id: o.id})
+                        });
+                        self.keyList = res;
+                    }
+                }, "json");
+            },
+            change: function (val) {
+                window.location.href = "${base}/platform/wx/conf/menu/index/" + val;
             }
-        }, "json");
-    }
-
-    $(function () {
-        $("#nestable3").nestable();
-        $("#wxid").on("change",function(){
-            $("#_reload").attr("href","${base}/platform/wx/conf/menu/index/"+$(this).val());
-            $("#_reload").trigger("click");
-        });
+        },
+        created: function () {
+            this.treeTableChild("");
+        }
     });
-
 </script>
-
-<%}%>
+<!--#
+}
+#-->

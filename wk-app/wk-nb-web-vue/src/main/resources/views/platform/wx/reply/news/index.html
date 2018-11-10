@@ -535,7 +535,7 @@ layout("/layouts/platform.html"){
             },
             handleChannelSelect: function (val) {
                 var domain = "${AppDomain!}";
-                this.formData.url = domain + "/public/wx/cms/channel/" + val.id;
+                this.formData.url = domain + base + "/public/wx/cms/channel/" + val.id;
             },
             queryArticle: function (queryString, cb) {
                 $.post(base + "/platform/wx/reply/news/article_data", {
@@ -557,7 +557,7 @@ layout("/layouts/platform.html"){
             },
             handleArticleSelect: function (val) {
                 var domain = "${AppDomain!}";
-                this.formData.url = domain + "/public/wx/cms/article/" + val.id;
+                this.formData.url = domain + base + "/public/wx/cms/article/" + val.id;
             },
             change: function (val) {
                 window.location.href = "${base}/platform/wx/reply/news/index/" + val;
