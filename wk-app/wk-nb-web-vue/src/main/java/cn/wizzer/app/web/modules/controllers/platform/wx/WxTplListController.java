@@ -2,13 +2,12 @@ package cn.wizzer.app.web.modules.controllers.platform.wx;
 
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_tpl_list;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
 import cn.wizzer.app.wx.modules.services.WxTplListService;
 import cn.wizzer.framework.base.Result;
-import cn.wizzer.framework.page.datatable.DataTableColumn;
-import cn.wizzer.framework.page.datatable.DataTableOrder;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
@@ -43,23 +42,27 @@ public class WxTplListController {
     @Ok("beetl:/platform/wx/tpl/list/index.html")
     @RequiresPermissions("wx.tpl.list")
     public void index(String wxid, HttpServletRequest req) {
+        Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
         if (list.size() > 0 && Strings.isBlank(wxid)) {
-            wxid = list.get(0).getId();
+            wxConfig = list.get(0);
         }
+        if (Strings.isNotBlank(wxid)) {
+            wxConfig = wxConfigService.fetch(wxid);
+        }
+        req.setAttribute("wxConfig", wxConfig);
         req.setAttribute("wxList", list);
-        req.setAttribute("wxid", Strings.sBlank(wxid));
     }
 
     @At
     @Ok("json:full")
     @RequiresPermissions("wx.tpl.list")
-    public Object data(@Param("wxid") String wxid, @Param("length") int length, @Param("start") int start, @Param("draw") int draw, @Param("::order") List<DataTableOrder> order, @Param("::columns") List<DataTableColumn> columns) {
+    public Object data(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
             cnd.and("wxid", "=", wxid);
         }
-        return wxTplListService.data(length, start, draw, order, columns, cnd, null);
+        return Result.success().addData(wxTplListService.listPage(pageNumber, pageSize, cnd));
     }
 
     @At
@@ -73,11 +76,15 @@ public class WxTplListController {
             List<Wx_tpl_list> lists = wxResp.getList("template_list", Wx_tpl_list.class);
             for (Wx_tpl_list o : lists) {
                 o.setWxid(wxid);
-                wxTplListService.insert(o);
+                o.setOpBy(StringUtil.getPlatformUid());
+                try {
+                    wxTplListService.insert(o);
+                } catch (Exception e) {
+                }
             }
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 

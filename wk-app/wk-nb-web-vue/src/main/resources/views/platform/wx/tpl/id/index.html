@@ -1,171 +1,316 @@
-<%
+<!--#
 layout("/layouts/platform.html"){
-%>
-<section class="content-wrap bg-white">
-    <header class="header navbar bg-white shadow">
-        <div class="btn-group tool-button">
-            <a id="add" class="btn btn-primary navbar-btn" href="${base}/platform/wx/tpl/id/add" data-toggle="modal" data-target="#dialogDetail"><i class="ti-plus"></i> 添加模板</a>
-            <a href="${base}/platform/wx/tpl/id/index/${wxid}" data-pjax id="_reload"></a>
-            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> 删除选中</button>
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <span>微信公众号：</span>
+            <el-select size="medium" v-model="pageForm.wxid" placeholder="请选择" @change="change">
+                <el-option
+                        v-for="item in wxConfigs"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
         </div>
-        <div class="btn-group">
-            <div >
-                <select id="wxid" name="wxid" class="form-control">
-                    <% for(o in wxList){
-                    %>
-                    <option value="${o.id}" <%if(o.id==wxid){%>selected<%}%>>${o.appname}</option>
-                    <%
-                    } %>
-                </select>
-            </div>
+        <div class="btn-group tool-button mt5">
+            <el-button size="medium" @click="openAdd">
+                <i class="ti-plus"></i>
+                添加模板
+            </el-button>
         </div>
-    </header>
-    <div class=panel-body style="padding-top: 50px;">
-        <div class="table-responsive no-border">
-            <table class="table table-bordered table-striped mg-t datatable">
-                <thead>
-                    <tr>
-                        <th>模板编号</th>
-                        <th>模板ID</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-            </table>
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="delMore" type="danger" :disabled="selectData.length==0">
+                <i class="el-icon-delete"></i>
+                删除
+            </el-button>
         </div>
-    </div>
-</section>
-<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">确定删除</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        删除后无法恢复。<br/>
-                        <br/>确定删除吗？
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取  消</button>
-                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="正在删除...">确  定</button>
-            </div>
-        </div>
-    </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                @selection-change="handleSelectionChange"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+        >
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+
+            <el-table-column label="模板编号" header-align="left" prop="id"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="template_id" header-align="left" prop="template_id"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+
+            <el-table-column
+                    prop="id"
+                    label="操作"
+                    width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item
+                                    :command="{type:'delete',id:scope.row.id}">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+
+    <el-dialog
+            title="添加模板"
+            :visible.sync="addDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="id" label="模板编号">
+                <el-input maxlength="100" placeholder="模板编号"
+                          v-model="formData.id"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+                <el-alert style="margin-top: 3px;"
+                          title="填写微信公众号后台模板库里的模板编号，如 TM00001，注意一定要从这里添加，而非模板库页面手动添加"
+                          type="warning">
+                </el-alert>
+                <el-alert style="margin-top: 3px;"
+                          title="添加成功后到“模板列表”里同步模板"
+                          type="warning">
+                </el-alert>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+
 </div>
-<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        </div>
-    </div>
-</div>
-<script language="JavaScript">
-    var datatable;
-    function initDatatable() {
-        datatable = $('.datatable').DataTable({
-            "dom": '<"toolbar">frtip',
-            "searching":false,
-            "processing": false,
-            "serverSide": true,
-            "select": true,
-            "ordering": true,
-            "language": {
-                "url": "${base}/assets/plugins/datatables/cn.json"
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var wxConfigs = [];
+            <!--#for(o in wxList){#-->
+            wxConfigs.push({value: "${o.id!}", label: "${o.appname!}"});
+            <!--#}#-->
+            return {
+                wxConfigs: wxConfigs,
+                addDialogVisible: false,
+                editDialogVisible: false,
+                selectData: [],
+                pageForm: {
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending"
+                },
+                tableData: [],
+                formData: {
+                },
+                formRules: {
+                    id: [
+                        {required: true, message: '模板编号', trigger: 'blur'}
+                    ]
+                },
+            }
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
             },
-            "preDrawCallback": function () {
-                sublime.showLoadingbar($(".main-content"));
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
             },
-            "drawCallback": function () {
-                sublime.closeLoadingbar($(".main-content"));
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
             },
-            "ajax": {
-                "url": "${base}/platform/wx/tpl/id/data",
-                "type": "post",
-                "data": function (d) {
-                    d.wxid=$("#wxid").val();
-                }
-            },
-            //默认排序列
-            "order": [[0, "desc"]],
-            "columns": [
-                {"data": "id", "bSortable": true},
-                {"data": "template_id", "bSortable": true}
-            ],
-            "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
-                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
-                                '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">删除</a></li>' +
-                                '</ul></div>';
-                    },
-                    "targets": 2
-                }
-            ]
-        });
-        datatable.on('click', 'tr', function () {
-            $(this).toggleClass('selected');
-        });
-        $("#searchBtn").on('click', function () {
-            datatable.ajax.reload();
-        });
-    }
-    function del(id) {
-        var dialog = $("#dialogDelete");
-        dialog.modal("show");
-        dialog.find("#okDel").unbind("click");
-        dialog.find("#okDel").bind("click", function (event) {
-            var btn = $(this);
-            btn.button("loading");
-            $.post("${base}/platform/wx/tpl/id/delete/" + id, {wxid:$("#wxid").val()}, function (data) {
-                if (data.code == 0) {
-                    datatable.ajax.reload(null,false);
-                } else {
-                    Toast.error(data.msg);
-                }
-                //重置按钮状态，关闭提示框
-                btn.button("reset");
-                dialog.modal("hide");
-            }, "json");
-        });
-    }
-    function delCheck() {
-        var chks = datatable.rows('.selected').data();
-        if (chks.length > 0) {
-            var ids = [];
-            $.each(datatable.rows('.selected').data(), function (i, n) {
-                ids.push(n.id);
-            });
-            var dialog = $("#dialogDelete");
-            dialog.modal("show");
-            dialog.find("#okDel").unbind("click");
-            dialog.find("#okDel").bind("click", function (event) {
-                var btn = $(this);
-                btn.button("loading");
-                $.post("${base}/platform/wx/tpl/id/delete", {ids: ids.toString(),wxid:$("#wxid").val()}, function (data) {
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/wx/tpl/id/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
                     if (data.code == 0) {
-                        datatable.ajax.reload(null,false);
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
                     } else {
-                        Toast.error(data.msg);
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
                     }
-                    btn.button("reset");
-                    dialog.modal("hide");
                 }, "json");
-            });
-        } else {
-            Toast.warning("请先选择要删除的项！");
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            openAdd: function () {
+                var self = this;
+                self.addDialogVisible = true;
+                self.formData = {
+                    id: "",
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                };//打开新增窗口,表单先清空
+                if (self.$refs["addForm"])
+                    self.$refs["addForm"].resetFields();
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "/platform/wx/tpl/id/addDo";
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                var url = base + "/platform/wx/tpl/id/editDo";
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            delMore: function () {
+                var self = this;
+                if (self.selectData.length == 0) {
+                    self.$message({
+                        message: "请选择消息",
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                var ids = [];
+                self.selectData.forEach(function (val) {
+                    ids.push(val.id);
+                });
+                self.$confirm('您确定要删除选中的 ' + ids.length + ' 条数据？ ', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "/platform/wx/tpl/id/delete", {ids: ids.toString(),wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"}, function (data) {
+                                if (data.code == 0) {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'success'
+                                    });
+                                    self.pageData();
+                                } else {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("delete" == command.type) {
+                    self.$confirm('确定要删除模板 '+command.id+'？此操作不可恢复', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/wx/tpl/id/delete/" + command.id, {wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.pageData();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            },
+            change: function (val) {
+                window.location.href = "${base}/platform/wx/tpl/id/index/" + val;
+            }
+        },
+        created: function () {
+            this.pageData();
         }
-    }
-    $(function () {
-        initDatatable();
-        $("#wxid").on("change",function(){
-            $("#_reload").attr("href","${base}/platform/wx/tpl/id/index/"+$(this).val());
-            $("#_reload").trigger("click");
-        });
     });
 </script>
-
-<%}%>
+<!--#
+}
+#-->

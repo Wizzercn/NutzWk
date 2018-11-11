@@ -9,10 +9,10 @@ import java.io.Serializable;
  * Created by wizzer on 2016/8/5.
  */
 @Table("wx_tpl_id")
+@TableIndexes({@Index(name = "INDEX_WX_TPL_ID", fields = {"id", "wxid"}, unique = true)})
 public class Wx_tpl_id extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
-    @Name
     @Comment("模板编号")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String id;

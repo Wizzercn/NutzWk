@@ -50,7 +50,7 @@ public class TplService {
      */
     public String send(String wxid, String openid, String tplId, String url, Map<String, WxTemplateData> data) {
         WxApi2 wxApi2 = wxService.getWxApi2(wxid);
-        Wx_tpl_id tpl = wxTplIdService.fetch(tplId);
+        Wx_tpl_id tpl = wxTplIdService.fetch(Cnd.where("id", "=", tplId).and("wxid", "=", wxid));
         if (tpl != null) {
             WxResp wxResp = wxApi2.template_send(openid, tpl.getTemplate_id(), url, data);
             Wx_user user = wxUserService.fetch(Cnd.where("openid", "=", openid));

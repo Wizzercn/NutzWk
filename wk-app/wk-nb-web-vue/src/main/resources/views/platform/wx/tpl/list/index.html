@@ -1,138 +1,167 @@
-<%
+<!--#
 layout("/layouts/platform.html"){
-%>
-<section class="content-wrap bg-white">
-    <header class="header navbar bg-white shadow">
-        <div class="btn-group" style="padding-top: 5px;">
-        <div >
-            <select id="wxid" name="wxid" class="form-control">
-                <% for(o in wxList){
-                %>
-                <option value="${o.id}" <%if(o.id==wxid){%>selected<%}%>>${o.appname}</option>
-                <%
-                } %>
-            </select>
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <span>微信公众号：</span>
+            <el-select size="medium" v-model="pageForm.wxid" placeholder="请选择" @change="change">
+                <el-option
+                        v-for="item in wxConfigs"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
         </div>
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="getTpl">
+                <i class="el-icon-download"></i>
+                同步模板
+            </el-button>
         </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+        >
 
-        <div class="pull-right">
-            <div class="btn-group tool-button">
-                <button class="btn btn-info navbar-btn" id="down"><i class="ti-import"></i> 获取模板列表</button>
-            </div>
-        </div>
-    </header>
-    <div class=panel-body style="padding-top: 50px;">
-        <div class="table-responsive no-border">
-            <table class="table table-bordered table-striped mg-t datatable">
-                <thead>
-                <tr>
-                    <th>模板编号</th>
-                    <th>标题</th>
-                    <th>模板内容</th>
-                    <th>模板示例</th>
-                </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
-</section>
-<div id="dialog" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">提示</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        确定获取模板列表吗？ <br/>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="ok" type="button" class="btn btn-primary" data-loading-text="正在获取...">确 定</button>
-            </div>
-        </div>
-    </div>
+            <el-table-column label="template_id" header-align="left" prop="template_id"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="模板标题" header-align="left" prop="title"
+                             :show-overflow-tooltip="true" width="150">
+            </el-table-column>
+
+            <el-table-column label="所属行业" header-align="left" prop="primary_industry"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    {{scope.row.primary_industry}} - {{scope.row.deputy_industry}}
+                </template>
+            </el-table-column>
+
+            <el-table-column label="模板示例" header-align="left" prop="example"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="模板内容" header-align="left" prop="content"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+
 </div>
-<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        </div>
-    </div>
-</div>
-<script language="JavaScript">
-    var datatable;
-    function initDatatable() {
-        datatable = $('.datatable').DataTable({
-            "dom": '<"toolbar">frtip',
-            "searching":false,
-            "processing": false,
-            "serverSide": true,
-            "select": true,
-            "ordering": true,
-            "language": {
-                "url": "${base}/assets/plugins/datatables/cn.json"
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var wxConfigs = [];
+            <!--#for(o in wxList){#-->
+            wxConfigs.push({value: "${o.id!}", label: "${o.appname!}"});
+            <!--#}#-->
+            return {
+                wxConfigs: wxConfigs,
+                pageForm: {
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending"
+                },
+                tableData: [],
+            }
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
             },
-            "preDrawCallback": function () {
-                sublime.showLoadingbar($(".main-content"));
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
             },
-            "drawCallback": function () {
-                sublime.closeLoadingbar($(".main-content"));
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
             },
-            "ajax": {
-                "url": "${base}/platform/wx/tpl/list/data",
-                "type": "post",
-                "data": function (d) {
-                    d.wxid=$("#wxid").val();
-                }
-            },
-            //默认排序列
-            "order": [[0, "desc"]],
-            "columns": [
-                {"data": "template_id", "bSortable": true},
-                {"data": "title", "bSortable": true},
-                {"data": "content", "bSortable": true},
-                {"data": "example", "bSortable": true}
-            ],
-            "columnDefs": [
-            ]
-        });
-        datatable.on('click', 'tr', function () {
-            $(this).toggleClass('selected');
-        });
-        $("#searchBtn").on('click', function () {
-            datatable.ajax.reload();
-        });
-    }
-    $(function () {
-        initDatatable();
-        $("#wxid").on("change",function(){
-            datatable.ajax.reload();
-        });
-        $("#down").on("click",function(){
-            var dialog = $("#dialog");
-            dialog.modal("show");
-            dialog.find("#ok").unbind("click");
-            dialog.find("#ok").bind("click", function (event) {
-                var btn = $(this);
-                btn.button("loading");
-                $.post("${base}/platform/wx/tpl/list/getDo", {wxid:$("#wxid").val()}, function (data) {
-                    //重置按钮状态，关闭提示框
-                    btn.button("reset");
-                    dialog.modal("hide");
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/wx/tpl/list/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
                     if (data.code == 0) {
-                        Toast.success(data.msg);
-                        datatable.ajax.reload();
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
                     } else {
-                        Toast.error(data.msg);
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
                     }
                 }, "json");
-            });
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            getTpl:function(){
+                var self = this;
+                self.$confirm('您确定要同步模板？确定后请稍作等待.. ', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "/platform/wx/tpl/list/getDo", {wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"}, function (data) {
+                                if (data.code == 0) {
+                                    self.pageData();
+                                } else {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
 
-        });
+            },
+            change: function (val) {
+                window.location.href = "${base}/platform/wx/tpl/list/index/" + val;
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
     });
 </script>
-
-<%}%>
+<!--#
+}
+#-->
