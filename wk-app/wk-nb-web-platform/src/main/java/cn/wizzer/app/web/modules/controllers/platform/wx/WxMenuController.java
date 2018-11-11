@@ -95,7 +95,7 @@ public class WxMenuController {
     public void add(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
         req.setAttribute("menus", wxMenuService.query(Cnd.where("wxid", "=", wxid).and(Cnd.exps("parentId", "=", "").or("parentId", "is", null)).asc("location")));
-        req.setAttribute("config", wxConfigService.fetch(wxid));
+        req.setAttribute("wxconfig", wxConfigService.fetch(wxid));
     }
 
     @At
@@ -154,7 +154,7 @@ public class WxMenuController {
     @RequiresPermissions("wx.conf.menu")
     public Object edit(String id, HttpServletRequest req) {
         Wx_menu menu = wxMenuService.fetch(id);
-        req.setAttribute("config", wxConfigService.fetch(menu.getWxid()));
+        req.setAttribute("wxconfig", wxConfigService.fetch(menu.getWxid()));
         return wxMenuService.fetchLinks(menu, "wxConfig");
     }
 

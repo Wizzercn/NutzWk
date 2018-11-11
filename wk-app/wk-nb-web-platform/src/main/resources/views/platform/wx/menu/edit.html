@@ -182,7 +182,7 @@ layout("/layouts/platform.html"){
 
     }
     function getUrl(url){
-        var str="https://open.weixin.qq.com/connect/oauth2/authorize?appid=${config.appid!}&redirect_uri=$s&response_type=code&scope=snsapi_base&state=11624317#wechat_redirect";
+        var str="https://open.weixin.qq.com/connect/oauth2/authorize?appid=${wxconfig.appid!}&redirect_uri=$s&response_type=code&scope=snsapi_base&state=11624317#wechat_redirect";
         return str.replace("$s",encodeURIComponent(url));
     }
     function seeUrl(url){
