@@ -335,7 +335,7 @@ layout("/layouts/platform.html"){
             },
             openAdd: function () {
                 var self = this;
-                if (self.pageForm.channelId == "") {
+                if (typeof(self.pageForm.channelId) == "undefined" || self.pageForm.channelId == "" || self.pageForm.channelId == "root") {
                     self.$message({
                         message: "请在左侧选定一个栏目",
                         type: 'error'
