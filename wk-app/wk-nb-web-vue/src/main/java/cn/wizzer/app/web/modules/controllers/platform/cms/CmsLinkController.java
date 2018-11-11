@@ -65,6 +65,7 @@ public class CmsLinkController {
         try {
             link.setOpBy(StringUtil.getPlatformUid());
             cmsLinkService.insert(link);
+            cmsLinkService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -90,6 +91,7 @@ public class CmsLinkController {
     public Object editDo(@Param("..") Cms_link link, HttpServletRequest req) {
         try {
             cmsLinkService.updateIgnoreNull(link);
+            cmsLinkService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -109,6 +111,7 @@ public class CmsLinkController {
                 cmsLinkService.delete(oneId);
                 req.setAttribute("id", oneId);
             }
+            cmsLinkService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();

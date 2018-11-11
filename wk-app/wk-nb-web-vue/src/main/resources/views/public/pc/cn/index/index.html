@@ -1,0 +1,22 @@
+
+<!--# include( "../include/top.html" ){}; #-->
+演示模板标签的使用：
+<#cms_article_list pageNumber="${pageNumber}" pageSize="${pageSize}" sortName="publishAt" sortOrder="desc" var="p">
+
+<ul class="clearfix2 i_news_text">
+    <!--#for(o in p.list){#-->
+    <!--#if(oLP.index==1){#--><li><!--#}#-->
+    <p>${o.title!} - ${@date.getDate(o.publishAt,'yyyy.MM.dd')}</p>
+    <!--#if(oLP.index%8==0||oLP.last){#-->
+    </li>
+    <!--#}#-->
+    <!--#if(oLP.index%8!=0&&!oLP.last){#-->
+    </li><li>
+    <!--#}#-->
+    <!--#}#-->
+</ul>
+<!--end页码-->
+</#cms_article_list>
+
+
+<!--# include( "../include/buttom.html" ){}; #-->
