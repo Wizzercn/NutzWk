@@ -1,4 +1,4 @@
-NutzWk 开源企业级微服务开发框架
+NutzWk 开源企业级Java Web开发框架
 ======
 
 [![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
@@ -49,7 +49,7 @@ https://wizzer.cn/donation                捐赠者列表
 *   缓存框架：Redis、Ehcache、Wkcache
 *   订阅发布：Redis
 *   可扩展功能：WebSocket-Nutz、消息队列-Rabbitmq、搜索引擎-Elasticsearch、工作流-Activiti等
-*   前端框架：Bootstrap+JQuery
+*   前端框架：Bootstrap+JQuery或Vue +Element
 
 ## NutzWk 5.x 使用说明：
 
