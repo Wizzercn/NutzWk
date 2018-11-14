@@ -16,15 +16,17 @@ public class LogTimeProcessor extends AbstractProcessor {
     private static final Log log = Logs.get();
 
     public void process(ActionContext ac) throws Throwable {
-        Stopwatch sw = Stopwatch.begin();
-        try {
-            doNext(ac);
-        } finally {
-            sw.stop();
-            if (log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
+            Stopwatch sw = Stopwatch.begin();
+            try {
+                doNext(ac);
+            } finally {
+                sw.stop();
                 HttpServletRequest req = ac.getRequest();
                 log.debugf("[%-4s]URI=%s %sms", req.getMethod(), req.getRequestURI(), sw.getDuration());
             }
+        } else {
+            doNext(ac);
         }
     }
 }
