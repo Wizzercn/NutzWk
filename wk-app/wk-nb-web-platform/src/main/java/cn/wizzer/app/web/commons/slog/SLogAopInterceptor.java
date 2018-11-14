@@ -5,12 +5,9 @@ import org.nutz.aop.InterceptorChain;
 import org.nutz.aop.MethodInterceptor;
 import org.nutz.el.El;
 import org.nutz.ioc.Ioc;
-import org.nutz.lang.Lang;
 import org.nutz.lang.segment.CharSegment;
-import org.nutz.lang.util.Context;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Mvcs;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -28,7 +25,7 @@ public class SLogAopInterceptor implements MethodInterceptor {
 
     protected String type;
     protected String tag;
-    protected CharSegment msg;
+    protected CharSegment seg;
     protected boolean param;
     protected boolean result;
     protected boolean async;
@@ -36,10 +33,10 @@ public class SLogAopInterceptor implements MethodInterceptor {
     protected Ioc ioc;
 
     public SLogAopInterceptor(Ioc ioc, SLog slog, Method method) {
-        this.msg = new CharSegment(slog.msg());
-        if (msg.hasKey()) {
+        this.seg = new CharSegment(slog.msg());
+        if (seg.hasKey()) {
             els = new HashMap<String, El>();
-            for (String key : msg.keys()) {
+            for (String key : seg.keys()) {
                 els.put(key, new El(key));
             }
         }
@@ -59,29 +56,14 @@ public class SLogAopInterceptor implements MethodInterceptor {
     public void filter(InterceptorChain chain) throws Throwable {
         try {
             chain.doChain();
-            doLog("aop.after", chain, null);
+            doLog("aop.after", seg, chain, null);
         } catch (Throwable e) {
-            doLog("aop.error", chain, e);
+            doLog("aop.error", seg, chain, e);
             throw e;
         }
     }
 
-    protected void doLog(String t, InterceptorChain chain, Throwable e) {
-        String _msg = null;
-        if (msg.hasKey()) {
-            Context ctx = Lang.context();
-            ctx.set("args", chain.getArgs());
-            ctx.set("return", chain.getReturn());
-            ctx.set("req", Mvcs.getReq());
-            ctx.set("resp", Mvcs.getResp());
-            Context _ctx = Lang.context();
-            for (String key : msg.keys()) {
-                _ctx.set(key, els.get(key).eval(ctx));
-            }
-            _msg = msg.render(_ctx).toString();
-        } else {
-            _msg = msg.getOrginalString();
-        }
+    protected void doLog(String t, CharSegment seg, InterceptorChain chain, Throwable e) {
         if (sLogService == null)
             sLogService = ioc.get(SLogService.class);
         try {
@@ -89,7 +71,7 @@ public class SLogAopInterceptor implements MethodInterceptor {
                     type,
                     tag,
                     source,
-                    _msg,
+                    seg,
                     els,
                     param,
                     result,

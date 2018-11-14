@@ -43,7 +43,7 @@ public class SysConfController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.conf.add")
-    @SLog(tag = "添加参数", msg = "${args[0].configKey}:${args[0].configValue}")
+    @SLog(tag = "添加参数", msg = "${conf.configKey}:${conf.configValue}")
     public Object addDo(@Param("..") Sys_config conf) {
         try {
             conf.setOpBy(StringUtil.getPlatformUid());
@@ -71,7 +71,7 @@ public class SysConfController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.conf.edit")
-    @SLog(tag = "修改参数", msg = "${args[0].configKey}:${args[0].configValue}")
+    @SLog(tag = "修改参数", msg = "${conf.configKey}:${conf.configValue}")
     public Object editDo(@Param("..") Sys_config conf) {
         try {
             conf.setOpBy(StringUtil.getPlatformUid());
@@ -88,7 +88,7 @@ public class SysConfController {
     @At("/delete/?")
     @Ok("json")
     @RequiresPermissions("sys.manager.conf.delete")
-    @SLog(tag = "删除参数", msg = "参数:${args[0]}")
+    @SLog(tag = "删除参数", msg = "参数:${configKey}")
     public Object delete(String configKey) {
         try {
             if (Strings.sBlank(configKey).startsWith("App")) {

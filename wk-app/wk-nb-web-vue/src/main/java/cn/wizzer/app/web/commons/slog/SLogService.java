@@ -4,20 +4,23 @@ import cn.wizzer.app.sys.modules.models.Sys_log;
 import cn.wizzer.app.sys.modules.services.SysLogService;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import com.alibaba.dubbo.config.annotation.Reference;
-import org.nutz.dao.Dao;
-import org.nutz.dao.util.Daos;
+import org.nutz.Nutz;
 import org.nutz.el.El;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Times;
+import org.nutz.lang.segment.CharSegment;
+import org.nutz.lang.util.ClassMetaReader;
+import org.nutz.lang.util.Context;
+import org.nutz.lang.util.MethodParamNamesScaner;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,20 +107,70 @@ public class SLogService implements Runnable {
      * @param obj    被拦截的对象
      * @param e      异常对象
      */
-    public void log(String t, String type, String tag, String source, String msg,
+    public void log(String t, String type, String tag, String source, CharSegment seg,
                     Map<String, El> els, boolean param, boolean result,
                     boolean async,
                     Object[] args, Object re, Method method, Object obj,
                     Throwable e) {
+        String _msg = null;
+        if (seg.hasKey()) {
+            Context ctx = Lang.context();
+            List<String> names = null;
+            if (Nutz.majorVersion() == 1 && Nutz.minorVersion() < 60) {
+                Class<?> klass = obj.getClass();
+                if (klass.getName().endsWith("$$NUTZAOP"))
+                    klass = klass.getSuperclass();
+                String key = klass.getName();
+                if (caches.containsKey(key))
+                    names = caches.get(key).get(ClassMetaReader.getKey(method));
+                else {
+                    try {
+                        Map<String, List<String>> tmp = MethodParamNamesScaner.getParamNames(klass);
+                        names = tmp.get(ClassMetaReader.getKey(method));
+                        caches.put(key, tmp);
+                    } catch (IOException e1) {
+                        log.debug("error when reading param name");
+                    }
+                }
+            } else {
+                names = MethodParamNamesScaner.getParamNames(method);
+            }
+            if (names != null) {
+                for (int i = 0; i < names.size() && i < args.length; i++) {
+                    ctx.set(names.get(i), args[i]);
+                }
+            }
+            ctx.set("obj", obj);
+            ctx.set("args", args);
+            ctx.set("re", re);
+            ctx.set("return", re);
+            ctx.set("req", Mvcs.getReq());
+            ctx.set("resp", Mvcs.getResp());
+            Context _ctx = Lang.context();
+            for (String key : seg.keys()) {
+                _ctx.set(key, els.get(key).eval(ctx));
+            }
+            _msg = seg.render(_ctx).toString();
+        } else {
+            _msg = seg.getOrginalString();
+        }
         String _param = "";
         String _result = "";
         if (param && args != null) {
-            _param = Json.toJson(args);
+            try {
+                _param = Json.toJson(args);
+            } catch (Exception e1) {
+                _param = "传参不能转换为JSON格式";
+            }
         }
         if (result && re != null) {
-            _result = Json.toJson(re);
+            try {
+                _result = Json.toJson(re);
+            } catch (Exception e1) {
+                _param = "返回对象不能转换为JSON格式";
+            }
         }
-        log(type, tag, source, msg, async, _param, _result);
+        log(type, tag, source, _msg, async, _param, _result);
     }
 
 
