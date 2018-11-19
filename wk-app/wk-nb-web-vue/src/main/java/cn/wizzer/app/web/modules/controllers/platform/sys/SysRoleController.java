@@ -192,7 +192,12 @@ public class SysRoleController {
     @RequiresPermissions("sys.manager.role")
     public Object menuAll(HttpServletRequest req) {
         try {
-            List<Sys_menu> list = sysUserService.getMenusAndButtons(StringUtil.getPlatformUid());
+            List<Sys_menu> list;
+            if (shiroUtil.hasRole("sysadmin")) {
+                list = sysMenuService.query(Cnd.orderBy().asc("location").asc("path"));
+            } else {
+                list = sysUserService.getMenusAndButtons(StringUtil.getPlatformUid());
+            }
             NutMap menuMap = NutMap.NEW();
             for (Sys_menu unit : list) {
                 List<Sys_menu> list1 = menuMap.getList(unit.getParentId(), Sys_menu.class);
@@ -215,7 +220,12 @@ public class SysRoleController {
     public Object menuRole(String roleId, HttpServletRequest req) {
         try {
             List<Sys_menu> userList = sysUserService.getMenusAndButtons(StringUtil.getPlatformUid());
-            List<Sys_menu> list = sysRoleService.getMenusAndButtons(roleId);
+            List<Sys_menu> list;
+            if (shiroUtil.hasRole("sysadmin")) {
+                list = sysMenuService.query(Cnd.orderBy().asc("location").asc("path"));
+            } else {
+                list = sysRoleService.getMenusAndButtons(roleId);
+            }
             NutMap menuMap = NutMap.NEW();
             for (Sys_menu unit : userList) {
                 List<Sys_menu> list1 = menuMap.getList(unit.getParentId(), Sys_menu.class);
