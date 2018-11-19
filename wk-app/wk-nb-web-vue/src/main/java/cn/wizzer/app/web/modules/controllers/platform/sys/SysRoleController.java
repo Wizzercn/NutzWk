@@ -227,7 +227,7 @@ public class SysRoleController {
                 list = sysRoleService.getMenusAndButtons(roleId);
             }
             NutMap menuMap = NutMap.NEW();
-            for (Sys_menu unit : userList) {
+            for (Sys_menu unit : list) {
                 List<Sys_menu> list1 = menuMap.getList(unit.getParentId(), Sys_menu.class);
                 if (list1 == null) {
                     list1 = new ArrayList<>();
@@ -236,8 +236,8 @@ public class SysRoleController {
                 menuMap.put(unit.getParentId(), list1);
             }
             List<String> cmenu = new ArrayList<>();
-            for (Sys_menu unit : list) {
-                cmenu.add(unit.getId());
+            for (Sys_menu menu : userList) {
+                cmenu.add(menu.getId());
             }
             return Result.success().addData(NutMap.NEW().addv("menu", getTree(menuMap, "")).addv("cmenu", cmenu));
         } catch (Exception e) {
