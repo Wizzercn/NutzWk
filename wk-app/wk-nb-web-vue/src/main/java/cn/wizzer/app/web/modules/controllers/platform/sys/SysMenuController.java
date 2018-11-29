@@ -121,7 +121,7 @@ public class SysMenuController {
                 }
             }
             sysMenu.setHasChildren(false);
-            sysMenu.setIsShow(true);
+            sysMenu.setShowit(true);
             sysMenu.setOpBy(StringUtil.getPlatformUid());
             sysMenuService.save(sysMenu, sysMenu.getParentId(), buttons);
             req.setAttribute("name", sysMenu.getName());
@@ -179,7 +179,7 @@ public class SysMenuController {
                 }
             }
             sysMenu.setHasChildren(false);
-            sysMenu.setIsShow(true);
+            sysMenu.setShowit(true);
             sysMenu.setOpBy(StringUtil.getPlatformUid());
             sysMenuService.edit(sysMenu, sysMenu.getParentId(), buttons);
             req.setAttribute("name", sysMenu.getName());

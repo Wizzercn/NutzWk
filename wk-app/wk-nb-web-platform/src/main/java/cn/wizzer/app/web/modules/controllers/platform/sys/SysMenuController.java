@@ -62,8 +62,8 @@ public class SysMenuController {
                 return Result.error("sys.role.code");
             }
             if ("data".equals(menu.getType())) {
-                menu.setIsShow(false);
-            } else menu.setIsShow(true);
+                menu.setShowit(false);
+            } else menu.setShowit(true);
             menu.setOpBy(StringUtil.getPlatformUid());
             sysMenuService.save(menu, parentId,null);
             return Result.success("system.success");

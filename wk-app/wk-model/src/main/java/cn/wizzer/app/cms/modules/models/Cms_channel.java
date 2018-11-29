@@ -68,7 +68,7 @@ public class Cms_channel extends BaseModel implements Serializable {
     @Column
     @Comment("是否显示")
     @ColDefine(type = ColType.BOOLEAN)
-    private boolean isShow;
+    private boolean showit;
 
     @Column
     @Comment("是否禁用")
@@ -78,8 +78,8 @@ public class Cms_channel extends BaseModel implements Serializable {
     @Column
     @Comment("排序字段")
     @Prev({
-            @SQL(db= DB.MYSQL,value = "SELECT IFNULL(MAX(location),0)+1 FROM cms_channel"),
-            @SQL(db= DB.ORACLE,value = "SELECT COALESCE(MAX(location),0)+1 FROM cms_channel")
+            @SQL(db = DB.MYSQL, value = "SELECT IFNULL(MAX(location),0)+1 FROM cms_channel"),
+            @SQL(db = DB.ORACLE, value = "SELECT COALESCE(MAX(location),0)+1 FROM cms_channel")
     })
     private Integer location;
 
@@ -167,12 +167,12 @@ public class Cms_channel extends BaseModel implements Serializable {
         this.target = target;
     }
 
-    public boolean isShow() {
-        return isShow;
+    public boolean isShowit() {
+        return showit;
     }
 
-    public void setShow(boolean show) {
-        isShow = show;
+    public void setShowit(boolean showit) {
+        this.showit = showit;
     }
 
     public boolean isDisabled() {

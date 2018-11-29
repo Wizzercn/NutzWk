@@ -51,7 +51,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<Sys_menu> implements Sys
                 Sys_menu m = new Sys_menu();
                 m.setParentId(menu.getId());
                 m.setHasChildren(false);
-                m.setIsShow(false);
+                m.setShowit(false);
                 m.setLocation(0);
                 m.setType("data");
                 m.setPermission(map.getString("permission", ""));
@@ -90,7 +90,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<Sys_menu> implements Sys
                     Sys_menu m = new Sys_menu();
                     m.setParentId(menu.getId());
                     m.setHasChildren(false);
-                    m.setIsShow(false);
+                    m.setShowit(false);
                     m.setLocation(0);
                     m.setType("data");
                     m.setPermission(map.getString("permission", ""));

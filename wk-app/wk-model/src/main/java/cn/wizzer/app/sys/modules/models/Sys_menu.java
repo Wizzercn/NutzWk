@@ -64,7 +64,7 @@ public class Sys_menu extends BaseModel implements Serializable {
     @Column
     @Comment("是否显示")
     @ColDefine(type = ColType.BOOLEAN)
-    private boolean isShow;
+    private boolean showit;
 
     @Column
     @Comment("是否禁用")
@@ -167,12 +167,12 @@ public class Sys_menu extends BaseModel implements Serializable {
         this.icon = icon;
     }
 
-    public boolean isShow() {
-        return isShow;
+    public boolean isShowit() {
+        return showit;
     }
 
-    public void setIsShow(boolean isShow) {
-        this.isShow = isShow;
+    public void setShowit(boolean showit) {
+        this.showit = showit;
     }
 
     public boolean isDisabled() {
