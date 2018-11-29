@@ -219,7 +219,7 @@ public class SysRoleController {
     @RequiresPermissions("sys.manager.role")
     public Object menuRole(String roleId, HttpServletRequest req) {
         try {
-            List<Sys_menu> userList = sysUserService.getMenusAndButtons(StringUtil.getPlatformUid());
+            List<Sys_menu> userList = sysRoleService.getMenusAndButtons(roleId);
             List<Sys_menu> list;
             if (shiroUtil.hasRole("sysadmin")) {
                 list = sysMenuService.query(Cnd.orderBy().asc("location").asc("path"));

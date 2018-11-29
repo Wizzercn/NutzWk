@@ -167,10 +167,15 @@ layout("/layouts/platform.html"){
                 </el-switch>
             </el-form-item>
             <el-form-item prop="" label="分配权限">
+                <el-row style="margin-bottom: 3px;">
+                    <el-button size="small" @click="addRoleSelAll">全选</el-button>
+                    <el-button size="small" @click="addRoleSelClear">清空</el-button>
+                </el-row>
                 <el-tree
                         ref="addMenuTree"
                         :data="addMenuData"
                         show-checkbox
+                        check-strictly
                         node-key="id"
                         :props="defaultProps"
                 >
@@ -272,6 +277,10 @@ layout("/layouts/platform.html"){
             :title="menuDialogTitle"
             :visible.sync="menuDialogVisible"
             width="70%">
+        <el-row style="margin-bottom: 3px;">
+            <el-button size="small" @click="menuRoleSelAll">全选</el-button>
+            <el-button size="small" @click="menuRoleSelClear">清空</el-button>
+        </el-row>
         <el-tree
                 ref="doMenuTree"
                 :data="doMenuData"
@@ -918,6 +927,35 @@ layout("/layouts/platform.html"){
                         });
                     }
                 }, "json");
+            },
+            getTreeAllIds:function(ids,obj){
+                var self=this;
+                if(obj&&obj.length>0){
+                    obj.forEach(function (o) {
+                        ids.push(o.id);
+                        if(o.children){
+                            self.getTreeAllIds(ids,o.children);
+                        }
+                    });
+                }
+            },
+            addRoleSelAll:function () {
+                var self=this;
+                var ids=[];
+                self.getTreeAllIds(ids,self.addMenuData);
+                self.$refs["addMenuTree"].setCheckedKeys(ids);
+            },
+            addRoleSelClear:function () {
+                this.$refs["addMenuTree"].setCheckedKeys([]);
+            },
+            menuRoleSelAll:function () {
+                var self=this;
+                var ids=[];
+                self.getTreeAllIds(ids,self.doMenuData);
+                self.$refs["doMenuTree"].setCheckedKeys(ids);
+            },
+            menuRoleSelClear:function () {
+                this.$refs["doMenuTree"].setCheckedKeys([]);
             }
         },
         created: function () {
