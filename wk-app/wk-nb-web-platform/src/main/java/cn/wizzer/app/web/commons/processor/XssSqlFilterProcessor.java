@@ -20,7 +20,7 @@ import java.util.Iterator;
 public class XssSqlFilterProcessor extends AbstractProcessor {
 
     private static final Log log = Logs.get();
-    protected String lerrorUri = "/WEB-INF/error/403.html";
+    protected String lerrorUri = "/error/403.html";
 
     public void process(ActionContext ac) throws Throwable {
         if (checkParams(ac)) {
