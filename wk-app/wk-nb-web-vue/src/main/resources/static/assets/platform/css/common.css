@@ -1,3 +1,43 @@
 [v-cloak] {
     display: none
 }
+
+.ie-must-go-die {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.ie-must-go-die .ie-container {
+    position: absolute;
+    top: 40%;
+    left: 33%;
+    text-align: center;
+    color: #000;
+}
+
+.ie-must-go-die .ie-container h1 {
+    font-size: 28px;
+    margin-bottom: 36px;
+}
+
+.ie-must-go-die .ie-container p {
+    font-size: 16px;
+    line-height: 24px;
+    margin-bottom: 16px;
+}
+
+.ie-must-go-die .ie-container a {
+    display: block;
+    color: inherit;
+}
+
+.ie-must-go-die .ie-container a:hover {
+    text-decoration: underline;
+}
+
+.ie-must-go-die .ie-container a:visited {
+    color: inherit;
+}
