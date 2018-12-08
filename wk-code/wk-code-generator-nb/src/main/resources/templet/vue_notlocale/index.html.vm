@@ -1,0 +1,340 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+#set($ttt="$")
+
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <el-button size="medium" @click="openAdd">
+                <i class="ti-plus"></i>
+                新建
+            </el-button>
+        </div>
+        <div class="btn-group tool-button mt5">
+            <el-input placeholder="请输入内容" v-model="pageForm.searchKeyword" @keyup.enter.native="doSearch">
+                <el-select v-model="pageForm.searchName" slot="prepend" placeholder="查询类型" style="width: 120px;">
+          #foreach ($column in $table.LabeledColumns)
+           <el-option label="${column.label}" value="${column.fieldName}"></el-option>
+          #end
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="doSearch"></el-button>
+            </el-input>
+        </div>
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="delMore" type="danger" :disabled="selectData.length==0">
+                <i class="el-icon-delete"></i>
+                删除
+            </el-button>
+        </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                @selection-change="handleSelectionChange"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+        >
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+            #foreach ($column in $table.LabeledColumns)
+            <el-table-column label="${column.label}" header-align="left" prop="${column.fieldName}"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+            #end
+
+            <el-table-column
+                    prop="id"
+                    label="操作"
+                    width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item :command="{type:'edit',id:scope.row.id}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                                    :command="{type:'delete',id:scope.row.id}">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+
+    <el-dialog
+            title="新建"
+            :visible.sync="addDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            #set ($columSize=0)
+            #foreach ($column in $table.LabeledColumns)
+            #set($columSize=$columSize+1)
+            <el-form-item prop="${column.fieldName}" label="${column.label}">
+                <el-input maxlength="100" placeholder="${column.label}"
+                          v-model="formData.${column.fieldName}"
+                          auto-complete="off" tabindex="$columSize" type="text"></el-input>
+            </el-form-item>
+            #end
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+
+    <el-dialog
+            title="修改"
+            :visible.sync="editDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
+            #set ($columSize=0)
+            #foreach ($column in $table.LabeledColumns)
+            #set($columSize=$columSize+1)
+            <el-form-item prop="${column.fieldName}" label="${column.label}">
+                <el-input maxlength="100" placeholder="${column.label}"
+                          v-model="formData.${column.fieldName}"
+                          auto-complete="off" tabindex="$columSize" type="text"></el-input>
+            </el-form-item>
+            #end
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doEdit">确 定</el-button>
+                  </span>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                addDialogVisible: false,
+                editDialogVisible: false,
+                selectData: [],
+                pageForm: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending"
+                },
+                tableData: [],
+                formData: {},
+                formRules: {
+#foreach ($column in $table.LabeledColumns)
+             ${column.fieldName} : [
+                        {required: true, message: '${column.label}', trigger: 'blur'}
+                    ],
+                    #end
+                }
+            }
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            doSearch: function () {
+                this.pageForm.pageNumber = 1;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "${table.UriPrefix}/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.${ttt}message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            openAdd: function () {
+                var self = this;
+                self.addDialogVisible = true;
+                self.formData = {
+                    id: "",
+                };//打开新增窗口,表单先清空
+                if (self.${ttt}refs["addForm"])
+                    self.${ttt}refs["addForm"].resetFields();
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "${table.UriPrefix}/addDo";
+                self.${ttt}refs["addForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.${ttt}message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.${ttt}message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                var url = base + "${table.UriPrefix}/editDo";
+                self.${ttt}refs["editForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.${ttt}message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.${ttt}message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            delMore: function () {
+                var self = this;
+                if (self.selectData.length == 0) {
+                    self.${ttt}message({
+                        message: "请选择要删除的数据",
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                var ids = [];
+                self.selectData.forEach(function (val) {
+                    ids.push(val.id);
+                });
+                self.${ttt}confirm('您确定要删除选中的 ' + ids.length + ' 条数据？ ', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "${table.UriPrefix}/delete", {ids: ids.toString()}, function (data) {
+                                if (data.code == 0) {
+                                    self.${ttt}message({
+                                        message: data.msg,
+                                        type: 'success'
+                                    });
+                                    self.pageData();
+                                } else {
+                                    self.${ttt}message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("edit" == command.type) {
+                    $.post(base + "${table.UriPrefix}/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.editDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.${ttt}message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.${ttt}confirm('此操作将删除： ' + command.id, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "${table.UriPrefix}/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.${ttt}message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.pageData();
+                                    } else {
+                                        self.${ttt}message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
+    });
+</script>
+<!--#
+}
+#-->

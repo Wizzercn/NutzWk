@@ -70,6 +70,7 @@ public class GeneratorAction extends AnAction {
                 .append(" -mod ").append(generateConfig.getModelPakName())
                 .append(" -ctr ").append(generateConfig.getControllerPakName())
                 .append(" -sev ").append(generateConfig.getServicePakName())
+                .append(" -vue ").append(generateConfig.isVue())
                 .append(generateConfig.isConroller() ? " controller" : "")
                 .append(generateConfig.isService() ? " service" : "")
                 .append(generateConfig.isLocale() ? " locale" : "")

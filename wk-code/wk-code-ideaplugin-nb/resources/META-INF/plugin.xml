@@ -1,12 +1,12 @@
 <idea-plugin>
   <id>cn.wizzer.code</id>
   <name>wk-code-ideaplugin-nb</name>
-  <version>5.0.7</version>
+  <version>5.1.1</version>
   <vendor email="wizzer@qq.com" url="https://wizzer.cn">Wizzer</vendor>
 
-  <description>NutzWk 5.0.x Code Generator plugin</description>
+  <description>NutzWk 5.1.x Code Generator plugin</description>
 
-  <change-notes>for NutzWk 5.0.x https://github.com/Wizzercn/NutzWk</change-notes>
+  <change-notes>for NutzWk 5.1.x https://github.com/Wizzercn/NutzWk</change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
   <idea-version since-build="145.0"/>

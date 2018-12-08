@@ -1,0 +1,114 @@
+package ${packageName};
+
+import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.PageUtil;
+import cn.wizzer.app.web.commons.utils.StringUtil;
+import ${table.EntityFullClassName};
+import ${table.ServiceFullClassName};
+import cn.wizzer.framework.base.Result;
+import com.alibaba.dubbo.config.annotation.Reference;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.dao.Cnd;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
+import org.nutz.lang.Times;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+#set($parameterId = '${args[0].id}')
+#set($parameterId2 = "${req.getAttribute('id')}")
+@IocBean
+@At("${table.UriPrefix}")
+public class ${table.ControllerClassName}{
+    private static final Log log = Logs.get();
+    @Inject
+    @Reference
+    private ${table.ServiceClassName} ${table.ServiceInstanceName};
+
+    @At("")
+    @Ok("beetl:/${table.ViewBasePath}/index.html")
+    @RequiresPermissions("${table.Permissions}")
+    public void index() {
+    }
+
+    @At("/data")
+    @Ok("json:full")
+    @RequiresPermissions("${table.Permissions}")
+    public Object data(@Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        Cnd cnd = Cnd.NEW();
+        if (!Strings.isBlank(searchName) && !Strings.isBlank(searchKeyword)) {
+            cnd.and(searchName, "like", "%" + searchKeyword + "%");
+        }
+        if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+            cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+        }
+        return Result.success().addData(${table.ServiceInstanceName}.listPage(pageNumber, pageSize, cnd));
+    }
+
+
+    @At("/addDo")
+    @Ok("json")
+    @RequiresPermissions("${table.Permissions}.add")
+    @SLog(tag = "${table.Label}", msg = "$parameterId")
+    public Object addDo(@Param("..")${table.EntityClassName} ${table.EntityInstanceName}, HttpServletRequest req) {
+		try {
+            ${table.EntityInstanceName}.setOpBy(StringUtil.getPlatformUid());
+			${table.ServiceInstanceName}.insert(${table.EntityInstanceName});
+			return Result.success();
+		} catch (Exception e) {
+			return Result.error();
+		}
+    }
+
+    @At("/edit/?")
+    @Ok("json")
+    @RequiresPermissions("${table.Permissions}")
+    public Object edit(${table.pkType} id,HttpServletRequest req) {
+        try {
+            return Result.success().addData(${table.ServiceInstanceName}.fetch(id));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/editDo")
+    @Ok("json")
+    @RequiresPermissions("${table.Permissions}.edit")
+    @SLog(tag = "${table.Label}", msg = "$parameterId")
+    public Object editDo(@Param("..")${table.EntityClassName} ${table.EntityInstanceName}, HttpServletRequest req) {
+		try {
+            ${table.EntityInstanceName}.setOpBy(StringUtil.getPlatformUid());
+			${table.EntityInstanceName}.setOpAt(Times.getTS());
+			${table.ServiceInstanceName}.updateIgnoreNull(${table.EntityInstanceName});
+			return Result.success();
+		} catch (Exception e) {
+			return Result.error();
+		}
+    }
+
+    @At({"/delete/?", "/delete"})
+    @Ok("json")
+    @RequiresPermissions("${table.Permissions}.delete")
+    @SLog(tag = "${table.Label}", msg = "$parameterId2")
+    public Object delete(${table.pkType} id, @Param("ids")  ${table.pkType}[] ids, HttpServletRequest req) {
+		try {
+			if(ids!=null&&ids.length>0){
+				${table.ServiceInstanceName}.delete(ids);
+    			req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
+			}else{
+				${table.ServiceInstanceName}.delete(id);
+    			req.setAttribute("id", id);
+			}
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+}
