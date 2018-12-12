@@ -33,7 +33,7 @@ public class Result implements Serializable {
 
     public Result addMsg(String msg) {
         if (Strings.isBlank(msg) || Mvcs.getActionContext() == null || Mvcs.getActionContext().getRequest() == null || Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg) == null) {
-            this.msg = "";
+            this.msg = Strings.sNull(msg);
         } else {
             this.msg = Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
         }
@@ -96,8 +96,7 @@ public class Result implements Serializable {
         return data;
     }
 
-    @Override
-    public String toString() {
+    public String toJson() {
         return Json.toJson(this, JsonFormat.compact());
     }
 
