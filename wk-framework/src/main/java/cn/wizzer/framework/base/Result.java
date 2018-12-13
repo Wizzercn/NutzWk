@@ -96,7 +96,7 @@ public class Result implements Serializable {
         return data;
     }
 
-    public String toJson() {
+    public String toJsonString() {
         return Json.toJson(this, JsonFormat.compact());
     }
 
