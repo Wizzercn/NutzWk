@@ -6,7 +6,7 @@
 
     <groupId>cn.wizzer</groupId>
     <artifactId>wk-parent</artifactId>
-    <version>5.1.2</version>
+    <version>5.1.3</version>
     <modules>
         <module>wk-framework</module>
         <module>wk-app</module>
