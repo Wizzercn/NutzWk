@@ -1,5 +1,8 @@
 package cn.wizzer.app.web.commons.utils;
 
+import cn.wizzer.app.sys.modules.models.Sys_user;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
@@ -14,6 +17,26 @@ import java.util.Random;
  */
 @IocBean
 public class StringUtil {
+    /**
+     * 获取平台当前登录用户的所在单位
+     *
+     * @return
+     */
+    public static String getPlatformUserUnitid() {
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            if (subject != null) {
+                Sys_user user = (Sys_user) subject.getPrincipal();
+                if (user != null) {
+                    return Strings.sNull(user.getUnitid());
+                }
+            }
+        } catch (Exception e) {
+
+        }
+        return "";
+    }
+
     /**
      * 获取平台后台登陆UID
      *
