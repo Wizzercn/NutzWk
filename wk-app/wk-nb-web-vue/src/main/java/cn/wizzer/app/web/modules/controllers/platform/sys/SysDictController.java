@@ -107,7 +107,7 @@ public class SysDictController {
     @Ok("json")
     @RequiresPermissions("sys.manager.dict.add")
     @SLog(tag = "新建字典", msg = "字典名称:${args[0].name}")
-    public Object addDo(@Param("..") Sys_dict dict, @Param("parentId") String parentId, HttpServletRequest req) {
+    public Object addDo(@Param("..") Sys_dict dict, @Param(value = "parentId",df = "") String parentId, HttpServletRequest req) {
         try {
             dict.setHasChildren(false);
             dict.setOpBy(StringUtil.getPlatformUid());

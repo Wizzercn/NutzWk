@@ -123,7 +123,7 @@ public class SysMenuController {
             sysMenu.setHasChildren(false);
             sysMenu.setShowit(true);
             sysMenu.setOpBy(StringUtil.getPlatformUid());
-            sysMenuService.save(sysMenu, sysMenu.getParentId(), buttons);
+            sysMenuService.save(sysMenu, Strings.sNull(sysMenu.getParentId()), buttons);
             req.setAttribute("name", sysMenu.getName());
             return Result.success();
         } catch (Exception e) {

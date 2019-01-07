@@ -141,7 +141,7 @@ public class WxMenuController {
     @Ok("json")
     @RequiresPermissions("wx.conf.menu.add")
     @SLog(tag = "添加菜单", msg = "菜单名称:${args[0].menuName}")
-    public Object addDo(@Param("..") Wx_menu menu, @Param("parentId") String parentId, HttpServletRequest req) {
+    public Object addDo(@Param("..") Wx_menu menu, @Param(value = "parentId",df = "") String parentId, HttpServletRequest req) {
         try {
             if (Strings.isBlank(menu.getWxid())) {
                 return Result.error("请选择公众号");
