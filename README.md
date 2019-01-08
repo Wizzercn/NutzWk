@@ -41,7 +41,7 @@ https://wizzer.cn/donation                捐赠者列表
 ## NutzWk 5.x 技术选型：
 
 *   核心框架：Nutzboot
-*   分布式框架：Dubbo、Zookeeper
+*   分布式框架：Dubbo、Zookeeper、Sentinel
 *   安全框架：Shiro
 *   任务调度：Quartz
 *   数据库连接池：Druid 
