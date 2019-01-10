@@ -18,10 +18,10 @@
     <properties>
         <nutzboot.version>2.2.9</nutzboot.version>
         <nutz.version>1.r.67</nutz.version>
-        <poi.version>3.17</poi.version>
+        <poi.version>4.0.0</poi.version>
         <zkclient.version>0.11</zkclient.version>
-        <druid.version>1.1.10</druid.version>
-        <mysql-connector-java.version>5.1.46</mysql-connector-java.version>
+        <druid.version>1.1.12</druid.version>
+        <mysql-connector-java.version>5.1.47</mysql-connector-java.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <docker.image.prefix>nutzwk</docker.image.prefix>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,7 +36,7 @@
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
-            <url>http://apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
     <developers>
