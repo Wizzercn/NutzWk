@@ -421,21 +421,10 @@ public class SysRoleController {
     @At
     @Ok("json:full")
     @RequiresPermissions("sys.manager.role")
-    public Object userSearch(@Param("query") String query, @Param("roleId") String roleId) {
+    public Object userSearch(@Param("query") String keyword, @Param("roleId") String roleId) {
         try {
-            Sql sql = Sqls.create("SELECT a.id AS VALUE,CONCAT(a.loginname,'(',a.username,')') AS label,a.disabled,a.unitid,b.name as unitname FROM sys_user a,sys_unit b WHERE a.unitid=b.id  and a.id NOT IN(SELECT b.userId FROM sys_user_role b WHERE b.roleId=@roleId) $s1 $s2 order by a.opAt desc");
-            sql.params().set("roleId", roleId);
-            if (!shiroUtil.hasRole("sysadmin")) {
-                //非超级管理员只可查询本单位及下级单位用户
-                Sys_user user = (Sys_user) shiroUtil.getPrincipal();
-                String menuPath = user.getUnit().getPath();
-                sql.vars().set("s1", " and b.path like '" + menuPath + "%'");
-            }
-            if (Strings.isNotBlank(query)) {
-                sql.vars().set("s2", " and (a.loginname like '%" + query + "%' or a.username like '%" + query + "%')");
-            }
-            return Result.success().addData(sysUserService.listPage(1, 10, sql));
-
+            Sys_user user = (Sys_user) shiroUtil.getPrincipal();
+            return Result.success().addData(sysRoleService.userSearch(roleId, keyword, shiroUtil.hasRole("sysadmin"), user.getUnit()));
         } catch (Exception e) {
             return Result.error();
         }

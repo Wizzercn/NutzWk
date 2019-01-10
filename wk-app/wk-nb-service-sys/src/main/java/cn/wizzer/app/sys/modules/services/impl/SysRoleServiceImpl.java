@@ -2,11 +2,14 @@ package cn.wizzer.app.sys.modules.services.impl;
 
 import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.models.Sys_role;
+import cn.wizzer.app.sys.modules.models.Sys_unit;
 import cn.wizzer.app.sys.modules.services.SysRoleService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
+import cn.wizzer.framework.page.Pagination;
 import com.alibaba.dubbo.config.annotation.Service;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Cnd;
+import org.nutz.dao.DB;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
@@ -132,5 +135,34 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
         sql.setCallback(Sqls.callback.integer());
         dao().execute(sql);
         return sql.getInt() > 0;
+    }
+
+    /**
+     * 查询用户
+     *
+     * @param roleId
+     * @param keyword
+     * @param isAdmin
+     * @param sysUnit
+     * @return
+     */
+    public Pagination userSearch(String roleId, String keyword, boolean isAdmin, Sys_unit sysUnit) {
+        Sql sql;
+        if (DB.ORACLE.name().equals(this.dao().getJdbcExpert().getDatabaseType())) {
+            //拼接字符串兼容oracle
+            sql = Sqls.create("SELECT a.id AS VALUE,a.loginname||'('||a.username||')' AS label,a.disabled,a.unitid,b.name as unitname FROM sys_user a,sys_unit b WHERE a.unitid=b.id  and a.id NOT IN(SELECT b.userId FROM sys_user_role b WHERE b.roleId=@roleId) $s1 $s2 order by a.opAt desc");
+        } else {
+            sql = Sqls.create("SELECT a.id AS VALUE,CONCAT(a.loginname,'(',a.username,')') AS label,a.disabled,a.unitid,b.name as unitname FROM sys_user a,sys_unit b WHERE a.unitid=b.id  and a.id NOT IN(SELECT b.userId FROM sys_user_role b WHERE b.roleId=@roleId) $s1 $s2 order by a.opAt desc");
+        }
+        sql.params().set("roleId", roleId);
+        if (!isAdmin) {
+            //非超级管理员只可查询本单位及下级单位用户
+            String menuPath = sysUnit.getPath();
+            sql.vars().set("s1", " and b.path like '" + menuPath + "%'");
+        }
+        if (Strings.isNotBlank(keyword)) {
+            sql.vars().set("s2", " and (a.loginname like '%" + keyword + "%' or a.username like '%" + keyword + "%')");
+        }
+        return this.listPage(1, 10, sql);
     }
 }

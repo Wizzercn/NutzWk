@@ -2,7 +2,9 @@ package cn.wizzer.app.sys.modules.services;
 
 import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.models.Sys_role;
+import cn.wizzer.app.sys.modules.models.Sys_unit;
 import cn.wizzer.framework.base.service.BaseService;
+import cn.wizzer.framework.page.Pagination;
 
 import java.util.List;
 
@@ -12,6 +14,7 @@ import java.util.List;
 public interface SysRoleService extends BaseService<Sys_role> {
     /**
      * 通过角色ID获取菜单及数据权限
+     *
      * @param roleId
      * @return
      */
@@ -19,18 +22,21 @@ public interface SysRoleService extends BaseService<Sys_role> {
 
     /**
      * 通过角色ID获取菜单数据
+     *
      * @return
      */
     List<Sys_menu> getDatas(String roleId);
 
     /**
      * 获取所有菜单数据
+     *
      * @return
      */
     List<Sys_menu> getDatas();
 
     /**
      * 通过角色获取权限标识符
+     *
      * @param role
      * @return
      */
@@ -38,12 +44,14 @@ public interface SysRoleService extends BaseService<Sys_role> {
 
     /**
      * 删除角色
+     *
      * @param roleid
      */
     void del(String roleid);
 
     /**
      * 批量删除角色
+     *
      * @param roleids
      */
     void del(String[] roleids);
@@ -65,4 +73,15 @@ public interface SysRoleService extends BaseService<Sys_role> {
      * @return
      */
     boolean hasChildren(String roleId, String pid);
+
+    /**
+     * 查询用户
+     *
+     * @param roleId
+     * @param keyword
+     * @param isAdmin
+     * @param sysUnit
+     * @return
+     */
+    Pagination userSearch(String roleId, String keyword, boolean isAdmin, Sys_unit sysUnit);
 }
