@@ -456,8 +456,9 @@ public class SysRoleController {
     public Object usersDel(@Param("users") String users, @Param("roleId") String roleId, HttpServletRequest req) {
         try {
             String superadminId = sysUserService.fetch(Cnd.where("loginname", "=", "superadmin")).getId();
+            String sysadminRoleid = sysRoleService.fetch(Cnd.where("code", "=", "sysadmin")).getId();
             String[] ids = StringUtils.split(users, ",");
-            if (Lang.contains(ids, superadminId)) {
+            if (Lang.contains(ids, superadminId) && roleId.equals(sysadminRoleid)) {
                 return Result.error("超级管理员不能从[系统管理员]角色里删除");
             }
             sysRoleService.clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleId));
