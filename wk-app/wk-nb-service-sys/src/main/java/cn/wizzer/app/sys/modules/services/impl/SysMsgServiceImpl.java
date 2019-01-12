@@ -58,11 +58,13 @@ public class SysMsgServiceImpl extends BaseServiceImpl<Sys_msg> implements SysMs
                 }
             }
         }
+        sysMsgUserService.clearCache();
         return dbMsg;
     }
 
     public void deleteMsg(String id) {
         this.vDelete(id);
         sysMsgUserService.vDelete(Cnd.where("msgId", "=", id));
+        sysMsgUserService.clearCache();
     }
 }

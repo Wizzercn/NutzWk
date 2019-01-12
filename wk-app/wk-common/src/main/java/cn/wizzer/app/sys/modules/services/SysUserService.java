@@ -72,4 +72,9 @@ public interface SysUserService extends BaseService<Sys_user> {
      * @return
      */
     boolean hasChildren(String userId, String pid);
+
+    /**
+     * 清空缓存
+     */
+    void clearCache();
 }

@@ -9,6 +9,7 @@ import java.util.Map;
 public interface SysDictService extends BaseService<Sys_dict> {
     /**
      * 通过code获取名称
+     *
      * @param code
      * @return
      */
@@ -16,12 +17,15 @@ public interface SysDictService extends BaseService<Sys_dict> {
 
     /**
      * 通过ID获取名称
+     *
      * @param id
      * @return
      */
     String getNameById(String id);
+
     /**
      * 通过树PATH获取子级
+     *
      * @param path
      * @return
      */
@@ -29,6 +33,7 @@ public interface SysDictService extends BaseService<Sys_dict> {
 
     /**
      * 通过ID获取子级
+     *
      * @param id
      * @return
      */
@@ -36,6 +41,7 @@ public interface SysDictService extends BaseService<Sys_dict> {
 
     /**
      * 通过code获取子级
+     *
      * @param code
      * @return
      */
@@ -43,6 +49,7 @@ public interface SysDictService extends BaseService<Sys_dict> {
 
     /**
      * 通过树PATH获取子级
+     *
      * @param path
      * @return
      */
@@ -50,6 +57,7 @@ public interface SysDictService extends BaseService<Sys_dict> {
 
     /**
      * 通过ID获取子级
+     *
      * @param id
      * @return
      */
@@ -57,6 +65,7 @@ public interface SysDictService extends BaseService<Sys_dict> {
 
     /**
      * 通过code获取子级
+     *
      * @param code
      * @return
      */
@@ -64,6 +73,7 @@ public interface SysDictService extends BaseService<Sys_dict> {
 
     /**
      * 保存数据字典
+     *
      * @param dict
      * @param pid
      */
@@ -71,7 +81,13 @@ public interface SysDictService extends BaseService<Sys_dict> {
 
     /**
      * 级联删除数据
+     *
      * @param dict
      */
     void deleteAndChild(Sys_dict dict);
+
+    /**
+     * 清空缓存
+     */
+    void clearCache();
 }

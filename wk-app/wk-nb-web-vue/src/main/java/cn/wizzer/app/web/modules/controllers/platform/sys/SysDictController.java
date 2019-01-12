@@ -112,6 +112,7 @@ public class SysDictController {
             dict.setHasChildren(false);
             dict.setOpBy(StringUtil.getPlatformUid());
             sysDictService.save(dict, parentId);
+            sysDictService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -138,6 +139,7 @@ public class SysDictController {
             dict.setOpBy(StringUtil.getPlatformUid());
             dict.setOpAt(Times.getTS());
             sysDictService.updateIgnoreNull(dict);
+            sysDictService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -153,6 +155,7 @@ public class SysDictController {
             Sys_dict dict = sysDictService.fetch(id);
             req.setAttribute("name", dict.getName());
             sysDictService.deleteAndChild(dict);
+            sysDictService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -167,6 +170,7 @@ public class SysDictController {
         try {
             req.setAttribute("name", sysDictService.fetch(menuId).getName());
             sysDictService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", menuId));
+            sysDictService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -181,6 +185,7 @@ public class SysDictController {
         try {
             req.setAttribute("name", sysDictService.fetch(menuId).getName());
             sysDictService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", menuId));
+            sysDictService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -236,6 +241,7 @@ public class SysDictController {
                     i++;
                 }
             }
+            sysDictService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();

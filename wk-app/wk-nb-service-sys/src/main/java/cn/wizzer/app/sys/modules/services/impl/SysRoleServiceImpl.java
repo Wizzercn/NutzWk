@@ -17,6 +17,9 @@ import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.plugins.wkcache.annotation.CacheDefaults;
+import org.nutz.plugins.wkcache.annotation.CacheRemoveAll;
+import org.nutz.plugins.wkcache.annotation.CacheResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +29,13 @@ import java.util.List;
  */
 @IocBean(args = {"refer:dao"})
 @Service(interfaceClass = SysRoleService.class)
+@CacheDefaults(cacheName = "sys_role")
 public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements SysRoleService {
     public SysRoleServiceImpl(Dao dao) {
         super(dao);
     }
 
+    @CacheResult
     public List<Sys_menu> getMenusAndButtons(String roleId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and" +
                 " b.roleId=@roleId and a.disabled=@f order by a.location ASC,a.path asc");
@@ -43,6 +48,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
         return sql.getList(Sys_menu.class);
     }
 
+    @CacheResult
     public List<Sys_menu> getDatas(String roleId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and" +
                 " b.roleId=@roleId and a.type='data' and a.disabled=@f order by a.location ASC,a.path asc");
@@ -55,6 +61,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
         return sql.getList(Sys_menu.class);
     }
 
+    @CacheResult
     public List<Sys_menu> getDatas() {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and a.type='data' order by a.location ASC,a.path asc");
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
@@ -70,6 +77,8 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
      * @param role
      * @return
      */
+    //如果传参是对象,那么要取字符串做为cacheKey值,因为对象的标识是变动的
+    @CacheResult(cacheKey = "${args[0].id}_getPermissionNameList")
     public List<String> getPermissionNameList(Sys_role role) {
         dao().fetchLinks(role, "menus");
         List<String> list = new ArrayList<String>();
@@ -100,6 +109,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
      * @param pid
      * @return
      */
+    @CacheResult
     public List<Sys_menu> getRoleMenus(String roleId, String pid) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
                 "$m and b.roleId=@roleId and a.disabled=@f order by a.location ASC,a.path asc");
@@ -122,6 +132,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
      * @param pid
      * @return
      */
+    @CacheResult
     public boolean hasChildren(String roleId, String pid) {
         Sql sql = Sqls.create("select count(*) from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
                 "$m and b.roleId=@roleId and a.disabled=@f order by a.location ASC,a.path asc");
@@ -164,5 +175,10 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
             sql.vars().set("s2", " and (a.loginname like '%" + keyword + "%' or a.username like '%" + keyword + "%')");
         }
         return this.listPage(1, 10, sql);
+    }
+
+    @CacheRemoveAll
+    public void clearCache() {
+
     }
 }

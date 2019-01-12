@@ -12,6 +12,9 @@ import org.nutz.dao.Sqls;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.plugins.wkcache.annotation.CacheDefaults;
+import org.nutz.plugins.wkcache.annotation.CacheRemoveAll;
+import org.nutz.plugins.wkcache.annotation.CacheResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,18 +23,20 @@ import java.util.Map;
 
 
 @IocBean(args = {"refer:dao"})
-@Service(interfaceClass=SysDictService.class)
+@Service(interfaceClass = SysDictService.class)
+@CacheDefaults(cacheName = "sys_dict")
 public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements SysDictService {
     public SysDictServiceImpl(Dao dao) {
         super(dao);
     }
+
     /**
      * 通过code获取name
      *
      * @param code
      * @return
      */
-    //@Cacheable
+    @CacheResult
     public String getNameByCode(String code) {
         Sys_dict dict = this.fetch(Cnd.where("code", "=", code));
         return dict == null ? "" : dict.getName();
@@ -43,7 +48,7 @@ public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements Sys
      * @param id
      * @return
      */
-    //@Cacheable
+    @CacheResult
     public String getNameById(String id) {
         Sys_dict dict = this.fetch(id);
         return dict == null ? "" : dict.getName();
@@ -55,7 +60,7 @@ public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements Sys
      * @param path
      * @return
      */
-    //@Cacheable
+    @CacheResult
     public List<Sys_dict> getSubListByPath(String path) {
         return this.query(Cnd.where("path", "like", Strings.sNull(path) + "____").asc("location"));
     }
@@ -66,7 +71,7 @@ public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements Sys
      * @param id
      * @return
      */
-    //@Cacheable
+    @CacheResult
     public List<Sys_dict> getSubListById(String id) {
         return this.query(Cnd.where("parentId", "=", Strings.sNull(id)).asc("location"));
     }
@@ -77,7 +82,7 @@ public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements Sys
      * @param code
      * @return
      */
-    //@Cacheable
+    @CacheResult
     public List<Sys_dict> getSubListByCode(String code) {
         Sys_dict dict = this.fetch(Cnd.where("code", "=", code));
         return dict == null ? new ArrayList<>() : this.query(Cnd.where("parentId", "=", Strings.sNull(dict.getId())).asc("location"));
@@ -89,7 +94,7 @@ public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements Sys
      * @param path
      * @return
      */
-    //@Cacheable
+    @CacheResult
     public Map getSubMapByPath(String path) {
         return this.getMap(Sqls.create("select code,name from sys_dict where path like @path order by location asc").setParam("path", path + "____"));
     }
@@ -100,7 +105,7 @@ public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements Sys
      * @param id
      * @return
      */
-    //@Cacheable
+    @CacheResult
     public Map getSubMapById(String id) {
         return this.getMap(Sqls.create("select code,name from sys_dict where parentId = @id order by location asc").setParam("id", id));
     }
@@ -111,14 +116,14 @@ public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements Sys
      * @param code
      * @return
      */
-    //@Cacheable
+    @CacheResult
     public Map getSubMapByCode(String code) {
         Sys_dict dict = this.fetch(Cnd.where("code", "=", code));
         return dict == null ? new HashMap() : this.getMap(Sqls.create("select code,name from sys_dict where parentId = @id order by location asc").setParam("id", dict.getId()));
     }
 
     /**
-     * 新增单位
+     * 新增字典
      *
      * @param dict
      * @param pid
@@ -152,5 +157,10 @@ public class SysDictServiceImpl extends BaseServiceImpl<Sys_dict> implements Sys
                 dao().execute(Sqls.create("update sys_dict set hasChildren=0 where id=@pid").setParam("pid", dict.getParentId()));
             }
         }
+    }
+
+    @CacheRemoveAll
+    public void clearCache() {
+
     }
 }

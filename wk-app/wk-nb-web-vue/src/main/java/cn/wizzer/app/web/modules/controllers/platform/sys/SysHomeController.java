@@ -5,7 +5,6 @@ import cn.wizzer.app.sys.modules.services.SysMenuService;
 import cn.wizzer.app.web.commons.base.Globals;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
@@ -45,13 +44,13 @@ public class SysHomeController {
     public void left(@Param("url") String url, HttpServletRequest req) {
         String path = "";
         String perpath = "";
-        url=Strings.sNull(url).trim();
+        url = Strings.sNull(url).trim();
         if (!Strings.isBlank(Globals.AppBase)) {
             url = Strings.sBlank(url).substring(Globals.AppBase.length());
         }
         if (Strings.sBlank(url).indexOf("?") > 0)
             url = url.substring(0, url.indexOf("?"));
-        Sys_menu menu = sysMenuService.fetch(Cnd.where("href", "=", url));
+        Sys_menu menu = sysMenuService.getLeftMenu(url);
         if (menu != null) {
             if (menu.getPath().length() > 8) {
                 path = menu.getPath().substring(0, 8);
@@ -69,7 +68,7 @@ public class SysHomeController {
     @Ok("beetl:/platform/sys/left.html")
     @RequiresAuthentication
     public void path(@Param("url") String url, HttpServletRequest req) {
-        url=Strings.sNull(url).trim();
+        url = Strings.sNull(url).trim();
         if (Strings.sBlank(url).indexOf("//") > 0) {
             String[] u = url.split("//");
             String s = u[1].substring(u[1].indexOf("/"));
@@ -103,7 +102,7 @@ public class SysHomeController {
             } else list.add(url);
             String path = "";
             String perpath = "";
-            Sys_menu menu = sysMenuService.fetch(Cnd.where("href", "in", list).desc("href").desc("path"));
+            Sys_menu menu = sysMenuService.getLeftPathMenu(list);
             if (menu != null) {
                 if (menu.getPath().length() > 8) {
                     path = menu.getPath().substring(0, 8);

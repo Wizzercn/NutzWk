@@ -99,6 +99,7 @@ public class SysUserController {
             user.setLoginCount(0);
             user.setOpBy(StringUtil.getPlatformUid());
             sysUserService.insert(user);
+            sysUserService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -125,6 +126,7 @@ public class SysUserController {
             user.setOpBy(StringUtil.getPlatformUid());
             user.setOpAt(Times.getTS());
             sysUserService.updateIgnoreNull(user);
+            sysUserService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -142,6 +144,7 @@ public class SysUserController {
             String pwd = R.captchaNumber(6);
             String hashedPasswordBase64 = new Sha256Hash(pwd, ByteSource.Util.bytes(salt), 1024).toHex();
             sysUserService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", id));
+            sysUserService.clearCache();
             req.setAttribute("loginname", user.getLoginname());
             return Result.success().addData(pwd);
         } catch (Exception e) {
@@ -160,6 +163,7 @@ public class SysUserController {
                 return Result.error("system.not.allow");
             }
             sysUserService.deleteById(userId);
+            sysUserService.clearCache();
             req.setAttribute("loginname", user.getLoginname());
             return Result.success();
         } catch (Exception e) {
@@ -182,6 +186,7 @@ public class SysUserController {
                 sb.append(s).append(",");
             }
             sysUserService.deleteByIds(userIds);
+            sysUserService.clearCache();
             req.setAttribute("ids", sb.toString());
             return Result.success();
         } catch (Exception e) {
@@ -197,6 +202,7 @@ public class SysUserController {
         try {
             req.setAttribute("loginname", sysUserService.fetch(userId).getLoginname());
             sysUserService.update(Chain.make("disabled", false), Cnd.where("id", "=", userId));
+            sysUserService.clear();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -215,6 +221,7 @@ public class SysUserController {
             }
             req.setAttribute("loginname", loginname);
             sysUserService.update(Chain.make("disabled", true), Cnd.where("id", "=", userId));
+            sysUserService.clear();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -357,6 +364,7 @@ public class SysUserController {
             } else {
                 user.setLoginPjax(false);
             }
+            sysUserService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -379,6 +387,7 @@ public class SysUserController {
                 user.setCustomMenu("");
                 user.setCustomMenus(new ArrayList<>());
             }
+            sysUserService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -398,6 +407,7 @@ public class SysUserController {
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
             sysUserService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", user.getId()));
+            sysUserService.clearCache();
             return Result.success();
         } else {
             return Result.error();

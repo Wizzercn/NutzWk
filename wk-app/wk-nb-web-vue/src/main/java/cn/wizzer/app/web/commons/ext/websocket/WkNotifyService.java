@@ -89,10 +89,8 @@ public class WkNotifyService {
     public void getMsg(String loginname) {
         try {
             //通过用户名查询未读消息
-            int size = sysMsgUserService.count(Cnd.where("delFlag", "=", false).and("loginname", "=", loginname)
-                    .and("status", "=", 0));
-            List<Sys_msg_user> list = sysMsgUserService.query(Cnd.where("delFlag", "=", false).and("loginname", "=", loginname)
-                    .desc("opAt"), "msg", Cnd.orderBy().desc("sendAt"), new Pager().setPageNumber(1).setPageSize(5));
+            int size = sysMsgUserService.getUnreadNum(loginname);
+            List<Sys_msg_user> list = sysMsgUserService.getUnreadList(loginname,1,5);
             List<NutMap> mapList = new ArrayList<>();
             for (Sys_msg_user msgUser : list) {
                 String url = "/platform/sys/msg/user/all/detail/" + msgUser.getMsgId();

@@ -50,7 +50,7 @@ public class SysHomeController {
         }
         if (Strings.sBlank(url).indexOf("?") > 0)
             url = url.substring(0, url.indexOf("?"));
-        Sys_menu menu = sysMenuService.fetch(Cnd.where("href", "=", url));
+        Sys_menu menu = sysMenuService.getLeftMenu(url);
         if (menu != null) {
             if (menu.getPath().length() > 8) {
                 path = menu.getPath().substring(0, 8);
@@ -101,7 +101,7 @@ public class SysHomeController {
             } else list.add(url);
             String path = "";
             String perpath = "";
-            Sys_menu menu = sysMenuService.fetch(Cnd.where("href", "in", list).desc("href").desc("path"));
+            Sys_menu menu = sysMenuService.getLeftPathMenu(list);
             if (menu != null) {
                 if (menu.getPath().length() > 8) {
                     path = menu.getPath().substring(0, 8);

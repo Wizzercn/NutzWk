@@ -59,6 +59,7 @@ public class SysDictController {
         try {
             dict.setOpBy(StringUtil.getPlatformUid());
             dictService.save(dict, parentId);
+            dictService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -92,6 +93,7 @@ public class SysDictController {
             dict.setOpBy(StringUtil.getPlatformUid());
             dict.setOpAt(Times.getTS());
             dictService.updateIgnoreNull(dict);
+            dictService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -107,6 +109,7 @@ public class SysDictController {
             Sys_dict dict = dictService.fetch(id);
             req.setAttribute("name", dict.getName());
             dictService.deleteAndChild(dict);
+            dictService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -164,6 +167,7 @@ public class SysDictController {
                     i++;
                 }
             }
+            dictService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");

@@ -127,6 +127,7 @@ public class SysRoleController {
                     sysRoleService.insert("sys_role_menu", org.nutz.dao.Chain.make("roleId", r.getId()).add("menuId", s));
                 }
             }
+            sysRoleService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -226,6 +227,7 @@ public class SysRoleController {
                     sysRoleService.insert("sys_role_menu", org.nutz.dao.Chain.make("roleId", roleid).add("menuId", s));
                 }
             }
+            sysRoleService.clearCache();
             Sys_role role = sysRoleService.fetch(roleid);
             req.setAttribute("name", role.getName());
             return Result.success("system.success");
@@ -301,6 +303,7 @@ public class SysRoleController {
         try {
             String[] ids = StringUtils.split(menuIds, ",");
             sysRoleService.clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleid));
+            sysRoleService.clearCache();
             Sys_role role = sysRoleService.fetch(roleid);
             req.setAttribute("name", role.getName());
             return Result.success("system.success");
@@ -321,6 +324,7 @@ public class SysRoleController {
                     sysRoleService.insert("sys_user_role", org.nutz.dao.Chain.make("roleId", roleid).add("userId", s));
                 }
             }
+            sysRoleService.clearCache();
             Sys_role role = sysRoleService.fetch(roleid);
             req.setAttribute("name", role.getName());
             return Result.success("system.success");
@@ -412,6 +416,7 @@ public class SysRoleController {
             role.setOpBy(StringUtil.getPlatformUid());
             role.setOpAt(Times.getTS());
             sysRoleService.updateIgnoreNull(role);
+            sysRoleService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -429,6 +434,7 @@ public class SysRoleController {
                 return Result.error("system.not.allow");
             }
             sysRoleService.del(roleId);
+            sysRoleService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success("system.success");
         } catch (Exception e) {
@@ -452,6 +458,7 @@ public class SysRoleController {
                 sb.append(s).append(",");
             }
             sysRoleService.del(roleIds);
+            sysRoleService.clearCache();
             req.setAttribute("ids", sb.toString());
             return Result.success("system.success");
         } catch (Exception e) {
@@ -467,6 +474,7 @@ public class SysRoleController {
         try {
             Sys_role role = sysRoleService.fetch(roleId);
             sysRoleService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", roleId));
+            sysRoleService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success("system.success");
         } catch (Exception e) {
@@ -482,6 +490,7 @@ public class SysRoleController {
         try {
             Sys_role role = sysRoleService.fetch(roleId);
             sysRoleService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", roleId));
+            sysRoleService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success("system.success");
         } catch (Exception e) {

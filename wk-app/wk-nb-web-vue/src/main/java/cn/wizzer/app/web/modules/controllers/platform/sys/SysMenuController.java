@@ -125,6 +125,7 @@ public class SysMenuController {
             sysMenu.setOpBy(StringUtil.getPlatformUid());
             sysMenuService.save(sysMenu, Strings.sNull(sysMenu.getParentId()), buttons);
             req.setAttribute("name", sysMenu.getName());
+            sysMenuService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -183,6 +184,7 @@ public class SysMenuController {
             sysMenu.setOpBy(StringUtil.getPlatformUid());
             sysMenuService.edit(sysMenu, sysMenu.getParentId(), buttons);
             req.setAttribute("name", sysMenu.getName());
+            sysMenuService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -211,6 +213,7 @@ public class SysMenuController {
                 return Result.error("sys.role.code");
             }
             sysMenuService.updateIgnoreNull(menu);
+            sysMenuService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -229,6 +232,7 @@ public class SysMenuController {
                 return Result.error("system.not.allow");
             }
             sysMenuService.deleteAndChild(menu);
+            sysMenuService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -243,6 +247,7 @@ public class SysMenuController {
         try {
             req.setAttribute("name", sysMenuService.fetch(menuId).getName());
             sysMenuService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", menuId));
+            sysMenuService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -257,6 +262,7 @@ public class SysMenuController {
         try {
             req.setAttribute("name", sysMenuService.fetch(menuId).getName());
             sysMenuService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", menuId));
+            sysMenuService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -312,6 +318,7 @@ public class SysMenuController {
                     i++;
                 }
             }
+            sysMenuService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();

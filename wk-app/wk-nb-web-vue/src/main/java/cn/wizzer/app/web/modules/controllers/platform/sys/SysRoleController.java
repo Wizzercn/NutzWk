@@ -286,6 +286,7 @@ public class SysRoleController {
                     }
                 }
             }
+            sysRoleService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -326,6 +327,7 @@ public class SysRoleController {
                 return Result.error("system.not.allow");
             }
             sysRoleService.del(roleId);
+            sysRoleService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {
@@ -363,6 +365,7 @@ public class SysRoleController {
             role.setOpBy(StringUtil.getPlatformUid());
             role.setOpAt(Times.getTS());
             sysRoleService.updateIgnoreNull(role);
+            sysRoleService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -390,6 +393,7 @@ public class SysRoleController {
                 }
             }
             Sys_role role = sysRoleService.fetch(roleId);
+            sysRoleService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {
@@ -441,6 +445,7 @@ public class SysRoleController {
                 sysRoleService.insert("sys_user_role", org.nutz.dao.Chain.make("roleId", roleId).add("userId", s));
             }
             Sys_role role = sysRoleService.fetch(roleId);
+            sysRoleService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {
@@ -463,6 +468,7 @@ public class SysRoleController {
             }
             sysRoleService.clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleId));
             Sys_role role = sysRoleService.fetch(roleId);
+            sysRoleService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {

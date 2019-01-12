@@ -101,6 +101,7 @@ public class SysMsgUserController {
                         .add("opAt", Times.getTS()).add("opBy", StringUtil.getPlatformUid()), Cnd.where("id", "=", id).and("loginname", "=", StringUtil.getPlatformLoginname()));
                 req.setAttribute("id", id);
             }
+            sysMsgUserService.deleteCache(StringUtil.getPlatformLoginname());
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -129,6 +130,7 @@ public class SysMsgUserController {
         try {
             sysMsgUserService.update(Chain.make("status", 1).add("readAt", Times.getTS())
                     .add("opAt", Times.getTS()).add("opBy", StringUtil.getPlatformUid()), Cnd.where("id", "in", ids).and("loginname", "=", StringUtil.getPlatformLoginname()));
+            sysMsgUserService.deleteCache(StringUtil.getPlatformLoginname());
             req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
             return Result.success("system.success");
         } catch (Exception e) {
@@ -144,6 +146,7 @@ public class SysMsgUserController {
         try {
             sysMsgUserService.update(Chain.make("status", 1).add("readAt", Times.getTS())
                     .add("opAt", Times.getTS()).add("opBy", StringUtil.getPlatformUid()), Cnd.where("loginname", "=", StringUtil.getPlatformLoginname()));
+            sysMsgUserService.deleteCache(StringUtil.getPlatformLoginname());
             return Result.success();
         } catch (Exception e) {
             return Result.error();

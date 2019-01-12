@@ -12,12 +12,15 @@ import org.nutz.dao.Sqls;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.plugins.wkcache.annotation.CacheDefaults;
+import org.nutz.plugins.wkcache.annotation.CacheRemoveAll;
 
 /**
  * Created by wizzer on 2016/12/22.
  */
 @IocBean(args = {"refer:dao"})
 @Service(interfaceClass=SysUnitService.class)
+@CacheDefaults(cacheName = "sys_unit")
 public class SysUnitServiceImpl extends BaseServiceImpl<Sys_unit> implements SysUnitService {
     public SysUnitServiceImpl(Dao dao) {
         super(dao);
@@ -60,5 +63,10 @@ public class SysUnitServiceImpl extends BaseServiceImpl<Sys_unit> implements Sys
                 dao().execute(Sqls.create("update sys_unit set hasChildren=0 where id=@pid").setParam("pid", unit.getParentId()));
             }
         }
+    }
+
+    @CacheRemoveAll
+    public void clearCache() {
+
     }
 }

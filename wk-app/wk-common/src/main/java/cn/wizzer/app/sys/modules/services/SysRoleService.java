@@ -84,4 +84,9 @@ public interface SysRoleService extends BaseService<Sys_role> {
      * @return
      */
     Pagination userSearch(String roleId, String keyword, boolean isAdmin, Sys_unit sysUnit);
+
+    /**
+     * 清空缓存
+     */
+    void clearCache();
 }

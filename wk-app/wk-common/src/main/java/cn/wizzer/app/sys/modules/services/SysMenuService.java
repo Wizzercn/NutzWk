@@ -32,4 +32,25 @@ public interface SysMenuService extends BaseService<Sys_menu> {
      * @param menu
      */
     void deleteAndChild(Sys_menu menu);
+
+    /**
+     * 获取左侧菜单
+     *
+     * @param href
+     * @return
+     */
+    Sys_menu getLeftMenu(String href);
+
+    /**
+     * 获取左侧菜单路径
+     *
+     * @param list
+     * @return
+     */
+    Sys_menu getLeftPathMenu(List<String> list);
+
+    /**
+     * 清空缓存
+     */
+    void clearCache();
 }

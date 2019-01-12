@@ -66,6 +66,7 @@ public class SysMenuController {
             } else menu.setShowit(true);
             menu.setOpBy(StringUtil.getPlatformUid());
             sysMenuService.save(menu, parentId,null);
+            sysMenuService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -98,6 +99,7 @@ public class SysMenuController {
             menu.setOpBy(StringUtil.getPlatformUid());
             menu.setOpAt(Times.getTS());
             sysMenuService.updateIgnoreNull(menu);
+            sysMenuService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -116,6 +118,7 @@ public class SysMenuController {
                 return Result.error("system.not.allow");
             }
             sysMenuService.deleteAndChild(menu);
+            sysMenuService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -130,6 +133,7 @@ public class SysMenuController {
         try {
             req.setAttribute("name", sysMenuService.fetch(menuId).getName());
             sysMenuService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", menuId));
+            sysMenuService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -144,6 +148,7 @@ public class SysMenuController {
         try {
             req.setAttribute("name", sysMenuService.fetch(menuId).getName());
             sysMenuService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", menuId));
+            sysMenuService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -229,6 +234,7 @@ public class SysMenuController {
                     i++;
                 }
             }
+            sysMenuService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");

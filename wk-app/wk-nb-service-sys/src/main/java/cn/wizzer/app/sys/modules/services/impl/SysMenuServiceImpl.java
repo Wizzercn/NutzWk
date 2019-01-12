@@ -2,6 +2,7 @@ package cn.wizzer.app.sys.modules.services.impl;
 
 import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.services.SysMenuService;
+import cn.wizzer.app.sys.modules.services.SysRoleService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
 import com.alibaba.dubbo.config.annotation.Service;
 import org.nutz.aop.interceptor.ioc.TransAop;
@@ -10,9 +11,13 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.ioc.aop.Aop;
+import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
+import org.nutz.plugins.wkcache.annotation.CacheDefaults;
+import org.nutz.plugins.wkcache.annotation.CacheRemoveAll;
+import org.nutz.plugins.wkcache.annotation.CacheResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +27,14 @@ import java.util.List;
  */
 @IocBean(args = {"refer:dao"})
 @Service(interfaceClass = SysMenuService.class)
+@CacheDefaults(cacheName = "sys_menu")
 public class SysMenuServiceImpl extends BaseServiceImpl<Sys_menu> implements SysMenuService {
     public SysMenuServiceImpl(Dao dao) {
         super(dao);
     }
+
+    @Inject
+    private SysRoleService sysRoleService;
 
     /**
      * 新增菜单
@@ -124,5 +133,21 @@ public class SysMenuServiceImpl extends BaseServiceImpl<Sys_menu> implements Sys
                 dao().execute(Sqls.create("update sys_menu set hasChildren=false where id=@pid").setParam("pid", menu.getParentId()));
             }
         }
+    }
+
+    @CacheResult
+    public Sys_menu getLeftMenu(String href) {
+        return this.fetch(Cnd.where("href", "=", href));
+    }
+
+    @CacheResult
+    public Sys_menu getLeftPathMenu(List<String> list) {
+        return this.fetch(Cnd.where("href", "in", list).desc("href").desc("path"));
+    }
+
+
+    @CacheRemoveAll
+    public void clearCache() {
+        sysRoleService.clearCache();
     }
 }
