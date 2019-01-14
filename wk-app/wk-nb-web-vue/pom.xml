@@ -17,6 +17,7 @@
         <emoji-java.veision>4.0.0</emoji-java.veision>
         <jsoup.veision>1.11.2</jsoup.veision>
         <pinyin4j.veision>2.5.1</pinyin4j.veision>
+        <poi.version>4.0.0</poi.version>
     </properties>
     <dependencies>
         <dependency>
@@ -118,6 +119,27 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
+        </dependency>
+        <!-- json4excel,poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>ooxml-schemas</artifactId>
+            <version>1.3</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
