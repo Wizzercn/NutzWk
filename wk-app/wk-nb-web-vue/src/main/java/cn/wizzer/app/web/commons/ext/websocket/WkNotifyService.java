@@ -6,8 +6,6 @@ import cn.wizzer.app.sys.modules.services.SysMsgService;
 import cn.wizzer.app.sys.modules.services.SysMsgUserService;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.aop.interceptor.async.Async;
-import org.nutz.dao.Cnd;
-import org.nutz.dao.pager.Pager;
 import org.nutz.integration.jedis.RedisService;
 import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -90,7 +88,7 @@ public class WkNotifyService {
         try {
             //通过用户名查询未读消息
             int size = sysMsgUserService.getUnreadNum(loginname);
-            List<Sys_msg_user> list = sysMsgUserService.getUnreadList(loginname,1,5);
+            List<Sys_msg_user> list = sysMsgUserService.getUnreadList(loginname, 1, 5);
             List<NutMap> mapList = new ArrayList<>();
             for (Sys_msg_user msgUser : list) {
                 String url = "/platform/sys/msg/user/all/detail/" + msgUser.getMsgId();
@@ -119,8 +117,8 @@ public class WkNotifyService {
         try {
             pubSubService.fire("wsroom:" + loginname + ":" + httpSessionId, msg);
             redisService.expire("wsroom:" + loginname + ":" + httpSessionId, 60 * 3);
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -128,8 +126,8 @@ public class WkNotifyService {
     public void offlineNoMsg(String loginname, String httpSessionId) {
         try {
             redisService.expire("wsroom:" + loginname + ":" + httpSessionId, 60 * 3);
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
 
