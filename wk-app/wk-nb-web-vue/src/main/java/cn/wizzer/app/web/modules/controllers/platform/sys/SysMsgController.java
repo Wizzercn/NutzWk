@@ -117,6 +117,7 @@ public class SysMsgController {
             if (sys_msg != null) {
                 wkNotifyService.notify(sys_msg, users);
             }
+            sysMsgUserService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -149,6 +150,7 @@ public class SysMsgController {
         try {
             req.setAttribute("title", sysMsgService.fetch(id).getTitle());
             sysMsgService.deleteMsg(id);
+            sysMsgUserService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();

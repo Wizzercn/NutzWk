@@ -107,6 +107,7 @@ public class SysMsgController {
             if (sys_msg != null) {
                 wkNotifyService.notify(sys_msg, users);
             }
+            sysMsgUserService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -120,6 +121,7 @@ public class SysMsgController {
     public Object delete(String id, HttpServletRequest req) {
         try {
             sysMsgService.deleteMsg(id);
+            sysMsgUserService.clearCache();
             req.setAttribute("id", id);
             return Result.success("system.success");
         } catch (Exception e) {
