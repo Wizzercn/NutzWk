@@ -12,6 +12,7 @@
     <artifactId>wk-nb-service-sys</artifactId>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <commons-lang3.version>3.7</commons-lang3.version>
     </properties>
     <dependencies>
         <dependency>
@@ -99,6 +100,11 @@
             <!--<scope>system</scope>-->
             <!--<systemPath>D://oracle/product/10.2.0/db_1/jdbc/lib/classes12.jar</systemPath>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
