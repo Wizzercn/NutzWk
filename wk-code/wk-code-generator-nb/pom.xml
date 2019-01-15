@@ -12,7 +12,7 @@
         <evo-inflector-version>1.0.1</evo-inflector-version>
         <velocity-version>1.7</velocity-version>
         <commons-cli-version>1.2</commons-cli-version>
-        <nutz-version>1.r.66</nutz-version>
+        <nutz-version>1.r.67</nutz-version>
     </properties>
     <url>https://wizzer.cn</url>
     <description>java web development framework, base on nutz</description>
