@@ -71,10 +71,10 @@ https://wizzer.cn/donation                捐赠者列表
 *   项目根目录执行 `mvn clean install -Dmaven.test.skip=true`
 *   在单个NB模块下执行 `mvn compile nutzboot:run` 运行或 `mvn package nutzboot:shade` 生成可执行jar包
 *   在项目根目录执行 `mvn -Dnutzboot.dst=E:/dst clean package nutzboot:shade` 将所有可运行jar包生成到指定位置
-*   启动顺序是 sys --> cms[可选] --> wx[可选] --> task[可选] --> web-platform --> web-api[可选]
+*   启动顺序是 sys --> cms[可选] --> wx[可选] --> task[可选] --> web-platform 或 web-vue --> web-api[可选]
 *   可选择使用运行参数 `-Dnutz.profiles.active=prod` 加载 application-prod.properties 配置文件
 *   正常启动后访问 `http://127.0.0.1:8080/sysadmin` 用户名 superadmin 密码 1
-*   框架详细介绍及代码生成器的使用等内容请仔细阅读 `wk-wiki`
+*   框架详细介绍及代码生成器的使用等内容请仔细阅读 [wk-wiki](wk-wiki)
 
 
 # 鸣谢
