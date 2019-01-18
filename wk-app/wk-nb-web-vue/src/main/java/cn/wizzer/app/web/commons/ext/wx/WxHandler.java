@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Created by wizzer on 2016/7/3.
  */
-@IocBean(name = "wxHandler")
+@IocBean(name = "wxHandler",singleton = false)
 public class WxHandler extends AbstractWxHandler {
     private final static Log log = Logs.get();
     protected String token;
@@ -128,6 +128,7 @@ public class WxHandler extends AbstractWxHandler {
     public WxOutMsg eventClick(WxInMsg msg) {
         String eventKey = msg.getEventKey();
         log.debug("eventKey: " + eventKey);
+        log.debug("extKey: " + msg.getExtkey());
         Wx_reply reply = wxReplyService.fetch(Cnd.where("type", "=", "keyword").and("wxid", "=", msg.getExtkey()).and("keyword", "=", eventKey));
         if (reply != null) {
             if ("txt".equals(reply.getMsgType())) {
