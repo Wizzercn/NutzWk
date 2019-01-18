@@ -28,7 +28,7 @@
     </appender>
 
     <logger name="java" additivity="false" />
-    <logger name="logger.org.eclipse.jetty" level="INFO">
+    <logger name="org.eclipse.jetty" level="INFO">
         <appender-ref ref="STDOUT" />
     </logger>
 
