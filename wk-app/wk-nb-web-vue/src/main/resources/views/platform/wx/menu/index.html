@@ -441,7 +441,7 @@ layout("/layouts/platform.html"){
             treeTableChild: function (pid) {
                 var self = this;
                 var url = base + "/platform/wx/conf/menu/child";
-                $.post(url, {pid: pid}, function (data) {
+                $.post(url, {pid: pid,wxid:"<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"}, function (data) {
                     if (data.code == 0) {
                         if (pid != undefined && pid != "") {
                             self.treeDataChildren(self.tableData, data.data, pid);
@@ -494,7 +494,7 @@ layout("/layouts/platform.html"){
             menuLoadTree: function (val, cb) {
                 var self = this;
                 var url = base + "/platform/wx/conf/menu/tree";
-                $.post(url, {pid: val}, function (data) {
+                $.post(url, {pid: val,wxid:"<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"}, function (data) {
                     if (data.code == 0) {
                         cb(data.data);
                     }

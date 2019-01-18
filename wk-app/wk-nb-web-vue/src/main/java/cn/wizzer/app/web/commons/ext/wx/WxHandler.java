@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Created by wizzer on 2016/7/3.
  */
-@IocBean(name = "wxHandler",singleton = false)
+@IocBean(name = "wxHandler")
 public class WxHandler extends AbstractWxHandler {
     private final static Log log = Logs.get();
     protected String token;

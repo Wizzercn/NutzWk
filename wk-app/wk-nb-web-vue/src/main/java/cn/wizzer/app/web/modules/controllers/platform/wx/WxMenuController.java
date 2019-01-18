@@ -82,7 +82,7 @@ public class WxMenuController {
     @At("/child")
     @Ok("json")
     @RequiresAuthentication
-    public Object child(@Param("pid") String pid, HttpServletRequest req) {
+    public Object child(@Param("pid") String pid,@Param("wxid") String wxid, HttpServletRequest req) {
         List<Wx_menu> list = new ArrayList<>();
         List<NutMap> treeList = new ArrayList<>();
         Cnd cnd = Cnd.NEW();
@@ -91,6 +91,7 @@ public class WxMenuController {
         } else {
             cnd.and("parentId", "=", pid);
         }
+        cnd.and("wxid","=",wxid);
         cnd.asc("location").asc("path");
         list = wxMenuService.query(cnd);
         for (Wx_menu menu : list) {
@@ -108,7 +109,7 @@ public class WxMenuController {
     @At("/tree")
     @Ok("json")
     @RequiresAuthentication
-    public Object tree(@Param("pid") String pid, HttpServletRequest req) {
+    public Object tree(@Param("pid") String pid,@Param("wxid") String wxid, HttpServletRequest req) {
         try {
             List<NutMap> treeList = new ArrayList<>();
             if (Strings.isBlank(pid)) {
@@ -121,6 +122,7 @@ public class WxMenuController {
             } else {
                 cnd.and("parentId", "=", pid);
             }
+            cnd.and("wxid","=",wxid);
             cnd.asc("location").asc("path");
             List<Wx_menu> list = wxMenuService.query(cnd);
             for (Wx_menu menu : list) {
@@ -306,7 +308,7 @@ public class WxMenuController {
             }
             return Result.success();
         } catch (Exception e) {
-            return Result.error();
+            return Result.error("请检查白名单IP是否配置");
         }
     }
 
