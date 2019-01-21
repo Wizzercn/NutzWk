@@ -164,6 +164,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
@@ -179,9 +184,9 @@
             <version>${logback.version}</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutzboot-starter-logback-exts</artifactId>
+            <version>${nutzboot.version}</version>
         </dependency>
     </dependencies>
     <build>

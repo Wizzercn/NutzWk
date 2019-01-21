@@ -663,6 +663,47 @@ public class DubboRpcSysMainLauncher {
             menu.setType("data");
             dao.insert(menu);
 
+            //消息中心及消息管理
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("00010004");
+            menu.setName("运维中心");
+            menu.setNote("运维中心");
+            menu.setAliasName("Operation");
+            menu.setIcon("ti-shield");
+            menu.setLocation(0);
+            menu.setHref("");
+            menu.setTarget("");
+            menu.setShowit(true);
+            menu.setHasChildren(true);
+            menu.setParentId(m0.getId());
+            menu.setType("menu");
+            menu.setPermission("sys.operation");
+            Sys_menu op0 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("000100040001");
+            menu.setName("系统日志");
+            menu.setAliasName("Logback");
+            menu.setLocation(0);
+            menu.setHref("/platform/sys/logback");
+            menu.setTarget("data-pjax");
+            menu.setShowit(true);
+            menu.setPermission("sys.operation.logback");
+            menu.setParentId(op0.getId());
+            menu.setType("menu");
+            Sys_menu op01 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000400010001");
+            menu.setName("修改日志等级");
+            menu.setAliasName("ChangeLevel");
+            menu.setLocation(1);
+            menu.setShowit(false);
+            menu.setPermission("sys.operation.logback.change");
+            menu.setParentId(op01.getId());
+            menu.setType("data");
+            dao.insert(menu);
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
