@@ -1,0 +1,75 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+<style>
+    .loglevel span {
+        width: 120px;
+        float:left;
+        padding-top: 5px;
+    }
+    .logcard{
+        min-height: 240px;
+    }
+</style>
+<div id="app" v-cloak>
+    <el-row class="mt15 ml15 ">
+        <el-row :gutter="20" class="mt15 ml15 mr15">
+            <el-col :span="8" v-for="item in tableData" style="padding-left: 10px; padding-right: 20px;">
+                <el-card class="mb15 logcard" shadow="always">
+                    <div slot="header" class="clearfix">
+                        <span>实例名称：{{item[0].name}}</span>
+                        <el-button style="float: right; padding: 5px 3px" type="text" icon="el-icon-refresh"  @click="pageData"></el-button>
+                        <el-button style="float: right; padding: 5px 3px" type="text" icon="el-icon-edit"></el-button>
+                    </div>
+                    <div v-for="log in item" class="textitem">
+                        <div class="loglevel"><span>进程ID：{{log.processId}}</span><span>日志等级：{{log.loglevel}}</span></div>
+                        <div>
+                            <el-button style="right:0;padding-left: 10px;padding-top:5px;" type="text" icon="el-icon-edit"></el-button>
+                        </div>
+                    </div>
+                </el-card>
+            </el-col>
+        </el-row>
+
+    </el-row>
+</div>
+
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                tableData: [],
+            }
+        },
+        methods: {
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/sys/monitor/data", {}, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data;
+                        console.log(self.tableData);
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+        },
+        created: function () {
+            this.pageData();
+        }
+    });
+</script>
+<!--#
+}
+#-->

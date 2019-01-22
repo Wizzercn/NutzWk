@@ -7,10 +7,17 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nutz.boot.NbApp;
+import org.nutz.boot.starter.logback.exts.loglevel.LoglevelProperty;
 import org.nutz.boot.test.junit4.NbJUnit4Runner;
+import org.nutz.integration.jedis.RedisService;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
+import org.nutz.lang.util.NutMap;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by wizzer on 2018/4/1.
@@ -22,6 +29,8 @@ public class WebTestDemo extends Assert {
     @Inject
     @Reference//先启动SYS模块
     private SysConfigService sysConfigService;
+    @Inject
+    private RedisService redisService;
 
     public void init() {
         System.out.println("say hi");
@@ -29,8 +38,15 @@ public class WebTestDemo extends Assert {
 
     @Test
     public void test_service_inject() {
-        assertNotNull(sysConfigService);
-        System.out.println("sys_config:::"+ Json.toJson(sysConfigService.getAllList()));
+            Set<String> set = redisService.keys("logback:loglevel:list:*");
+            NutMap map = NutMap.NEW();
+            for (String key : set) {
+                String[] keys = key.split(":");
+                String name = keys[3];
+                LoglevelProperty loglevelProperty = Json.fromJson(LoglevelProperty.class, redisService.get(key));
+                map.addv2(name, loglevelProperty);
+            }
+        System.out.println(Json.toJson(map));
     }
 
     // 测试类可提供public的static的createNbApp方法,用于定制当前测试类所需要的NbApp对象.
