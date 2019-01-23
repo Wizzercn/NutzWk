@@ -82,7 +82,7 @@ public class DubboRpcSysMainLauncher {
             dao.insert(conf);
             conf = new Sys_config();
             conf.setConfigKey("WebNotification");
-            conf.setConfigValue("true");
+            conf.setConfigValue("false");
             conf.setNote("启用浏览器通知");
             dao.insert(conf);
             //初始化单位
