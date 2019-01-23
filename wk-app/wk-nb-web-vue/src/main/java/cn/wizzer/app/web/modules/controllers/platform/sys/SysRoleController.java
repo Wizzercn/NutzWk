@@ -164,6 +164,8 @@ public class SysRoleController {
         try {
             Sys_role role = sysRoleService.fetch(roleId);
             sysRoleService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", roleId));
+            sysRoleService.clearCache();
+            sysUserService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {
@@ -179,6 +181,8 @@ public class SysRoleController {
         try {
             Sys_role role = sysRoleService.fetch(roleId);
             sysRoleService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", roleId));
+            sysRoleService.clearCache();
+            sysUserService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {
@@ -287,6 +291,7 @@ public class SysRoleController {
                 }
             }
             sysRoleService.clearCache();
+            sysUserService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -328,6 +333,7 @@ public class SysRoleController {
             }
             sysRoleService.del(roleId);
             sysRoleService.clearCache();
+            sysUserService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {
@@ -366,6 +372,7 @@ public class SysRoleController {
             role.setOpAt(Times.getTS());
             sysRoleService.updateIgnoreNull(role);
             sysRoleService.clearCache();
+            sysUserService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -394,6 +401,7 @@ public class SysRoleController {
             }
             Sys_role role = sysRoleService.fetch(roleId);
             sysRoleService.clearCache();
+            sysUserService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {
@@ -446,6 +454,7 @@ public class SysRoleController {
             }
             Sys_role role = sysRoleService.fetch(roleId);
             sysRoleService.clearCache();
+            sysUserService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {
@@ -469,6 +478,7 @@ public class SysRoleController {
             sysRoleService.clear("sys_user_role", Cnd.where("userId", "in", ids).and("roleId", "=", roleId));
             Sys_role role = sysRoleService.fetch(roleId);
             sysRoleService.clearCache();
+            sysUserService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {
