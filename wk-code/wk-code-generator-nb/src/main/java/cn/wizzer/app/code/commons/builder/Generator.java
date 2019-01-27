@@ -74,6 +74,7 @@ public class Generator {
         Method add = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
         add.setAccessible(true);
         add.invoke(classLoader, programRootDir.toURI().toURL());
+        boolean vue = false;
         String basePath = "";
         String baseNbPath = "";
         String baseComPath = "";
@@ -94,7 +95,7 @@ public class Generator {
         String types[] = {"all"};
         String pages[] = {"index", "add", "edit", "detail"};
         Options options = new Options();
-        options.addOption("c", "config", true, "spring datasource config file(classpath)");
+        options.addOption("c", "config", true, "datasource config file(classpath)");
         options.addOption("i", "include", true, "include table pattern");
         options.addOption("x", "exclude", true, "exclude table pattern");
         options.addOption("p", "package", true, "base package name,default:cn.wizzer.app");
@@ -114,6 +115,10 @@ public class Generator {
                 "views",
                 true,
                 "for generator pages,default:all pages,eg: -v index_detail will generate index.html and detail.html");
+        options.addOption("vue",
+                "vue",
+                true,
+                "for generator vue");
         options.addOption("j", "project-path", true, "project directory, default is empty");
         options.addOption("b", "base-path", true, "base directory, default is empty");
         options.addOption("y", "common-path", true, "base common directory, default is empty");
@@ -126,6 +131,12 @@ public class Generator {
         CommandLineParser parser = new GnuParser();
         try {
             CommandLine commandLine = parser.parse(options, args);
+            if (commandLine.hasOption("vue")) {
+                String _vue = commandLine.getOptionValue("vue", "false");
+                if ("true".equals(_vue)) {
+                    vue = true;
+                }
+            }
             if (commandLine.hasOption("c")) {
                 configPath = commandLine.getOptionValue("c");
             }
@@ -228,7 +239,14 @@ public class Generator {
                     if (!hasLocale(types)) {
                         viewpath = "view_notlocale";
                     }
-                    generateViews(projectPath + "/" + outputDir + "/src/main", force, viewpath, table, generator, pages);
+                    if (vue) {
+                        viewpath = "vue";
+                        if (!hasLocale(types)) {
+                            viewpath = "vue_notlocale";
+                        }
+                        generateViewsVue(projectPath + "/" + outputDir + "/src/main", force, viewpath, table, generator, pages);
+                    } else
+                        generateViews(projectPath + "/" + outputDir + "/src/main", force, viewpath, table, generator, pages);
                 } else if (type.equals("locale")) {
                     generateLocales(projectPath + "/" + outputDir + "/src/main", force, table, generator);
                 } else {
@@ -246,6 +264,9 @@ public class Generator {
                     }
                     String templatePath = "templet/" + type.toLowerCase() + ".vm";
 
+                    if ("controller".equals(type) && vue) {
+                        templatePath = "templet/controller_vue.vm";
+                    }
                     String packagePath = packageName.replace('.', '/');
                     String className = table.getEntityClassName();
 
@@ -318,6 +339,21 @@ public class Generator {
             log.debug("generate html:" + file.getName());
             generator.generate(null, templatePath, file, force);
         }
+    }
+
+    private static void generateViewsVue(String outputDir, boolean force, String viewpath,
+                                         TableDescriptor table,
+                                         Generator generator,
+                                         String[] pages)
+            throws IOException {
+
+        String templatePath = "templet/" + viewpath + "/index.html.vm";
+        File file = new File(outputDir + "/resources/views/"
+                + table.getViewBasePath()
+                + "/index.html");
+        log.debug("generate html:" + file.getName());
+        generator.generate(null, templatePath, file, force);
+
     }
 
     private static void usage(Options options) {

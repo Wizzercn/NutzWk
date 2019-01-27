@@ -59,6 +59,7 @@ public class ${table.ControllerClassName}{
     @SLog(tag = "${table.Label}", msg = "$parameterId")
     public Object addDo(@Param("..")${table.EntityClassName} ${table.EntityInstanceName}, HttpServletRequest req) {
 		try {
+            ${table.EntityInstanceName}.setOpBy(StringUtil.getPlatformUid());
 			${table.ServiceInstanceName}.insert(${table.EntityInstanceName});
 			return Result.success("system.success");
 		} catch (Exception e) {

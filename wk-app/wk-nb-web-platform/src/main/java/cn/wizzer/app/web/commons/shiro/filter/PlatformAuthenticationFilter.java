@@ -22,7 +22,7 @@ import java.security.interfaces.RSAPrivateKey;
  */
 @IocBean(name = "platformAuthc")
 public class PlatformAuthenticationFilter extends FormAuthenticationFilter implements ActionFilter {
-    private final static Log log= Logs.get();
+    private final static Log log = Logs.get();
     private String captchaParam = "platformCaptcha";
 
     public String getCaptchaParam() {
@@ -43,6 +43,8 @@ public class PlatformAuthenticationFilter extends FormAuthenticationFilter imple
             RSAPrivateKey platformPrivateKey = (RSAPrivateKey) request.getSession().getAttribute("platformPrivateKey");
             if (platformPrivateKey != null) {
                 password = RSAUtil.decryptByPrivateKey(password, platformPrivateKey);
+            } else {
+                return null;
             }
         } catch (Exception e) {
             /*
@@ -51,7 +53,7 @@ public class PlatformAuthenticationFilter extends FormAuthenticationFilter imple
             在9下面添加 security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
             2、拷贝 bcprov-jdk16-143.jar 和 bcprov-jdk15-135.jar 到 /usr/java/jdk1.8.0_162/jre/lib/ext 目录下
              */
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
         return new PlatformCaptchaToken(username, password, rememberMe, host, captcha);
     }

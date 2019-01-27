@@ -73,6 +73,7 @@ public class CmsChannelController {
     @SLog(tag = "新建栏目", msg = "栏目名称:${args[0].name}")
     public Object addDo(@Param("..") Cms_channel channel, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
+            channel.setOpBy(StringUtil.getPlatformUid());
             cmsChannelService.save(channel, parentId);
             cmsChannelService.clearCache();
             return Result.success("system.success");

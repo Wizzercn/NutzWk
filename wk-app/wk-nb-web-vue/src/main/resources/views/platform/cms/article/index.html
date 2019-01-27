@@ -1,0 +1,609 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+<style>
+    .left_aside {
+        width: 200px;
+        background-color: #eaecf6;
+        height: 500px;
+    }
+
+    .left_tree {
+        margin-top: 10px;
+        margin-left: 10px;
+        background-color: #eaecf6;
+    }
+
+    .note {
+        width: 100%;
+        height: 320px;
+    }
+
+    .el-upload input[type=file] {
+        display: none;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 128px;
+        height: 128px;
+        line-height: 128px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 128px;
+        height: 128px;
+        display: block;
+    }
+</style>
+<link href="${base!}/assets/platform/plugins/umeditor/themes/default/css/umeditor.min.css" type="text/css"
+      rel="stylesheet">
+<script src="${base!}/assets/platform/plugins/umeditor/umeditor.config.js"></script>
+<script src="${base!}/assets/platform/plugins/umeditor/umeditor.js"></script>
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <span>站点：</span>
+            <el-select size="medium" v-model="site.id" placeholder="请选择" @change="siteChange">
+                <el-option
+                        v-for="item in sites"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+            <el-button size="medium" @click="openAdd">
+                <i class="ti-plus"></i>
+                新建文章
+            </el-button>
+        </div>
+        <div class="btn-group tool-button mt5">
+            <el-input placeholder="请输入标题" v-model="pageForm.searchKeyword" @keyup.enter.native="doSearch">
+                <el-button slot="append" icon="el-icon-search" @click="doSearch"></el-button>
+            </el-input>
+        </div>
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="delMore" type="danger" :disabled="selectData.length==0">
+                <i class="el-icon-delete"></i>
+                删除
+            </el-button>
+        </div>
+    </el-row>
+    <el-row style="padding-top: 50px;">
+        <section class="el-container">
+            <aside class="el-aside left_aside">
+                <el-tree
+                        @node-click="treeClick"
+                        class="left_tree"
+                        :data="channelData"
+                        node-key="id"
+                        :props="defaultProps">
+                </el-tree>
+            </aside>
+            <main class="el-main">
+                <el-breadcrumb separator-class="el-icon-arrow-right">
+                    <el-breadcrumb-item>{{site.site_name}}</el-breadcrumb-item>
+                    <el-breadcrumb-item>{{pageForm.channelName||'所有栏目'}}</el-breadcrumb-item>
+                </el-breadcrumb>
+                <el-row style="margin-top: 5px;">
+                    <el-table
+                            :data="tableData"
+                            @sort-change='pageOrder'
+                            size="small"
+                            header-align="center"
+                            style="width: 100%"
+                            @selection-change="handleSelectionChange"
+                            :default-sort="{prop: 'publishAt', order: 'descending'}"
+                    >
+                        <el-table-column
+                                type="selection"
+                                width="35">
+                        </el-table-column>
+
+                        <el-table-column label="文章标题" header-align="left" prop="title"
+                                         :show-overflow-tooltip="true">
+                        </el-table-column>
+
+                        <el-table-column sortable label="发布时间" header-align="center" prop="publishAt"
+                                         width="240">
+                            <template slot-scope="scope">
+                                {{formatAt(scope.row.publishAt)}} - {{formatAt(scope.row.endAt)}}
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column label="发布状态" header-align="center" align="center" prop="disabled"
+                                         width="120">
+                            <template slot-scope="scope">
+                                <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                                <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="id"
+                                label="操作"
+                                width="120">
+                            <template slot-scope="scope">
+                                <el-dropdown @command="dropdownCommand">
+                                    <el-button size="mini">
+                                        <i class="ti-settings"></i>
+                                        <span class="ti-angle-down"></span>
+                                    </el-button>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item :command="{type:'view',id:scope.row.id}">
+                                            预览
+                                        </el-dropdown-item>
+                                        <el-dropdown-item divided
+                                                          :command="{type:'enable',id:scope.row.id,row:scope.row}">
+                                            启用
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :command="{type:'disable',id:scope.row.id,row:scope.row}">
+                                            禁用
+                                        </el-dropdown-item>
+                                        <el-dropdown-item divided :command="{type:'edit',id:scope.row.id}">
+                                            修改
+                                        </el-dropdown-item>
+                                        <el-dropdown-item
+                                                :command="{type:'delete',id:scope.row.id,title:scope.row.title}">
+                                            删除
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-row>
+                <el-row class="el-pagination-container">
+                    <el-pagination
+                            @size-change="pageSizeChange"
+                            @current-change="pageNumberChange"
+                            :current-page="pageForm.pageNumber"
+                            :page-sizes="[10, 20, 30, 50]"
+                            :page-size="pageForm.pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="pageForm.totalCount">
+                    </el-pagination>
+                </el-row>
+            </main>
+        </section>
+    </el-row>
+
+    <el-dialog
+            :title="dialogTitle"
+            :visible.sync="dialogVisible"
+            width="60%">
+        <el-form :model="formData" ref="dialogForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="title" label="文章标题">
+                <el-input maxlength="255" placeholder="文章标题"
+                          v-model="formData.title"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="author" label="文章作者">
+                <el-input maxlength="50" placeholder="文章作者"
+                          v-model="formData.author"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="info" label="文章简介">
+                <el-input type="textarea" v-model="formData.info"></el-input>
+            </el-form-item>
+            <el-form-item prop="url" label="URL">
+                <el-input maxlength="50" placeholder="URL"
+                          v-model="formData.url"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="publishAt" label="发布时间">
+                <el-date-picker
+                        format="yyyy-MM-dd HH:mm:ss"
+                        value-format="timestamp"
+                        v-model="formData.time"
+                        type="datetimerange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+
+            <el-form-item prop="disabled" label="发布状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+            <el-form-item prop="picurl" label="标题图">
+                <el-upload
+                        class="avatar-uploader"
+                        tabindex="5"
+                        action="${base}/open/file/upload/image"
+                        name="Filedata"
+                        :show-file-list="false"
+                        :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picurl')}">
+
+                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+            </el-form-item>
+            <el-form-item prop="content" label="文章内容">
+                <!--一个页面中不能出现两个umeditor对象,所以新建和修改用同一个dialog来做吧-->
+                <script type="text/plain" id="content" class="note"></script>
+                <!---->
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false"> 取 消 </el-button>
+                <el-button type="primary" @click="doSave"> 确 定 </el-button>
+        </span>
+    </el-dialog>
+
+    <el-dialog
+            title="预览文章"
+            :visible.sync="viewDialogVisible"
+            width="60%">
+        <el-row style="text-align: center">
+            <h4>{{formData.title}}</h4>
+        </el-row>
+        <el-row>
+            <span>作者：{{formData.author}}</span>
+            <span>发布时间：{{formatAt(formData.publishAt)}} - {{formatAt(formData.endAt)}}</span>
+        </el-row>
+        <el-row style="margin-top: 5px !important;margin-bottom: 5px !important;border-bottom: 1px solid #DDD;">
+        </el-row>
+        <el-row>
+            <span v-html="formData.content"></span>
+        </el-row>
+        <span slot="footer" class="dialog-footer">
+                <el-button @click="viewDialogVisible = false"> 关 闭 </el-button>
+        </span>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var sites = [];
+            <!--#for(o in siteList){#-->
+            sites.push({value: "${o.id!}", label: "${o.site_name!}"});
+            <!--#}#-->
+            var site = {id: "", site_name: ""};
+            <!--#if(!isEmpty(site)){#-->
+            site = {id: "${site.id}", site_name: "${site.site_name}"};
+            <!--#}#-->
+            return {
+                dialogVisible: false,
+                viewDialogVisible: false,
+                dialogTitle: "新建文章",
+                sites: sites,
+                site: site,
+                selectData: [],
+                pageForm: {
+                    siteId: site.id,
+                    channelId: "",
+                    channelName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "publishAt",
+                    pageOrderBy: "descending"
+                },
+                channelData: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
+                tableData: [],
+                formData: {
+                    id: "",
+                },
+                formRules: {
+                    title: [
+                        {required: true, message: '标题', trigger: 'blur'}
+                    ],
+                    info: [
+                        {required: false, message: '请输入文章作者', trigger: 'blur'},
+                        {min: 0, max: 500, message: '长度500个字符以内', trigger: 'blur'}
+                    ]
+                },
+                action: "add"
+            }
+        },
+        methods: {
+            siteChange: function (val) {
+                window.location.href = "${base}/platform/cms/article/" + val;
+            },
+            channelLoad: function () {
+                var self = this;
+                $.post(base + "/platform/cms/article/tree/" + self.site.id, {}, function (data) {
+                    if (data.code == 0) {
+                        self.channelData = data.data;
+                    }
+                }, "json");
+            },
+            openAdd: function () {
+                var self = this;
+                if (typeof(self.pageForm.channelId) == "undefined" || self.pageForm.channelId == "" || self.pageForm.channelId == "root") {
+                    self.$message({
+                        message: "请在左侧选定一个栏目",
+                        type: 'error'
+                    });
+                    return false;
+                }
+                self.dialogVisible = true;
+                self.dialogTitle = "新建文章";
+                self.action = "add";
+                self.formData = {
+                    id: "",
+                    author: "${@shiro.getPrincipalProperty('username')}",
+                    time: [
+                        moment().format("x"),
+                        moment("2099-12-31 23:59:59").format("x")
+                    ]
+                };//打开新增窗口,表单先清空
+                if (self.$refs["dialogForm"])
+                    self.$refs["dialogForm"].resetFields();
+                UM.getEditor("content");
+                setTimeout(function () {
+                    UM.getEditor("content").setContent("", false);
+                }, 200);
+            },
+            doSave: function () {
+                if ("add" == this.action) {
+                    this.doAdd();
+                }
+                if ("edit" == this.action) {
+                    this.doEdit();
+                }
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "/platform/cms/article/addDo/" + self.site.id;
+                self.$refs["dialogForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        self.formData.content = UM.getEditor("content").getContent();
+                        self.formData.siteid = self.site.id;
+                        self.formData.channelId = self.pageForm.channelId;
+                        self.formData.time_param = JSON.stringify(self.formData.time);
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.dialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                var url = base + "/platform/cms/article/editDo";
+                self.$refs["dialogForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        self.formData.content = UM.getEditor("content").getContent();
+                        self.formData.time_param = JSON.stringify(self.formData.time);
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.dialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            delMore: function () {
+                var self = this;
+                if (self.selectData.length == 0) {
+                    self.$message({
+                        message: "请选择消息",
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                var ids = [];
+                self.selectData.forEach(function (val) {
+                    ids.push(val.id);
+                });
+                self.$confirm('您确定要删除选中的 ' + ids.length + ' 条消息？ ', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "/platform/cms/article/delete", {ids: ids.toString()}, function (data) {
+                                if (data.code == 0) {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'success'
+                                    });
+                                    self.pageData();
+                                } else {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
+            },
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/cms/article/data/" + self.site.id, self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            doSearch: function () {
+                this.pageData();
+            },
+            treeClick: function (data, node, obj) {
+                this.pageForm.channelId = data.id;
+                this.pageForm.channelName = data.name;
+                this.pageData();
+            },
+            handlePicSuccess: function (response, file, fileList, attrName) {
+                if (response.code == 0) {
+                    // 对象属性直接赋值不会触发试图更新，采用 Vue.set 、this.$set或者Object.assign({}，this.obj)创建新对象
+                    // 或者也可以定义一个 refresh 属性 ，当数据发生改变时，该属性同时变化，也会触发视图更新
+                    // this.formData.site_logo =response.data;
+                    this.$set(this.formData, attrName, response.data);
+                } else {
+                    this.$set(this.formData, attrName, "");
+                }
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/cms/article/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.formData.time = [
+                                self.formData.publishAt * 1000,
+                                self.formData.endAt * 1000
+                            ];
+                            self.dialogVisible = true;//打开编辑窗口
+                            self.dialogTitle = "修改文章";
+                            self.action = "edit";
+                            UM.getEditor("content");
+                            setTimeout(function () {
+                                UM.getEditor("content").setContent("" + self.formData.content, false);
+                            }, 200);
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("view" == command.type) {
+                    $.post(base + "/platform/cms/article/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.viewDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("enable" == command.type || "disable" == command.type) {
+                    $.post(base + "/platform/cms/article/" + command.type + "/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.$message({
+                                message: data.msg,
+                                type: 'success'
+                            });
+                            if ("disable" == command.type) {
+                                command.row.disabled = true;
+                            }
+                            if ("enable" == command.type) {
+                                command.row.disabled = false;
+                            }
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除文章： ' + command.title, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/cms/article/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.doSearch();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            }
+        },
+        created: function () {
+            this.channelLoad();
+            this.pageData();
+        }
+    });
+</script>
+<!--#
+}
+#-->

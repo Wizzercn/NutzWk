@@ -1,0 +1,525 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <span>微信公众号：</span>
+            <el-select size="medium" v-model="pageForm.wxid" placeholder="请选择" @change="change">
+                <el-option
+                        v-for="item in wxConfigs"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+        </div>
+        <div class="btn-group tool-button mt5">
+            <el-button size="medium" @click="openAdd">
+                <i class="ti-plus"></i>
+                添加绑定
+            </el-button>
+        </div>
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="delMore" type="danger" :disabled="selectData.length==0">
+                <i class="el-icon-delete"></i>
+                删除
+            </el-button>
+        </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                @selection-change="handleSelectionChange"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+        >
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+
+            <el-table-column label="事件类型" header-align="left" prop="title"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.type=='follow'">关注触发</span>
+                    <span v-if="scope.row.type=='keyword'">关键词触发</span>
+                </template>
+            </el-table-column>
+            <!--#if("keyword"==type){#-->
+            <el-table-column label="关键词" header-align="left" prop="type"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.type=='follow'">无</span>
+                    <span v-if="scope.row.type=='keyword'">{{scope.row.keyword}}</span>
+                </template>
+            </el-table-column>
+            <!--#}#-->
+            <el-table-column label="消息类型" header-align="left" prop="content"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.msgType=='txt'">文本</span>
+                    <span v-if="scope.row.msgType=='image'">图片</span>
+                    <span v-if="scope.row.msgType=='news'">图文</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="回复内容" header-align="left"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.msgType=='txt'">
+                        {{scope.row.replyTxt.title}}
+                    </span>
+                    <span v-if="scope.row.msgType=='image'">
+                        <img :src="base+scope.row.replyImg.picurl" width="35" height="35"/>
+                    </span>
+                    <span v-if="scope.row.msgType=='news'">
+                        {{scope.row.replyNews.title}}
+                    </span>
+                </template>
+            </el-table-column>
+
+            <el-table-column
+                    prop="id"
+                    label="操作"
+                    width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item :command="{type:'edit',id:scope.row.id}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                                    :command="{type:'delete',id:scope.row.id}">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+
+    <el-dialog
+            title="添加绑定"
+            :visible.sync="addDialogVisible"
+            width="50%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="type" label="绑定事件">
+                <span v-if="formData.type=='follow'">关注触发</span>
+                <span v-if="formData.type=='keyword'">关键词触发</span>
+            </el-form-item>
+            <el-form-item class="is-required" v-if="formData.type=='keyword'" prop="keyword" label="关键词">
+                <el-input maxlength="100" placeholder="关键词"
+                          v-model="formData.keyword"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item class="is-required" prop="scope" label="绑定类型">
+                <el-radio-group @change="msgTypeChange" v-model="formData.msgType" size="medium">
+                    <el-radio label="txt">文本</el-radio>
+                    <el-radio label="news">图文</el-radio>
+                    <el-radio label="image">图片</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item v-if="formData.msgType=='txt'" class="is-required" label="绑定文本" prop="content">
+                <el-select v-model="formData.content" placeholder="请选择文本">
+                    <el-option
+                            v-for="item in txtList"
+                            :key="item.id"
+                            :label="item.title"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item v-if="formData.msgType=='news'" class="is-required" label="绑定图文" prop="content">
+                <el-select v-model="formData.content" placeholder="请选择图文">
+                    <el-option
+                            v-for="item in newsList"
+                            :key="item.id"
+                            :label="item.title"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item v-if="formData.msgType=='image'" class="is-required" label="绑定图片" prop="content">
+                <el-col :span="6" v-for="(o, index) in imageList" :key="o" :offset="index > 0 ? 3 : 0">
+                    <el-card style="width: 120px;height: 120px;">
+                        <img :src="base+o.picurl" style="height: 60px;"/>
+                        <div style="padding: 3px;">
+                            <span v-if="formData.content==o.id" style="font-size: 12px;color: red;">已选择</span>
+                            <div class="bottom clearfix">
+                                <el-button type="text" class="button" @click="imgClassSel(o.id)">选择</el-button>
+                            </div>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+
+    <el-dialog
+            title="修改绑定"
+            :visible.sync="editDialogVisible"
+            width="50%">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="type" label="绑定事件">
+                <span v-if="formData.type=='follow'">关注触发</span>
+                <span v-if="formData.type=='keyword'">关键词触发</span>
+            </el-form-item>
+            <el-form-item class="is-required" v-if="formData.type=='keyword'" prop="keyword" label="关键词">
+                <el-input maxlength="100" placeholder="关键词"
+                          v-model="formData.keyword"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+            <el-form-item class="is-required" prop="scope" label="绑定类型">
+                <el-radio-group @change="msgTypeChange" v-model="formData.msgType" size="medium">
+                    <el-radio label="txt">文本</el-radio>
+                    <el-radio label="news">图文</el-radio>
+                    <el-radio label="image">图片</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item v-if="formData.msgType=='txt'" class="is-required" label="绑定文本" prop="content">
+                <el-select v-model="formData.content" placeholder="请选择文本">
+                    <el-option
+                            v-for="item in txtList"
+                            :key="item.id"
+                            :label="item.title"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item v-if="formData.msgType=='news'" class="is-required" label="绑定图文" prop="content">
+                <el-select v-model="formData.content" placeholder="请选择图文">
+                    <el-option
+                            v-for="item in newsList"
+                            :key="item.id"
+                            :label="item.title"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item v-if="formData.msgType=='image'" class="is-required" label="绑定图片" prop="content">
+                <el-col :span="6" v-for="(o, index) in imageList" :key="o" :offset="index > 0 ? 3 : 0">
+                    <el-card style="width: 120px;height: 120px;">
+                        <img :src="base+o.picurl" style="height: 60px;"/>
+                        <div style="padding: 3px;">
+                            <span v-if="formData.content==o.id" style="font-size: 12px;color: red;">已选择</span>
+                            <div class="bottom clearfix">
+                                <el-button type="text" class="button" @click="imgClassSel(o.id)">选择</el-button>
+                            </div>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doEdit">确 定</el-button>
+                  </span>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var wxConfigs = [];
+            <!--#for(o in wxList){#-->
+            wxConfigs.push({value: "${o.id!}", label: "${o.appname!}"});
+            <!--#}#-->
+            var self = this;
+            var validateKeyword = function (rule, value, callback) {
+                if (self.formData.type == "keyword" && (typeof(self.formData.keyword) == "undefined" || self.formData.keyword == "")) {
+                    callback(new Error('请输入关键词'));
+                } else if (self.formData.type == "keyword" && self.formData.keyword.length > 20) {
+                    callback(new Error('关键词最大长度为20个字符'));
+                } else {
+                    callback();
+                }
+            };
+            return {
+                wxConfigs: wxConfigs,
+                addDialogVisible: false,
+                editDialogVisible: false,
+                selectData: [],
+                txtList: [],
+                newsList: [],
+                imageList: [],
+                pageForm: {
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending"
+                },
+                tableData: [],
+                formData: {
+                    id: "",
+                },
+                formRules: {
+                    keyword: [
+                        {required: false, message: '关键词', trigger: 'blur'},
+                        {validator: validateKeyword, trigger: ['blur', 'change']}
+                    ],
+                    content: [
+                        {required: true, message: '请选择发送内容', trigger: 'blur'}
+                    ]
+                },
+                action: "add"
+            }
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/wx/reply/conf/${type!}/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            openAdd: function () {
+                var self = this;
+                self.addDialogVisible = true;
+                self.action = "add";
+                self.formData = {
+                    id: "",
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                    type: "${type!}",
+                    msgType: "txt",
+                    keyword: "",
+                    content: ""
+                };//打开新增窗口,表单先清空
+                if (self.$refs["addForm"])
+                    self.$refs["addForm"].resetFields();
+                self.msgTypeChange("txt");
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "/platform/wx/reply/conf/${type!}/addDo";
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                var url = base + "/platform/wx/reply/conf/${type!}/editDo";
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            delMore: function () {
+                var self = this;
+                if (self.selectData.length == 0) {
+                    self.$message({
+                        message: "请选择消息",
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                var ids = [];
+                self.selectData.forEach(function (val) {
+                    ids.push(val.id);
+                });
+                self.$confirm('您确定要删除选中的 ' + ids.length + ' 条数据？ ', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    callback: function (a, b) {
+                        if ("confirm" == a) {//确认后再执行
+                            $.post(base + "/platform/wx/reply/conf/${type!}/delete", {ids: ids.toString()}, function (data) {
+                                if (data.code == 0) {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'success'
+                                    });
+                                    self.pageData();
+                                } else {
+                                    self.$message({
+                                        message: data.msg,
+                                        type: 'error'
+                                    });
+                                }
+                            }, "json");
+                        }
+                    }
+                });
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/wx/reply/conf/${type!}/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.editDialogVisible = true;//打开编辑窗口
+                            self.action = "edit";
+                            self.msgTypeChange(self.formData.msgType);
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('确定要删除？ ', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/wx/reply/conf/${type!}/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.pageData();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            },
+            msgTypeChange: function (val) {
+                var self = this;
+                if ("add" == self.action) {
+                    self.formData.content = "";
+                }
+                if (val == "txt") {
+                    $.post(base + "/platform/wx/reply/conf/${type!}/selectData", {
+                        wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                        msgType: val
+                    }, function (data) {
+                        if (data.code == 0) {
+                            self.txtList = data.data;
+                        }
+                    }, "json");
+                }
+                if (val == "image") {
+                    $.post(base + "/platform/wx/reply/conf/${type!}/selectData", {
+                        wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                        msgType: val
+                    }, function (data) {
+                        if (data.code == 0) {
+                            self.imageList = data.data;
+                        }
+                    }, "json");
+                }
+                if (val == "news") {
+                    $.post(base + "/platform/wx/reply/conf/${type!}/selectData", {
+                        wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                        msgType: val
+                    }, function (data) {
+                        if (data.code == 0) {
+                            self.newsList = data.data;
+                        }
+                    }, "json");
+                }
+            },
+            imgClassSel: function (val) {
+                this.formData.content = val;
+            },
+            change: function (val) {
+                window.location.href = "${base}/platform/wx/reply/conf/${type!}/index/" + val;
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
+    });
+</script>
+<!--#
+}
+#-->

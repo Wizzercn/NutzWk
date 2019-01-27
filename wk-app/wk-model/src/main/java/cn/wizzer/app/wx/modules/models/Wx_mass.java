@@ -4,6 +4,7 @@ import cn.wizzer.framework.base.model.BaseModel;
 import org.nutz.dao.entity.annotation.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by wizzer on 2016/7/1.
@@ -31,12 +32,17 @@ public class Wx_mass extends BaseModel implements Serializable {
     @Column
     @Comment("群发类型")
     @ColDefine(type = ColType.VARCHAR, width = 20)
-    private String type;
+    private String type;//text image news
 
     @Column
     @Comment("媒体文件ID")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String media_id;
+
+    @Column
+    @Comment("图片地址")//type=image
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String picurl;
 
     @Column
     @Comment("Scope")
@@ -60,6 +66,9 @@ public class Wx_mass extends BaseModel implements Serializable {
 
     @One(field = "wxid")
     private Wx_config wxConfig;
+
+    @One(field = "id",key = "massId")
+    private Wx_mass_send massSend;
 
     public String getId() {
         return id;
@@ -91,6 +100,14 @@ public class Wx_mass extends BaseModel implements Serializable {
 
     public void setMedia_id(String media_id) {
         this.media_id = media_id;
+    }
+
+    public String getPicurl() {
+        return picurl;
+    }
+
+    public void setPicurl(String picurl) {
+        this.picurl = picurl;
     }
 
     public String getScope() {
@@ -139,5 +156,13 @@ public class Wx_mass extends BaseModel implements Serializable {
 
     public void setWxConfig(Wx_config wxConfig) {
         this.wxConfig = wxConfig;
+    }
+
+    public Wx_mass_send getMassSend() {
+        return massSend;
+    }
+
+    public void setMassSend(Wx_mass_send massSend) {
+        this.massSend = massSend;
     }
 }

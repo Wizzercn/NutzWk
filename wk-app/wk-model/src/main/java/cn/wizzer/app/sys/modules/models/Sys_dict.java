@@ -42,6 +42,11 @@ public class Sys_dict extends BaseModel implements Serializable {
     private String code;
 
     @Column
+    @Comment("启用状态")
+    @ColDefine(type = ColType.BOOLEAN)
+    private boolean disabled;
+
+    @Column
     @Comment("排序字段")
     @Prev({
             @SQL(db= DB.MYSQL,value = "SELECT IFNULL(MAX(location),0)+1 FROM sys_dict"),
@@ -91,6 +96,14 @@ public class Sys_dict extends BaseModel implements Serializable {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public Integer getLocation() {

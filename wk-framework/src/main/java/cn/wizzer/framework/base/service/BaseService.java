@@ -391,6 +391,13 @@ public interface BaseService<T> {
     void delete(String[] ids);
 
     /**
+     * 批量删除
+     *
+     * @param ids
+     */
+    void delete(List<String> ids);
+
+    /**
      * 清空表
      *
      * @return
@@ -433,6 +440,14 @@ public interface BaseService<T> {
      * @return
      */
     int vDelete(String[] ids);
+
+    /**
+     * 批量伪删除
+     *
+     * @param ids
+     * @return
+     */
+    int vDelete(List<String> ids);
 
     /**
      * 根据条件进行伪删除
@@ -628,6 +643,38 @@ public interface BaseService<T> {
      */
     Pagination listPage(Integer pageNumber, Sql sql);
 
+
+    /**
+     * 分页查询(sql)
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param sql
+     * @return
+     */
+    Pagination listPage(Integer pageNumber, int pageSize, Sql sql);
+
+    /**
+     * 分页查询
+     *
+     * @param pageNumber
+     * @param sql        查询语句
+     * @param countSql   统计语句
+     * @return
+     */
+    Pagination listPage(Integer pageNumber, Sql sql, Sql countSql);
+
+    /**
+     * 分页查询
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param sql        查询语句
+     * @param countSql   统计语句
+     * @return
+     */
+    Pagination listPage(Integer pageNumber, int pageSize, Sql sql, Sql countSql);
+
     /**
      * 分页查询
      *
@@ -660,6 +707,29 @@ public interface BaseService<T> {
     Pagination listPage(Integer pageNumber, int pageSize, Condition cnd, String fieldName);
 
     /**
+     * 关联查询
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param cnd
+     * @param linkName   支持通配符 ^(a|b)$
+     * @return
+     */
+    Pagination listPageLinks(Integer pageNumber, int pageSize, Condition cnd, String linkName);
+
+    /**
+     * 关联查询,带子查询条件
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param cnd
+     * @param linkName   支持通配符 ^(a|b)$
+     * @param subCnd     子查询条件
+     * @return
+     */
+    Pagination listPageLinks(Integer pageNumber, int pageSize, Condition cnd, String linkName, Condition subCnd);
+
+    /**
      * 分页查询(tabelName)
      *
      * @param pageNumber
@@ -669,16 +739,6 @@ public interface BaseService<T> {
      * @return
      */
     Pagination listPage(Integer pageNumber, int pageSize, String tableName, Condition cnd);
-
-    /**
-     * 分页查询(sql)
-     *
-     * @param pageNumber
-     * @param pageSize
-     * @param sql
-     * @return
-     */
-    Pagination listPage(Integer pageNumber, int pageSize, Sql sql);
 
 
     /**
@@ -734,6 +794,7 @@ public interface BaseService<T> {
      * @return
      */
     NutMap data(int length, int start, int draw, Sql countSql, Sql orderSql, boolean countOnly);
+
     /**
      * DataTable Page
      *

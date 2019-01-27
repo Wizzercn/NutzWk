@@ -4,6 +4,7 @@ import cn.wizzer.app.cms.modules.services.CmsArticleService;
 import cn.wizzer.app.cms.modules.services.CmsChannelService;
 import cn.wizzer.app.web.commons.ext.wx.WxService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.models.Wx_menu;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
@@ -94,7 +95,7 @@ public class WxMenuController {
     public void add(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
         req.setAttribute("menus", wxMenuService.query(Cnd.where("wxid", "=", wxid).and(Cnd.exps("parentId", "=", "").or("parentId", "is", null)).asc("location")));
-        req.setAttribute("config", wxConfigService.fetch(wxid));
+        req.setAttribute("wxconfig", wxConfigService.fetch(wxid));
     }
 
     @At
@@ -120,6 +121,7 @@ public class WxMenuController {
             if (Strings.isBlank(menu.getWxid())) {
                 return Result.error("请选择公众号");
             }
+            menu.setOpBy(StringUtil.getPlatformUid());
             wxMenuService.save(menu, parentId);
             return Result.success("system.success");
         } catch (Exception e) {
@@ -152,7 +154,7 @@ public class WxMenuController {
     @RequiresPermissions("wx.conf.menu")
     public Object edit(String id, HttpServletRequest req) {
         Wx_menu menu = wxMenuService.fetch(id);
-        req.setAttribute("config", wxConfigService.fetch(menu.getWxid()));
+        req.setAttribute("wxconfig", wxConfigService.fetch(menu.getWxid()));
         return wxMenuService.fetchLinks(menu, "wxConfig");
     }
 

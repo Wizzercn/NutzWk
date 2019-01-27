@@ -4,6 +4,7 @@ import cn.wizzer.app.cms.modules.models.Cms_link_class;
 import cn.wizzer.app.cms.modules.services.CmsLinkClassService;
 import cn.wizzer.app.cms.modules.services.CmsLinkService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
@@ -54,6 +55,7 @@ public class CmsLinkClassController {
     @SLog(tag = "添加链接分类", msg = "分类名称:${args[0].name}")
     public Object addDo(@Param("..") Cms_link_class linkClass, HttpServletRequest req) {
         try {
+            linkClass.setOpBy(StringUtil.getPlatformUid());
             cmsLinkClassService.insert(linkClass);
             return Result.success("system.success");
         } catch (Exception e) {

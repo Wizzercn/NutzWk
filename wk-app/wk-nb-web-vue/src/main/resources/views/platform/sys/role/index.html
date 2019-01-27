@@ -1,0 +1,979 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <el-cascader
+                    style="width: 100%"
+                    tabindex="1"
+                    :options="options"
+                    :show-all-levels="false"
+                    v-model="parentUnit"
+                    :fetch-suggestions="unitQuery"
+                    @active-item-change="unitChange"
+                    @change="unitChange2"
+                    @select="unitSelect"
+                    placeholder="请选择单位"
+            ></el-cascader>
+        </div>
+        <div class="btn-group tool-button mt5">
+            <el-input placeholder="请输入内容" v-model="pageForm.searchKeyword" @keyup.enter.native="doSearch">
+                <el-select v-model="pageForm.searchName" slot="prepend" placeholder="查询类型" style="width: 120px;">
+                    <el-option label="角色名称" value="name"></el-option>
+                    <el-option label="角色标识" value="code"></el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="doSearch"></el-button>
+            </el-input>
+        </div>
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="openAdd"><i class="ti-plus"></i> 新建角色</el-button>
+        </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+        >
+            <el-table-column
+                    sortable
+                    prop="name"
+                    label="角色名称"
+                    header-align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="code"
+                    label="角色标识"
+                    header-align="center"
+                    :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+                    prop="unit"
+                    label="所属单位"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+            >
+                <template slot-scope="scope">
+                    <span v-if="scope.row.unit==null" style="font-weight: bold">
+                        系统角色
+                    </span>
+                    <span v-if="scope.row.unit!=null">
+                        {{scope.row.unit.name}}
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="disabled"
+                    label="启用状态"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+            >
+                <template slot-scope="scope">
+                    <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="userOnline"
+                    label="操作"
+                    width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item :command="{type:'role',id:scope.row.id,name:scope.row.name}">
+                                查看权限
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'menu',id:scope.row.id,name:scope.row.name}">
+                                分配权限
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'user',id:scope.row.id,name:scope.row.name}">
+                                分配用户
+                            </el-dropdown-item>
+                            <el-dropdown-item divided :command="{type:'enable',id:scope.row.id,name:scope.row.name,row:scope.row}">
+                                启用
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'disable',id:scope.row.id,name:scope.row.name,row:scope.row}">
+                                禁用
+                            </el-dropdown-item>
+                            <el-dropdown-item divided :command="{type:'edit',id:scope.row.id}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'delete',id:scope.row.id,name:scope.row.name}"
+                                              v-if="scope.row.code!='superadmin'&&scope.row.code!='public'">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+    <el-dialog
+            append-to-body
+            title="新建角色"
+            :visible.sync="addDialogVisible"
+            width="70%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item class="is-required" prop="parentUnit" label="所属单位" label-width="80px">
+                <el-cascader
+                        style="width: 100%"
+                        tabindex="1"
+                        :options="options"
+                        :show-all-levels="false"
+                        v-model="parentUnit"
+                        :fetch-suggestions="unitQuery"
+                        @active-item-change="unitChange"
+                        @change="unitChange2"
+                        @select="unitSelect"
+                        placeholder="请选择单位"
+                ></el-cascader>
+            </el-form-item>
+            <el-form-item prop="name" label="角色名称">
+                <el-input maxlength="50" placeholder="角色名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="code" label="角色标识">
+                <el-input maxlength="150" placeholder="角色标识"
+                          v-model="formData.code"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+            <el-form-item prop="" label="分配权限">
+                <el-row style="margin-bottom: 3px;">
+                    <el-button size="small" @click="addRoleSelAll">全选</el-button>
+                    <el-button size="small" @click="addRoleSelClear">清空</el-button>
+                </el-row>
+                <el-tree
+                        ref="addMenuTree"
+                        :data="addMenuData"
+                        show-checkbox
+                        check-strictly
+                        node-key="id"
+                        :props="defaultProps"
+                >
+                    <span class="custom-tree-node" slot-scope="scope">
+                    <span>{{ scope.node.label }}</span>
+                    <span>
+                        <span v-if="scope.data.type=='menu'" style="font-weight: bold">菜单权限 </span>
+                        <span v-if="scope.data.type=='data'">数据权限 </span>
+                    </span>
+                  </span>
+                </el-tree>
+
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+    <el-dialog
+            append-to-body
+            title="修改角色"
+            :visible.sync="editDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="name" label="角色名称">
+                <el-input maxlength="50" placeholder="角色名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="code" label="角色标识">
+                <el-input maxlength="150" placeholder="角色标识"
+                          v-model="formData.code"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doEdit">确 定</el-button>
+                  </span>
+    </el-dialog>
+    <el-dialog
+            :title="roleDialogTitle"
+            :visible.sync="roleDialogVisible"
+            width="70%">
+        <el-table :data="roleTreeData" style="width: 100%" :row-style="treeTableShowTr" size="small"
+                  :highlight-current-row="true">
+            <el-table-column label="菜单名称" header-align="center" prop="name"
+                             width="200" :show-overflow-tooltip="true" align="left">
+                <template slot-scope="scope">
+                    <span v-for="(space, levelIndex) in treeTablePath(scope.row.path)" class="ms-tree-space"></span>
+                    <span v-if="treeTableIconShow(scope.row)" @click="treeTableChild(scope.row.id)"
+                          style="cursor: pointer">
+                        <span v-if="!scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right" title="展开"></span>
+
+                        <span v-if="scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right expanded" title="关闭"></span>
+                    {{ scope.row.name }}
+                    </span>
+                    <span v-if="!treeTableIconShow(scope.row)">
+                         <span class="ms-tree-space"></span>
+                        {{ scope.row.name }}
+                    </span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="URL" header-align="center" prop="href"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="资源类型" header-align="center" prop="type"
+                             :show-overflow-tooltip="true" align="center">
+
+                <template slot-scope="scope">
+                    <i v-if="scope.row.type=='menu'" style="font-weight: bold">菜单</i>
+                    <i v-if="scope.row.type=='data'">数据</i>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="权限标识" header-align="center" prop="permission"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+        </el-table>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="roleDialogVisible = false">关 闭</el-button>
+                  </span>
+    </el-dialog>
+    <el-dialog
+            append-to-body
+            :title="menuDialogTitle"
+            :visible.sync="menuDialogVisible"
+            width="70%">
+        <el-row style="margin-bottom: 3px;">
+            <el-button size="small" @click="menuRoleSelAll">全选</el-button>
+            <el-button size="small" @click="menuRoleSelClear">清空</el-button>
+        </el-row>
+        <el-tree
+                ref="doMenuTree"
+                :data="doMenuData"
+                :default-checked-keys="doMenuCheckedData"
+                show-checkbox
+                node-key="id"
+                check-strictly
+                :props="defaultProps"
+        >
+                    <span class="custom-tree-node" slot-scope="scope">
+                    <span>{{ scope.node.label }}</span>
+                    <span>
+                        <span v-if="scope.data.type=='menu'" style="font-weight: bold">菜单权限 </span>
+                        <span v-if="scope.data.type=='data'">数据权限 </span>
+                    </span>
+                  </span>
+        </el-tree>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="menuDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doMenu">确 定</el-button>
+                  </span>
+    </el-dialog>
+    <el-dialog
+            append-to-body
+            :title="userDialogTitle"
+            :visible.sync="userDialogVisible"
+            width="70%">
+        <div class="block">
+            <el-select
+                    size="small"
+                    style="width: 60%"
+                    class="span_n"
+                    v-model="selUsers"
+                    multiple
+                    filterable
+                    remote
+                    default-first-option
+                    reserve-keyword
+                    :remote-method="remoteMethod"
+                    :loading="loading"
+                    placeholder="请输入用户名或姓名"
+            >
+                <el-option
+                        v-for="item in dbUsers"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+            <el-button size="small" @click="userAddRole">将用户加入角色</el-button>
+            <div class="pull-right offscreen-right">
+                <el-button size="small" type="danger" @click="userDelRole">从角色中移除</el-button>
+            </div>
+        </div>
+        <el-table
+                :data="userTableData"
+                @sort-change='userPageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                @selection-change="userSelectionChange"
+        >
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="loginname"
+                    label="用户名"
+                    header-align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="username"
+                    label="姓名"
+                    header-align="center"
+                    :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+                    prop="unitname"
+                    label="所属单位"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+            >
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="disabled"
+                    label="帐号状态"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+            >
+                <template slot-scope="scope">
+                    <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="userOnline"
+                    label="在线状态"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+            >
+                <template slot-scope="scope">
+                    <i v-if="scope.row.userOnline" class="text-success ml5">在线</i>
+                    <i v-if="!scope.row.userOnline" class="text-danger ml5">离线</i>
+                </template>
+            </el-table-column>
+        </el-table>
+        <el-pagination
+                @size-change="userPageSizeChange"
+                @current-change="userPageNumberChange"
+                :current-page="userForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="userForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="userForm.totalCount">
+        </el-pagination>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="userDialogVisible = false">关 闭</el-button>
+                  </span>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var self = this;
+            var validateName = function (rule, value, callback) {
+                var regex = new RegExp("^[a-zA-Z][a-zA-Z0-9_]{1,49}$");
+                if (!regex.test(value)) {
+                    callback(new Error('角色标识以字母开头2-50字,允许使用字母/数字/下划线'));
+                } else {
+                    callback();
+                }
+            };
+            var validateUnit = function (rule, value, callback) {
+                if (self.parentUnit.length < 1 || self.parentUnit[self.parentUnit.length - 1] == "") {
+                    callback(new Error('请选择所属单位!'));
+                } else {
+                    callback();
+                }
+            };
+            return {
+                addDialogVisible: false,
+                editDialogVisible: false,
+                roleDialogVisible: false,
+                menuDialogVisible: false,
+                userDialogVisible: false,
+                treeData: {
+                    label: 'name',
+                    children: 'zones',
+                    id: 'id',
+                    isLeaf: 'leaf'
+                },
+                tableData: [],
+                options: [],
+                parentUnit: [],
+                pageForm: {
+                    searchUnit: "",
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "",
+                    pageOrderBy: ""
+                },
+                formData: {
+                    id: "",
+                    unitid: "",
+                    disabled: false,
+                    menuIds: ""
+                },
+                formRules: {
+                    parentUnit: [
+                        {validator: validateUnit, trigger: ['blur', 'change']}
+                    ],
+                    name: [
+                        {required: true, message: '角色名称', trigger: ['blur', 'change']}
+                    ],
+                    code: [
+                        {required: true, message: '角色标识', trigger: ['blur', 'change']},
+                        {validator: validateName, trigger: ['blur', 'change']}
+                    ],
+                },
+                editRules: {
+                    parentUnit: [
+                        {validator: validateUnit, trigger: ['blur', 'change']}
+                    ],
+                    name: [
+                        {required: true, message: '角色名称', trigger: ['blur', 'change']}
+                    ],
+                    code: [
+                        {required: true, message: '角色标识', trigger: ['blur', 'change']},
+                        {validator: validateName, trigger: ['blur', 'change']}
+                    ],
+                },
+                roleDialogTitle: "查看角色权限",
+                menuDialogTitle: "分配角色菜单",
+                userDialogTitle: "分配用户",
+                roleTableData: [],//treeTable后台取出的数据
+                roleTreeData: [],//treeTable格式化用于显示的数据
+                roleId: "",//当前角色ID
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
+                addMenuData: [],
+                doMenuData: [],
+                doMenuCheckedData: [],//已分配的权限选中状态
+                userForm: {
+                    roleId: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "",
+                    pageOrderBy: ""
+                },
+                userTableData: [],
+                loading: false,
+                dbUsers: [],//分配用户
+                selUsers: [],//分配选中的用户
+                userSelection: []
+            }
+        },
+        methods: {
+            //级联选择器从后台动态获取下级数据
+            loadTree: function (val, cb) {
+                var url = base + "/platform/sys/role/tree";
+                $.post(url, {pid: val}, function (data) {
+                    if (data.code == 0) {
+                        cb(data.data);
+                    }
+                }, "json");
+            },
+            initTree: function () {
+                var self = this;
+                this.loadTree("", function (val) {
+                    self.options = val;
+                });
+            },
+            unitQuery: function (queryString, cb) {
+                cb(this.options);
+            },
+            unitSelect: function (val) {
+            },
+            unitTree: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.value) {
+                        obj.children = data;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.unitTree(obj.children, data, pid);
+                    }
+                });
+            },
+            unitChange2: function (val) {
+                var self = this;
+                if (val[0] == "root") {
+                    self.parentUnit = [];
+                }
+            },
+            unitChange: function (val) {
+                var self = this;
+                self.parentUnit = val;
+                var pid = val[val.length - 1];
+                this.loadTree(pid, function (tree) {
+                    self.unitTree(self.options, tree, pid);
+                });
+            }, pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/sys/role/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            doSearch: function () {
+                this.pageForm.searchUnit = this.parentUnit[this.parentUnit.length - 1];
+                this.pageForm.pageNumber = 1;
+                this.pageData();
+            },
+            addMenuLoad: function () {
+                var self = this;
+                $.post(base + "/platform/sys/role/menuAll", {}, function (data) {
+                    if (data.code == 0) {
+                        self.addMenuData = data.data;
+                    }
+                }, "json");
+            },
+            doMenuLoad: function () {
+                var self = this;
+                $.post(base + "/platform/sys/role/menuRole/" + self.roleId, {}, function (data) {
+                    if (data.code == 0) {
+                        self.doMenuData = data.data.menu;
+                        self.doMenuCheckedData = data.data.cmenu;
+                    }
+                }, "json");
+            },
+            userSelectionChange: function (val) {
+                this.userSelection = val;
+            },
+            userPageOrder: function (column) {//按字段排序
+                this.userForm.pageOrderName = column.prop;
+                this.userForm.pageOrderBy = column.order;
+                this.doUserLoad();
+            },
+            userPageNumberChange: function (val) {//页码更新操作
+                this.userForm.pageNumber = val;
+                this.doUserLoad();
+            },
+            userPageSizeChange: function (val) {//分页大小更新操作
+                this.userForm.pageSize = val;
+                this.doUserLoad();
+            },
+            remoteMethod: function (query) {
+                var self = this;
+                if (query !== '') {
+                    self.loading = true;
+                    $.post(base + "/platform/sys/role/userSearch", {
+                        query: query,
+                        roleId: self.roleId
+                    }, function (data) {
+                        if (data.code == 0) {
+                            self.dbUsers = data.data.list;
+                        }
+                        self.loading = false;
+                    }, "json");
+                } else {
+                    self.selUsers = [];
+                }
+            },
+            doUserLoad: function () {
+                var self = this;
+                $.post(base + "/platform/sys/role/user", self.userForm, function (data) {
+                    if (data.code == 0) {
+                        self.userTableData = data.data.list;
+                        self.userForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            openAdd: function () {
+                var self = this;
+                this.addDialogVisible = true;
+                this.formData = {};//打开新增窗口,表单先清空
+                if (this.$refs["addForm"])
+                    this.$refs["addForm"].resetFields();
+                this.addMenuLoad();
+            },
+            doAdd: function () {
+                var self = this;
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {
+                        self.formData.menuIds = (self.$refs["addMenuTree"].getCheckedKeys()).toString();
+                        self.formData.unitid = self.parentUnit[self.parentUnit.length - 1] || "";
+                        $.post(base + "/platform/sys/role/addDo", self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.pageData();
+                                self.addDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post(base + "/platform/sys/role/editDo", self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.doSearch();//查询是带条件的,加载新建用户选择的单位用户数据
+                                //self.pageData();
+                                self.editDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doMenu: function () {
+                var self = this;
+                var ids = self.$refs["doMenuTree"].getCheckedKeys();
+                if (!ids || ids.length == 0) {
+                    self.$message({
+                        message: "请选择菜单或数据权限",
+                        type: 'warning'
+                    });
+                    return;
+                }
+                $.post(base + "/platform/sys/role/menuDo", {
+                    roleId: self.roleId,
+                    menuIds: ids.toString()
+                }, function (data) {
+                    if (data.code == 0) {
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.menuDialogVisible = false;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            // 显示层级
+            treeTablePath: function (path) {
+                return path.length / 4 - 1;
+            },
+            // 显示行
+            treeTableShowTr: function (row, index) {
+                var parentIndex = this.roleTreeData.findIndex(function (value) {
+                    return value.id === row.row.parentId;
+                });
+                var show = (row.row.parentId ? (this.roleTreeData[parentIndex].expanded && this.roleTreeData[parentIndex]._show) : true);
+                row.row._show = show;
+                return show ? '' : 'display:none;'
+            },
+            treeDataChildren: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.id) {//找到这条数据追加下级数据
+                        obj.children = data;
+                        obj.expanded = !obj.expanded;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.treeDataChildren(obj.children, data, pid);
+                    }
+                });
+            },
+            // 展开下级
+            treeTableChild: function (pid) {
+                var self = this;
+                var url = base + "/platform/sys/role/menu/" + self.roleId;
+                $.post(url, {pid: pid}, function (data) {
+                    if (data.code == 0) {
+                        if (pid != undefined && pid != "") {
+                            self.treeDataChildren(self.roleTableData, data.data, pid);
+                        } else {
+                            self.roleTableData = data.data;
+                        }
+                        self.roleTreeData = sublime.treeToArray(self.roleTableData);
+                    }
+                }, "json");
+
+            },
+            // 点击展开和关闭的时候，图标的切换
+            treeTableIconShow: function (record) {
+                return record.hasChildren;
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("role" == command.type) {
+                    self.roleDialogVisible = true;
+                    self.roleDialogTitle = "查看角色 【" + command.name + "】 的权限";
+                    self.roleId = command.id;
+                    self.treeTableChild("");
+                }
+                if ("menu" == command.type) {
+                    self.menuDialogTitle = "分配角色 【" + command.name + "】 的权限";
+                    self.menuDialogVisible = true;
+                    self.roleId = command.id;
+                    self.doMenuLoad();
+                }
+                if ("user" == command.type) {
+                    self.userDialogTitle = "分配角色 【" + command.name + "】 的用户";
+                    self.userDialogVisible = true;
+                    self.roleId = command.id;
+                    self.userForm.roleId = command.id;
+                    self.doUserLoad();
+                }
+                if ("enable" == command.type || "disable" == command.type) {
+                    $.post(base + "/platform/sys/role/" + command.type + "/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.$message({
+                                message: data.msg,
+                                type: 'success'
+                            });
+                            if ("disable" == command.type) {
+                                command.row.disabled=true;
+                            }
+                            if ("enable" == command.type) {
+                                command.row.disabled=false;
+                            }
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/sys/role/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.editDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除 ' + command.name, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/sys/role/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.doSearch();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            },
+            userAddRole: function () {
+                var self = this;
+                if (self.selUsers.length == 0) {
+                    self.$message({
+                        message: "请先输入用户名或姓名查询用户",
+                        type: 'warning'
+                    });
+                    return;
+                }
+                $.post(base + "/platform/sys/role/usersAdd", {
+                    roleId: self.roleId,
+                    users: self.selUsers.toString()
+                }, function (data) {
+                    if (data.code == 0) {
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.selUsers = [];//清除已选择的用户
+                        self.dbUsers = [];//清除数据库查询的用户,已添加到角色的用户不应该还存在so..
+                        self.doUserLoad();
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            userDelRole: function () {
+                var self = this;
+                if (self.userSelection.length == 0) {
+                    self.$message({
+                        message: "请先选择要移除的用户",
+                        type: 'warning'
+                    });
+                    return;
+                }
+                var users = [];
+                self.userSelection.forEach(function (obj) {
+                    users.push(obj.id);
+                });
+                $.post(base + "/platform/sys/role/usersDel", {
+                    roleId: self.roleId,
+                    users: users.toString()
+                }, function (data) {
+                    if (data.code == 0) {
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.selUsers = [];//清除已选择的用户
+                        self.dbUsers = [];//清除数据库查询的用户,已移除的用户应该能重新被查询到..
+                        self.doUserLoad();
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            getTreeAllIds:function(ids,obj){
+                var self=this;
+                if(obj&&obj.length>0){
+                    obj.forEach(function (o) {
+                        ids.push(o.id);
+                        if(o.children){
+                            self.getTreeAllIds(ids,o.children);
+                        }
+                    });
+                }
+            },
+            addRoleSelAll:function () {
+                var self=this;
+                var ids=[];
+                self.getTreeAllIds(ids,self.addMenuData);
+                self.$refs["addMenuTree"].setCheckedKeys(ids);
+            },
+            addRoleSelClear:function () {
+                this.$refs["addMenuTree"].setCheckedKeys([]);
+            },
+            menuRoleSelAll:function () {
+                var self=this;
+                var ids=[];
+                self.getTreeAllIds(ids,self.doMenuData);
+                self.$refs["doMenuTree"].setCheckedKeys(ids);
+            },
+            menuRoleSelClear:function () {
+                this.$refs["doMenuTree"].setCheckedKeys([]);
+            }
+        },
+        created: function () {
+            this.initTree();
+            this.pageData();
+        }
+    });
+</script>
+<style>
+    .custom-tree-node {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        padding-right: 8px;
+    }
+</style>
+<!--#
+}
+#-->

@@ -17,6 +17,9 @@ import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.plugins.wkcache.annotation.CacheDefaults;
+import org.nutz.plugins.wkcache.annotation.CacheRemoveAll;
+import org.nutz.plugins.wkcache.annotation.CacheResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +30,8 @@ import java.util.Map;
  * Created by wizzer on 2016/12/22.
  */
 @IocBean(args = {"refer:dao"})
-@Service(interfaceClass=SysUserService.class)
+@Service(interfaceClass = SysUserService.class)
+@CacheDefaults(cacheName = "sys_user")
 public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements SysUserService {
     public SysUserServiceImpl(Dao dao) {
         super(dao);
@@ -35,12 +39,14 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
 
     @Inject
     private SysMenuService sysMenuService;
+
     /**
      * 查询用户角色code列表
      *
      * @param user
      * @return
      */
+    @CacheResult(cacheKey = "${args[0].id}_getRoleCodeList")
     public List<String> getRoleCodeList(Sys_user user) {
         dao().fetchLinks(user, "roles");
         List<String> roleNameList = new ArrayList<String>();
@@ -53,8 +59,11 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
 
     /**
      * 获取用户菜单
+     *
      * @param user
      */
+    //如果传参是对象,那么要取字符串做为cacheKey值,因为对象的标识是变动的
+    @CacheResult(cacheKey = "${args[0].id}_fillMenu")
     public Sys_user fillMenu(Sys_user user) {
         user.setMenus(getMenus(user.getId()));
         //计算左侧菜单
@@ -84,12 +93,13 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      * @param userId
      * @return
      */
+    @CacheResult
     public List<Sys_menu> getMenus(String userId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
-                " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f and a.isShow=@t and a.type='menu' order by a.location ASC,a.path asc");
+                " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f and a.showit=@t and a.type='menu' order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
-        sql.params().set("f",false);
-        sql.params().set("t",true);
+        sql.params().set("f", false);
+        sql.params().set("t", true);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
         sql.setCallback(Sqls.callback.entities());
@@ -103,11 +113,12 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      * @param userId
      * @return
      */
+    @CacheResult
     public List<Sys_menu> getMenusAndButtons(String userId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
                 " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
-        sql.params().set("f",false);
+        sql.params().set("f", false);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
         sql.setCallback(Sqls.callback.entities());
@@ -121,11 +132,12 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      * @param userId
      * @return
      */
+    @CacheResult
     public List<Sys_menu> getDatas(String userId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId  and " +
                 " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f and a.type='data' order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
-        sql.params().set("f",false);
+        sql.params().set("f", false);
         Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
         sql.setEntity(entity);
         sql.setCallback(Sqls.callback.entities());
@@ -157,4 +169,52 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
         dao().clear("sys_user", Cnd.where("id", "in", userIds));
     }
 
+    /**
+     * @param userId
+     * @param pid
+     * @return
+     */
+    @CacheResult
+    public List<Sys_menu> getRoleMenus(String userId, String pid) {
+        Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
+                "$m and b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f order by a.location ASC,a.path asc");
+        sql.params().set("userId", userId);
+        sql.params().set("f", false);
+        if (Strings.isNotBlank(pid)) {
+            sql.vars().set("m", "a.parentId='" + pid + "'");
+        } else {
+            sql.vars().set("m", "(a.parentId='' or a.parentId is null)");
+        }
+        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
+        sql.setEntity(entity);
+        sql.setCallback(Sqls.callback.entities());
+        dao().execute(sql);
+        return sql.getList(Sys_menu.class);
+    }
+
+    /**
+     * @param userId
+     * @param pid
+     * @return
+     */
+    @CacheResult
+    public boolean hasChildren(String userId, String pid) {
+        Sql sql = Sqls.create("select count(*) from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
+                "$m and b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f order by a.location ASC,a.path asc");
+        sql.params().set("userId", userId);
+        sql.params().set("f", false);
+        if (Strings.isNotBlank(pid)) {
+            sql.vars().set("m", "a.parentId='" + pid + "'");
+        } else {
+            sql.vars().set("m", "(a.parentId='' or a.parentId is null)");
+        }
+        sql.setCallback(Sqls.callback.integer());
+        dao().execute(sql);
+        return sql.getInt() > 0;
+    }
+
+    @CacheRemoveAll
+    public void clearCache() {
+
+    }
 }

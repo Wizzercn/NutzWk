@@ -1,0 +1,673 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+<style>
+    .el-upload input[type=file] {
+        display: none;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        display: block;
+    }
+</style>
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <span>微信公众号：</span>
+            <el-select size="medium" v-model="pageForm.wxid" placeholder="请选择" @change="change">
+                <el-option
+                        v-for="item in wxConfigs"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+        </div>
+        <div class="pull-right mt5">
+            <el-button size="medium"
+                       @click="window.location='${base!}/platform/wx/msg/mass/news/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->'">
+                <i class="ti-book"></i> 图文素材
+            </el-button>
+
+            <el-button size="medium" @click="openSend"><i class="ti-export"></i> 群发消息</el-button>
+        </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+        >
+            <el-table-column label="群发名称" header-align="left" prop="name">
+
+            </el-table-column>
+
+            <el-table-column label="群发类型" header-align="left" prop="type" width="120">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.type=='image'">图片</span>
+                    <span v-if="scope.row.type=='news'">图文消息</span>
+                    <span v-if="scope.row.type=='text'">文本消息</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="发送范围" header-align="left" prop="id"
+                             :show-overflow-tooltip="true" width="120">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.scope=='some'">部分会员</span>
+                    <span v-if="scope.row.scope=='all'">全部会员</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="发送状态" header-align="left" prop="id"
+                             :show-overflow-tooltip="true" width="120">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.massSend">
+                         <span v-if="scope.row.massSend.status==1">成功</span>
+                         <span v-if="scope.row.massSend.status!=1">失败</span>
+                    </span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="发送日志" header-align="left" prop="id"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.massSend">{{scope.row.massSend.errMsg}}</span>
+                </template>
+            </el-table-column>
+
+
+            <el-table-column sortable label="群发时间" header-align="center" align="center" prop="opAt">
+                <template slot-scope="scope">
+                    {{formatAt(scope.row.opAt)}}
+                </template>
+            </el-table-column>
+
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+
+
+    <el-dialog
+            title="群发消息"
+            :visible.sync="sendDialogVisible"
+            width="60%">
+        <el-form :model="formData" ref="dialogForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="name" label="群发名称">
+                <el-input maxlength="255" placeholder="群发名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item class="is-required" prop="type" label="群发类型">
+                <el-radio-group v-model="formData.type" size="medium">
+                    <el-radio label="text">纯文字</el-radio>
+                    <el-radio label="image">图片</el-radio>
+                    <el-radio label="news">图文消息</el-radio>
+                </el-radio-group>
+            </el-form-item>
+
+            <el-form-item class="is-required" v-if="formData.type=='news'" prop="newsids" label="图文消息">
+                <el-button size="mini" @click="openNews">选择图文</el-button>
+                <el-button size="mini" @click="clearNews">清除图文</el-button>
+
+                <el-tree style="padding-top: 8px;"
+                         :data="newsTreeData"
+                         :allow-drop="sortAllowDrop"
+                         node-key="id"
+                         default-expand-all
+                         :expand-on-click-node="false"
+                         draggable>
+                    <span class="custom-tree-node" slot-scope="node">
+                        <span>{{ node.data.label }}</span>
+                        <span>
+                          <el-button
+                                  type="text"
+                                  size="mini"
+                                  @click="remove(node)">
+                            Delete
+                          </el-button>
+                        </span>
+                    </span>
+                </el-tree>
+                <el-alert
+                        v-if="newsTreeData.length>0"
+                        style="padding:10px;height: 22px;"
+                        title="已选图文可拖拽排序"
+                        type="success"
+                        :closable="false">
+                </el-alert>
+            </el-form-item>
+
+            <el-form-item v-if="formData.type=='image'" prop="picurl" label="发送图片(2M以内)">
+                <el-upload
+                        class="avatar-uploader"
+                        tabindex="5"
+                        action="${base}/platform/wx/msg/mass/uploadImage/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"
+                        name="Filedata"
+                        :before-upload="beforeImageUpload"
+                        :show-file-list="false"
+                        :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picurl')}">
+                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+            </el-form-item>
+
+            <el-form-item class="is-required" v-if="formData.type=='text'" label="发送内容" prop="content">
+                <el-input type="textarea" v-model="formData.content"></el-input>
+            </el-form-item>
+
+            <el-form-item class="is-required" prop="scope" label="发送范围">
+                <el-radio-group v-model="formData.scope" size="medium">
+                    <el-radio label="all">全部会员</el-radio>
+                    <el-radio label="some">部分会员</el-radio>
+                </el-radio-group>
+            </el-form-item>
+
+            <el-form-item class="is-required" v-if="formData.scope=='some'" label="选择会员" prop="receivers">
+                <el-button size="mini" @click="openSel">选择会员</el-button>
+                <el-input style="margin-top: 5px;" type="textarea" v-model="formData.receivers"></el-input>
+                <el-alert style="margin-top: 5px;"
+                          title="openid必须2个以上,1万个以内并且使用英文,符号分割"
+                          type="success">
+                </el-alert>
+            </el-form-item>
+
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="sendDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doSend" :disabled="sendBtnDisabled">发 送</el-button>
+                  </span>
+    </el-dialog>
+
+    <el-dialog
+            title="选择会员"
+            :visible.sync="selDialogVisible"
+            width="70%">
+        <div class="btn-group tool-button">
+            <el-input placeholder="请输入内容" v-model="pageForm2.searchKeyword" @keyup.enter.native="doSearch2">
+                <el-select v-model="pageForm2.searchName" slot="prepend" placeholder="查询类型" style="width: 120px;">
+                    <el-option label="昵称" value="nickname"></el-option>
+                    <el-option label="openid" value="openid"></el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="doSearch2"></el-button>
+            </el-input>
+        </div>
+        <el-table
+                :data="tableData2"
+                @sort-change='pageOrder2'
+                size="small"
+                header-align="center"
+                style="width: 100%;padding-top: 5px;"
+                :default-sort="{prop: 'subscribeAt', order: 'descending'}"
+                @selection-change="handleSelectionChange"
+        >
+
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+
+            <el-table-column label="会员openid" header-align="left" prop="openid" width="222">
+            </el-table-column>
+
+            <el-table-column label="昵称" header-align="left" prop="nickname"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <img v-if="scope.row.headimgurl!=''" :src="scope.row.headimgurl" width="30" height="30">
+                    <span>{{scope.row.nickname}}</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="性别" header-align="left" prop="sex"
+                             :show-overflow-tooltip="true" width="80">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.sex==1">男</span>
+                    <span v-if="scope.row.sex==2">女</span>
+                    <span v-if="scope.row.sex==0">未知</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="区域" header-align="left" prop="id"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    {{scope.row.country}} - {{scope.row.province}} - {{scope.row.city}}
+                </template>
+            </el-table-column>
+
+        </el-table>
+        <el-pagination
+                @size-change="pageSizeChange2"
+                @current-change="pageNumberChange2"
+                :current-page="pageForm2.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm2.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm2.totalCount">
+        </el-pagination>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="selDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doSel">确 定</el-button>
+                  </span>
+    </el-dialog>
+
+    <el-dialog
+            title="选择图文消息"
+            :visible.sync="newsDialogVisible"
+            width="50%">
+        <el-table
+                :data="tableData3"
+                @sort-change='pageOrder3'
+                size="small"
+                header-align="center"
+                style="width: 100%;padding-top: 5px;"
+                :default-sort="{prop: 'subscribeAt', order: 'descending'}"
+                @selection-change="handleSelectionChangeNews"
+        >
+
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+
+            <el-table-column label="标题" header-align="left" prop="title" :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column sortable label="添加时间" header-align="center" align="center" prop="opAt">
+                <template slot-scope="scope">
+                    {{formatAt(scope.row.opAt)}}
+                </template>
+            </el-table-column>
+
+        </el-table>
+        <el-pagination
+                @size-change="pageSizeChange3"
+                @current-change="pageNumberChange3"
+                :current-page="pageForm3.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm3.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm3.totalCount">
+        </el-pagination>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="newsDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doNews">确 定</el-button>
+                  </span>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var wxConfigs = [];
+            <!--#for(o in wxList){#-->
+            wxConfigs.push({value: "${o.id!}", label: "${o.appname!}"});
+            <!--#}#-->
+            var self = this;
+            var validateText = function (rule, value, callback) {
+                if (self.formData.type == "text" && self.formData.content == "") {
+                    callback(new Error('请输入纯文本内容'));
+                } else {
+                    callback();
+                }
+            };
+            var validateSome = function (rule, value, callback) {
+                if (self.formData.scope == "some" && self.formData.receivers.length == 0) {
+                    callback(new Error('请输入选择会员或输入会员openid'));
+                } else if (self.formData.scope == "some" && self.formData.receivers.length < 2) {
+                    callback(new Error('openid必须大于2个'));
+                } else {
+                    callback();
+                }
+            };
+            var validateNews = function (rule, value, callback) {
+                if (self.formData.type == "news" && self.newsTreeData.length == 0) {
+                    callback(new Error('请选择图文消息'));
+                } else {
+                    callback();
+                }
+            };
+            var validatePic = function (rule, value, callback) {
+                if (self.formData.type == "image" && self.formData.picurl == "") {
+                    callback(new Error('请上传图片'));
+                } else {
+                    callback();
+                }
+            };
+            return {
+                wxConfigs: wxConfigs,
+                sendDialogVisible: false,
+                selDialogVisible: false,
+                newsDialogVisible: false,
+                sendBtnDisabled: false,
+                pageForm: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending",
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                },
+                pageForm2: {
+                    searchName: "nickname",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "subscribeAt",
+                    pageOrderBy: "descending",
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                },
+                pageForm3: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending",
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                },
+                tableData: [],
+                tableData2: [],
+                tableData3: [],
+                formData: {},
+                formRules: {
+                    name: [
+                        {required: true, message: '群发名称', trigger: 'blur'}
+                    ],
+                    content: [
+                        {required: false, message: '文本内容', trigger: 'blur'},
+                        {validator: validateText, trigger: ['blur', 'change']}
+                    ],
+                    receivers: [
+                        {required: false, message: '文本内容', trigger: 'blur'},
+                        {validator: validateSome, trigger: ['blur', 'change']}
+                    ],
+                    newsids: [
+                        {required: false, message: '图文消息', trigger: 'blur'},
+                        {validator: validateNews, trigger: ['blur', 'change']}
+                    ],
+                    picurl: [
+                        {required: false, message: '图片', trigger: 'blur'},
+                        {validator: validatePic, trigger: ['blur', 'change']}
+                    ],
+                },
+                selectData: [],
+                selectNews: [],
+                newsTreeData: []
+            }
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/wx/msg/mass/massData", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            doSearch: function () {
+                this.pageForm.pageNumber = 1;
+                this.pageData();
+            },
+            pageOrder2: function (column) {//按字段排序
+                this.pageForm2.pageOrderName = column.prop;
+                this.pageForm2.pageOrderBy = column.order;
+                this.pageData2();
+            },
+            pageNumberChange2: function (val) {//页码更新操作
+                this.pageForm2.pageNumber = val;
+                this.pageData2();
+            },
+            pageSizeChange2: function (val) {//分页大小更新操作
+                this.pageForm2.pageSize = val;
+                this.pageData2();
+            },
+            pageData2: function () {//加载分页数据
+                var self = this;
+                $.post(base + "/platform/wx/user/data", self.pageForm2, function (data) {
+                    if (data.code == 0) {
+                        self.tableData2 = data.data.list;
+                        self.pageForm2.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            doSearch2: function () {
+                this.pageForm2.pageNumber = 1;
+                this.pageData2();
+            },
+            pageOrder3: function (column) {//按字段排序
+                this.pageForm3.pageOrderName = column.prop;
+                this.pageForm3.pageOrderBy = column.order;
+                this.pageData3();
+            },
+            pageNumberChange3: function (val) {//页码更新操作
+                this.pageForm3.pageNumber = val;
+                this.pageData3();
+            },
+            pageSizeChange3: function (val) {//分页大小更新操作
+                this.pageForm3.pageSize = val;
+                this.pageData3();
+            },
+            pageData3: function () {//加载分页数据
+                var self = this;
+                $.post(base + "/platform/wx/msg/mass/newsData/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->", self.pageForm3, function (data) {
+                    if (data.code == 0) {
+                        self.tableData3 = data.data.list;
+                        self.pageForm3.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            handlePicSuccess: function (response, file, fileList, attrName) {
+                if (response.code == 0) {
+                    // 对象属性直接赋值不会触发试图更新，采用 Vue.set 、this.$set或者Object.assign({}，this.obj)创建新对象
+                    // 或者也可以定义一个 refresh 属性 ，当数据发生改变时，该属性同时变化，也会触发视图更新
+                    // this.formData.site_logo =response.data;
+                    this.$set(this.formData, "picurl", response.data.picurl);
+                    this.$set(this.formData, "media_id", response.data.id);
+                } else {
+                    this.$message({
+                        message: response.msg,
+                        type: 'error'
+                    });
+                    this.$set(this.formData, "picurl", "");
+                    this.$set(this.formData, "media_id", "");
+                }
+            },
+            beforeImageUpload: function (file) {
+                var isLt2M = file.size / 1024 / 1024 < 2;
+                if ("image/jpeg" != file.type && "image/png" != file.type) {
+                    this.$message.error('上传图片只能是 JPG 或 PNG 格式');
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB');
+                    return false;
+                }
+                return true;
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            handleSelectionChangeNews: function (val) {
+                this.selectNews = val;
+            },
+            //排序树控制不可跨级拖拽
+            sortAllowDrop: function (moveNode, inNode, type) {
+                if (moveNode.data.parentId == inNode.data.parentId) {
+                    return type == 'prev';
+                }
+            },
+            openSel: function () {
+                this.selDialogVisible = true;
+                this.pageData2();
+            },
+            doSel: function () {
+                var self = this;
+                self.selDialogVisible = false;
+                if (self.selectData && self.selectData.length > 0) {
+                    self.selectData.forEach(function (o) {
+                        self.formData.receivers.push(o.openid);
+                    });
+                }
+            },
+            openNews: function () {
+                this.newsDialogVisible = true;
+                this.pageData3();
+            },
+            doNews: function () {
+                var self = this;
+                self.newsDialogVisible = false;
+                if (self.selectNews && self.selectNews.length > 0) {
+                    self.selectNews.forEach(function (o) {
+                        self.formData.newsids.push(o.id);
+                        self.newsTreeData.push({id: o.id, label: o.title});
+                    });
+                }
+            },
+            clearNews: function () {
+                var self = this;
+                self.newsTreeData = [];
+            },
+            remove: function (node) {
+                var self = this;
+                var data=node.data;
+                //注意:对数组对象进行深度复制,否则原始对象不能进行删除操作
+                var temp = JSON.parse(JSON.stringify(self.newsTreeData));
+                var index = temp.findIndex(function (o) {
+                    return o.id == data.id;
+                });
+                temp.splice(index, 1);
+                self.newsTreeData = temp;
+            },
+            openSend: function () {
+                this.formData = {
+                    wxid: "<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->",
+                    type: "text",
+                    content: "",
+                    scope: "all",
+                    receivers: [],
+                    picurl: "",
+                    newsids: []
+                };
+                if (this.$refs["dialogForm"])
+                    this.$refs["dialogForm"].resetFields();
+                this.sendDialogVisible = true;
+                this.sendBtnDisabled = false;
+            },
+            doSend: function () {
+                var self = this;
+                var url = base + "/platform/wx/msg/mass/sendDo";
+                self.$refs["dialogForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        self.newsTreeData.forEach(function (o) {
+                            self.formData.newsids.push(o.id);
+                        });
+                        self.formData.receivers = self.formData.receivers.toString();
+                        self.formData.newsids = self.formData.newsids.toString();
+                        self.sendBtnDisabled = true;
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.sendDialogVisible = false;
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                            self.sendBtnDisabled = false;
+                        }, "json");
+                    }
+                });
+            },
+            change: function (val) {
+                window.location.href = "${base}/platform/wx/msg/mass/" + val;
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
+    });
+</script>
+<!--#
+}
+#-->

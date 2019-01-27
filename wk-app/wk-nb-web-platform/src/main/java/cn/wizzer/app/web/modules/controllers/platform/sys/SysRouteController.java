@@ -61,6 +61,7 @@ public class SysRouteController {
     @RequiresPermissions("sys.manager.route.add")
     public Object addDo(@Param("..") Sys_route route, HttpServletRequest req) {
         try {
+            route.setOpBy(StringUtil.getPlatformUid());
             routeService.insert(route);
             pubSubService.fire("nutzwk:web:platform","sys_route");
             return Result.success("system.success");

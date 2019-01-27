@@ -26,12 +26,12 @@ public class Sys_msg extends BaseModel implements Serializable {
 
     @Column
     @Comment("消息标题")
-    @ColDefine(type = ColType.VARCHAR, width = 50)
+    @ColDefine(type = ColType.VARCHAR, width = 255)
     private String title;
 
     @Column
     @Comment("消息内容")
-    @ColDefine(type = ColType.VARCHAR, width = 500)
+    @ColDefine(type = ColType.TEXT)
     private String note;
 
     @Column
@@ -41,7 +41,7 @@ public class Sys_msg extends BaseModel implements Serializable {
 
     @Column
     @Comment("发送时间")
-    @ColDefine(type = ColType.INT, width = 9)
+    //Long不要用ColDefine定义,兼容oracle/mysql,支持2038年以后的时间戳
     private Long sendAt;
 
     @Many(field = "msgId")

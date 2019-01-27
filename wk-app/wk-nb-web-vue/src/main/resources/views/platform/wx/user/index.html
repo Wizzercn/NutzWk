@@ -1,0 +1,229 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <span>微信公众号：</span>
+            <el-select size="medium" v-model="pageForm.wxid" placeholder="请选择" @change="change">
+                <el-option
+                        v-for="item in wxConfigs"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                </el-option>
+            </el-select>
+        </div>
+
+        <div class="btn-group tool-button mt5">
+            <el-input placeholder="请输入内容" v-model="pageForm.searchKeyword" @keyup.enter.native="doSearch">
+                <el-select v-model="pageForm.searchName" slot="prepend" placeholder="查询类型" style="width: 120px;">
+                    <el-option label="昵称" value="nickname"></el-option>
+                    <el-option label="openid" value="openid"></el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="doSearch"></el-button>
+            </el-input>
+        </div>
+
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="openUp">
+                <i class="el-icon-download"></i>
+                同步会员资料
+            </el-button>
+        </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                :default-sort="{prop: 'subscribeAt', order: 'descending'}"
+        >
+
+            <el-table-column label="会员openid" header-align="left" prop="openid" width="222">
+            </el-table-column>
+
+            <el-table-column label="昵称" header-align="left" prop="nickname"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <img v-if="scope.row.headimgurl!=''" :src="scope.row.headimgurl" width="30" height="30">
+                    <span>{{scope.row.nickname}}</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="性别" header-align="left" prop="sex"
+                             :show-overflow-tooltip="true" width="80">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.sex==1">男</span>
+                    <span v-if="scope.row.sex==2">女</span>
+                    <span v-if="scope.row.sex==0">未知</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="区域" header-align="left" prop="id"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    {{scope.row.country}} - {{scope.row.province}} - {{scope.row.city}}
+                </template>
+            </el-table-column>
+
+
+            <el-table-column label="是否关注" header-align="left" prop="subscribe"
+                             :show-overflow-tooltip="true" width="80">
+                <template slot-scope="scope">
+                    <i v-if="!scope.row.subscribe" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="scope.row.subscribe" class="fa fa-circle text-success ml5"></i>
+                </template>
+            </el-table-column>
+
+            <el-table-column sortable label="关注时间" header-align="center" align="center" prop="subscribeAt">
+                <template slot-scope="scope">
+                    {{formatAt(scope.row.subscribeAt)}}
+                </template>
+            </el-table-column>
+
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+    <el-dialog
+            title="同步用户资料"
+            :visible.sync="upDialogVisible"
+            width="40%">
+        <el-row>
+            <el-alert
+                    title="微信公众号后台配置好接入地址之后,只需做一次手动同步操作即可"
+                    type="success">
+            </el-alert>
+        </el-row>
+        <el-row style="padding-top:5px;text-align: center">
+            <el-progress type="circle" :percentage="progressNum" :status="progressStatus"></el-progress>
+        </el-row>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="upDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doUp">同 步</el-button>
+                  </span>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var wxConfigs = [];
+            <!--#for(o in wxList){#-->
+            wxConfigs.push({value: "${o.id!}", label: "${o.appname!}"});
+            <!--#}#-->
+            return {
+                wxConfigs: wxConfigs,
+                upDialogVisible: false,
+                pageForm: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "subscribeAt",
+                    pageOrderBy: "descending",
+                    wxid: "${wxConfig.id!}",
+                },
+                tableData: [],
+                progressNum: 0,
+                progressStatus: ""
+            }
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/wx/user/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            doSearch: function () {
+                this.pageForm.pageNumber = 1;
+                this.pageData();
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            openUp: function () {
+                this.upDialogVisible = true;
+            },
+            doUp: function () {
+                var self = this;
+                var t = setInterval(function () {
+                    self.progressNum += 10;
+                    if (self.progressNum >= 100) {
+                        window.clearInterval(t);
+                    }
+                }, 400);
+                var url = base + "/platform/wx/user/down/" + self.pageForm.wxid;
+                $.post(url, {}, function (data) {
+                    if (data.code == 0) {
+                        self.progressStatus = "success";
+                        self.upDialogVisible = false;
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.pageData();
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                        self.progressStatus = "exception";
+                    }
+                }, "json");
+            },
+            change: function (val) {
+                window.location.href = "${base}/platform/wx/user/index/" + val;
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
+    })
+    ;
+</script>
+<!--#
+}
+#-->

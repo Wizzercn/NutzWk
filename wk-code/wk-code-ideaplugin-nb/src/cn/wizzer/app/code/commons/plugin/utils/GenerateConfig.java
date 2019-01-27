@@ -10,6 +10,7 @@ public class GenerateConfig {
     private boolean service;
     private boolean conroller;
     private boolean view;
+    private boolean vue;
     private boolean locale;
     private String baseModelPath;
     private String baseComPath;
@@ -55,6 +56,14 @@ public class GenerateConfig {
 
     public void setView(boolean view) {
         this.view = view;
+    }
+
+    public boolean isVue() {
+        return vue;
+    }
+
+    public void setVue(boolean vue) {
+        this.vue = vue;
     }
 
     public String getBaseModelPath() {

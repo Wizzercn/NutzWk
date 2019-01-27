@@ -95,6 +95,7 @@ public class SysMsgUserController {
                 sysMsgUserService.vDelete(id);
                 req.setAttribute("id", id);
             }
+            sysMsgUserService.deleteCache(StringUtil.getPlatformLoginname());
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -108,6 +109,7 @@ public class SysMsgUserController {
     public Object read(@Param("ids") String[] ids, HttpServletRequest req) {
         try {
             sysMsgUserService.update(Chain.make("status", 1), Cnd.where("id", "in", ids).and("loginname", "=", StringUtil.getPlatformLoginname()));
+            sysMsgUserService.deleteCache(StringUtil.getPlatformLoginname());
             req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
             return Result.success("system.success");
         } catch (Exception e) {
@@ -122,6 +124,7 @@ public class SysMsgUserController {
     public Object readAll(HttpServletRequest req) {
         try {
             sysMsgUserService.update(Chain.make("status", 1), Cnd.where("loginname", "=", StringUtil.getPlatformLoginname()));
+            sysMsgUserService.deleteCache(StringUtil.getPlatformLoginname());
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");

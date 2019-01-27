@@ -40,7 +40,7 @@ public class Wx_reply extends BaseModel implements Serializable {
 
     @Column
     @Comment("回复内容")
-    @ColDefine(type = ColType.TEXT)
+    @ColDefine(type = ColType.VARCHAR, width = 255)
     private String content;
 
     @Column
@@ -50,6 +50,15 @@ public class Wx_reply extends BaseModel implements Serializable {
 
     @One(field = "wxid")
     private Wx_config wxConfig;
+
+    @One(field = "content", key = "id")
+    private Wx_reply_img replyImg;
+
+    @One(field = "content", key = "id")
+    private Wx_reply_news replyNews;
+
+    @One(field = "content", key = "id")
+    private Wx_reply_txt replyTxt;
 
     public String getId() {
         return id;
@@ -113,5 +122,29 @@ public class Wx_reply extends BaseModel implements Serializable {
 
     public void setSys_unit_id(String sys_unit_id) {
         this.sys_unit_id = sys_unit_id;
+    }
+
+    public Wx_reply_img getReplyImg() {
+        return replyImg;
+    }
+
+    public void setReplyImg(Wx_reply_img replyImg) {
+        this.replyImg = replyImg;
+    }
+
+    public Wx_reply_news getReplyNews() {
+        return replyNews;
+    }
+
+    public void setReplyNews(Wx_reply_news replyNews) {
+        this.replyNews = replyNews;
+    }
+
+    public Wx_reply_txt getReplyTxt() {
+        return replyTxt;
+    }
+
+    public void setReplyTxt(Wx_reply_txt replyTxt) {
+        this.replyTxt = replyTxt;
     }
 }

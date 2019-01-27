@@ -21,6 +21,7 @@ public class ConfigDialog extends DialogWrapper {
     private JBCheckBox controllerCheckBox;
     private JBCheckBox serviceCheckBox;
     private JBCheckBox viewCheckBox;
+    private JBCheckBox vueCheckBox;
 
     private JBCheckBox viewAddCheckBox;
     private JBCheckBox viewDetailCheckBox;
@@ -78,7 +79,7 @@ public class ConfigDialog extends DialogWrapper {
     private void setupViews(String modelName) {
 
         setTitle("Generate Model:" + modelName);
-
+        vueCheckBox = new JBCheckBox("vue", true);
         controllerCheckBox = new JBCheckBox("controllers", true);
         serviceCheckBox = new JBCheckBox("services", true);
         viewCheckBox = new JBCheckBox("views", true);
@@ -94,7 +95,7 @@ public class ConfigDialog extends DialogWrapper {
         baseModelPathTextField = new JBTextField("wk-app/wk-model");
         baseComPathTextField = new JBTextField("wk-app/wk-common");
         baseNbPathTextField = new JBTextField("wk-app/wk-nb-service-" + modelUriName);
-        basePathTextField = new JBTextField("wk-app/wk-nb-web-platform");
+        basePathTextField = new JBTextField("wk-app/wk-nb-web-vue");
         baseUriTextField = new JBTextField(baseUri);
         basePackageTextField = new JBTextField(basePackage);
         baseModelPathLabel = new JBLabel("base model Path:");
@@ -136,6 +137,17 @@ public class ConfigDialog extends DialogWrapper {
                     viewDetailCheckBox.setVisible(false);
                     viewEditCheckBox.setVisible(false);
                     viewIndexCheckBox.setVisible(false);
+                }
+            }
+        });
+
+        vueCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (vueCheckBox.isSelected()) {
+                    basePathTextField.setText("wk-app/wk-nb-web-vue");
+                } else {
+                    basePathTextField.setText("wk-app/wk-nb-web-platform");
                 }
             }
         });
@@ -183,6 +195,7 @@ public class ConfigDialog extends DialogWrapper {
 
         final HorizontalBox horizontalBox2 = new HorizontalBox();
 
+        horizontalBox1.add(vueCheckBox);
         horizontalBox1.add(controllerCheckBox);
         horizontalBox1.add(serviceCheckBox);
         horizontalBox1.add(localeCheckBox);
@@ -206,6 +219,7 @@ public class ConfigDialog extends DialogWrapper {
         config.setBaseComPath(baseComPathTextField.getText().trim());
         config.setBaseNbPath(baseNbPathTextField.getText().trim());
         config.setBaseUri(baseUriTextField.getText().trim());
+        config.setVue(vueCheckBox.isSelected());
         config.setConroller(controllerCheckBox.isSelected());
         config.setService(serviceCheckBox.isSelected());
         config.setLocale(localeCheckBox.isSelected());

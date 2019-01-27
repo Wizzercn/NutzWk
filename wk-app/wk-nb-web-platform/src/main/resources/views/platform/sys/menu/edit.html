@@ -13,7 +13,7 @@ layout("/layouts/platform.html"){
             <form id="unitAddForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
                   action="${base}/platform/sys/menu/editDo" method="post">
                 <input type="hidden" id="id" name="id" value="${obj.id!}">
-                <input type="hidden" id="isShow" name="isShow" value="${obj.isShow!}">
+                <input type="hidden" id="showit" name="showit" value="${obj.showit!}">
                 <input type="hidden" id="hasChildren" name="hasChildren" value="${obj.hasChildren!}">
                 <input type="hidden" id="oldPermission" name="oldPermission" value="${obj.permission!}">
                 <div class="row mb10">

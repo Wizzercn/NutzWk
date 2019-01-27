@@ -1,0 +1,97 @@
+/*.el-dialog__header{*/
+/*border-bottom: 1px solid #e5e5e5;*/
+/*}*/
+
+/*.el-dialog__footer{*/
+/*border-top: 1px solid #e5e5e5;*/
+/*}*/
+.el-table-container {
+    padding-top: 54px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.el-pagination-container {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #fff;
+    margin-bottom: 20px;
+}
+
+a .collapsed {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIW…aIJN0bgQRgIjnlmn1heSO5PE6Y2YXe+5Cr5+h++gs12AcAS6FS+7YOsj4AAAAASUVORK5CYII=);
+}
+
+a .expanded {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIW…EYRYBPOB0gBShKwKGA////48VtbW3/8clTnBIH3gCKkzJgAGvBX0dDm0sCAAAAAElFTkSuQmCC);
+}
+
+.ms-tree-space {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    width: 18px;
+    height: 14px;
+}
+
+.ms-tree-space::before {
+    content: ""
+}
+
+.el-table__expand-icon--expanded {
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+.el-table-expand {
+    font-size: 0;
+}
+.el-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+    font-size: 12px;
+}
+.el-table-expand .el-form-item{
+    margin-bottom: 2px;
+    margin-right: 0;
+    width: 50%;
+    display: inline-block;
+    vertical-align: top;
+}
+.el-table-expand .el-form-item__content {
+    margin-right: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
+
+.el-table-expand-line {
+    font-size: 0;
+}
+.el-table-expand-line label {
+    width: 90px;
+    color: #99a9bf;
+    font-size: 12px;
+}
+.el-table-expand-line .el-form-item{
+    margin-bottom: 2px;
+    margin-right: 0;
+    width: 100%;
+    display: inline-block;
+    vertical-align: top;
+}
+.el-table-expand-line .el-form-item__content {
+    margin-right: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}

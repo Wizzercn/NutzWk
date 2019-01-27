@@ -1,0 +1,762 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <el-cascader
+                    style="width: 100%"
+                    tabindex="1"
+                    :options="options"
+                    :show-all-levels="false"
+                    v-model="parentUnit"
+                    :fetch-suggestions="unitQuery"
+                    @active-item-change="unitChange"
+                    @change="unitChange2"
+                    @select="unitSelect"
+                    placeholder="请选择单位"
+            ></el-cascader>
+        </div>
+        <div class="btn-group tool-button mt5">
+            <el-input placeholder="请输入内容" v-model="pageForm.searchKeyword" @keyup.enter.native="doSearch">
+                <el-select v-model="pageForm.searchName" slot="prepend" placeholder="查询类型" style="width: 120px;">
+                    <el-option label="用户名" value="loginname"></el-option>
+                    <el-option label="姓名" value="username"></el-option>
+                    <el-option label="手机" value="mobile"></el-option>
+                    <el-option label="邮箱" value="email"></el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="doSearch"></el-button>
+            </el-input>
+        </div>
+        <div class="pull-right offscreen-right mt5">
+            <el-button size="medium" @click="openAdd"><i class="ti-plus"></i> 新建用户</el-button>
+            <el-dropdown @command="batchCommand">
+                <el-button size="medium">
+                    批量操作
+                    <span class="ti-angle-down"></span>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item :command="{type:'delete'}">
+                        批量删除
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="{type:'export'}">
+                        导出XLS
+                    </el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
+        </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                @selection-change="handleSelectionChange"
+        >
+            <el-table-column
+                    type="selection"
+                    width="35">
+            </el-table-column>
+            <el-table-column type="expand">
+                <template slot-scope="scope">
+                    <el-form label-position="left" inline class="el-table-expand" size="mini">
+                        <el-form-item label="Email">
+                            <span>{{ scope.row.email }}</span>
+                        </el-form-item>
+                        <el-form-item label="最后登录时间">
+                            <span>
+                                {{ formatAt(scope.row.loginAt) }}</span>
+                        </el-form-item>
+                        <el-form-item label="手机号">
+                            <span>{{ scope.row.mobile }}</span>
+                        </el-form-item>
+                        <el-form-item label="最后登录IP">
+                            <span>{{ scope.row.loginIp }}</span>
+                        </el-form-item>
+                    </el-form>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="loginname"
+                    label="用户名"
+                    header-align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="username"
+                    label="姓名"
+                    header-align="center"
+                    :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+                    prop="unit"
+                    label="所属单位"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+            >
+                <template slot-scope="scope">
+                    <span v-if="scope.row.unit!=null">
+                        {{scope.row.unit.name}}
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="disabled"
+                    label="帐号状态"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+            >
+                <template slot-scope="scope">
+                    <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="userOnline"
+                    label="在线状态"
+                    header-align="center"
+                    align="center"
+                    :show-overflow-tooltip="true"
+            >
+                <template slot-scope="scope">
+                    <i v-if="scope.row.userOnline" class="text-success ml5">在线</i>
+                    <i v-if="!scope.row.userOnline" class="text-danger ml5">离线</i>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="userOnline"
+                    label="操作"
+                    width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item :command="{type:'role',id:scope.row.id,loginname:scope.row.loginname}">
+                                查看权限
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'reset',id:scope.row.id,loginname:scope.row.loginname}">
+                                重置密码
+                            </el-dropdown-item>
+                            <el-dropdown-item divided :command="{type:'enable',id:scope.row.id,row:scope.row}">
+                                启用
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'disable',id:scope.row.id,row:scope.row}">
+                                禁用
+                            </el-dropdown-item>
+                            <el-dropdown-item divided :command="{type:'edit',id:scope.row.id}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'delete',id:scope.row.id,loginname:scope.row.loginname}"
+                                              v-if="scope.row.loginname!='superadmin'">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+    <el-dialog
+            title="新建用户"
+            :visible.sync="addDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item class="is-required" prop="parentUnit" label="所属单位" label-width="80px">
+                <el-cascader
+                        style="width: 100%"
+                        tabindex="1"
+                        :options="options"
+                        :show-all-levels="false"
+                        v-model="parentUnit"
+                        :fetch-suggestions="unitQuery"
+                        @active-item-change="unitChange"
+                        @change="unitChange2"
+                        @select="unitSelect"
+                        placeholder="请选择单位"
+                ></el-cascader>
+            </el-form-item>
+            <el-form-item prop="loginname" label="用户名">
+                <el-input maxlength="100" placeholder="用户名"
+                          v-model="formData.loginname"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="username" label="姓名">
+                <el-input maxlength="20" placeholder="姓名"
+                          v-model="formData.username"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="password" label="登录密码">
+                <el-input maxlength="20" placeholder="登录密码" v-model="formData.password"
+                          auto-complete="off" tabindex="4" type="password"></el-input>
+            </el-form-item>
+            <el-form-item prop="passwordAgain" label="确认密码">
+                <el-input maxlength="20" placeholder="再输一次密码"
+                          v-model="formData.passwordAgain"
+                          auto-complete="off" tabindex="5" type="password"></el-input>
+            </el-form-item>
+            <el-form-item prop="mobile" label="手机号码">
+                <el-input maxlength="20" placeholder="手机号码"
+                          v-model="formData.mobile"
+                          auto-complete="off" tabindex="6" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="email" label="单位邮箱">
+                <el-input maxlength="100" placeholder="单位邮箱"
+                          v-model="formData.email"
+                          auto-complete="off" tabindex="7" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+    <el-dialog
+            title="编辑用户"
+            :visible.sync="editDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="editForm" :rules="editRules" size="small" label-width="80px">
+            <el-form-item prop="loginname" label="用户名">
+                {{formData.loginname}}
+            </el-form-item>
+            <el-form-item prop="username" label="姓名">
+                <el-input maxlength="20" placeholder="姓名"
+                          v-model="formData.username"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="mobile" label="手机号码">
+                <el-input maxlength="20" placeholder="手机号码"
+                          v-model="formData.mobile"
+                          auto-complete="off" tabindex="6" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="email" label="单位邮箱">
+                <el-input maxlength="100" placeholder="单位邮箱"
+                          v-model="formData.email"
+                          auto-complete="off" tabindex="7" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="disabled" label="启用状态">
+                <el-switch
+                        v-model="formData.disabled"
+                        active-color="#ff4949"
+                        inactive-color="#13ce66">
+                </el-switch>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doEdit">确 定</el-button>
+                  </span>
+    </el-dialog>
+    <el-dialog
+            :title="roleDialogTitle"
+            :visible.sync="roleDialogVisible"
+            width="70%">
+        <el-table :data="roleTreeData" style="width: 100%" :row-style="treeTableShowTr" size="small"
+                  :highlight-current-row="true">
+            <el-table-column label="菜单名称" header-align="center" prop="name"
+                             width="200" :show-overflow-tooltip="true" align="left">
+                <template slot-scope="scope">
+                    <span v-for="(space, levelIndex) in treeTablePath(scope.row.path)" class="ms-tree-space"></span>
+                    <span v-if="treeTableIconShow(scope.row)" @click="treeTableChild(scope.row.id)"
+                          style="cursor: pointer">
+                        <span v-if="!scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right" title="展开"></span>
+
+                        <span v-if="scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right expanded" title="关闭"></span>
+                    {{ scope.row.name }}
+                    </span>
+                    <span v-if="!treeTableIconShow(scope.row)">
+                         <span class="ms-tree-space"></span>
+                        {{ scope.row.name }}
+                    </span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="URL" header-align="center" prop="href"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="资源类型" header-align="center" prop="type"
+                             :show-overflow-tooltip="true" align="center">
+
+                <template slot-scope="scope">
+                    <i v-if="scope.row.type=='menu'" style="font-weight: bold">菜单</i>
+                    <i v-if="scope.row.type=='data'">数据</i>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="权限标识" header-align="center" prop="permission"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+        </el-table>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="roleDialogVisible = false">关 闭</el-button>
+                  </span>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var self = this;
+            var validateLoginname = function (rule, value, callback) {
+                var regex = new RegExp("^[a-zA-Z][a-zA-Z0-9_]{1,19}$");
+                if (!regex.test(value)) {
+                    callback(new Error('用户名以字母开头2-20字,允许使用字母/数字/下划线'));
+                } else {
+                    callback();
+                }
+            };
+            var validatePass = function (rule, value, callback) {
+                if (value !== self.formData.password) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            };
+            var validateUnit = function (rule, value, callback) {
+                if (self.parentUnit.length < 1 || self.parentUnit[self.parentUnit.length - 1] == "") {
+                    callback(new Error('请选择所属单位!'));
+                } else {
+                    callback();
+                }
+            };
+            return {
+                addDialogVisible: false,
+                editDialogVisible: false,
+                roleDialogVisible: false,
+                treeData: {
+                    label: 'name',
+                    children: 'zones',
+                    id: 'id',
+                    isLeaf: 'leaf'
+                },
+                tableData: [],
+                options: [],
+                parentUnit: [],
+                pageForm: {
+                    searchUnit: "",
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "",
+                    pageOrderBy: ""
+                },
+                formData: {
+                    id: "",
+                    unitid: "",
+                    disabled: false
+                },
+                formRules: {
+                    parentUnit: [
+                        {validator: validateUnit, trigger: ['blur', 'change']}
+                    ],
+                    loginname: [
+                        {required: true, message: '用户名', trigger: ['blur', 'change']},
+                        {validator: validateLoginname, trigger: ['blur', 'change']}
+                    ],
+                    username: [
+                        {required: true, message: '姓名', trigger: ['blur', 'change']}
+                    ],
+                    email: [
+                        {required: false, message: '邮箱地址', trigger: ['blur', 'change']},
+                        {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}
+                    ],
+                    mobile: [
+                        {required: false, message: '手机号码', trigger: ['blur', 'change']},
+                        {pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码'}
+                    ],
+                    password: [
+                        {required: true, message: '请输入密码', trigger: 'blur'},
+                        {min: 3, max: 20, message: '密码长度必须是3-20位', trigger: 'change'}
+                    ],
+                    passwordAgain: [
+                        {required: true, message: '请再次输入新密码', trigger: 'blur'},
+                        {validator: validatePass, trigger: 'change'}
+                    ]
+                },
+                editRules: {
+                    username: [
+                        {required: true, message: '姓名', trigger: ['blur', 'change']}
+                    ],
+                    email: [
+                        {required: false, message: '邮箱地址', trigger: ['blur', 'change']},
+                        {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}
+                    ],
+                    mobile: [
+                        {required: false, message: '手机号码', trigger: ['blur', 'change']},
+                        {pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码'}
+                    ],
+                },
+                roleDialogTitle: "查看用户权限",
+                roleTableData: [],//treeTable后台取出的数据
+                roleTreeData: [],//treeTable格式化用于显示的数据
+                userId: "",//当前用户ID
+                multipleSelection: []
+
+            }
+        },
+        methods: {
+            //级联选择器从后台动态获取下级数据
+            loadTree: function (val, cb) {
+                var url = base + "/platform/sys/unit/tree";
+                $.post(url, {pid: val}, function (data) {
+                    if (data.code == 0) {
+                        cb(data.data);
+                    }
+                }, "json");
+            },
+            initTree: function () {
+                var self = this;
+                this.loadTree("", function (val) {
+                    self.options = val;
+                });
+            },
+            unitQuery: function (queryString, cb) {
+                cb(this.options);
+            },
+            unitSelect: function (val) {
+            },
+            unitTree: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.value) {
+                        obj.children = data;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.unitTree(obj.children, data, pid);
+                    }
+                });
+            },
+            unitChange2:function(val){
+                var self = this;
+                if(val[0]=="root"){
+                    self.parentUnit=[];
+                }
+            },
+            unitChange: function (val) {
+                var self = this;
+                self.parentUnit = val;
+                var pid = val[val.length - 1];
+                this.loadTree(pid, function (tree) {
+                    self.unitTree(self.options, tree, pid);
+                });
+            }, pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/sys/user/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            doSearch: function () {
+                this.pageForm.searchUnit = this.parentUnit[this.parentUnit.length - 1];
+                this.pageForm.pageNumber = 1;
+                this.pageData();
+            },
+            openAdd: function () {
+                var self = this;
+                this.addDialogVisible = true;
+                this.formData = {};//打开新增窗口,表单先清空
+                if (this.$refs["addForm"])
+                    this.$refs["addForm"].resetFields();
+            },
+            doAdd: function () {
+                var self = this;
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {
+                        self.formData.unitid = self.parentUnit[self.parentUnit.length - 1]||"";
+                        $.post(base + "/platform/sys/user/addDo", self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.doSearch();//查询是带条件的,加载新建用户选择的单位用户数据
+                                //self.pageData();
+                                self.addDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post(base + "/platform/sys/user/editDo", self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.doSearch();//查询是带条件的,加载新建用户选择的单位用户数据
+                                //self.pageData();
+                                self.editDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            // 显示层级
+            treeTablePath: function (path) {
+                return path.length / 4 - 1;
+            },
+            // 显示行
+            treeTableShowTr: function (row, index) {
+                var parentIndex = this.roleTreeData.findIndex(function (value) {
+                    return value.id === row.row.parentId;
+                });
+                var show = (row.row.parentId ? (this.roleTreeData[parentIndex].expanded && this.roleTreeData[parentIndex]._show) : true);
+                row.row._show = show;
+                return show ? '' : 'display:none;'
+            },
+            treeDataChildren: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.id) {//找到这条数据追加下级数据
+                        obj.children = data;
+                        obj.expanded = !obj.expanded;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.treeDataChildren(obj.children, data, pid);
+                    }
+                });
+            },
+            // 展开下级
+            treeTableChild: function (pid) {
+                var self = this;
+                var url = base + "/platform/sys/user/menu/" + self.userId;
+                $.post(url, {pid: pid}, function (data) {
+                    if (data.code == 0) {
+                        if (pid != undefined && pid != "") {
+                            self.treeDataChildren(self.roleTableData, data.data, pid);
+                        } else {
+                            self.roleTableData = data.data;
+                        }
+                        self.roleTreeData = sublime.treeToArray(self.roleTableData);
+                    }
+                }, "json");
+
+            },
+            // 点击展开和关闭的时候，图标的切换
+            treeTableIconShow: function (record) {
+                return record.hasChildren;
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("role" == command.type) {
+                    self.roleDialogVisible = true;
+                    self.roleDialogTitle = "查看用户 " + command.loginname + " 的权限";
+                    self.userId = command.id;
+                    self.treeTableChild("");
+                }
+                if ("reset" == command.type) {
+                    self.$confirm('确定重置用户 ' + command.loginname + ' 的密码', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/sys/user/resetPwd/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$alert('新密码为 ' + data.data, '新密码', {
+                                            confirmButtonText: '确定'
+                                        });
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+                if ("enable" == command.type || "disable" == command.type) {
+                    $.post(base + "/platform/sys/user/" + command.type + "/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.$message({
+                                message: data.msg,
+                                type: 'success'
+                            });
+                            if ("disable" == command.type) {
+                                command.row.disabled=true;
+                            }
+                            if ("enable" == command.type) {
+                                command.row.disabled=false;
+                            }
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/sys/user/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.editDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除 ' + command.loginname, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/sys/user/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.doSearch();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            },
+            batchCommand: function (command) {
+                var self = this;
+                if ("delete" == command.type) {
+                    if (self.multipleSelection.length == 0) {
+                        self.$message({
+                            message: "请选择要删除的用户",
+                            type: 'warning'
+                        });
+                    } else {
+                        var loginnames = [];
+                        var ids = [];
+                        self.multipleSelection.forEach(function (val) {
+                            loginnames.push(val.loginname);
+                            ids.push(val.id);
+                        });
+                        self.$confirm('此操作将删除用户 ' + loginnames.toString(), '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning',
+                            callback: function (a, b) {
+                                if ("confirm" == a) {//确认后再执行
+                                    $.post(base + "/platform/sys/user/delete", {ids: ids.toString()}, function (data) {
+                                        if (data.code == 0) {
+                                            self.$message({
+                                                message: data.msg,
+                                                type: 'success'
+                                            });
+                                            self.doSearch();
+                                        } else {
+                                            self.$message({
+                                                message: data.msg,
+                                                type: 'error'
+                                            });
+                                        }
+                                    }, "json");
+                                }
+                            }
+                        });
+                    }
+                }
+                if ("export" == command.type) {
+                    window.open(base + "/platform/sys/user/export?searchUnit=" + self.pageForm.searchUnit
+                        + "&searchName=" + self.pageForm.searchName
+                        + "&searchKeyword=" + self.pageForm.searchKeyword
+                        + "&pageOrderName=" + self.pageForm.pageOrderName
+                        + "&pageOrderBy=" + self.pageForm.pageOrderBy
+                    );
+                }
+            },
+            handleSelectionChange: function (val) {
+                this.multipleSelection = val;
+            }
+        },
+        created: function () {
+            this.initTree();
+            this.pageData();
+        }
+    });
+</script>
+<!--#
+}
+#-->

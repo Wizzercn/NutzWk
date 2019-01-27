@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="${lang,escape}">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="${AppName!}">
+    <title>${AppName!}</title>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="${base!}/assets/platform/plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/plugins/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/fonts/themify-icons.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/css/common.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/css/main.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/css/elmain.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/css/panel.css">
+    <!-- import Vue before Element -->
+    <script src="${base!}/assets/platform/plugins/vue/vue.min.js"></script>
+    <!-- import JavaScript -->
+    <script src="${base!}/assets/platform/plugins/element-ui/lib/index.js"></script>
+    <script src="${base!}/assets/platform/plugins/jquery/jquery-1.11.1.min.js"></script>
+    <script src="${base!}/assets/platform/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <!-- pjax是异步加载html片段的工具,模拟前端路由机制 -->
+    <script src="${base!}/assets/platform/plugins/pjax/jquery.pjax.js"></script>
+    <script src="${base!}/assets/platform/plugins/bootstrap/js/bootstrap.js"></script>
+    <!-- Array数组增加findIndex等方法,TreeTable用得到,兼容IE8 -->
+    <script src="${base!}/assets/platform/plugins/polyfill/polyfill.js"></script>
+    <!-- 时间日期处理工具类 -->
+    <script src="${base!}/assets/platform/plugins/moment/moment.min.js"></script>
+    <!-- 浏览器通知 -->
+    <script src="${base!}/assets/platform/plugins/push/push.min.js"></script>
+    <script src="${base!}/assets/platform/js/main.js"></script>
+    <script src="${base!}/assets/platform/js/offscreen.js"></script>
+    <!--# if(@shiro.getPrincipalProperty('loginTheme')!=null){ #-->
+    <link rel="stylesheet" href="${base!}/assets/platform/css/skins/${@shiro.getPrincipalProperty('loginTheme')}"
+          id="skin">
+    <!--# }else{ #-->
+    <link rel="stylesheet" href="${base!}/assets/platform/css/skins/palette.css" id="skin">
+    <!--# } #-->
+    <script type="text/javascript">
+        var base = "${base!}";
+        var loginPjax = "${@shiro.getPrincipalProperty('loginPjax')}";
+    </script>
+</head>
+<body>
+<div class="gallery-loader" style="background-color:transparent;">
+    <div class="loader"></div>
+</div>
+<div class="playground hidden-xs">
+    <div class="options">
+        <div class="pg-close ti-close"></div>
+        <div class="options-container color-options">
+            <h6>${msg['index.themes']}</h6>
+            <a onclick="sublime.changeTheme('palette.css')" href="${base!}/assets/platform/css/skins/palette.css"
+               class="css_orange cs_color cs_1 <!--#if(@shiro.getPrincipalProperty('loginTheme')==null || 'palette.css' == @shiro.getPrincipalProperty('loginTheme')){#-->active<!--#}#-->">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+            <a onclick="sublime.changeTheme('palette.2.css')" href="${base!}/assets/platform/css/skins/palette.2.css"
+               class="css_orange cs_color cs_2 <!--#if('palette.2.css' == @shiro.getPrincipalProperty('loginTheme')){#-->active<!--# }#-->">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+            <a onclick="sublime.changeTheme('palette.3.css')" href="${base!}/assets/platform/css/skins/palette.3.css"
+               class="css_orange cs_color cs_3 <!--#if('palette.3.css' == @shiro.getPrincipalProperty('loginTheme')){#-->active<!--# }#-->">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </a>
+        </div>
+        <div class="options-container">
+            <h6>${msg['index.layout']}</h6>
+            <a class="pg-val toggle-sidebar toggle-active <!--#if(@shiro.getPrincipalProperty('loginSidebar')){#--> active<!--#}#-->"
+               href="javascript:;">
+                <img src="${base!}/assets/platform/img/panel/small.png" alt="">
+            </a>
+            <a class="pg-val toggle-scroll toggle-active <!--#if(@shiro.getPrincipalProperty('loginScroll')){#-->active<!--#}#-->"
+               href="javascript:;">
+                <img src="${base!}/assets/platform/img/panel/scroll.png" alt="">
+            </a>
+            <a class="pg-val toggle-boxed toggle-active <!--#if(@shiro.getPrincipalProperty('loginBoxed')){#-->active<!--#}#-->"
+               href="javascript:;">
+                <img src="${base!}/assets/platform/img/panel/boxed.png" alt="">
+            </a>
+        </div>
+        <small class="pg-footer"><i class="ti-info-alt mr5"></i>${msg['index.panel']}</small>
+    </div>
+</div>
+<div id="mainApp"
+     class="app <!--#if(@shiro.getPrincipalProperty('loginSidebar')){#--> small-menu <!--#}#--> <!--#if(@shiro.getPrincipalProperty('loginScroll')){#--> fixed-scroll <!--#}#--> <!--#if(@shiro.getPrincipalProperty('loginBoxed')){#--> boxed <!--#}#-->">
+    <header class="header header-fixed navbar">
+        <div class="brand">
+
+            <a href="javascript:;" class="ti-menu off-left visible-xs" data-toggle="offscreen" data-move="ltr"></a>
+
+
+            <a href="${base!}/platform/home" data-pjax class="navbar-brand">
+                <img src="${base!}/assets/platform/img/logo.png" alt=""
+                     class="o_img <!--#if(!@shiro.getPrincipalProperty('loginSidebar')){#-->o_hide<!--#}#-->">
+                <span class="heading-font o_img <!--#if(@shiro.getPrincipalProperty('loginSidebar')){#-->o_hide<!--#}#-->">
+		            <img src="${base!}/assets/platform/img/logoa.png">
+                </span>
+            </a>
+
+        </div>
+
+        <ul class="nav navbar-nav">
+            <li class="hidden-xs">
+                <!-- toggle small menu -->
+                <a href="javascript:;" class="toggle-sidebar">
+                    <i class="ti-menu"></i>
+                </a>
+                <!-- /toggle small menu -->
+            </li>
+        </ul>
+        <ul id="topnav" class="nav navbar-nav hidden-xs">
+            <!--#
+            var secondMenus=@shiro.getPrincipalProperty('secondMenus');
+            for(firstMenu in @shiro.getPrincipalProperty('firstMenus')){
+           #-->
+            <li class="dropdown">
+
+                <!--# if(!isEmpty(@secondMenus.get(firstMenu.path))){#-->
+                <a href="javascript:;" data-toggle="dropdown">
+                    <!--# if(!isEmpty(firstMenu.icon)){ #-->
+                    <i class="${firstMenu.icon}"></i>
+                    <!--# } #-->
+                    <span>
+                        <!--#if(lang=="zh_CN"){#-->${firstMenu.name}<!--#}else{#-->${firstMenu.aliasName}
+                        <!--#}#--></span>
+                    <b class="caret"></b>
+                </a>
+                <!--#}else{#-->
+                <a href="<!--# if(!isEmpty(firstMenu.href)){ #--><!--#if(@string.startWith(firstMenu.href,'/')){#-->${base}${firstMenu.href!}<!--#}else{#-->${firstMenu.href!}<!--#}#--> <!--# }else{ #-->javascript:;<!--# } #-->"
+                <!--#if(@string.startWith(firstMenu.target,'_')){#-->target="${firstMenu.target!}"<!--#}else{#-->
+                ${firstMenu.target!}<!--#}#--> >
+                <span>
+                        <!--#if(lang=="zh_CN"){#-->${firstMenu.name}<!--#}else{#-->${firstMenu.aliasName}
+                    <!--#}#--></span></a>
+                <!--#}#-->
+                <!--# if(!isEmpty(@secondMenus.get(firstMenu.path))){#-->
+                <ul class="dropdown-menu topnav">
+                    <!--# for(secondMenu in @secondMenus.get(firstMenu.path)){ #-->
+                    <li class="dropdown">
+                        <a href="<!--# if(!isEmpty(secondMenu.href)){ #--><!--#if(@string.startWith(secondMenu.href,'/')){#-->${base}${secondMenu.href!}<!--#}else{#-->${secondMenu.href!}<!--#}#--> <!--# }else{ #-->javascript:;<!--# } #-->"
+                        <!--#if(@string.startWith(secondMenu.target,'_')){#-->target="${secondMenu.target!}"
+                        <!--#}else{#--> ${secondMenu.target!}<!--#}#--> >
+                        <!--# if(!isEmpty(@secondMenus.get(secondMenu.path))){ #--><i class="toggle-accordion"></i>
+                        <!--#}#-->
+                        <span><!--#if(lang=="zh_CN"){#-->${secondMenu.name}<!--#}else{#-->${secondMenu.aliasName}
+                            <!--#}#--></span>
+                        </a>
+                        <!--# if(!isEmpty(@secondMenus.get(secondMenu.path))){ #-->
+                        <ul class="sub-menu">
+                            <!--# for(thMenu in @secondMenus.get(secondMenu.path)){ #-->
+                            <li class="clearfix">
+                                <a <!--# if(!isEmpty(thMenu.href)){ #-->href="
+                                <!--#if(@string.startWith(thMenu.href,'/')){#--> ${base}${thMenu.href!}<!--#}else{#-->
+                                ${thMenu.href!}<!--#}#--> " <!--# }else{ #-->href="javascript:;"<!--# } #-->
+                                <!--#if(@string.startWith(thMenu.target,'_')){#-->target="${thMenu.target!}"
+                                <!--#}else{#--> ${thMenu.target!}<!--#}#--> >
+                                <span><!--#if(lang=="zh_CN"){#-->${thMenu.name}<!--#}else{#-->${thMenu.aliasName}
+                                    <!--#}#--></span>
+                                </a>
+                            </li><!--# }#-->
+                        </ul><!--#}#-->
+                    </li><!--# } #-->
+                </ul><!--# } #-->
+            </li><!--# }#-->
+            <!--# if(@shiro.hasRole("wizzer")){#-->
+            <!--项目开发请删除-->
+            <li>
+                <a href="${base}/platform/sys/test" data-pjax>捐赠管理</a>
+            </li>
+            <!--# }#-->
+            <li>
+                <a href="https://wizzer.cn/donation" target="_blank">捐赠清单</a>
+            </li>
+            <li>
+                <a href="https://wizzer.cn/" target="_blank">官网</a>
+            </li>
+            <li>
+                <a href="https://nutz.cn" target="_blank">Nutz 社区</a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+
+            <li class="dropdown hidden-xs">
+                <a href="javascript:;" data-toggle="dropdown">
+                    <i class="ti-more-alt"></i>
+                </a>
+                <ul class="dropdown-menu animated zoomIn">
+                    <li class="dropdown-header">Quick Links</li>
+                    <li>
+                        <a href="javascript:;">Start New Campaign</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">Review Campaigns</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="javascript:;">Settings</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">Wish List</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">Purchases History</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="javascript:;">Activity Log</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">Settings</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="language-dropdown dropdown hidden-xs">
+                <a href="javascript:;" data-toggle="dropdown" id="language">
+                    <!--# if(lang==null||lang=="zh_CN"){ #-->
+                    <img src="${base!}/assets/platform/img/flags/cn.png" class="flag"/>
+                    <!--#}else{#-->
+                    <img src="${base!}/assets/platform/img/flags/us.png" class="flag"/>
+                    <!--#}#-->
+                    <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
+                        <li>
+                            <a href="javascript:sublime.changeLang('en_US');">
+                                <img src="${base!}/assets/platform/img/flags/us.png" class="flag"/>
+                                <span class="language">English</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:sublime.changeLang('zh_CN');">
+                                <img src="${base!}/assets/platform/img/flags/cn.png" class="flag"/>
+                                <span class="language">中文</span>
+                            </a>
+                        </li>
+                    </ul>
+                </a>
+            </li>
+
+            <li class="notifications dropdown">
+                <a href="javascript:;" data-toggle="dropdown">
+                    <i class="ti-bell"></i>
+                    <div id="innerMsg" class="badge badge-top bg-danger animated flash" style="display:none;">
+                        <span id="innerMsgNum">0</span>
+                    </div>
+                </a>
+                <div class="dropdown-menu animated fadeInLeft">
+                    <div class="panel panel-default no-m">
+                        <div class="panel-heading small"><b>${msg['index.notifications.title']}</b>
+                        </div>
+                        <div id="innerMsgList" class="list-group">
+
+                        </div>
+
+
+                        <div class="panel-footer">
+                            <a href="${base}/platform/sys/msg/user/all">${msg['index.notifications.see']}</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="off-right">
+                <a href="javascript:;" data-toggle="dropdown">
+                    <span class="hidden-xs ml10">${@shiro.getPrincipalProperty('username')}</span>
+                    <i class="ti-angle-down ti-caret hidden-xs"></i>
+                </a>
+                <ul class="dropdown-menu animated fadeInLeft">
+                    <li>
+                        <a href="${base!}/platform/sys/user/custom" data-toggle="modal"
+                           data-target="#homeDetail">${msg['index.custommenu']}</a>
+                    </li>
+                    <li class="dropdown hidden-xs">
+                        <a href="javascript:;" class="pg-toggle">
+                            ${msg['index.user.layout']}
+                        </a>
+                    </li>
+                    <li class="dropdown hidden-xs">
+                        <a href="${base!}/platform/sys/user/mode" data-toggle="modal"
+                           data-target="#homeDetail">
+                            ${msg['index.user.mode']}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="${base!}/platform/sys/user/pass" data-toggle="modal"
+                           data-target="#homeDetail">${msg['index.user.password']}</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="off-right">
+                <a href="${base!}/platform/login/logout">
+                    <i class="ti-power-off"></i>
+                </a>
+            </li>
+        </ul>
+    </header>
+    <section class="layout">
+        <!-- sidebar menu -->
+        <aside class="sidebar offscreen-left">
+            <!-- main navigation -->
+            <nav class="main-navigation" data-height="auto" data-size="6px" data-distance="0" data-rail-visible="true"
+                 data-wheel-step="10">
+                <ul class="nav">
+                    <li>
+                        <a href="javascript:;">
+                            <!--#if(!isEmpty(@shiro.getPrincipalProperty('customMenus'))){#-->
+                            <i class="toggle-accordion"></i>
+                            <!--#}#-->
+                            <i class="ti-heart"></i>
+                            <span>${msg['index.custommenu']}</span>
+                        </a>
+                        <!--#if(!isEmpty(@shiro.getPrincipalProperty('customMenus'))){#-->
+                        <ul class="sub-menu">
+                            <!--#for(o in @shiro.getPrincipalProperty('customMenus')){#-->
+
+                            <li>
+                                <a <!--#if(!isEmpty(o.href)){#-->href="${base}${o.href}"
+                                <!--#if('data-pjax'==o.target){#-->data-pjax<!--#}}else{ #--> href="javascript:;"
+                                <!--#}#--> >
+                                <span><!--#if(lang=="zh_CN"){#-->${o.name}<!--#}else{#-->${o.aliasName}<!--#}#--></span>
+                                </a>
+                            </li>
+
+                            <!--#}#-->
+                        </ul>
+                        <!--#}#-->
+                    </li>
+
+                </ul>
+
+                <ul id="leftnav" class="nav">
+                </ul>
+            </nav>
+        </aside>
+        <!-- main content -->
+        <section class="main-content" id="container">
+            ${layoutContent}
+        </section>
+    </section>
+</div>
+<div id="homeDetail" class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<div id="dialogOffline" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="el-dialog__header">
+                <button type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close" class="el-dialog__headerbtn"><i
+                        class="el-dialog__close el-icon el-icon-close"></i></button>
+                <h4 class="modal-title">系统通知</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        您的帐号在其他地方登录，您已被迫下线，如果不是您本人操作，请及时修改密码。
+                    </div>
+                </div>
+            </div>
+            <div class="el-dialog__footer">
+                <span class="dialog-footer">
+                    <a type="button" class="el-button el-button--primary" href="${base}/platform/login/logout">
+                        <span>确 定</span>
+                    </a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var ws;
+    function connect() {
+        var WS_URL = window.location.host+"${base}/websocket";
+        if (window.location.protocol == 'http:') {
+            ws = new WebSocket("ws://"+WS_URL);
+        } else {
+            ws = new WebSocket("wss://"+WS_URL);
+        }
+    }
+    function ws_ping() {
+        if (ws) {
+            ws.send(JSON.stringify({room:"${@shiro.getPrincipalProperty('loginname')}","action":"msg"}));
+        }else {
+            connect();
+        }
+    }
+    function msg_get(list) {
+        $("#innerMsgList").html("");
+        var msgList="";
+        $.each(list,function(index, o){
+            var url=base + o.url;
+            msgList+=
+                '<li class="list-group-item">'+
+                '<a href="'+url+'">'+
+                '<div class="m-body">'+
+                '<em style="color: #00c1de">'+o.type+' : </em>'+
+                '<span style="color: #00c1de">'+o.title+'</span>'+
+                '<span class="time small">'+ o.time +'</span>'+
+                '</div></a></li>';
+        });
+        $("#innerMsgList").html(msgList);
+    }
+    $(document).ready(function () {
+            //浏览器通知 + websocket
+            if (${@config.getOrDefault("WebNotification",true)}) {
+                Push.Permission.request(function () {
+                    if (parseInt("${@shiro.getPrincipalProperty('loginCount')}") > 0 || !${@config.getOrDefault("WebNotification",true)})
+                        return;
+                    Push.create('Thank You!', {
+                        body: '欢迎选用 NutzWk!',
+                        icon: base + '/assets/platform/img/notice.png',
+                        timeout: 5000,
+                        onClick: function () {
+                            window.open("https://wizzer.cn"); //just added the window.open to a OnClick event.
+                            this.close();
+                        },
+                        vibrate: [100, 100, 100]
+                    });
+                }, function () {
+
+                });
+            }
+            try {
+                connect();
+                ws.onmessage = function (event) {
+                    var re = JSON.parse(event.data);
+                    if (re.action == "notify" && Push.Permission.has() && ${@config.getOrDefault("WebNotification",true)}) {
+                        Push.create(re.title, {
+                            body: re.body,
+                            icon: base + '/assets/img/notice.png',
+                            timeout: 8000,
+                            onClick: function () {
+                                if (re.url) {
+                                    window.open(base + re.url);
+                                } //just added the window.open to a OnClick event.
+                                this.close();
+                            },
+                            vibrate: [100, 100, 100]
+                        });
+                    } else if (re.action == "innerMsg") {
+                        if (re.size > 0) {
+                            $("#innerMsgNum").html(re.size);
+                            $("#innerMsg").show();
+                        } else {
+                            $("#innerMsg").hide();
+                        }
+                        msg_get(re.list);
+                    } else if (re.action == "offline") {
+                        $("#dialogOffline").modal().show();
+                        $("#okOffline").on("click", function () {
+                            window.location.href = "${base}/platform/login";
+                        });
+                    }
+                };
+                ws.onopen = function (event) {
+                    ws.send(JSON.stringify({
+                        room: "${@shiro.getPrincipalProperty('loginname')}:${@shiro.getSessionId()}",
+                        "action": "join"
+                    }));
+                    ws_ping();
+                };
+                setInterval("ws_ping()", (11624317 / 1000) * 2);
+                //以下判断是否关闭浏览器,不兼容ie8,9,10
+                if (ws) {
+                    var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+                    var isOpera = userAgent.indexOf("Opera") > -1; //判断是否Opera浏览器
+                    var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera; //判断是否IE浏览器
+                    var isIE11 = userAgent.indexOf("rv:11.0") > -1; //判断是否是IE11浏览器
+                    var isEdge = userAgent.indexOf("Edge") > -1 && !isIE; //判断是否IE的Edge浏览器
+                    if (!isIE && !isEdge && !isIE11) {//兼容chrome和firefox
+                        var _beforeUnload_time = 0, _gap_time = 0;
+                        var is_fireFox = navigator.userAgent.indexOf("Firefox") > -1;//是否是火狐浏览器
+                        window.onunload = function () {
+                            _gap_time = new Date().getTime() - _beforeUnload_time;
+                            if (_gap_time <= 5) {
+                                ws.send(JSON.stringify({
+                                    room: "${@shiro.getPrincipalProperty('loginname')}:${@shiro.getSessionId()}",
+                                    "action": "left"
+                                }));
+                            } else {//浏览器刷新
+                            }
+                        };
+                        window.onbeforeunload = function () {
+                            _beforeUnload_time = new Date().getTime();
+                            if (is_fireFox) {//火狐关闭执行
+                                ws.send(JSON.stringify({
+                                    room: "${@shiro.getPrincipalProperty('loginname')}:${@shiro.getSessionId()}",
+                                    "action": "left"
+                                }));
+                            }
+                        };
+                    }
+                }
+            } catch (ex) {
+                if (console)
+                    console.info(ex);
+            }
+        });
+</script>
+</body>
+</html>

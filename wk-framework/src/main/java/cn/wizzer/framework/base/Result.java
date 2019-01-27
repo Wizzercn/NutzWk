@@ -33,7 +33,7 @@ public class Result implements Serializable {
 
     public Result addMsg(String msg) {
         if (Strings.isBlank(msg) || Mvcs.getActionContext() == null || Mvcs.getActionContext().getRequest() == null || Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg) == null) {
-            this.msg = "";
+            this.msg = Strings.sNull(msg);
         } else {
             this.msg = Mvcs.getMessage(Mvcs.getActionContext().getRequest(), msg);
         }
@@ -63,6 +63,10 @@ public class Result implements Serializable {
         return new Result(0, content, data);
     }
 
+    public static Result success(Object data) {
+        return new Result(0, "system.success", data);
+    }
+
     public static Result error(int code, String content) {
         return new Result(code, content, null);
     }
@@ -78,8 +82,8 @@ public class Result implements Serializable {
     public static Result error() {
         return new Result(1, "system.error", null);
     }
-    
-    
+
+
     public int getCode() {
         return code;
     }
@@ -92,8 +96,7 @@ public class Result implements Serializable {
         return data;
     }
 
-    @Override
-    public String toString() {
+    public String toJsonString() {
         return Json.toJson(this, JsonFormat.compact());
     }
 

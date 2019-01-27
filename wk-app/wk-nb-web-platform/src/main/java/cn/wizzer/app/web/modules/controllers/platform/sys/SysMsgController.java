@@ -102,10 +102,12 @@ public class SysMsgController {
     public Object addDo(@Param("..") Sys_msg sysMsg, @Param("users") String[] users, HttpServletRequest req) {
         try {
             sysMsg.setSendAt(Times.getTS());
+            sysMsg.setOpBy(StringUtil.getPlatformUid());
             Sys_msg sys_msg = sysMsgService.saveMsg(sysMsg, users);
             if (sys_msg != null) {
                 wkNotifyService.notify(sys_msg, users);
             }
+            sysMsgUserService.clearCache();
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -119,6 +121,7 @@ public class SysMsgController {
     public Object delete(String id, HttpServletRequest req) {
         try {
             sysMsgService.deleteMsg(id);
+            sysMsgUserService.clearCache();
             req.setAttribute("id", id);
             return Result.success("system.success");
         } catch (Exception e) {

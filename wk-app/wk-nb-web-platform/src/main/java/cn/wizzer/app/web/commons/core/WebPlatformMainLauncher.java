@@ -2,6 +2,9 @@ package cn.wizzer.app.web.commons.core;
 
 import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.ext.pubsub.WebPubSub;
+
+import javax.servlet.ServletContext;
+
 import org.nutz.boot.NbApp;
 import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.integration.shiro.ShiroSessionProvider;
@@ -39,6 +42,12 @@ public class WebPlatformMainLauncher {
         NbApp nb = new NbApp().setArgs(args).setPrintProcDoc(true);
         nb.getAppContext().setMainPackage("cn.wizzer");
         nb.run();
+    }
+    
+    public static NbApp warMain(ServletContext sc) {
+        NbApp nb = new NbApp().setPrintProcDoc(true);
+        nb.getAppContext().setMainPackage("cn.wizzer");
+        return nb;
     }
 
     public void init() {

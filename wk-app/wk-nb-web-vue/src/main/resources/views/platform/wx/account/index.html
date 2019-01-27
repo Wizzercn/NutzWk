@@ -1,0 +1,464 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <el-button size="medium" @click="openAdd">
+                新增公众号
+            </el-button>
+        </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+                :default-sort="{prop: 'opAt', order: 'descending'}"
+        >
+
+            <el-table-column label="公众号名称" header-align="left" prop="appname"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+
+            <el-table-column label="AppId" header-align="left" prop="appid"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="AppSecret" header-align="left" prop="appsecret"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="Token" header-align="left" prop="token"
+                             :show-overflow-tooltip="true">
+            </el-table-column>
+
+            <el-table-column label="微信支付" header-align="left" prop="payEnabled"
+                             :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.payEnabled">已配置</span>
+                    <span v-if="!scope.row.payEnabled">未配置</span>
+                </template>
+            </el-table-column>
+
+            <el-table-column
+                    prop="id"
+                    label="操作"
+                    width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item :command="{type:'edit',id:scope.row.id}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                                    :command="{type:'delete',id:scope.row.id,name:scope.row.name}">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+
+    <el-dialog
+            title="新增公众号"
+            :visible.sync="addDialogVisible"
+            width="60%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="120px">
+            <el-form-item label="配置URL">
+                ${AppDomain!}${base!}/open/weixin/api/{{formData.id}}
+                <el-alert
+                        title="URL需为公网可访问地址，[系统] - [系统管理] - [系统参数] - 修改 AppDomain 配置项"
+                        type="success">
+                </el-alert>
+            </el-form-item>
+
+            <el-form-item prop="id" label="唯一标识">
+                <el-input maxlength="100" placeholder="公众号名称"
+                          v-model="formData.id"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="appname" label="公众号名称">
+                <el-input maxlength="100" placeholder="公众号名称"
+                          v-model="formData.appname"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="appid" label="Appid">
+                <el-input maxlength="100" placeholder="Appid"
+                          v-model="formData.appid"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="appsecret" label="Appsecret">
+                <el-input maxlength="100" placeholder="Appsecret"
+                          v-model="formData.appsecret"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="token" label="Token">
+                <el-input maxlength="100" placeholder="Token"
+                          v-model="formData.token"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="encodingAESKey" label="EncodingAESKey">
+                <el-input maxlength="100" placeholder="EncodingAESKey"
+                          v-model="formData.encodingAESKey"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="payEnabled" label="微信支付">
+                <el-radio-group v-model="formData.payEnabled" @change="payEnabledChange">
+                    <el-radio :label="true">配置</el-radio>
+                    <el-radio :label="false">不配置</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="配置授权目录" v-if="formData.payEnabled">
+                ${AppDomain!}${base!}/open/pay/
+                <el-alert
+                        title="请在微信支付后台添加支付授权目录"
+                        type="success">
+                </el-alert>
+            </el-form-item>
+
+            <el-form-item class="is-required" prop="wxpay_mchid" label="商户号Mchid" v-if="formData.payEnabled">
+                <el-input maxlength="100" placeholder="商户号Mchid"
+                          v-model="formData.payInfo.wxpay_mchid"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item class="is-required" prop="wxpay_key" label="商户Key" v-if="formData.payEnabled">
+                <el-input maxlength="100" placeholder="商户Key"
+                          v-model="formData.payInfo.wxpay_key"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+
+    <el-dialog
+            title="修改公众号"
+            :visible.sync="editDialogVisible"
+            width="60%">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="120px">
+            <el-form-item label="配置URL">
+                ${AppDomain!}${base!}/open/weixin/api/{{formData.id}}
+                <el-alert
+                        title="URL需为公网可访问地址，[系统] - [系统管理] - [系统参数] - 修改 AppDomain 配置项"
+                        type="success">
+                </el-alert>
+            </el-form-item>
+
+            <el-form-item prop="id" label="唯一标识">
+                {{formData.id}}
+            </el-form-item>
+
+            <el-form-item prop="appname" label="公众号名称">
+                <el-input maxlength="100" placeholder="公众号名称"
+                          v-model="formData.appname"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="appid" label="Appid">
+                <el-input maxlength="100" placeholder="Appid"
+                          v-model="formData.appid"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="appsecret" label="Appsecret">
+                <el-input maxlength="100" placeholder="Appsecret"
+                          v-model="formData.appsecret"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="token" label="Token">
+                <el-input maxlength="100" placeholder="Token"
+                          v-model="formData.token"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="encodingAESKey" label="EncodingAESKey">
+                <el-input maxlength="100" placeholder="EncodingAESKey"
+                          v-model="formData.encodingAESKey"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item prop="payEnabled" label="微信支付">
+                <el-radio-group v-model="formData.payEnabled" @change="payEnabledChange">
+                    <el-radio :label="true">配置</el-radio>
+                    <el-radio :label="false">不配置</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="配置授权目录" v-if="formData.payEnabled">
+                ${AppDomain!}${base!}/open/pay/
+                <el-alert
+                        title="请在微信支付后台添加支付授权目录"
+                        type="success">
+                </el-alert>
+            </el-form-item>
+
+            <el-form-item class="is-required" prop="wxpay_mchid" label="商户号Mchid" v-if="formData.payEnabled">
+                <el-input maxlength="100" placeholder="商户号Mchid"
+                          v-model="formData.payInfo.wxpay_mchid"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+
+            <el-form-item class="is-required" prop="wxpay_key" label="商户Key" v-if="formData.payEnabled">
+                <el-input maxlength="100" placeholder="商户Key"
+                          v-model="formData.payInfo.wxpay_key"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doEdit">确 定</el-button>
+                  </span>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var self = this;
+            var validateId = function (rule, value, callback) {
+                var regex = new RegExp("^[A-Za-z]+$");
+                if (!regex.test(value)) {
+                    callback(new Error('唯一标识只可为字母'));
+                } else {
+                    callback();
+                }
+            };
+            var validateMchid = function (rule, value, callback) {
+                if (self.formData.payInfo.wxpay_mchid && self.formData.payInfo.wxpay_mchid != "") {
+                    callback();
+                } else {
+                    callback(new Error('请输入商户号'));
+                }
+            };
+            var validateKey = function (rule, value, callback) {
+                if (self.formData.payInfo.wxpay_key && self.formData.payInfo.wxpay_key != "") {
+                    callback();
+                } else {
+                    callback(new Error('请输入商户key'));
+                }
+            };
+            return {
+                addDialogVisible: false,
+                editDialogVisible: false,
+                pageForm: {
+                    searchName: "",
+                    searchKeyword: "",
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending",
+                },
+                tableData: [],
+                formData: {},
+                formRules: {
+                    id: [
+                        {required: true, message: '公众号唯一标识', trigger: ['blur', 'change']},
+                        {min: 0, max: 32, message: '长度在 32 个字符以内', trigger: ['blur', 'change']},
+                        {validator: validateId, trigger: ['blur', 'change']}
+                    ],
+                    appname: [
+                        {required: true, message: '微信公众号名称', trigger: 'blur'}
+                    ],
+                    appid: [
+                        {required: true, message: 'Appid', trigger: 'blur'}
+                    ],
+                    appsecret: [
+                        {required: true, message: 'Appsecret', trigger: 'blur'}
+                    ],
+                    token: [
+                        {required: true, message: 'Token', trigger: 'blur'}
+                    ],
+                    wxpay_mchid: [
+                        {validator: validateMchid, trigger: 'blur'}
+                    ],
+                    wxpay_key: [
+                        {validator: validateKey, trigger: 'blur'}
+                    ]
+                },
+            }
+        },
+        methods: {
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/wx/conf/account/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            formatAt: function (val) {
+                if (val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            handleSelectionChange: function (val) {
+                this.selectData = val;
+            },
+            payEnabledChange: function (val) {
+                if (!val) {
+                    this.formData.payInfo = {};
+                }
+            },
+            openAdd: function () {
+                var self = this;
+                self.addDialogVisible = true;
+                self.formData = {
+                    id: "",
+                    payEnabled: false,
+                    payInfo: {}
+                };
+                if (this.$refs["addForm"])
+                    this.$refs["addForm"].resetFields();
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "/platform/wx/conf/account/addDo";
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        self.formData.payInfo = JSON.stringify(self.formData.payInfo);
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                var url = base + "/platform/wx/conf/account/editDo";
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        self.formData.payInfo = JSON.stringify(self.formData.payInfo);
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDialogVisible = false;
+                                self.pageData();
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/wx/conf/account/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.formData.payInfo = JSON.parse(data.data.payInfo);
+                            self.editDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除： ' + command.name, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/wx/conf/account/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.pageData();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
+    });
+</script>
+<!--#
+}
+#-->

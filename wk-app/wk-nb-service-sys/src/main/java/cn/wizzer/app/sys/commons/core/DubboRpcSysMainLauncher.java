@@ -43,16 +43,9 @@ public class DubboRpcSysMainLauncher {
         //通过POJO类创建表结构
         try {
             Daos.createTablesInPackage(dao, "cn.wizzer.app.sys", false);
+            //通过POJO类修改表结构
+            //Daos.migration(dao, "cn.wizzer.app.sys", true, false);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        try {
-            if (log.isDebugEnabled()) {
-                //通过POJO类修改表结构
-                Daos.migration(dao, "cn.wizzer.app.sys", true, false);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
         }
         // 若必要的数据表不存在，则初始化数据库
         if (0 == dao.count(Sys_user.class)) {
@@ -89,7 +82,7 @@ public class DubboRpcSysMainLauncher {
             dao.insert(conf);
             conf = new Sys_config();
             conf.setConfigKey("WebNotification");
-            conf.setConfigValue("true");
+            conf.setConfigValue("false");
             conf.setNote("启用浏览器通知");
             dao.insert(conf);
             //初始化单位
@@ -117,7 +110,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("");
             menu.setTarget("");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setHasChildren(true);
             menu.setParentId("");
             menu.setType("menu");
@@ -133,7 +126,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(1);
             menu.setHref("");
             menu.setTarget("");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setHasChildren(true);
             menu.setParentId(m0.getId());
             menu.setType("menu");
@@ -147,7 +140,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("/platform/sys/unit");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.manager.unit");
             menu.setParentId(m1.getId());
             menu.setType("menu");
@@ -158,7 +151,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("添加单位");
             menu.setAliasName("Add");
             menu.setLocation(0);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.unit.add");
             menu.setParentId(m2.getId());
             menu.setType("data");
@@ -169,7 +162,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("修改单位");
             menu.setAliasName("Edit");
             menu.setLocation(0);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.unit.edit");
             menu.setParentId(m2.getId());
             menu.setType("data");
@@ -180,7 +173,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("删除单位");
             menu.setAliasName("Delete");
             menu.setLocation(0);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.unit.delete");
             menu.setParentId(m2.getId());
             menu.setType("data");
@@ -193,7 +186,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("/platform/sys/user");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.manager.user");
             menu.setHasChildren(false);
             menu.setParentId(m1.getId());
@@ -205,7 +198,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("添加用户");
             menu.setAliasName("Add");
             menu.setLocation(0);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.user.add");
             menu.setParentId(m3.getId());
             menu.setType("data");
@@ -216,7 +209,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("修改用户");
             menu.setAliasName("Edit");
             menu.setLocation(1);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.user.edit");
             menu.setParentId(m3.getId());
             menu.setType("data");
@@ -227,7 +220,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("删除用户");
             menu.setAliasName("Delete");
             menu.setLocation(2);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.user.delete");
             menu.setParentId(m3.getId());
             menu.setType("data");
@@ -239,7 +232,7 @@ public class DubboRpcSysMainLauncher {
             menu.setAliasName("Role");
             menu.setLocation(0);
             menu.setHref("/platform/sys/role");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.manager.role");
             menu.setTarget("data-pjax");
             menu.setParentId(m1.getId());
@@ -251,7 +244,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("添加角色");
             menu.setAliasName("Add");
             menu.setLocation(1);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.role.add");
             menu.setParentId(m4.getId());
             menu.setType("data");
@@ -262,7 +255,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("修改角色");
             menu.setAliasName("Edit");
             menu.setLocation(2);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.role.edit");
             menu.setParentId(m4.getId());
             menu.setType("data");
@@ -273,7 +266,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("删除角色");
             menu.setAliasName("Delete");
             menu.setLocation(3);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.role.delete");
             menu.setParentId(m4.getId());
             menu.setType("data");
@@ -284,7 +277,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("分配菜单");
             menu.setAliasName("SetMenu");
             menu.setLocation(4);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.role.menu");
             menu.setParentId(m4.getId());
             menu.setType("data");
@@ -295,7 +288,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("分配用户");
             menu.setAliasName("SetUser");
             menu.setLocation(5);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.role.user");
             menu.setParentId(m4.getId());
             menu.setType("data");
@@ -308,7 +301,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("/platform/sys/menu");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.manager.menu");
             menu.setParentId(m1.getId());
             menu.setType("menu");
@@ -319,7 +312,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("添加菜单");
             menu.setAliasName("Add");
             menu.setLocation(1);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.menu.add");
             menu.setParentId(m5.getId());
             menu.setType("data");
@@ -330,7 +323,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("修改菜单");
             menu.setAliasName("Edit");
             menu.setLocation(2);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.menu.edit");
             menu.setParentId(m5.getId());
             menu.setType("data");
@@ -341,7 +334,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("删除菜单");
             menu.setAliasName("Delete");
             menu.setLocation(3);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.menu.delete");
             menu.setParentId(m5.getId());
             menu.setType("data");
@@ -354,7 +347,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("/platform/sys/conf");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.manager.conf");
             menu.setParentId(m1.getId());
             menu.setType("menu");
@@ -365,7 +358,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("添加参数");
             menu.setAliasName("Add");
             menu.setLocation(1);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.conf.add");
             menu.setParentId(m6.getId());
             menu.setType("data");
@@ -376,7 +369,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("修改参数");
             menu.setAliasName("Edit");
             menu.setLocation(2);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.conf.edit");
             menu.setParentId(m6.getId());
             menu.setType("data");
@@ -387,7 +380,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("删除参数");
             menu.setAliasName("Delete");
             menu.setLocation(3);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.conf.delete");
             menu.setParentId(m6.getId());
             menu.setType("data");
@@ -400,7 +393,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("/platform/sys/log");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.manager.log");
             menu.setParentId(m1.getId());
             menu.setType("menu");
@@ -411,7 +404,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("清除日志");
             menu.setAliasName("Delete");
             menu.setLocation(1);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.log.delete");
             menu.setParentId(m7.getId());
             menu.setType("data");
@@ -424,7 +417,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("/platform/sys/task");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.manager.task");
             menu.setParentId(m1.getId());
             menu.setType("menu");
@@ -435,7 +428,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("添加任务");
             menu.setAliasName("Add");
             menu.setLocation(1);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.task.add");
             menu.setParentId(m8.getId());
             menu.setType("data");
@@ -446,7 +439,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("修改任务");
             menu.setAliasName("Edit");
             menu.setLocation(2);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.task.edit");
             menu.setParentId(m8.getId());
             menu.setType("data");
@@ -457,7 +450,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("删除任务");
             menu.setAliasName("Delete");
             menu.setLocation(3);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.task.delete");
             menu.setParentId(m8.getId());
             menu.setType("data");
@@ -470,7 +463,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("/platform/sys/route");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.manager.route");
             menu.setParentId(m1.getId());
             menu.setType("menu");
@@ -481,7 +474,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("添加路由");
             menu.setAliasName("Add");
             menu.setLocation(1);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.route.add");
             menu.setParentId(m9.getId());
             menu.setType("data");
@@ -492,7 +485,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("修改路由");
             menu.setAliasName("Edit");
             menu.setLocation(2);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.route.edit");
             menu.setParentId(m9.getId());
             menu.setType("data");
@@ -503,7 +496,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("删除路由");
             menu.setAliasName("Delete");
             menu.setLocation(3);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.route.delete");
             menu.setParentId(m9.getId());
             menu.setType("data");
@@ -517,7 +510,7 @@ public class DubboRpcSysMainLauncher {
             menu.setType("menu");
             menu.setLocation(2);
             menu.setIcon("ti-pencil-alt");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.config");
             menu.setHasChildren(true);
             Sys_menu pp1 = dao.insert(menu);
@@ -529,7 +522,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("/platform/sys/dict");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.manager.dict");
             menu.setParentId(pp1.getId());
             menu.setType("menu");
@@ -540,7 +533,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("添加字典");
             menu.setAliasName("Add");
             menu.setLocation(1);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.dict.add");
             menu.setParentId(d.getId());
             menu.setType("data");
@@ -551,7 +544,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("修改字典");
             menu.setAliasName("Edit");
             menu.setLocation(2);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.dict.edit");
             menu.setParentId(d.getId());
             menu.setType("data");
@@ -562,7 +555,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("删除字典");
             menu.setAliasName("Delete");
             menu.setLocation(3);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.dict.delete");
             menu.setParentId(d.getId());
             menu.setType("data");
@@ -578,7 +571,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("");
             menu.setTarget("");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setHasChildren(true);
             menu.setParentId(m0.getId());
             menu.setType("menu");
@@ -592,7 +585,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("/platform/sys/msg/user/all");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.msg.all");
             menu.setParentId(msg0.getId());
             menu.setType("menu");
@@ -605,7 +598,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(1);
             menu.setHref("/platform/sys/msg/user/unread");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.msg.unread");
             menu.setParentId(msg0.getId());
             menu.setType("menu");
@@ -618,7 +611,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(2);
             menu.setHref("/platform/sys/msg/user/read");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.msg.read");
             menu.setParentId(msg0.getId());
             menu.setType("menu");
@@ -631,7 +624,7 @@ public class DubboRpcSysMainLauncher {
             menu.setLocation(0);
             menu.setHref("/platform/sys/msg");
             menu.setTarget("data-pjax");
-            menu.setIsShow(true);
+            menu.setShowit(true);
             menu.setPermission("sys.manager.msg");
             menu.setParentId(m1.getId());
             menu.setType("menu");
@@ -642,7 +635,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("添加消息");
             menu.setAliasName("Add");
             menu.setLocation(0);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.msg.add");
             menu.setParentId(msgManger.getId());
             menu.setType("data");
@@ -653,7 +646,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("修改消息");
             menu.setAliasName("Edit");
             menu.setLocation(1);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.msg.edit");
             menu.setParentId(msgManger.getId());
             menu.setType("data");
@@ -664,12 +657,53 @@ public class DubboRpcSysMainLauncher {
             menu.setName("删除消息");
             menu.setAliasName("Delete");
             menu.setLocation(2);
-            menu.setIsShow(false);
+            menu.setShowit(false);
             menu.setPermission("sys.manager.msg.delete");
             menu.setParentId(msgManger.getId());
             menu.setType("data");
             dao.insert(menu);
 
+            //消息中心及消息管理
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("00010004");
+            menu.setName("运维中心");
+            menu.setNote("运维中心");
+            menu.setAliasName("Operation");
+            menu.setIcon("ti-shield");
+            menu.setLocation(0);
+            menu.setHref("");
+            menu.setTarget("");
+            menu.setShowit(true);
+            menu.setHasChildren(true);
+            menu.setParentId(m0.getId());
+            menu.setType("menu");
+            menu.setPermission("sys.operation");
+            Sys_menu op0 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("000100040001");
+            menu.setName("系统监控");
+            menu.setAliasName("Monitor");
+            menu.setLocation(0);
+            menu.setHref("/platform/sys/monitor");
+            menu.setTarget("data-pjax");
+            menu.setShowit(true);
+            menu.setPermission("sys.operation.monitor");
+            menu.setParentId(op0.getId());
+            menu.setType("menu");
+            Sys_menu op01 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000400010001");
+            menu.setName("修改日志等级");
+            menu.setAliasName("ChangeLoglevel");
+            menu.setLocation(1);
+            menu.setShowit(false);
+            menu.setPermission("sys.operation.monitor.loglevel");
+            menu.setParentId(op01.getId());
+            menu.setType("data");
+            dao.insert(menu);
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
@@ -701,7 +735,7 @@ public class DubboRpcSysMainLauncher {
             user.setLoginAt(0L);
             user.setLoginCount(0);
             user.setEmail("wizzer@qq.com");
-            user.setLoginTheme("palette.css");
+            user.setLoginTheme("palette.3.css");
             user.setLoginBoxed(false);
             user.setLoginScroll(false);
             user.setLoginSidebar(false);

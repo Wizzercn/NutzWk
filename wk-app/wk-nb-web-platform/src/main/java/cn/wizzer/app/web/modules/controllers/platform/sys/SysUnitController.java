@@ -66,6 +66,7 @@ public class SysUnitController {
     @SLog(tag = "新建单位", msg = "单位名称:${args[0].name}")
     public Object addDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
+            unit.setOpBy(StringUtil.getPlatformUid());
             sysUnitService.save(unit, parentId);
             return Result.success("system.success");
         } catch (Exception e) {

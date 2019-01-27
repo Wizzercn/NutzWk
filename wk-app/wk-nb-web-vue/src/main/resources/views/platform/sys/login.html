@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="${lang,escape}">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="${AppName!}">
+    <title>${AppName!}</title>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="${base!}/assets/platform/plugins/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/fonts/themify-icons.css">
+    <link rel="stylesheet" href="${base!}/assets/platform/css/common.css">
+</head>
+<body>
+<!--[if lt IE 9]>
+<div class="ie-must-go-die">
+    <div class="ie-container">
+        <h1>
+            您正在IE的世界中
+        </h1>
+        <p>
+            本系统不支持IE9以下版本浏览器访问。
+        </p>
+        <a href="https://browsehappy.com" target="_blank">
+            您可以点击此处，下载Chrome/Firefox后再次访问本页面。
+        </a>
+    </div>
+</div>
+<![endif]-->
+<div id="app" v-cloak>
+    <div class="login-container">
+
+        <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
+                 label-position="left">
+
+            <div class="title-container">
+                <h3 class="title">${AppName!}</h3>
+                <div class="lang">
+                    <el-dropdown size="small" @command="handleCommand">
+                        <!--# if(lang==null||lang=="zh_CN"){ #-->
+                        <img src="${base!}/assets/platform/img/flags/cn.png" class="flag">
+                        <!--# }else{ #-->
+                        <img src="${base!}/assets/platform/img/flags/us.png" class="flag">
+                        <!--# } #-->
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="en_US">
+                                <img src="${base!}/assets/platform/img/flags/us.png" class="flag">
+                                <span class="language">English</span>
+                            </el-dropdown-item>
+                            <el-dropdown-item command="zh_CN">
+                                <img src="${base!}/assets/platform/img/flags/cn.png" class="flag">
+                                <span class="language">中文</span>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
+            </div>
+
+            <el-form-item prop="username">
+
+                <el-input
+                        v-model="loginForm.username"
+                        placeholder="${msg['login.username']}"
+                        name="username"
+                        type="text"
+                        auto-complete="on" prefix-icon="ti-user"
+                >
+                </el-input>
+            </el-form-item>
+
+            <el-form-item prop="password">
+                <el-input
+                        :type="passwordType"
+                        v-model="loginForm.password"
+                        placeholder="${msg['login.password']}"
+                        name="password"
+                        auto-complete="on"
+                        @keyup.enter.native="doLogin" prefix-icon="ti-lock">
+                    <i
+                            class="ti-eye"
+                            slot="suffix"
+                            @click="showPwd">
+                    </i>
+                </el-input>
+            </el-form-item>
+
+            <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"
+                       @click.native.prevent="doLogin">${msg['login.submit']}
+            </el-button>
+
+            <el-button class="thirdparty-button" type="info" @click="showDialog=true">${msg['login.thirdparty']}
+            </el-button>
+            <el-row>
+                <p class="cp"><a href="https://Wizzer.cn" target="_blank">Wizzer.cn</a> ©
+                    <span>{{year}}</span>
+                </p>
+            </el-row>
+        </el-form>
+
+        <el-dialog title="${msg['login.thirdparty']}" :visible.sync="showDialog" append-to-body>
+            ${msg['login.thirdparty']}
+            <br>
+            <br>
+            <br>
+        </el-dialog>
+
+        <el-dialog title="${msg['login.error.verifycode']}" :visible.sync="captchaVisible" @close="closeCaptchaForm"
+                   append-to-body width="350px">
+            <el-form :model="captchaForm" ref="captchaForm" :rules="codeRules">
+                <el-row class="captcha_row">
+                    <el-form-item prop="verifycode">
+                        <el-input maxlength="4" placeholder="${msg['login.captcha']}" v-model="captchaForm.verifycode"
+                                  auto-complete="off" @keyup.enter.native="doCode"></el-input>
+                    </el-form-item>
+                    <img id="captcha_img" :src="codeUrl" @click="changeCode"/>
+                </el-row>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="closeCaptchaForm">取 消</el-button>
+                <el-button type="primary" @click="doCode">确 定</el-button>
+            </span>
+        </el-dialog>
+    </div>
+</div>
+</body>
+<!-- import Vue before Element -->
+<script src="${base!}/assets/platform/plugins/vue/vue.min.js"></script>
+<!-- import JavaScript -->
+<script src="${base!}/assets/platform/plugins/element-ui/lib/index.js"></script>
+<script src="${base!}/assets/platform/plugins/jquery/jquery-1.11.1.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                year: 2018,
+                captchaVisible: false,
+                codeUrl: "${base!}/platform/login/captcha",
+                captchaForm: {
+                    verifycode:""
+                },
+                loginForm: {
+                    username: 'superadmin',
+                    password: '1',
+                    platformCaptcha: ""
+                },
+                loginRules: {
+                    username: [
+                        {required: true, message: '请输入用户名', trigger: 'blur'}
+                    ],
+                    password: [
+                        {required: true, message: '请输入密码', trigger: 'blur'}
+                    ]
+                },
+                codeRules: {
+                    verifycode: [
+                        {required: true, message: '请输入验证码', trigger: 'blur'}
+                    ]
+                },
+                passwordType: 'password',
+                loading: false,
+                showDialog: false
+            }
+        },
+        methods: {
+            showPwd: function () {
+                if (this.passwordType === 'password') {
+                    this.passwordType = ''
+                } else {
+                    this.passwordType = 'password'
+                }
+            },
+            changeCode: function () {
+                this.captchaForm.verifycode=""
+                this.codeUrl = '${base!}/platform/login/captcha?_=' + new Date().getTime()
+            },
+            closeCaptchaForm: function () {
+                this.captchaForm.platformCaptcha = ""
+                this.captchaVisible = false
+            },
+            openCaptchaForm: function () {
+                this.captchaForm.platformCaptcha = ""
+                this.captchaVisible = true
+                this.changeCode()
+            },
+            doCode: function () {
+                var self = this
+                self.$refs["captchaForm"].validate(function (valid) {
+                    if(valid){
+                        self.doLogin()
+                    }
+                })
+            },
+            doLogin: function () {
+                var self = this
+                self.loginForm.platformCaptcha=self.captchaForm.verifycode
+                self.$refs["loginForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post("${base!}/platform/login/doLogin", self.loginForm, function (d) {
+                            if (d.code == 0) {
+                                window.location.href = "${base!}/platform/home"
+                            } else if (d.code == 1) {
+                                self.openCaptchaForm()
+                                self.$message({
+                                    message: d.msg,
+                                    type: 'error'
+                                })
+                            } else if (d.code == 2) {
+                                self.openCaptchaForm()
+                            } else {
+                                self.changeCode()
+                                self.$message({
+                                    message: d.msg,
+                                    type: 'error'
+                                })
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            handleCommand: function (command) {
+                window.location.href = "?lang=" + command
+            }
+        },
+        created: function () {
+            this.year = new Date().getFullYear()
+        }
+    })
+</script>
+<style scoped>
+    #app {
+        height: 100%;
+    }
+
+    body {
+        margin: 0 0 0 0;
+    }
+
+    .login-container {
+        background-color: #2d3a4b;
+        height: 100%;
+        position: fixed;
+        width: 100%;
+    }
+
+    .login-container .login-form {
+        left: 0;
+        margin: 120px auto;
+        padding: 35px 35px 15px;
+        position: absolute;
+        right: 0;
+        width: 520px;
+    }
+
+    .login-container .title-container .title {
+        color: #eee;
+        font-size: 26px;
+        font-weight: 700;
+        margin: 0 auto 40px;
+        text-align: center;
+    }
+
+    .login-container .title-container .set-language {
+        color: #fff;
+        position: absolute;
+        right: 0;
+        top: 5px;
+    }
+
+    .login-container .show-pwd {
+        color: #889aa4;
+        cursor: pointer;
+        font-size: 16px;
+        position: absolute;
+        right: 10px;
+        top: 7px;
+        user-select: none;
+    }
+
+    .thirdparty-button {
+        position: absolute;
+        bottom: -10px;
+        right: 35px;
+    }
+
+    .cp {
+        color: #ffffff;
+        position: absolute;
+        top: 50px;
+        text-align: center;
+        width: 100%;
+        font-size: 12px;
+    }
+
+    .cp a {
+        color: #ffffff;
+    }
+
+    .lang {
+        text-align: right;
+    }
+
+    .flag {
+        cursor: pointer;
+        width: 16px;
+        margin-top: -2px;
+    }
+
+    .captcha_row {
+        float: left;
+        margin: 10px;
+        bottom: 30px;
+    }
+
+    .captcha_row div {
+        width: 120px;
+        float: left;
+    }
+
+    .captcha_row img {
+        width: 120px;
+        margin-left: 5px;
+        float: left;
+    }
+
+    #captcha_img {
+        height: 40px;
+        cursor: pointer;
+    }
+</style>
+</html>

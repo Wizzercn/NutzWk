@@ -1,0 +1,395 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <el-button size="medium" @click="openAdd"><i class="ti-plus"></i> 新建单位</el-button>
+        </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table :data="treeData" style="width: 100%" :row-style="treeTableShowTr" size="small"
+                  :highlight-current-row="true">
+            <el-table-column label="单位名称" header-align="center" prop="name"
+                             width="200" :show-overflow-tooltip="true" align="left">
+                <template slot-scope="scope">
+                    <span v-for="(space, levelIndex) in treeTablePath(scope.row.path)" class="ms-tree-space"></span>
+                    <span v-if="treeTableIconShow(scope.row)" @click="treeTableChild(scope.row.id)"
+                          style="cursor: pointer">
+                        <span v-if="!scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right" title="展开"></span>
+
+                        <span v-if="scope.row.expanded"
+                              class="el-tree-node__expand-icon el-icon-caret-right expanded" title="关闭"></span>
+                    {{ scope.row.name }}
+                    </span>
+                    <span v-if="!treeTableIconShow(scope.row)">
+                         <span class="ms-tree-space"></span>
+                        {{ scope.row.name }}
+                    </span>
+                </template>
+            </el-table-column>
+
+            <el-table-column label="地址" header-align="center" prop="address"
+                             :show-overflow-tooltip="true" align="center">
+            </el-table-column>
+
+            <el-table-column label="电话" header-align="center" prop="telephone"
+                             :show-overflow-tooltip="true" align="center">
+            </el-table-column>
+
+            <el-table-column label="网址" header-align="center" prop="website"
+                             :show-overflow-tooltip="true" align="center">
+            </el-table-column>
+
+            <el-table-column label="操作" header-align="center" prop="website"
+                             :show-overflow-tooltip="true" align="center" width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item :command="{type:'edit',id:scope.row.id,name:scope.row.name}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item :command="{type:'delete',id:scope.row.id,name:scope.row.name}"
+                                              v-if="scope.row.path!='0001'">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <el-dialog
+            title="新建单位"
+            :visible.sync="addDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="parentId" label="上级单位" label-width="80px">
+                <el-cascader
+                        style="width: 100%"
+                        tabindex="1"
+                        :options="options"
+                        :show-all-levels="false"
+                        v-model="parentUnit"
+                        :fetch-suggestions="unitQuery"
+                        @active-item-change="unitChange"
+                        @change="unitChange2"
+                        @select="unitSelect"
+                        placeholder="不选择则为顶级"
+                ></el-cascader>
+            </el-form-item>
+            <el-form-item prop="name" label="单位名称">
+                <el-input maxlength="100" placeholder="单位名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="aliasName" label="单位别名">
+                <el-input maxlength="100" placeholder="单位别名"
+                          v-model="formData.aliasName"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="unitcode" label="机构编码">
+                <el-input maxlength="100" placeholder="机构编码"
+                          v-model="formData.unitcode"
+                          auto-complete="off" tabindex="4" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="address" label="单位地址">
+                <el-input maxlength="100" placeholder="单位地址"
+                          v-model="formData.address"
+                          auto-complete="off" tabindex="5" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="telephone" label="联系电话">
+                <el-input maxlength="100" placeholder="联系电话"
+                          v-model="formData.telephone"
+                          auto-complete="off" tabindex="6" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="email" label="单位邮箱">
+                <el-input maxlength="100" placeholder="单位邮箱"
+                          v-model="formData.email"
+                          auto-complete="off" tabindex="7" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="website" label="单位网站">
+                <el-input maxlength="100" placeholder="单位网站"
+                          v-model="formData.website"
+                          auto-complete="off" tabindex="8" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="note" label="单位介绍">
+                <el-input type="textarea" v-model="formData.note"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="addDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doAdd">确 定</el-button>
+                  </span>
+    </el-dialog>
+    <el-dialog
+            title="编辑单位"
+            :visible.sync="editDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="name" label="单位名称">
+                <el-input maxlength="100" placeholder="单位名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="2" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="aliasName" label="单位别名">
+                <el-input maxlength="100" placeholder="单位别名"
+                          v-model="formData.aliasName"
+                          auto-complete="off" tabindex="3" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="unitcode" label="机构编码">
+                <el-input maxlength="100" placeholder="机构编码"
+                          v-model="formData.unitcode"
+                          auto-complete="off" tabindex="4" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="address" label="单位地址">
+                <el-input maxlength="100" placeholder="单位地址"
+                          v-model="formData.address"
+                          auto-complete="off" tabindex="5" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="telephone" label="联系电话">
+                <el-input maxlength="100" placeholder="联系电话"
+                          v-model="formData.telephone"
+                          auto-complete="off" tabindex="6" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="email" label="单位邮箱">
+                <el-input maxlength="100" placeholder="单位邮箱"
+                          v-model="formData.email"
+                          auto-complete="off" tabindex="7" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="website" label="单位网站">
+                <el-input maxlength="100" placeholder="单位网站"
+                          v-model="formData.website"
+                          auto-complete="off" tabindex="8" type="text"></el-input>
+            </el-form-item>
+            <el-form-item prop="note" label="单位介绍">
+                <el-input type="textarea" v-model="formData.note"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="doEdit">确 定</el-button>
+                  </span>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                addDialogVisible: false,
+                editDialogVisible: false,
+                tableData: [],//后台取出的数据
+                treeData: [],//格式化tableData用于显示的数据
+                formData: {
+                    id: "",
+                    parentId: ""
+                },
+                formRules: {
+                    name: [
+                        {required: true, message: '单位名称', trigger: 'blur'}
+                    ],
+                    email: [
+                        {required: false, message: '单位邮箱', trigger: 'blur'},
+                        {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}
+                    ]
+                },
+                options: [],
+                parentUnit: []
+            }
+        },
+        methods: {
+            //级联选择器从后台动态获取下级数据
+            loadTree: function (val, cb) {
+                var url = base + "/platform/sys/unit/tree";
+                $.post(url, {pid: val}, function (data) {
+                    if (data.code == 0) {
+                        cb(data.data);
+                    }
+                }, "json");
+            },
+            unitQuery: function (queryString, cb) {
+                cb(this.options);
+            },
+            unitSelect: function (val) {
+            },
+            unitTree: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.value) {
+                        obj.children = data;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.unitTree(obj.children, data, pid);
+                    }
+                });
+            },
+            unitChange2:function(val){
+                var self = this;
+                if(val[0]=="root"){
+                    self.parentUnit=[];
+                }
+            },
+            unitChange: function (val) {
+                var self = this;
+                var pid = val[val.length - 1];
+                self.parentUnit = val;
+                this.loadTree(pid, function (tree) {
+                    self.unitTree(self.options, tree, pid);
+                });
+            },
+            openAdd: function () {
+                var self = this;
+                this.addDialogVisible = true;
+                this.formData = {};//打开新增窗口,表单先清空
+                this.parentUnit=[];
+                this.loadTree("", function (val) {
+                    self.options = val;
+                });
+            },
+            doAdd: function () {
+                var self = this;
+                var url = base + "/platform/sys/unit/addDo";
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        self.formData.parentId = self.parentUnit[self.parentUnit.length - 1]||"";
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                                self.treeTableChild("");
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doEdit: function () {
+                var self = this;
+                var url = base + "/platform/sys/unit/editDo";
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {//表单验证通过
+                        self.formData.parentId = self.parentUnit[self.parentUnit.length - 1];
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDialogVisible = false;
+                                self.treeTableChild("");
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            // 显示层级
+            treeTablePath: function (path) {
+                return path.length / 4 - 1;
+            },
+            // 显示行
+            treeTableShowTr: function (row, index) {
+                var parentIndex = this.treeData.findIndex(function (value) {
+                    return value.id === row.row.parentId;
+                });
+                var show = (row.row.parentId ? (this.treeData[parentIndex].expanded && this.treeData[parentIndex]._show) : true);
+                row.row._show = show;
+                return show ? '' : 'display:none;'
+            },
+            treeDataChildren: function (table, data, pid) {//树形数据的级联查找很是头疼
+                var self = this;
+                table.findIndex(function (obj) {
+                    if (pid == obj.id) {//找到这条数据追加下级数据
+                        obj.children = data;
+                        obj.expanded = !obj.expanded;
+                    } else if (obj.children && obj.children.length > 0) {
+                        self.treeDataChildren(obj.children, data, pid);
+                    }
+                });
+            },
+            // 展开下级
+            treeTableChild: function (pid) {
+                var self = this;
+                var url = base + "/platform/sys/unit/child";
+                $.post(url, {pid: pid}, function (data) {
+                    if (data.code == 0) {
+                        if (pid != undefined && pid != "") {
+                            self.treeDataChildren(self.tableData, data.data, pid);
+                        } else {
+                            self.tableData = data.data;
+                        }
+                        self.treeData = sublime.treeToArray(self.tableData);
+                    }
+                }, "json");
+
+            },
+            // 点击展开和关闭的时候，图标的切换
+            treeTableIconShow: function (record) {
+                return record.hasChildren;
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/sys/unit/edit/" + command.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.editDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除 ' + command.name, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/sys/unit/delete/" + command.id, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.treeTableChild("");
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            }
+        },
+        created: function () {
+            this.treeTableChild("");
+        }
+    });
+</script>
+<!--#
+}
+#-->

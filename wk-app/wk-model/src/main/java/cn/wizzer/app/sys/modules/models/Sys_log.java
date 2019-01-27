@@ -12,16 +12,13 @@ import java.io.Serializable;
 public class Sys_log extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
-    @Id
-//    @Prev({
-//            //仅做演示,实际使用oracle时,请使用触发器+序列的方式实现自增长ID,否则高并发下此种写法性能是个瓶颈
-//            //实际上不推荐在主键上使用自定义sql来生成
-//            @SQL(db = DB.ORACLE, value = "SELECT SYS_LOG_S.nextval FROM dual")
-//    })
-    private long id;
+    @Name
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    @Prev(els = {@EL("uuid()")})
+    private String id;
 
     @Column
-    @Comment("创建昵称")
+    @Comment("操作人姓名")
     @ColDefine(type = ColType.VARCHAR, width = 100)
     private String username;
 
@@ -60,11 +57,11 @@ public class Sys_log extends BaseModel implements Serializable {
     @ColDefine(type = ColType.TEXT)
     private String result;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

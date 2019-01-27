@@ -6,7 +6,7 @@
 
     <groupId>cn.wizzer</groupId>
     <artifactId>wk-parent</artifactId>
-    <version>5.0.7</version>
+    <version>5.1.5-SNAPSHOT</version>
     <modules>
         <module>wk-framework</module>
         <module>wk-app</module>
@@ -16,11 +16,15 @@
     <name>NutzWk-NB</name>
 
     <properties>
-        <nutzboot.version>2.3-SNAPSHOT</nutzboot.version>
-        <zkclient.version>0.10</zkclient.version>
-        <druid.version>1.1.10</druid.version>
-        <mysql-connector-java.version>5.1.46</mysql-connector-java.version>
-        <docker.image.prefix>nutzboot</docker.image.prefix>
+        <nutzboot.version>2.3.0-SNAPSHOT</nutzboot.version>
+        <nutz.version>1.r.68-SNAPSHOT</nutz.version>
+        <zkclient.version>0.11</zkclient.version>
+        <druid.version>1.1.12</druid.version>
+        <mysql-connector-java.version>5.1.47</mysql-connector-java.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <logback.version>1.2.3</logback.version>
+        <docker.image.prefix>nutzwk</docker.image.prefix>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -33,7 +37,7 @@
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
-            <url>http://apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
     <developers>
@@ -41,7 +45,7 @@
             <id>wizzercn</id>
             <name>Wizzer</name>
             <email>wizzer.cn@gmail.com</email>
-            <url>http://wizzer.cn</url>
+            <url>https://wizzer.cn</url>
         </developer>
         <developer>
             <id>wendal</id>
@@ -75,6 +79,11 @@
                 <version>${nutzboot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-api.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -135,16 +144,22 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.nutz.boot</groupId>
+                <artifactId>nutzboot-maven-plugin</artifactId>
+                <version>${nutzboot.version}</version>
+            </plugin>
         </plugins>
     </build>
     <repositories>
         <repository>
             <id>nutz</id>
-            <url>http://jfrog.nutz.cn/artifactory/libs-release</url>
+            <url>https://jfrog.nutz.cn/artifactory/libs-release</url>
         </repository>
         <repository>
             <id>nutz-snapshots</id>
-            <url>http://jfrog.nutz.cn/artifactory/snapshots</url>
+            <url>https://jfrog.nutz.cn/artifactory/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -157,7 +172,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>nutz-snapshots</id>
-            <url>http://jfrog.nutz.cn/artifactory/snapshots</url>
+            <url>https://jfrog.nutz.cn/artifactory/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>

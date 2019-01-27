@@ -25,6 +25,11 @@ public class Wx_reply_news extends BaseModel implements Serializable {
     private String sys_unit_id;
 
     @Column
+    @Comment("微信ID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String wxid;
+
+    @Column
     @Comment("标题")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String title;
@@ -38,6 +43,11 @@ public class Wx_reply_news extends BaseModel implements Serializable {
     @Comment("图片地址")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String picUrl;
+
+    @Column
+    @Comment("图片地址")
+    @ColDefine(type = ColType.VARCHAR, width = 255)
+    private String picUrl2;
 
     @Column
     @Comment("文章路径")
@@ -84,6 +94,14 @@ public class Wx_reply_news extends BaseModel implements Serializable {
         this.picUrl = picUrl;
     }
 
+    public String getPicUrl2() {
+        return picUrl2;
+    }
+
+    public void setPicUrl2(String picUrl2) {
+        this.picUrl2 = picUrl2;
+    }
+
     public String getUrl() {
         return url;
     }
@@ -106,5 +124,13 @@ public class Wx_reply_news extends BaseModel implements Serializable {
 
     public void setSys_unit_id(String sys_unit_id) {
         this.sys_unit_id = sys_unit_id;
+    }
+
+    public String getWxid() {
+        return wxid;
+    }
+
+    public void setWxid(String wxid) {
+        this.wxid = wxid;
     }
 }
