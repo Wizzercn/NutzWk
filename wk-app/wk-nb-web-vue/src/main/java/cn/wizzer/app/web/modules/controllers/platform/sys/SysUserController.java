@@ -364,7 +364,7 @@ public class SysUserController {
             } else {
                 user.setLoginPjax(false);
             }
-            sysUserService.clearCache();
+            sysUserService.deleteCache(user.getId());
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -387,7 +387,7 @@ public class SysUserController {
                 user.setCustomMenu("");
                 user.setCustomMenus(new ArrayList<>());
             }
-            sysUserService.clearCache();
+            sysUserService.deleteCache(user.getId());
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -407,7 +407,7 @@ public class SysUserController {
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
             sysUserService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", user.getId()));
-            sysUserService.clearCache();
+            sysUserService.deleteCache(user.getId());
             return Result.success();
         } else {
             return Result.error();
