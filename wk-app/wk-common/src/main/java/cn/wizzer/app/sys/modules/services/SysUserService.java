@@ -74,6 +74,11 @@ public interface SysUserService extends BaseService<Sys_user> {
     boolean hasChildren(String userId, String pid);
 
     /**
+     * 清除一个用户的缓存
+     * @param userId
+     */
+    void deleteCache(String userId);
+    /**
      * 清空缓存
      */
     void clearCache();

@@ -73,22 +73,22 @@ public class SysLoginController {
 //        if (subject.isAuthenticated()) {
 //            return "redirect:/platform/home";
 //        } else {
-        try {
-            HashMap<String, Object> map = RSAUtil.getKeys();
-            //生成公钥和私钥
-            RSAPublicKey publicKey = (RSAPublicKey) map.get("public");
-            RSAPrivateKey privateKey = (RSAPrivateKey) map.get("private");
-            //模
-            String publicKeyModulus = publicKey.getModulus().toString(16);
-            //公钥指数
-            String publicKeyExponent = publicKey.getPublicExponent().toString(16);
-            //私钥指数
-            req.setAttribute("publicKeyExponent", publicKeyExponent);
-            req.setAttribute("publicKeyModulus", publicKeyModulus);
-            session.setAttribute("platformPrivateKey", privateKey);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            HashMap<String, Object> map = RSAUtil.getKeys();
+//            //生成公钥和私钥
+//            RSAPublicKey publicKey = (RSAPublicKey) map.get("public");
+//            RSAPrivateKey privateKey = (RSAPrivateKey) map.get("private");
+//            //模
+//            String publicKeyModulus = publicKey.getModulus().toString(16);
+//            //公钥指数
+//            String publicKeyExponent = publicKey.getPublicExponent().toString(16);
+//            //私钥指数
+//            req.setAttribute("publicKeyExponent", publicKeyExponent);
+//            req.setAttribute("publicKeyModulus", publicKeyModulus);
+//            session.setAttribute("platformPrivateKey", privateKey);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return "beetl:/platform/sys/login.html";
 
 //        }
@@ -116,6 +116,7 @@ public class SysLoginController {
                 Sys_user user = (Sys_user) subject.getPrincipal();
                 user.setLoginTheme(theme);
                 sysUserService.update(Chain.make("loginTheme", theme), Cnd.where("id", "=", user.getId()));
+                sysUserService.deleteCache(user.getId());
             }
         }
     }
@@ -143,6 +144,7 @@ public class SysLoginController {
                 sysUserService.update(Chain.make("loginScroll", v), Cnd.where("id", "=", user.getId()));
                 user.setLoginScroll(v);
             }
+            sysUserService.deleteCache(user.getId());
         }
 
     }

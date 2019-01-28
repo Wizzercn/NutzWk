@@ -18,6 +18,7 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.plugins.wkcache.annotation.CacheDefaults;
+import org.nutz.plugins.wkcache.annotation.CacheRemove;
 import org.nutz.plugins.wkcache.annotation.CacheRemoveAll;
 import org.nutz.plugins.wkcache.annotation.CacheResult;
 
@@ -93,7 +94,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      * @param userId
      * @return
      */
-    @CacheResult
+    @CacheResult(cacheKey = "${args[0]}_getMenus")
     public List<Sys_menu> getMenus(String userId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
                 " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f and a.showit=@t and a.type='menu' order by a.location ASC,a.path asc");
@@ -113,7 +114,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      * @param userId
      * @return
      */
-    @CacheResult
+    @CacheResult(cacheKey = "${args[0]}_getMenusAndButtons")
     public List<Sys_menu> getMenusAndButtons(String userId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
                 " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f order by a.location ASC,a.path asc");
@@ -132,7 +133,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      * @param userId
      * @return
      */
-    @CacheResult
+    @CacheResult(cacheKey = "${args[0]}_getDatas")
     public List<Sys_menu> getDatas(String userId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId  and " +
                 " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f and a.type='data' order by a.location ASC,a.path asc");
@@ -174,7 +175,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      * @param pid
      * @return
      */
-    @CacheResult
+    @CacheResult(cacheKey = "${args[0]}_${args[1]}_getRoleMenus")
     public List<Sys_menu> getRoleMenus(String userId, String pid) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
                 "$m and b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f order by a.location ASC,a.path asc");
@@ -197,7 +198,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
      * @param pid
      * @return
      */
-    @CacheResult
+    @CacheResult(cacheKey = "${args[0]}_${args[1]}_hasChildren")
     public boolean hasChildren(String userId, String pid) {
         Sql sql = Sqls.create("select count(*) from sys_menu a,sys_role_menu b where a.id=b.menuId and " +
                 "$m and b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f order by a.location ASC,a.path asc");
@@ -211,6 +212,12 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
         sql.setCallback(Sqls.callback.integer());
         dao().execute(sql);
         return sql.getInt() > 0;
+    }
+
+    @CacheRemove(cacheKey = "${args[0]}_*")
+    //可以通过el表达式加 * 通配符来批量删除一批缓存
+    public void deleteCache(String userId) {
+
     }
 
     @CacheRemoveAll

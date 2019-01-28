@@ -23,9 +23,9 @@
     <script src="${base!}/assets/plugins/modernizr.js"></script>
     <script src="${base!}/assets/plugins/jquery-1.11.1.min.js"></script>
     <script src="${base!}/assets/js/jquery.pjax.js"></script>
-    <script src="${base!}/assets/js/sso/RSA.js"></script>
-    <script src="${base!}/assets/js/sso/BigInt.js"></script>
-    <script src="${base!}/assets/js/sso/Barrett.js"></script>
+    <!--<script src="${base!}/assets/js/sso/RSA.js"></script>-->
+    <!--<script src="${base!}/assets/js/sso/BigInt.js"></script>-->
+    <!--<script src="${base!}/assets/js/sso/Barrett.js"></script>-->
 
 <body>
 <div class="overlay"></div>
@@ -134,22 +134,22 @@
 </div>
 
 <script type="text/javascript">
-    function bodyRSA()
-    {
-        setMaxDigits(200);
-        return new RSAKeyPair("${publicKeyExponent!'10001'}","","${publicKeyModulus!'a5aeb8c636ef1fda5a7a17a2819e51e1ea6e0cceb24b95574ae026536243524f322807df2531a42139389674545f4c596db162f6e6bbb26498baab074c036777'}");
-    }
-    var key =  bodyRSA();
+    // function bodyRSA()
+    // {
+    //     setMaxDigits(200);
+    //     return new RSAKeyPair("${publicKeyExponent!'10001'}","","${publicKeyModulus!'a5aeb8c636ef1fda5a7a17a2819e51e1ea6e0cceb24b95574ae026536243524f322807df2531a42139389674545f4c596db162f6e6bbb26498baab074c036777'}");
+    // }
+    // var key =  bodyRSA();
     $(document).ready(function () {
         $("#year").html(new Date().getFullYear());
         $(document).on('keypress',function(event){
             if(event.keyCode == 13){
-                $("#password").val(encryptedString(key, $("#password").val().split("").reverse().join("")));
+                // $("#password").val(encryptedString(key, $("#password").val().split("").reverse().join("")));
                 $("#loginForm").submit();
             }
         });
         $("#login").on("click",function () {
-            $("#password").val(encryptedString(key,$("#password").val().split("").reverse().join("")));
+            // $("#password").val(encryptedString(key,$("#password").val().split("").reverse().join("")));
             $("#loginForm").submit();
         });
         $("#loginForm").ajaxForm({
