@@ -109,6 +109,7 @@ public class SysLoginController {
                 Sys_user user = (Sys_user) subject.getPrincipal();
                 user.setLoginTheme(theme);
                 sysUserService.update(Chain.make("loginTheme", theme), Cnd.where("id", "=", user.getId()));
+                sysUserService.deleteCache(user.getId());
             }
         }
     }
@@ -136,6 +137,7 @@ public class SysLoginController {
                 sysUserService.update(Chain.make("loginScroll", v), Cnd.where("id", "=", user.getId()));
                 user.setLoginScroll(v);
             }
+            sysUserService.deleteCache(user.getId());
         }
 
     }

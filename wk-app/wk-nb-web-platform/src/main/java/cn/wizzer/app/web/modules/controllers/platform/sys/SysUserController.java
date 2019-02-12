@@ -16,8 +16,6 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.crypto.RandomNumberGenerator;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ByteSource;
@@ -353,7 +351,7 @@ public class SysUserController {
             } else {
                 user.setLoginPjax(false);
             }
-            sysUserService.clearCache();
+            sysUserService.deleteCache(user.getId());
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -376,7 +374,7 @@ public class SysUserController {
                 user.setCustomMenu("");
                 user.setCustomMenus(new ArrayList<>());
             }
-            sysUserService.clearCache();
+            sysUserService.deleteCache(user.getId());
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -396,7 +394,7 @@ public class SysUserController {
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
             sysUserService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", user.getId()));
-            sysUserService.clearCache();
+            sysUserService.deleteCache(user.getId());
             return Result.success("修改成功");
         } else {
             return Result.error("原密码不正确");

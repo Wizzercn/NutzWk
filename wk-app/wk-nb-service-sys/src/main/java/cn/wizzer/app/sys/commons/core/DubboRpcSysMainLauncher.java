@@ -663,7 +663,7 @@ public class DubboRpcSysMainLauncher {
             menu.setType("data");
             dao.insert(menu);
 
-            //消息中心及消息管理
+            //运维中心
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("00010004");
