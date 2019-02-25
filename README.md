@@ -68,13 +68,13 @@ https://wizzer.cn/donation                捐赠者列表
 
 ![models](wk-wiki/images/08.png)
 
-*   确保 MySql、Redis、Zookeeper 默认配置并已启动好[application.properties 可更改配置项]
-*   MySql 创建名为 nutzwk_nb 的空数据库,在每个NB项目启动时会自动建表,同时初始化数据
+*   确保 MySql、Redis、Zookeeper 默认端口配置并已启动好
+*   MySql 创建名为 `nutzwk_nb` 的空数据库,在每个NB模块启动时会自动建表,同时初始化数据
 *   项目根目录执行 `mvn clean install -Dmaven.test.skip=true`
 *   在单个NB模块下执行 `mvn compile nutzboot:run` 运行或 `mvn package nutzboot:shade` 生成可执行jar包
 *   在项目根目录执行 `mvn -Dnutzboot.dst=E:/dst clean package nutzboot:shade` 将所有可运行jar包生成到指定位置
 *   启动顺序是 sys --> cms[可选] --> wx[可选] --> task[可选] --> web-platform 或 web-vue --> web-api[可选]
-*   可选择使用运行参数 `-Dnutz.profiles.active=prod` 加载 application-prod.properties 配置文件
+*   生产环境部署可使用运行参数 `-Dnutz.profiles.active=prod` 加载 application-prod.properties 配置文件
 *   正常启动后访问 `http://127.0.0.1:8080/sysadmin` 用户名 superadmin 密码 1
 *   框架详细介绍及代码生成器的使用等内容请仔细阅读 [wk-wiki](wk-wiki)
 
@@ -90,7 +90,10 @@ https://wizzer.cn/donation                捐赠者列表
 
 # 关于
 
-*   本项目完全开源，商用完全免费（欢迎商业用户打赏500￥以上，以便有更好的技术支持）
+*   本项目完全开源，商用完全免费
+*   欢迎商业用户打赏500￥以上，支持项目持续发展，以及得到更好的技术支持
+*   另外提供付费的培训服务，含源码解析、设计思路、疑难解答、项目辅导等
+*   联系方式 QQ：11624317  微信：wizzer
 *   欢迎打赏，以资鼓励 [https://wizzer.cn/donation](https://wizzer.cn/donation)
 
 ## Credits

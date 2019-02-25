@@ -8,6 +8,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
 import org.nutz.weixin.impl.WxApi2Impl;
 
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class Globals {
         Globals.MyConfig.clear();
         List<Sys_config> configList = sysConfigService.query();
         for (Sys_config sysConfig : configList) {
-            switch (sysConfig.getConfigKey()) {
+            switch (Strings.sNull(sysConfig.getConfigKey())) {
                 case "AppName":
                     Globals.AppName = sysConfig.getConfigValue();
                     break;
