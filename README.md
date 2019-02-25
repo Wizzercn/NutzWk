@@ -66,6 +66,8 @@ https://wizzer.cn/donation                捐赠者列表
 |[wk-nb-web-platform](wk-app/wk-nb-web-platform) |WEB管理后台(可选),dubbo消费端,NB项目,Mvc|
 |[wk-nb-web-vue](wk-app/wk-nb-web-vue) |WEB管理后台Vue.js混合版(可选),dubbo消费端,NB项目,Mvc|
 
+![models](wk-wiki/images/08.png)
+
 *   确保 MySql、Redis、Zookeeper 默认配置并已启动好[application.properties 可更改配置项]
 *   MySql 创建名为 nutzwk_nb 的空数据库,在每个NB项目启动时会自动建表,同时初始化数据
 *   项目根目录执行 `mvn clean install -Dmaven.test.skip=true`
