@@ -1,6 +1,8 @@
 package cn.wizzer.app.web.commons.utils;
 
+import cn.wizzer.app.sys.modules.services.SysApiService;
 import cn.wizzer.framework.base.Result;
+import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.integration.jedis.RedisService;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -21,17 +23,19 @@ public class SignCheckUtil {
     @Inject
     private PropertiesProxy conf;
     @Inject
+    @Reference
+    private SysApiService sysApiService;
+    @Inject
     private RedisService redisService;
 
     public Result checkSign(Map<String, Object> paramMap) {
         try {
-            String appid_sys = conf.get("apitoken.appid", "");
-            String appkey_sys = conf.get("apitoken.appkey", "");
             String appid = Strings.sNull(paramMap.get("appid"));
             String sign = Strings.sNull(paramMap.get("sign"));
             String timestamp = Strings.sNull(paramMap.get("timestamp"));
             String nonce = Strings.sNull(paramMap.get("nonce"));
-            if (!appid_sys.equals(appid)) {
+            String appkey = sysApiService.getAppkey(appid);
+            if (Strings.isBlank(appid) || Strings.isBlank(appkey)) {
                 return Result.error(1, "appid不正确");
             }
             if (Times.getTS() - Long.valueOf(timestamp) > 60 * 1000) {//时间戳相差大于1分钟则为无效的
@@ -42,7 +46,7 @@ public class SignCheckUtil {
                 return Result.error(3, "nonce不正确");
 
             }
-            if (!SignUtil.createSign(appkey_sys, paramMap).equalsIgnoreCase(sign)) {
+            if (!SignUtil.createSign(appkey, paramMap).equalsIgnoreCase(sign)) {
                 return Result.error(4, "sign签名不正确");
             }
             //nonce保存到缓存

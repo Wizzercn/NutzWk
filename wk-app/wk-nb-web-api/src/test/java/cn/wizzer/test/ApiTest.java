@@ -36,8 +36,9 @@ public class ApiTest extends Assert {
     private RedisService redisService;
 
     public void init() {
-        appid = conf.get("apitoken.appid", "");
-        appkey = conf.get("apitoken.appkey", "");
+        // 系统-系统配置-密钥管理 ,添加密钥
+        appid = "gappMtkoSz6FQD6D";
+        appkey = "N4qGVyQmPPcapwqzIqG8Xb0Ot3c6zk";
         System.out.println("appid:::" + appid);
         System.out.println("appkey:::" + appkey);
     }

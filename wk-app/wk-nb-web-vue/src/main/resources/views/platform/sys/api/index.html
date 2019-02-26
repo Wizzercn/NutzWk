@@ -1,0 +1,286 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+<div id="app" v-cloak>
+    <el-row class="header navbar bg-white shadow">
+        <div class="btn-group tool-button mt5">
+            <el-button size="medium" @click="openAdd">
+                <i class="ti-plus"></i>
+                新建密钥
+            </el-button>
+        </div>
+    </el-row>
+    <el-row class="el-table-container">
+        <el-table
+                :data="tableData"
+                @sort-change='pageOrder'
+                size="small"
+                header-align="center"
+                style="width: 100%"
+        >
+            <el-table-column
+                    sortable
+                    prop="name"
+                    label="应用名称"
+                    header-align="center"
+                    align="center"
+                    width="120"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="appid"
+                    label="App Id"
+                    header-align="center"
+                    width="160"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="appkey"
+                    label="App Key"
+                    header-align="center"
+                    width="320">
+                <template slot-scope="scope">
+                    <span v-if="isVisable(scope.row.appid)" class="bg-success">{{scope.row.appkey}}</span><a v-if="!isVisable(scope.row.appid)" @click="visiableData.push(scope.row.appid)" style="padding-left:5px;color: #06C;cursor: pointer;">显示</a><a v-if="isVisable(scope.row.appid)" @click="setNotVisable(scope.row.appid)" style="padding-left:5px;color: #06C;cursor: pointer;">隐藏</a>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="opAt"
+                    label="创建时间"
+                    header-align="center" align="center">
+                <template slot-scope="scope">
+                    {{formatAt(scope.row.opAt)}}
+                </template>
+            </el-table-column>
+            <el-table-column
+                    sortable
+                    prop="disabled"
+                    label="启用状态"
+                    header-align="center"
+                    align="center"
+            >
+                <template slot-scope="scope">
+                    <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
+                    <i v-if="!scope.row.disabled" class="fa fa-circle text-success ml5"></i>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    label="操作"
+                    width="120">
+                <template slot-scope="scope">
+                    <el-dropdown @command="dropdownCommand">
+                        <el-button size="mini">
+                            <i class="ti-settings"></i>
+                            <span class="ti-angle-down"></span>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item
+                                    :command="{type:'enable',appid:scope.row.appid,name:scope.row.name,row:scope.row}">
+                                启用
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                                    :command="{type:'disable',appid:scope.row.appid,name:scope.row.name,row:scope.row}">
+                                禁用
+                            </el-dropdown-item>
+                            <el-dropdown-item divided :command="{type:'delete',appid:scope.row.appid,name:scope.row.name}">
+                                删除
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <el-row class="el-pagination-container">
+        <el-pagination
+                @size-change="pageSizeChange"
+                @current-change="pageNumberChange"
+                :current-page="pageForm.pageNumber"
+                :page-sizes="[10, 20, 30, 50]"
+                :page-size="pageForm.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="pageForm.totalCount">
+        </el-pagination>
+    </el-row>
+    <el-dialog
+            title="新建密钥"
+            :visible.sync="addDialogVisible"
+            width="50%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="name" label="应用名称">
+                <el-input maxlength="100" placeholder="应用名称"
+                          v-model="formData.name"
+                          auto-complete="off" tabindex="1" type="text"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="addDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doAdd">确 定</el-button>
+        </span>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                addDialogVisible: false,
+                editDialogVisible: false,
+                visiableData:[],
+                tableData: [],
+                pageForm: {
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "",
+                    pageOrderBy: ""
+                },
+                formData: {
+                    id: ""
+                },
+                formRules: {
+                    name: [
+                        {required: true, message: '应用名称', trigger: 'blur'}
+                    ]
+                },
+            }
+        },
+        methods: {
+            isVisable:function(appid){
+                if(this.visiableData.indexOf(appid)>=0){
+                    return true;
+                }
+                return false;
+            },
+            setNotVisable:function(appid){
+                var index=this.visiableData.indexOf(appid);
+                if(index>=0){
+                    this.visiableData.splice(index,1);
+                }
+            },
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/sys/api/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            formatAt: function (val) {
+                if (val && val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            doSearch: function () {
+                this.pageForm.pageNumber = 1;
+                this.pageData();
+            },
+            openAdd: function () {
+                var self = this;
+                this.addDialogVisible = true;
+                this.formData = {};//打开新增窗口,表单先清空
+                if (this.$refs["addForm"])
+                    this.$refs["addForm"].resetFields();
+            },
+            doAdd: function () {
+                var self = this;
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post(base + "/platform/sys/api/addDo", self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.addDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                            self.pageData();//添加失败也可以入库,所以加载一下看看
+                        }, "json");
+                    }
+                });
+            },
+            dropdownCommand: function (command) {//监听下拉框事件
+                var self = this;
+                if ("enable" == command.type || "disable" == command.type) {
+                    $.post(base + "/platform/sys/api/" + command.type + "/" + command.appid, {}, function (data) {
+                        if (data.code == 0) {
+                            self.$message({
+                                message: data.msg,
+                                type: 'success'
+                            });
+                            if ("disable" == command.type) {
+                                command.row.disabled = true;
+                            }
+                            if ("enable" == command.type) {
+                                command.row.disabled = false;
+                            }
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
+                if ("delete" == command.type) {
+                    self.$confirm('此操作将删除密钥 ' + command.name, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        callback: function (a, b) {
+                            if ("confirm" == a) {//确认后再执行
+                                $.post(base + "/platform/sys/api/delete/" + command.appid, {}, function (data) {
+                                    if (data.code == 0) {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'success'
+                                        });
+                                        self.doSearch();
+                                    } else {
+                                        self.$message({
+                                            message: data.msg,
+                                            type: 'error'
+                                        });
+                                    }
+                                }, "json");
+                            }
+                        }
+                    });
+                }
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
+    });
+</script>
+
+<!--#
+}
+#-->

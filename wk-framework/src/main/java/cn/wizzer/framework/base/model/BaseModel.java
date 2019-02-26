@@ -5,7 +5,6 @@ import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
-import org.nutz.lang.random.R;
 import org.nutz.mvc.Mvcs;
 
 import javax.servlet.http.HttpServletRequest;
@@ -83,9 +82,5 @@ public abstract class BaseModel implements Serializable {
 
     public void setDelFlag(Boolean delFlag) {
         this.delFlag = delFlag;
-    }
-
-    public String uuid() {
-        return R.UU32().toLowerCase();
     }
 }
