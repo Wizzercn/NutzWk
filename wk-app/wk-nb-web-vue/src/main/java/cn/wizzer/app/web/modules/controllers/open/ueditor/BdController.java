@@ -39,14 +39,14 @@ public class BdController {
             } else if (tf == null) {
                 return Json.toJson(nutMap.addv("state", "FAIL"));
             } else {
-                String uri = "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
+                String uri = "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf("."));
                 String f = Globals.AppUploadPath + uri;
                 Files.write(new File(f), tf.getInputStream());
                 nutMap.addv("name", tf.getName());
                 nutMap.addv("state", "SUCCESS");
                 nutMap.addv("url", Globals.AppUploadBase + uri);
                 nutMap.addv("originalName", tf.getSubmittedFileName());
-                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
+                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".") + 1));
                 nutMap.addv("size", tf.getSize());
                 if (Strings.isBlank(callback)) {
                     return Json.toJson(nutMap);

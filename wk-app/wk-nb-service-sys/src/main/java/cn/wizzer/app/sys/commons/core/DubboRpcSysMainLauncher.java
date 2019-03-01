@@ -727,6 +727,7 @@ public class DubboRpcSysMainLauncher {
             menu.setType("menu");
             menu.setPermission("sys.operation");
             Sys_menu op0 = dao.insert(menu);
+            //系统监控
             menu = new Sys_menu();
             menu.setDisabled(false);
             menu.setPath("000100040001");
@@ -751,6 +752,54 @@ public class DubboRpcSysMainLauncher {
             menu.setParentId(op01.getId());
             menu.setType("data");
             dao.insert(menu);
+            //应用管理
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("000100040002");
+            menu.setName("应用管理");
+            menu.setAliasName("App");
+            menu.setLocation(0);
+            menu.setHref("/platform/sys/app");
+            menu.setTarget("data-pjax");
+            menu.setShowit(true);
+            menu.setPermission("sys.operation.app");
+            menu.setParentId(op0.getId());
+            menu.setType("menu");
+            Sys_menu op02 = dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000400020001");
+            menu.setName("配置文件管理");
+            menu.setAliasName("AppConfig");
+            menu.setLocation(1);
+            menu.setShowit(false);
+            menu.setPermission("sys.operation.app.conf");
+            menu.setParentId(op02.getId());
+            menu.setType("data");
+            dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000400020002");
+            menu.setName("Jar包管理");
+            menu.setAliasName("AppJar");
+            menu.setLocation(2);
+            menu.setShowit(false);
+            menu.setPermission("sys.operation.app.jar");
+            menu.setParentId(op02.getId());
+            menu.setType("data");
+            dao.insert(menu);
+            menu = new Sys_menu();
+            menu.setDisabled(false);
+            menu.setPath("0001000400020003");
+            menu.setName("实例管理");
+            menu.setAliasName("AppInstance");
+            menu.setLocation(3);
+            menu.setShowit(false);
+            menu.setPermission("sys.operation.app.instance");
+            menu.setParentId(op02.getId());
+            menu.setType("data");
+            dao.insert(menu);
+
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");

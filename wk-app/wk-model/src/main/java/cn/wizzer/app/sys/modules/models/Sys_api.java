@@ -6,6 +6,7 @@ import org.nutz.dao.entity.annotation.*;
 import java.io.Serializable;
 
 /**
+ * API密钥管理
  * Created by wizzer on 2019/2/26.
  */
 @Table("sys_api")

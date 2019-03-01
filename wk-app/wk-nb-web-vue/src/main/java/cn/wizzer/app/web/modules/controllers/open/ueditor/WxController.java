@@ -57,7 +57,7 @@ public class WxController {
                 nutMap.addv("state", "SUCCESS");
                 nutMap.addv("url", Strings.sNull(resp.get("url")).replace("http://","https://"));
                 nutMap.addv("originalName", tf.getSubmittedFileName());
-                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
+                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".") + 1));
                 nutMap.addv("size", tf.getSize());
                 if (Strings.isBlank(callback)) {
                     return Json.toJson(nutMap);

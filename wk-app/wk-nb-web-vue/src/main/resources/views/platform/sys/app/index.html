@@ -1,0 +1,279 @@
+<!--#
+layout("/layouts/platform.html"){
+#-->
+<style>
+    .host-title {
+        width: 180px;
+        height: 50px;
+        line-height: 50px;
+        background: #D9DEE4;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .host-list {
+        top: 50px;
+        left: 0px;
+        bottom: 0px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 550px;
+    }
+
+    .host-list ul {
+        padding-left: 0;
+        min-height: 550px;
+    }
+
+    .host-list li {
+        background-color: #D9DEE4;
+        list-style: none;
+        padding-bottom: 10px;
+        height: 50px;
+        line-height: 60px;
+    }
+
+    .host-list li:nth-child(1) {
+        padding-left: 40px;
+        padding-top: 10px;
+    }
+
+    .host-list li span:nth-child(1) {
+        padding-left: 6px;
+        position: absolute;
+        line-height: 30px;
+    }
+
+    .host-list li span:nth-child(2) {
+        padding-left: 6px;
+        font-size: 11px;
+    }
+
+    .host-list li.active {
+        background-color: #FFFFFF;
+        cursor: default;
+    }
+
+    .host-list li:hover {
+        background-color: #FFFFFF;
+        cursor: pointer;
+    }
+
+    a:hover {
+        color: #0e78c5;
+        cursor: pointer;
+    }
+</style>
+<div id="app" v-cloak>
+    <el-row>
+        <el-col :span="4" style="background-color: #D9DEE4;">
+            <div class="host-list">
+                <ul>
+                    <li @click="loaddata" :class="hostName==''?'active':''">
+                        <span>主机列表</span>
+                    </li>
+                    <li v-for="o in hostList" @click="loadhost(o.hostName)" :class="hostName==o.hostName?'active':''">
+                        <span>{{o.hostName}}</span>
+                        <span>{{o.hostAddress}}</span>
+                    </li>
+                </ul>
+            </div>
+        </el-col>
+        <el-col :span="20">
+
+            <el-row class="header navbar bg-white shadow">
+                <div class="btn-group tool-button mt5">
+                    <span>主机: {{hostName==''?'全部主机':hostName}}</span>
+                    <el-button v-if="hostName" style="padding: 10px 3px" type="text" icon="ti-stats-up"
+                               @click="pageData" title="资源监控"></el-button>
+                    <el-button style="padding: 10px 3px" type="text" icon="ti-timer"
+                               @click="pageData" title="任务列表"></el-button>
+                    <el-button style="padding: 10px 3px" type="text" icon="ti-reload"
+                               @click="pageData" title="刷新数据"></el-button>
+
+                </div>
+                <div class="pull-right offscreen-right mt5" style="margin-right: 185px;">
+                    <a class="el-button el-button--default el-button--medium" href="${base}/platform/sys/app/jar" data-pjax>安装包</a>
+                    <a class="el-button el-button--default el-button--medium" href="${base}/platform/sys/app/conf" data-pjax>配置文件</a>
+
+                </div>
+            </el-row>
+            <el-row class="el-table-container">
+                <el-table
+                        :data="appList"
+                        size="small"
+                        header-align="center"
+                        style="width: 100%"
+                >
+                    <el-table-column
+                            prop="name"
+                            label="实例名称"
+                            header-align="center"
+                            align="left"
+                            width="135"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            prop="processId"
+                            label="进程ID"
+                            width="65"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            prop="hostName"
+                            label="主机信息"
+                            width="140"
+                            :show-overflow-tooltip="true"
+                    >
+                        <template slot-scope="scope">
+                            <span style="font-size: 12px;">{{scope.row.hostName}}</span><br/>
+                            <span style="font-size: 10px;">{{scope.row.hostAddress}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            prop="hostName"
+                            label="JVM"
+                            width="180"
+                            :show-overflow-tooltip="true"
+                    >
+                        <template slot-scope="scope">
+                            <span>Total: {{scope.row.vmTotal}}MB</span>
+                            <span>Use: {{scope.row.vmUse}}MB</span><br/>
+                            <span>Free: {{scope.row.vmFree}}MB</span>
+                            <span>Max: {{scope.row.vmMax}}MB</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            prop="uptime"
+                            label="运行时间">
+                        <template slot-scope="scope">
+                            {{formatUptime(scope.row.uptime)}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            prop="appVersion"
+                            label="运行版本">
+                        <template slot-scope="scope">
+                            <span>
+                                安装包: {{scope.row.appVersion?scope.row.appVersion:'未获取'}}
+                            </span><br/>
+                            <span>
+                                配置文件: {{scope.row.confVersion?scope.row.confVersion:'未获取'}}
+                            </span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="操作"
+                            width="80">
+                        <template slot-scope="scope">
+                            <el-button style="padding: 10px 3px" type="text" icon="ti-power-off"
+                                       title="停止"
+                                       :disabled="getOffDisabled(scope.row)"></el-button>
+                            <el-button style="padding: 10px 3px" type="text" icon="ti-desktop"
+                                       title="启动新实例"
+                                       :disabled="getStartDisabled(scope.row)"></el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+            </el-row>
+        </el-col>
+    </el-row>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                addDialogVisible: false,
+                editDialogVisible: false,
+                hostName: "",
+                hostList: [],
+                appList: [],
+                tableData: [],
+                formData: {
+                    id: ""
+                },
+                formRules: {
+                    name: [
+                        {required: true, message: '应用名称', trigger: 'blur'}
+                    ]
+                },
+            }
+        },
+        methods: {
+            formatUptime: function (val) {
+                var up = moment(val * 1000);
+                var now = moment();
+                var hours = now.diff(up, 'hours');
+                var minutes = now.diff(up, 'minutes') % 60;
+                var seconds = now.diff(up, 'seconds') % 60;
+                return hours + "小时" + minutes + "分钟" + seconds + "秒";
+            },
+            pageData: function () {//加载分页数据
+                var self = this;
+                sublime.showLoadingbar();//显示loading
+                $.post(base + "/platform/sys/app/data", {hostName: self.hostName}, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.hostList = data.data.hostList;
+                        self.appList = data.data.appList;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            formatAt: function (val) {
+                if (val && val > 0)
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                return "";
+            },
+            loaddata: function () {
+                this.hostName = "";
+                this.pageData();
+            },
+            loadhost: function (h) {
+                this.hostName = h;
+                this.pageData();
+            },
+            getStartDisabled: function (obj) {
+                //判断是否可以启动主机,满足条件为获取版本号
+                if (obj.appVersion && obj.confVersion) {
+                    return false;
+                }
+                return true;
+            },
+            getOffDisabled: function (obj) {
+                //判断是否可以关机,满足条件为能获取版本号,且运行实例数量大于1
+                var self = this;
+                var num = 0;
+                var enabled = false;
+                self.appList.forEach(function (app) {
+                    if (app.name == obj.name && app.appVersion && app.confVersion) {
+                        num++;
+                        if (app.processId == obj.processId) {
+                            enabled = true;
+                        }
+                    }
+                });
+                if (num > 1 && enabled) {
+                    return false;
+                }
+                return true;
+            }
+        },
+        created: function () {
+            this.pageData();
+        }
+    });
+</script>
+
+<!--#
+}
+#-->

@@ -40,8 +40,8 @@ public class UploadController {
             } else if (tf == null) {
                 return Result.error("空文件");
             } else {
-                String s = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1);
-                String uri = "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
+                String s = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".") + 1);
+                String uri = "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf("."));
                 String f = Globals.AppUploadPath + uri;
                 Files.write(new File(f), tf.getInputStream());
                 return Result.success("上传成功", NutMap.NEW().addv("file_type", s.toLowerCase()).addv("file_name", tf.getName()).addv("file_size", tf.getSize()).addv("file_url", Globals.AppUploadBase + uri));
@@ -67,8 +67,8 @@ public class UploadController {
             } else if (tf == null) {
                 return Result.error("空文件");
             } else {
-                String s = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1);
-                String uri = "/video/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
+                String s = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".") + 1);
+                String uri = "/video/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf("."));
                 String f = Globals.AppUploadPath + uri;
                 Files.write(new File(f), tf.getInputStream());
                 return Result.success("上传成功", NutMap.NEW().addv("file_type", s.toLowerCase()).addv("file_name", tf.getName()).addv("file_size", tf.getSize()).addv("file_url", Globals.AppUploadBase + uri));
@@ -94,7 +94,7 @@ public class UploadController {
             } else if (tf == null) {
                 return Result.error("空文件");
             } else {
-                String uri = "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
+                String uri = "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf("."));
                 String f = Globals.AppUploadPath + uri;
                 Files.write(new File(f), tf.getInputStream());
                 return Result.success("上传成功", Globals.AppUploadBase + uri);
