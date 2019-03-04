@@ -62,7 +62,17 @@ public class Wx_mass_news extends BaseModel implements Serializable {
     @Column
     @Comment("显示封面")
     @ColDefine(type = ColType.INT)
-    protected Integer show_cover_pic;
+    private Integer show_cover_pic;//1为显示，0为不显示
+
+    @Column
+    @Comment("是否打开评论")
+    @ColDefine(type = ColType.INT)
+    private Integer need_open_comment;//0不打开，1打开
+
+    @Column
+    @Comment("是否粉丝才可评论")
+    @ColDefine(type = ColType.INT)
+    private Integer only_fans_can_comment;//0所有人可评论，1粉丝才可评论
 
     @Column
     @Comment("排序字段")
@@ -182,5 +192,21 @@ public class Wx_mass_news extends BaseModel implements Serializable {
 
     public void setSys_unit_id(String sys_unit_id) {
         this.sys_unit_id = sys_unit_id;
+    }
+
+    public Integer getNeed_open_comment() {
+        return need_open_comment;
+    }
+
+    public void setNeed_open_comment(Integer need_open_comment) {
+        this.need_open_comment = need_open_comment;
+    }
+
+    public Integer getOnly_fans_can_comment() {
+        return only_fans_can_comment;
+    }
+
+    public void setOnly_fans_can_comment(Integer only_fans_can_comment) {
+        this.only_fans_can_comment = only_fans_can_comment;
     }
 }

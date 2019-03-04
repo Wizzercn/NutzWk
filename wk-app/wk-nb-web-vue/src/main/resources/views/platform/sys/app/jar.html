@@ -44,14 +44,17 @@ layout("/layouts/platform.html"){
             >
             </el-table-column>
             <el-table-column
+                    sortable
                     prop="appVersion"
                     label="版本号"
-                    width="160"
+                    width="100"
             >
             </el-table-column>
             <el-table-column
                     prop="fileSize"
-                    label="文件大小">
+                    label="文件大小"
+                    width="120"
+            >
                 <template slot-scope="scope">
                     {{(scope.row.fileSize/1024/1024).toFixed(2)}}MB
                 </template>
@@ -88,6 +91,7 @@ layout("/layouts/platform.html"){
                     label="启用状态"
                     header-align="center"
                     align="center"
+                    width="100"
             >
                 <template slot-scope="scope">
                     <i v-if="scope.row.disabled" class="fa fa-circle text-danger ml5"></i>
@@ -139,6 +143,12 @@ layout("/layouts/platform.html"){
             width="50%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="appName" label="实例名称">
+                <el-autocomplete
+                        class="inline-input"
+                        v-model="formData.appName"
+                        :fetch-suggestions="queryAppName"
+                        placeholder="保持和配置文件中实例名称一致"
+                ></el-autocomplete>
                 <el-input maxlength="100" placeholder="保持和配置文件中实例名称一致"
                           v-model="formData.appName"
                           auto-complete="off" tabindex="1" type="text"></el-input>
@@ -162,7 +172,7 @@ layout("/layouts/platform.html"){
                         >
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip" >只能上传 jar 文件，且不超过100MB</div>
+                    <div class="el-upload__tip" slot="tip" >只能上传 jar 文件，且不超过120MB</div>
                 </el-upload>
                 <div v-if="formData.fileSize>0" style="color: green;font-size: 12px;">
                     文件大小: {{(formData.fileSize/1024/1024).toFixed(2)}}MB
@@ -370,6 +380,9 @@ layout("/layouts/platform.html"){
                     this.$set(this.formData, "filePath", "");
                 }
             },
+            queryAppName:function () {
+                
+            }
         },
         created: function () {
             this.pageData();

@@ -176,6 +176,13 @@ layout("/layouts/platform.html"){
                 </el-alert>
             </el-form-item>
 
+            <el-form-item prop="show_cover_pic" label="打开评论">
+                <el-checkbox v-model="formData.need_open_comment" true-label="1" false-label="0">打开评论</el-checkbox>
+            </el-form-item>
+
+            <el-form-item prop="show_cover_pic" label="粉丝评论">
+                <el-checkbox v-model="formData.only_fans_can_comment" true-label="1" false-label="0">粉丝才可评论</el-checkbox>
+            </el-form-item>
 
             <el-form-item prop="content" label="文章内容">
                 <!--一个页面中不能出现两个umeditor对象,所以新建和修改用同一个dialog来做吧-->

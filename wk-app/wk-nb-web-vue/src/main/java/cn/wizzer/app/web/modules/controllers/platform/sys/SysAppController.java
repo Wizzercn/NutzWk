@@ -1,7 +1,10 @@
 package cn.wizzer.app.web.modules.controllers.platform.sys;
 
+import cn.wizzer.app.sys.modules.models.Sys_app_list;
 import cn.wizzer.app.sys.modules.services.SysAppListService;
+import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.PageUtil;
+import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -18,6 +21,7 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +81,7 @@ public class SysAppController {
 
     @At("/jar/data")
     @Ok("json:full")
-    @RequiresPermissions("sys.manager.conf")
+    @RequiresPermissions("sys.operation.app.jar")
     public Object jarData(@Param("appName") String appName, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();
@@ -88,6 +92,20 @@ public class SysAppController {
                 cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
             }
             return Result.success().addData(sysAppListService.listPageLinks(pageNumber, pageSize, cnd, "^(user)$"));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/jar/addDo")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.jar")
+    @SLog(tag = "添加安装包", msg = "应用名称:${name}")
+    public Object jarAddDo(@Param("..") Sys_app_list sysAppList, HttpServletRequest req) {
+        try {
+            sysAppList.setOpBy(StringUtil.getPlatformUid());
+            sysAppListService.insert(sysAppList);
+            return Result.success();
         } catch (Exception e) {
             return Result.error();
         }

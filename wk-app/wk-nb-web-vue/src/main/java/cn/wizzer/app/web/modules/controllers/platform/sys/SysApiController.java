@@ -43,9 +43,9 @@ public class SysApiController {
     public Object addDo(@Param("name") String name, HttpServletRequest req) {
         try {
             sysApiService.createAppkey(name, StringUtil.getPlatformUid());
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
