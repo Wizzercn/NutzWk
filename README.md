@@ -35,7 +35,7 @@ https://wizzer.cn/donation                捐赠者列表
 *   JDK 8 181 + 或 OpenJDK 11 +
 *   Maven 3.5.3 +
 *   Redis 4.0.8 +
-*   MySql 5.7 + 或 MariaDB 10.3.10 +
+*   MySql 5.7 + 或 MariaDB、Oracle、SqlServer、达梦等
 *   Zookeeper 3.4.11 +
 
 ## NutzWk 5.x 技术选型：

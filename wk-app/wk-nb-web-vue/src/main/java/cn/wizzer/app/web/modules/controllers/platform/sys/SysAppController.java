@@ -11,6 +11,8 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.boot.starter.logback.exts.loglevel.LoglevelProperty;
 import org.nutz.boot.starter.logback.exts.loglevel.LoglevelService;
 import org.nutz.dao.Cnd;
+import org.nutz.dao.Sqls;
+import org.nutz.dao.entity.Record;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
@@ -109,5 +111,13 @@ public class SysAppController {
         } catch (Exception e) {
             return Result.error();
         }
+    }
+
+    @At("/jar/search")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.jar")
+    public Object search(@Param("appName") String appName) {
+        List<Record> list = sysAppListService.list(Sqls.create("SELECT DISTINCT appName FROM sys_app_list limit 5"));
+        return Result.NEW().addData(list);
     }
 }

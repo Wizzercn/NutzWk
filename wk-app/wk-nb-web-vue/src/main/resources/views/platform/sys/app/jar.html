@@ -5,6 +5,7 @@ layout("/layouts/platform.html"){
     .el-upload input[type=file] {
         display: none;
     }
+
     .el-upload__text {
         color: #606266;
         font-size: 14px;
@@ -149,9 +150,6 @@ layout("/layouts/platform.html"){
                         :fetch-suggestions="queryAppName"
                         placeholder="保持和配置文件中实例名称一致"
                 ></el-autocomplete>
-                <el-input maxlength="100" placeholder="保持和配置文件中实例名称一致"
-                          v-model="formData.appName"
-                          auto-complete="off" tabindex="1" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="appVersion" label="版本号">
                 <el-input maxlength="100" placeholder="版本号不可用特殊字符"
@@ -169,10 +167,10 @@ layout("/layouts/platform.html"){
                         :on-success="function(resp,file,fileList){return handleJarSuccess(resp,file,fileList)}"
                         style="height:180px;"
                         v-if="!formData.fileSize||formData.fileSize==0"
-                        >
+                >
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip" >只能上传 jar 文件，且不超过120MB</div>
+                    <div class="el-upload__tip" slot="tip">只能上传 jar 文件，且不超过120MB</div>
                 </el-upload>
                 <div v-if="formData.fileSize>0" style="color: green;font-size: 12px;">
                     文件大小: {{(formData.fileSize/1024/1024).toFixed(2)}}MB
@@ -205,8 +203,8 @@ layout("/layouts/platform.html"){
                 },
                 formData: {
                     id: "",
-                    fileSize:0,
-                    filePath:""
+                    fileSize: 0,
+                    filePath: ""
                 },
                 formRules: {
                     appName: [
@@ -276,8 +274,8 @@ layout("/layouts/platform.html"){
                 this.addDialogVisible = true;
                 this.formData = {
                     id: "",
-                    fileSize:0,
-                    filePath:""
+                    fileSize: 0,
+                    filePath: ""
                 };//打开新增窗口,表单先清空
                 if (this.$refs["addForm"])
                     this.$refs["addForm"].resetFields();
@@ -353,9 +351,9 @@ layout("/layouts/platform.html"){
                     });
                 }
             },
-            beforeJarUpload:function(file) {
-                var isLt120M = file.size / 1024 /1024 < 120;
-                if (".jar"!=file.name.substring(file.name.lastIndexOf("."),file.name.length)) {
+            beforeJarUpload: function (file) {
+                var isLt120M = file.size / 1024 / 1024 < 120;
+                if (".jar" != file.name.substring(file.name.lastIndexOf("."), file.name.length)) {
                     this.$message.error('只可上传jar文件');
                     return false;
                 }
@@ -380,8 +378,17 @@ layout("/layouts/platform.html"){
                     this.$set(this.formData, "filePath", "");
                 }
             },
-            queryAppName:function () {
-                
+            queryAppName: function (appName, cb) {
+                $.post(base + "/platform/sys/app/jar/search", {appName: appName}, function (data) {
+                    if (data.code == 0) {
+                        var list=data.data;
+                        var names=[];
+                        list.forEach(function (obj) {
+                            names.push({value:obj.appname});
+                        });
+                        cb(names);
+                    }
+                }, "json");
             }
         },
         created: function () {
