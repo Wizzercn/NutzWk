@@ -87,17 +87,19 @@ layout("/layouts/platform.html"){
             <el-row class="header navbar bg-white shadow">
                 <div class="btn-group tool-button mt5">
                     <span>主机: {{hostName==''?'全部主机':hostName}}</span>
-                    <el-button v-if="hostName" style="padding: 10px 3px" type="text" icon="ti-stats-up"
-                               @click="pageData" title="资源监控"></el-button>
-                    <el-button style="padding: 10px 3px" type="text" icon="ti-timer"
-                               @click="pageData" title="任务列表"></el-button>
-                    <el-button style="padding: 10px 3px" type="text" icon="ti-reload"
-                               @click="pageData" title="刷新数据"></el-button>
+                    <el-button v-if="hostName" style="margin-left:3px" type="text" icon="ti-stats-up"
+                               @click="hostData" title="资源监控"></el-button>
+                    <el-button style="margin-left:3px" type="text" icon="ti-timer"
+                               @click="openTask" title="任务列表"></el-button>
+                    <el-button style="margin-left:3px" type="text" icon="ti-reload"
+                               @click="hostData" title="刷新数据"></el-button>
 
                 </div>
                 <div class="pull-right offscreen-right mt5" style="margin-right: 185px;">
-                    <a class="el-button el-button--default el-button--medium" href="${base}/platform/sys/app/jar" data-pjax>安装包</a>
-                    <a class="el-button el-button--default el-button--medium" href="${base}/platform/sys/app/conf" data-pjax>配置文件</a>
+                    <a class="el-button el-button--default el-button--medium" href="${base}/platform/sys/app/jar"
+                       data-pjax>安装包</a>
+                    <a class="el-button el-button--default el-button--medium"
+                       href="${base}/platform/sys/app/conf">配置文件</a>
 
                 </div>
             </el-row>
@@ -171,10 +173,11 @@ layout("/layouts/platform.html"){
                         <template slot-scope="scope">
                             <el-button style="padding: 10px 3px" type="text" icon="ti-power-off"
                                        title="停止"
-                                       :disabled="getOffDisabled(scope.row)"></el-button>
+                                       :disabled="getOffDisabled(scope.row)" @click="openStop(scope.row)"></el-button>
                             <el-button style="padding: 10px 3px" type="text" icon="ti-desktop"
                                        title="启动新实例"
-                                       :disabled="getStartDisabled(scope.row)"></el-button>
+                                       :disabled="getStartDisabled(scope.row)"
+                                       @click="openStart(scope.row)"></el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -182,26 +185,231 @@ layout("/layouts/platform.html"){
             </el-row>
         </el-col>
     </el-row>
+
+    <el-dialog
+            :title="stopTitle"
+            :visible.sync="stopDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="addForm" size="small" label-width="120px">
+            <el-form-item prop="name" label="实例名" style="margin-bottom:0">
+                {{formData.name}}
+            </el-form-item>
+            <el-form-item prop="processId" label="进程ID" style="margin-bottom:0">
+                {{formData.processId}}
+            </el-form-item>
+            <el-form-item prop="name" label="安装包版本" style="margin-bottom:0">
+                {{formData.appVersion}}
+            </el-form-item>
+            <el-form-item prop="name" label="配置文件版本" style="margin-bottom:0">
+                {{formData.confVersion}}
+            </el-form-item>
+            <el-alert
+                    title="执行命令需要时间，注意不要把一个实例下所有进程都停止了哦……"
+                    type="warning" :closable="false">
+            </el-alert>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="stopDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doStop">创建任务</el-button>
+        </span>
+    </el-dialog>
+
+    <el-dialog
+            :title="startTitle"
+            :visible.sync="startDialogVisible"
+            width="40%">
+        <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="120px">
+
+            <el-form-item prop="name" label="实例名" style="margin-bottom:0">
+                {{formData.name}}
+            </el-form-item>
+            <el-form-item prop="appVersion" label="安装包版本" style="margin-bottom:0">
+                <el-select v-model="formData.appVersion" clearable placeholder="请选择">
+                    <el-option
+                            v-for="item in appVerList"
+                            :key="item.appVersion"
+                            :label="item.appVersion"
+                            :value="item.appVersion">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item prop="confVersion" label="配置文件版本" style="margin-bottom:0">
+                <el-select v-model="formData.confVersion" clearable placeholder="请选择">
+                    <el-option
+                            v-for="item in confVerList"
+                            :key="item.confVersion"
+                            :label="item.confVersion"
+                            :value="item.confVersion">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="startDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doStart">创建任务</el-button>
+        </span>
+    </el-dialog>
+
+    <el-dialog
+            title="任务列表"
+            :visible.sync="taskDialogVisible"
+            width="85%">
+        <el-row style="margin-top: -72px;margin-bottom: -70px;">
+            <el-button style="padding-left:88px;" type="text"  icon="ti-reload"
+                       @click="pageData" title="刷新数据"></el-button>
+            <el-table
+                    :data="tableData"
+                    @sort-change='pageOrder'
+                    size="small"
+                    header-align="center"
+                    style="width: 100%"
+                    :default-sort="{prop: 'opAt', order: 'descending'}"
+            >
+                <el-table-column
+                        sortable
+                        prop="name"
+                        label="实例名称"
+                        header-align="center"
+                        align="center"
+                        width="150"
+                >
+                </el-table-column>
+                <el-table-column
+                        sortable
+                        prop="hostName"
+                        label="主机名"
+                        header-align="center"
+                        align="center"
+                        width="150"
+                >
+                    <template slot-scope="scope">
+                        {{scope.row.hostName}}<br/>
+                        <span style="font-size: 10px;">{{scope.row.hostAddress}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="appVersion"
+                        label="软件版本"
+                >
+                    <template slot-scope="scope">
+                        安装包:{{scope.row.appVersion}}<br/>
+                        配置文件:{{scope.row.confVersion}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="processId"
+                        label="进程ID"
+                >
+                </el-table-column>
+                <el-table-column
+                        sortable
+                        prop="status"
+                        label="状态"
+                        header-align="center"
+                        align="center"
+                >
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.status==0">待执行</span>
+                        <span v-if="scope.row.status==1">执行中</span>
+                        <span v-if="scope.row.status==2">执行成功</span>
+                        <span v-if="scope.row.status==3">执行失败</span>
+                        <span v-if="scope.row.status==4">已撤销</span>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="pushAt"
+                        label="执行时间"
+                        header-align="center" align="center">
+                    <template slot-scope="scope">
+                        {{formatTaskAt(scope.row.pushAt)}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="pushResult"
+                        label="执行结果"
+                        header-align="center"
+                        align="center"
+                        width="100"
+                        :show-overflow-tooltip="true"
+                >
+                </el-table-column>
+                <el-table-column
+                        sortable
+                        prop="opAt"
+                        label="创建时间"
+                        header-align="center" align="center">
+                    <template slot-scope="scope">
+                        {{formatTaskAt(scope.row.opAt)}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="opAt"
+                        label="创建人"
+                        header-align="center" align="center">
+                    <template slot-scope="scope">
+                        {{scope.row.user.loginname}}
+                    </template>
+                </el-table-column>
+
+                <el-table-column
+                        label="操作"
+                        width="80">
+                    <template slot-scope="scope">
+                        <el-button v-if="scope.row.status==0" @click="cannelTask(scope.row.id)" size="small" type="text">撤销</el-button>
+                        <el-button v-if="scope.row.status!=0" size="small" type="text" disabled>撤销</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination
+                    @size-change="pageSizeChange"
+                    @current-change="pageNumberChange"
+                    :current-page="pageForm.pageNumber"
+                    :page-sizes="[10, 20, 30, 50]"
+                    :page-size="pageForm.pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="pageForm.totalCount">
+            </el-pagination>
+        </el-row>
+        </el-row>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="taskDialogVisible = false">关 闭</el-button>
+        </span>
+    </el-dialog>
 </div>
 <script>
     new Vue({
         el: "#app",
         data: function () {
             return {
-                addDialogVisible: false,
-                editDialogVisible: false,
+                stopDialogVisible: false,
+                startDialogVisible: false,
+                taskDialogVisible: false,
+                stopTitle: "",
+                startTitle: "",
                 hostName: "",
                 hostList: [],
                 appList: [],
                 tableData: [],
+                pageForm: {
+                    pageNumber: 1,
+                    pageSize: 10,
+                    totalCount: 0,
+                    pageOrderName: "opAt",
+                    pageOrderBy: "descending",
+                },
                 formData: {
                     id: ""
                 },
                 formRules: {
-                    name: [
-                        {required: true, message: '应用名称', trigger: 'blur'}
+                    confVersion: [
+                        {required: true, message: '配置文件版本', trigger: 'blur'}
+                    ],
+                    appVersion: [
+                        {required: true, message: '安装包版本', trigger: 'blur'}
                     ]
                 },
+                appVerList: [],
+                confVerList: []
             }
         },
         methods: {
@@ -213,7 +421,35 @@ layout("/layouts/platform.html"){
                 var seconds = now.diff(up, 'seconds') % 60;
                 return hours + "小时" + minutes + "分钟" + seconds + "秒";
             },
+            pageOrder: function (column) {//按字段排序
+                this.pageForm.pageOrderName = column.prop;
+                this.pageForm.pageOrderBy = column.order;
+                this.pageData();
+            },
+            pageNumberChange: function (val) {//页码更新操作
+                this.pageForm.pageNumber = val;
+                this.pageData();
+            },
+            pageSizeChange: function (val) {//分页大小更新操作
+                this.pageForm.pageSize = val;
+                this.pageData();
+            },
             pageData: function () {//加载分页数据
+                var self = this;
+                $.post(base + "/platform/sys/app/task/data", self.pageForm, function (data) {
+                    sublime.closeLoadingbar();//关闭loading
+                    if (data.code == 0) {
+                        self.tableData = data.data.list;
+                        self.pageForm.totalCount = data.data.totalCount;
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
+            },
+            hostData: function () {//加载分页数据
                 var self = this;
                 sublime.showLoadingbar();//显示loading
                 $.post(base + "/platform/sys/app/data", {hostName: self.hostName}, function (data) {
@@ -234,13 +470,18 @@ layout("/layouts/platform.html"){
                     return moment(val * 1000).format("YYYY-MM-DD HH:mm");
                 return "";
             },
+            formatTaskAt: function (val) {
+                if (val && val > 0)
+                    return moment(val * 1000).format("MM-DD HH:mm");
+                return "";
+            },
             loaddata: function () {
                 this.hostName = "";
-                this.pageData();
+                this.hostData();
             },
             loadhost: function (h) {
                 this.hostName = h;
-                this.pageData();
+                this.hostData();
             },
             getStartDisabled: function (obj) {
                 //判断是否可以启动主机,满足条件为获取版本号
@@ -266,10 +507,106 @@ layout("/layouts/platform.html"){
                     return false;
                 }
                 return true;
+            },
+            openStart: function (row) {
+                var self = this;
+                self.startTitle = "启动新实例";
+                self.startDialogVisible = true;
+                self.formData = {
+                    name: row.name,
+                    hostName: row.hostName,
+                    hostAddress: row.hostAddress,
+                    confVersion: "",
+                    appVersion: "",
+                    action: "start"
+                };
+                $.post(base + "/platform/sys/app/version", {}, function (data) {
+                    if (data.code == 0) {
+                        self.appVerList = data.data.appVerList;
+                        self.confVerList = data.data.confVerList;
+                    }
+                }, "json");
+            },
+            openStop: function (row) {
+                var self = this;
+                self.stopTitle = "停止实例";
+                self.stopDialogVisible = true;
+                self.formData = {
+                    name: row.name,
+                    hostName: row.hostName,
+                    hostAddress: row.hostAddress,
+                    confVersion: row.confVersion,
+                    appVersion: row.appVersion,
+                    processId: row.processId,
+                    action: "stop"
+                };
+            },
+            doStart: function () {
+                var self = this;
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post(base + "/platform/sys/app/task/addDo", self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: "任务创建成功，可在任务列表中查看进度……",
+                                    type: 'success'
+                                });
+                                self.startDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            doStop: function () {
+                var self = this;
+                self.$refs["addForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post(base + "/platform/sys/app/task/addDo", self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: "任务创建成功，可在任务列表中查看进度……",
+                                    type: 'success'
+                                });
+                                self.stopDialogVisible = false;
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
+            openTask:function () {
+                this.pageData();
+                this.taskDialogVisible=true;
+            },
+            cannelTask:function (id) {
+                var self=this;
+                $.post(base + "/platform/sys/app/task/cannel/"+id, {}, function (data) {
+                    if (data.code == 0) {
+                        self.$message({
+                            message: data.msg,
+                            type: 'success'
+                        });
+                        self.pageData();
+                    } else {
+                        self.$message({
+                            message: data.msg,
+                            type: 'error'
+                        });
+                    }
+                }, "json");
             }
         },
         created: function () {
-            this.pageData();
+            this.hostData();
         }
     });
 </script>

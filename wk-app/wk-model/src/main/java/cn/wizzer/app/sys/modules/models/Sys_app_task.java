@@ -26,19 +26,29 @@ public class Sys_app_task extends BaseModel implements Serializable {
     private String name;
 
     @Column
-    @Comment("推送类型")
+    @Comment("执行动作")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    private String type;//app 或 conf
+    private String action;
 
     @Column
-    @Comment("推送内容")
-    @ColDefine(type = ColType.TEXT)
-    private String data;//json 含动作文件版本等
+    @Comment("APP版本")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String appVersion;
+
+    @Column
+    @Comment("配置版本")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String confVersion;
+
+    @Column
+    @Comment("进程ID")
+    @ColDefine(type = ColType.VARCHAR, width = 32)
+    private String processId;
 
     @Column
     @Comment("推送主机")
     @ColDefine(type = ColType.VARCHAR, width = 255)
-    private String hostname;//主机名 如果是推送给全部主机则为多条
+    private String hostName;//主机名 如果是推送给全部主机则为多条
 
     @Column
     @Comment("主机IP")
@@ -48,7 +58,7 @@ public class Sys_app_task extends BaseModel implements Serializable {
     @Column
     @Comment("推送状态")
     @ColDefine(type = ColType.INT, width = 1)
-    private Integer status;//0 待接收 1 已接收 2 已反馈
+    private Integer status;//0-待执行,1-执行中,2-执行成功,3-执行失败,4-撤销任务
 
     @Column
     @Comment("反馈时间")
@@ -58,6 +68,9 @@ public class Sys_app_task extends BaseModel implements Serializable {
     @Comment("反馈结果")
     @ColDefine(type = ColType.VARCHAR, width = 255)
     private String pushResult;
+
+    @One(field = "opBy")
+    private Sys_user user;
 
     public String getId() {
         return id;
@@ -75,28 +88,44 @@ public class Sys_app_task extends BaseModel implements Serializable {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
+    public String getAction() {
+        return action;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setAction(String action) {
+        this.action = action;
     }
 
-    public String getData() {
-        return data;
+    public String getAppVersion() {
+        return appVersion;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
     }
 
-    public String getHostname() {
-        return hostname;
+    public String getConfVersion() {
+        return confVersion;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    public void setConfVersion(String confVersion) {
+        this.confVersion = confVersion;
+    }
+
+    public String getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(String processId) {
+        this.processId = processId;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
     }
 
     public String getHostAddress() {
@@ -129,5 +158,13 @@ public class Sys_app_task extends BaseModel implements Serializable {
 
     public void setPushResult(String pushResult) {
         this.pushResult = pushResult;
+    }
+
+    public Sys_user getUser() {
+        return user;
+    }
+
+    public void setUser(Sys_user user) {
+        this.user = user;
     }
 }

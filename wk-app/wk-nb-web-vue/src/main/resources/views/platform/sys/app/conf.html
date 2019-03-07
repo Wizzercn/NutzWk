@@ -1,17 +1,9 @@
 <!--#
 layout("/layouts/platform.html"){
 #-->
-<style>
-    .el-upload input[type=file] {
-        display: none;
-    }
-
-    .el-upload__text {
-        color: #606266;
-        font-size: 14px;
-        text-align: center;
-    }
-</style>
+<link rel="stylesheet" href="${base!}/assets/platform/plugins/codemirror/codemirror.css">
+<script src="${base!}/assets/platform/plugins/codemirror/codemirror.js"></script>
+<script src="${base!}/assets/platform/plugins/codemirror/vue-codemirror.js"></script>
 <div id="app" v-cloak>
     <el-row class="header navbar bg-white shadow">
         <div class="btn-group tool-button mt5">
@@ -19,11 +11,11 @@ layout("/layouts/platform.html"){
                     class="ti-angle-left"></i>返回</a>
             <el-button size="medium" @click="openAdd">
                 <i class="ti-plus"></i>
-                添加安装包
+                添加配置
             </el-button>
         </div>
         <div class="btn-group tool-button mt5">
-            <el-input @keyup.native="doSearch" placeholder="请输入内容" v-model="pageForm.appName" size="medium">
+            <el-input @keyup.native="doSearch" placeholder="请输入内容" v-model="pageForm.confName" size="medium">
                 <template slot="prepend">实例名称</template>
             </el-input>
         </div>
@@ -39,7 +31,7 @@ layout("/layouts/platform.html"){
         >
             <el-table-column
                     sortable
-                    prop="appName"
+                    prop="confName"
                     label="实例名称"
                     header-align="center"
                     align="center"
@@ -47,26 +39,17 @@ layout("/layouts/platform.html"){
             </el-table-column>
             <el-table-column
                     sortable
-                    prop="appVersion"
+                    prop="confVersion"
                     label="版本号"
                     width="100"
             >
             </el-table-column>
             <el-table-column
-                    prop="fileSize"
-                    label="文件大小"
-                    width="120"
-            >
-                <template slot-scope="scope">
-                    {{(scope.row.fileSize/1024/1024).toFixed(2)}}MB
-                </template>
-            </el-table-column>
-            <el-table-column
-                    prop="filePath"
                     label="文件下载"
-                    header-align="center">
+                    header-align="center"
+                    align="center">
                 <template slot-scope="scope">
-                    <a style="color: #0e5996" :href="base+'/platform/sys/app/jar/download/'+scope.row.id" target="_blank">{{scope.row.appName}}-{{scope.row.appVersion}}.jar</a>
+                    <a style="color: #0e5996" :href="base+'/platform/sys/app/conf/download/'+scope.row.id" target="_blank">{{scope.row.confName}}-{{scope.row.confVersion}}.properties</a>
                 </template>
             </el-table-column>
             <el-table-column
@@ -111,6 +94,10 @@ layout("/layouts/platform.html"){
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item
+                                    :command="{type:'edit',row:scope.row}">
+                                修改
+                            </el-dropdown-item>
+                            <el-dropdown-item
                                     :command="{type:'enable',row:scope.row}">
                                 启用
                             </el-dropdown-item>
@@ -140,44 +127,28 @@ layout("/layouts/platform.html"){
         </el-pagination>
     </el-row>
     <el-dialog
-            title="添加安装包"
+            title="添加配置"
             :visible.sync="addDialogVisible"
-            width="50%">
+            :close-on-click-modal="false"
+            width="60%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
-            <el-form-item prop="appName" label="实例名称">
+            <el-form-item prop="confName" label="实例名称">
                 <el-autocomplete
                         class="inline-input"
-                        v-model="formData.appName"
-                        :fetch-suggestions="queryAppName"
+                        v-model="formData.confName"
+                        :fetch-suggestions="queryConfName"
                         placeholder="保持和配置文件中实例名称一致"
                         style="width: 220px;"
                 ></el-autocomplete>
             </el-form-item>
-            <el-form-item prop="appVersion" label="版本号">
+            <el-form-item prop="confVersion" label="版本号">
                 <el-input maxlength="20" placeholder="版本号不可用特殊字符"
-                          v-model="formData.appVersion"
+                          v-model="formData.confVersion"
                           auto-complete="off" tabindex="2" type="text"
                           style="width: 220px;"></el-input>
             </el-form-item>
-            <el-form-item prop="filePath" label="文件上传">
-                <el-upload
-                        class="upload-demo"
-                        drag
-                        action="${base}/open/file/upload/file"
-                        name="Filedata"
-                        :show-file-list="false"
-                        :before-upload="beforeJarUpload"
-                        :on-success="function(resp,file,fileList){return handleJarSuccess(resp,file,fileList)}"
-                        style="height:180px;"
-                        v-if="!formData.fileSize||formData.fileSize==0"
-                >
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">只能上传 jar 文件，且不超过120MB</div>
-                </el-upload>
-                <div v-if="formData.fileSize>0" style="color: green;font-size: 12px;">
-                    文件大小: {{(formData.fileSize/1024/1024).toFixed(2)}}MB
-                </div>
+            <el-form-item prop="confData" label-width="2px">
+                <codemirror v-model="formData.confData" :options="cmOptions" style="line-height:20px;border:1px solid silver;"></codemirror>
 
             </el-form-item>
         </el-form>
@@ -186,8 +157,31 @@ layout("/layouts/platform.html"){
             <el-button type="primary" @click="doAdd">确 定</el-button>
         </span>
     </el-dialog>
+    <el-dialog
+            title="修改配置"
+            :visible.sync="editDialogVisible"
+            :close-on-click-modal="false"
+            width="60%">
+        <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
+            <el-form-item prop="confName" label="实例名称">
+                {{formData.confName}}
+            </el-form-item>
+            <el-form-item prop="confVersion" label="版本号">
+                {{formData.confVersion}}
+            </el-form-item>
+            <el-form-item prop="confData" label-width="2px">
+                <codemirror v-model="formData.confData" :options="cmOptions" style="line-height:20px;border:1px solid silver;"></codemirror>
+
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="editDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="doEdit">确 定</el-button>
+        </span>
+    </el-dialog>
 </div>
 <script>
+    Vue.use(window.VueCodemirror);
     new Vue({
         el: "#app",
         data: function () {
@@ -202,24 +196,31 @@ layout("/layouts/platform.html"){
                     totalCount: 0,
                     pageOrderName: "opAt",
                     pageOrderBy: "descending",
-                    appName: ""
+                    confName: ""
                 },
                 formData: {
                     id: "",
-                    fileSize: 0,
-                    filePath: ""
                 },
                 formRules: {
-                    appName: [
+                    confName: [
                         {required: true, message: '实例名称', trigger: 'blur'}
                     ],
-                    appVersion: [
+                    confVersion: [
                         {required: true, message: '版本号', trigger: 'blur'}
                     ],
-                    filePath: [
-                        {required: true, message: '上传文件', trigger: 'blur'}
+                    confData: [
+                        {required: true, message: '配置内容', trigger: 'blur'}
                     ],
                 },
+                cmOptions: {
+                    // codemirror options
+                    tabSize: 4,
+                    mode: 'text/javascript',
+                    theme: 'elegant',
+                    lineNumbers: true,
+                    line: true,
+                    // more codemirror options, 更多 codemirror 的高级配置...
+                }
             }
         },
         methods: {
@@ -239,7 +240,7 @@ layout("/layouts/platform.html"){
             pageData: function () {//加载分页数据
                 var self = this;
                 sublime.showLoadingbar();//显示loading
-                $.post(base + "/platform/sys/app/jar/data", self.pageForm, function (data) {
+                $.post(base + "/platform/sys/app/conf/data", self.pageForm, function (data) {
                     sublime.closeLoadingbar();//关闭loading
                     if (data.code == 0) {
                         self.tableData = data.data.list;
@@ -265,8 +266,9 @@ layout("/layouts/platform.html"){
                 this.addDialogVisible = true;
                 this.formData = {
                     id: "",
-                    fileSize: 0,
-                    filePath: ""
+                    confName: "",
+                    confVersion: "",
+                    confData:""
                 };//打开新增窗口,表单先清空
                 if (this.$refs["addForm"])
                     this.$refs["addForm"].resetFields();
@@ -275,7 +277,7 @@ layout("/layouts/platform.html"){
                 var self = this;
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {
-                        $.post(base + "/platform/sys/app/jar/addDo", self.formData, function (data) {
+                        $.post(base + "/platform/sys/app/conf/addDo", self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
                                     message: data.msg,
@@ -293,10 +295,46 @@ layout("/layouts/platform.html"){
                     }
                 });
             },
+            doEdit: function () {
+                var self = this;
+                var url = base + "/platform/sys/app/conf/editDo";
+                self.$refs["editForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post(url, self.formData, function (data) {
+                            if (data.code == 0) {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                                self.editDialogVisible = false;
+                                self.pageData();//重新加载分页数据
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            },
             dropdownCommand: function (command) {//监听下拉框事件
                 var self = this;
+                if ("edit" == command.type) {
+                    $.post(base + "/platform/sys/app/conf/edit/" + command.row.id, {}, function (data) {
+                        if (data.code == 0) {
+                            self.formData = data.data;//加载后台表单数据
+                            self.editDialogVisible = true;//打开编辑窗口
+                        } else {
+                            self.$message({
+                                message: data.msg,
+                                type: 'error'
+                            });
+                        }
+                    }, "json");
+                }
                 if ("enable" == command.type || "disable" == command.type) {
-                    $.post(base + "/platform/sys/app/jar/" + command.type + "/" + command.row.id, {}, function (data) {
+                    $.post(base + "/platform/sys/app/conf/" + command.type + "/" + command.row.id, {}, function (data) {
                         if (data.code == 0) {
                             self.$message({
                                 message: data.msg,
@@ -317,13 +355,13 @@ layout("/layouts/platform.html"){
                     }, "json");
                 }
                 if ("delete" == command.type) {
-                    self.$confirm('此操作将删除 ' + command.row.appName+'-'+command.row.appVersion+'.jar', '提示', {
+                    self.$confirm('此操作将删除 ' + command.row.confName+'-'+command.row.confVersion+'.properties', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning',
                         callback: function (a, b) {
                             if ("confirm" == a) {//确认后再执行
-                                $.post(base + "/platform/sys/app/jar/delete/" + command.row.id, {}, function (data) {
+                                $.post(base + "/platform/sys/app/conf/delete/" + command.row.id, {}, function (data) {
                                     if (data.code == 0) {
                                         self.$message({
                                             message: data.msg,
@@ -342,35 +380,8 @@ layout("/layouts/platform.html"){
                     });
                 }
             },
-            beforeJarUpload: function (file) {
-                var isLt120M = file.size / 1024 / 1024 < 120;
-                if (".jar" != file.name.substring(file.name.lastIndexOf("."), file.name.length)) {
-                    this.$message.error('只可上传jar文件');
-                    return false;
-                }
-                if (!isLt120M) {
-                    this.$message.error('文件大小不能超过120MB');
-                    return false;
-                }
-                return true;
-            },
-            handleJarSuccess: function (response, file, fileList) {
-                if (response.code == 0) {
-                    // 对象属性直接赋值不会触发试图更新，采用 Vue.set 、this.$set或者Object.assign({}，this.obj)创建新对象
-                    // 或者也可以定义一个 refresh 属性 ，当数据发生改变时，该属性同时变化，也会触发视图更新
-                    this.$set(this.formData, "fileSize", response.data.file_size);
-                    this.$set(this.formData, "filePath", response.data.file_url);
-                } else {
-                    this.$message({
-                        message: response.msg,
-                        type: 'error'
-                    });
-                    this.$set(this.formData, "fileSize", 0);
-                    this.$set(this.formData, "filePath", "");
-                }
-            },
-            queryAppName: function (appName, cb) {
-                $.post(base + "/platform/sys/app/jar/search", {appName: appName}, function (data) {
+            queryConfName: function (confName, cb) {
+                $.post(base + "/platform/sys/app/conf/search", {confName: confName}, function (data) {
                     if (data.code == 0) {
                         var list=data.data;
                         var names=[];

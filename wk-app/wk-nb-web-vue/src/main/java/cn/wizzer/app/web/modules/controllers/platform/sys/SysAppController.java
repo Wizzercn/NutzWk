@@ -1,7 +1,12 @@
 package cn.wizzer.app.web.modules.controllers.platform.sys;
 
+import cn.wizzer.app.sys.modules.models.Sys_app_conf;
 import cn.wizzer.app.sys.modules.models.Sys_app_list;
+import cn.wizzer.app.sys.modules.models.Sys_app_task;
+import cn.wizzer.app.sys.modules.services.SysAppConfService;
 import cn.wizzer.app.sys.modules.services.SysAppListService;
+import cn.wizzer.app.sys.modules.services.SysAppTaskService;
+import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
@@ -10,12 +15,14 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.boot.starter.logback.exts.loglevel.LoglevelProperty;
 import org.nutz.boot.starter.logback.exts.loglevel.LoglevelService;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
-import org.nutz.dao.Sqls;
-import org.nutz.dao.entity.Record;
+import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
+import org.nutz.lang.stream.StringInputStream;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -24,6 +31,9 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +50,12 @@ public class SysAppController {
     @Inject
     @Reference
     private SysAppListService sysAppListService;
+    @Inject
+    @Reference
+    private SysAppConfService sysAppConfService;
+    @Inject
+    @Reference
+    private SysAppTaskService sysAppTaskService;
 
     @At("")
     @Ok("beetl:/platform/sys/app/index.html")
@@ -74,6 +90,19 @@ public class SysAppController {
         }
     }
 
+    @At("/version")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app")
+    public Object version() {
+        try {
+            List<Sys_app_list> appVerList = sysAppListService.query(Cnd.where("disabled", "=", false).desc("opAt"), new Pager().setPageNumber(1).setPageSize(10));
+            List<Sys_app_conf> confVerList = sysAppConfService.query(Cnd.where("disabled", "=", false).desc("opAt"), new Pager().setPageNumber(1).setPageSize(10));
+            return Result.success().addData(NutMap.NEW().addv("appVerList", appVerList).addv("confVerList", confVerList));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
     @At("/jar")
     @Ok("beetl:/platform/sys/app/jar.html")
     @RequiresPermissions("sys.operation.app.jar")
@@ -102,9 +131,15 @@ public class SysAppController {
     @At("/jar/addDo")
     @Ok("json")
     @RequiresPermissions("sys.operation.app.jar")
-    @SLog(tag = "添加安装包", msg = "应用名称:${name}")
+    @SLog(tag = "添加安装包", msg = "应用名称:${sysAppList.appName}")
     public Object jarAddDo(@Param("..") Sys_app_list sysAppList, HttpServletRequest req) {
         try {
+            int num = sysAppListService.count(Cnd.where("appName", "=", Strings.trim(sysAppList.getAppName())).and("appVersion", "=", Strings.trim(sysAppList.getAppVersion())));
+            if (num > 0) {
+                return Result.error("版本号已存在");
+            }
+            sysAppList.setAppName(Strings.trim(sysAppList.getAppName()));
+            sysAppList.setAppVersion(Strings.trim(sysAppList.getAppVersion()));
             sysAppList.setOpBy(StringUtil.getPlatformUid());
             sysAppListService.insert(sysAppList);
             return Result.success();
@@ -116,8 +151,249 @@ public class SysAppController {
     @At("/jar/search")
     @Ok("json")
     @RequiresPermissions("sys.operation.app.jar")
-    public Object search(@Param("appName") String appName) {
-        List<Record> list = sysAppListService.list(Sqls.create("SELECT DISTINCT appName FROM sys_app_list limit 5"));
-        return Result.NEW().addData(list);
+    public Object jarSearch(@Param("appName") String appName) {
+        return Result.NEW().addData(sysAppListService.getAppNameList());
+    }
+
+    @At("/jar/delete/?")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.jar")
+    @SLog(tag = "删除Jar包", msg = "ID:${id}")
+    public Object jarDelete(String id, HttpServletRequest req) {
+        try {
+            sysAppListService.delete(id);
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/jar/enable/?")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.jar")
+    @SLog(tag = "启用Jar包", msg = "ID:${id}")
+    public Object jarEnable(String id, HttpServletRequest req) {
+        try {
+            sysAppListService.update(Chain.make("disabled", false), Cnd.where("id", "=", id));
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/jar/disable/?")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.jar")
+    @SLog(tag = "禁用Jar包", msg = "ID:${id}")
+    public Object jarDisable(String id, HttpServletRequest req) {
+        try {
+            sysAppListService.update(Chain.make("disabled", true), Cnd.where("id", "=", id));
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/jar/download/?")
+    @Ok("raw")
+    @RequiresPermissions("sys.operation.app.jar")
+    public File jarDownload(String id, HttpServletResponse response) {
+        try {
+            Sys_app_list sysAppList = sysAppListService.fetch(id);
+            String fileName = sysAppList.getAppName() + "-" + sysAppList.getAppVersion() + ".jar";
+            response.setHeader("Content-Type", "application/java-archive");
+            response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+            return new File(Globals.AppUploadPath + "/" + sysAppList.getFilePath().replace("/upload", ""));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @At("/conf")
+    @Ok("beetl:/platform/sys/app/conf.html")
+    @RequiresPermissions("sys.operation.app.conf")
+    public void conf() {
+
+    }
+
+
+    @At("/conf/data")
+    @Ok("json:{locked:'confData',ignoreNull:false}")
+    @RequiresPermissions("sys.operation.app.conf")
+    public Object confData(@Param("confName") String confName, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isNotBlank(confName)) {
+                cnd.and("confName", "like", "%" + confName + "%");
+            }
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+            }
+            return Result.success().addData(sysAppConfService.listPageLinks(pageNumber, pageSize, cnd, "^(user)$"));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/conf/addDo")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.conf")
+    @SLog(tag = "添加配置文件", msg = "应用名称:${sysAppConf.confName}")
+    public Object confAddDo(@Param("..") Sys_app_conf sysAppConf, HttpServletRequest req) {
+        try {
+            int num = sysAppConfService.count(Cnd.where("confName", "=", Strings.trim(sysAppConf.getConfName())).and("confVersion", "=", Strings.trim(sysAppConf.getConfVersion())));
+            if (num > 0) {
+                return Result.error("版本号已存在");
+            }
+            sysAppConf.setConfName(Strings.trim(sysAppConf.getConfName()));
+            sysAppConf.setConfVersion(Strings.trim(sysAppConf.getConfVersion()));
+            sysAppConf.setOpBy(StringUtil.getPlatformUid());
+            sysAppConfService.insert(sysAppConf);
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/conf/search")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.conf")
+    public Object confSearch(@Param("confName") String confName) {
+        return Result.NEW().addData(sysAppConfService.getConfNameList());
+    }
+
+    @At("/conf/delete/?")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.conf")
+    @SLog(tag = "删除配置文件", msg = "ID:${id}")
+    public Object confDelete(String id, HttpServletRequest req) {
+        try {
+            sysAppConfService.delete(id);
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/conf/enable/?")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.conf")
+    @SLog(tag = "启用配置文件", msg = "ID:${id}")
+    public Object confEnable(String id, HttpServletRequest req) {
+        try {
+            sysAppConfService.update(Chain.make("disabled", false), Cnd.where("id", "=", id));
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/conf/disable/?")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.conf")
+    @SLog(tag = "禁用配置文件", msg = "ID:${id}")
+    public Object confDisable(String id, HttpServletRequest req) {
+        try {
+            sysAppConfService.update(Chain.make("disabled", true), Cnd.where("id", "=", id));
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/conf/download/?")
+    @Ok("void")
+    @RequiresPermissions("sys.operation.app.conf")
+    public void confDownload(String id, HttpServletResponse response) {
+        try {
+            Sys_app_conf conf = sysAppConfService.fetch(id);
+            String fileName = conf.getConfName() + "-" + conf.getConfVersion() + ".properties";
+            response.setHeader("Content-Type", "text/plain");
+            response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+            try (InputStream in = new StringInputStream(conf.getConfData())) {
+                Streams.writeAndClose(response.getOutputStream(), in);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    @At("/conf/edit/?")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.conf")
+    public Object confEdit(@Param("id") String id) {
+        return Result.NEW().addData(sysAppConfService.fetch(id));
+    }
+
+    @At("/conf/editDo")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.conf")
+    @SLog(tag = "修改配置文件", msg = "应用名称:${sysAppConf.confName}")
+    public Object confEditDo(@Param("..") Sys_app_conf sysAppConf, HttpServletRequest req) {
+        try {
+            sysAppConf.setOpBy(StringUtil.getPlatformUid());
+            sysAppConfService.updateIgnoreNull(sysAppConf);
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/task/addDo")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.instance")
+    @SLog(tag = "创建任务", msg = "应用名称:${appTask.getName()} 动作:${appTask.getAction()}")
+    public Object taskAddDo(@Param("..") Sys_app_task appTask, HttpServletRequest req) {
+        try {
+            Cnd cnd = Cnd.where("name", "=", appTask.getName()).and("action", "=", "stop")
+                    .and("appVersion", "=", appTask.getAppVersion())
+                    .and("confVersion", "=", appTask.getConfVersion())
+                    .and("hostName", "=", appTask.getHostName())
+                    .and("hostAddress", "=", appTask.getHostAddress())
+                    .and(Cnd.exps("status", "=", 0).or("status", "=", 1));
+            if ("stop".equals(appTask.getAction())) {
+                cnd.and("processId", "=", appTask.getProcessId());
+            }
+            int num = sysAppTaskService.count(cnd);
+            if (num > 0) {
+                return Result.error("任务已存在，请耐心等待执行结果");
+            }
+            appTask.setOpBy(StringUtil.getPlatformUid());
+            appTask.setStatus(0);
+            sysAppTaskService.insert(appTask);
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/task/data")
+    @Ok("json:{locked:'confData',ignoreNull:false}")
+    @RequiresPermissions("sys.operation.app")
+    public Object taskData(@Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        try {
+            Cnd cnd = Cnd.NEW();
+            if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
+                cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
+            }
+            return Result.success().addData(sysAppTaskService.listPageLinks(pageNumber, pageSize, cnd, "^(user)$"));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At("/task/cannel/?")
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.instance")
+    @SLog(tag = "取消任务", msg = "任务ID:${id}")
+    public Object taskAddDo(String id, HttpServletRequest req) {
+        try {
+            //加上status条件,防止执行前状态已变更
+            sysAppTaskService.update(Chain.make("status", 4), Cnd.where("id", "=", id).and("status", "=", 0));
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
     }
 }

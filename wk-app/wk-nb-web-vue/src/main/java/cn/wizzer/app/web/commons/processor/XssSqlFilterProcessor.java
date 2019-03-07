@@ -21,9 +21,14 @@ public class XssSqlFilterProcessor extends AbstractProcessor {
 
     private static final Log log = Logs.get();
     protected String lerrorUri = "/error/403.html";
+    //要排除的请求路径
+    private String[] ignoreUrls = new String[]{
+            "/platform/sys/app/conf/addDo",
+            "/platform/sys/app/conf/editDo"
+    };
 
     public void process(ActionContext ac) throws Throwable {
-        if (checkParams(ac)) {
+        if (checkUrl(ac) && checkParams(ac)) {
             if (NutShiro.isAjax(ac.getRequest())) {
                 ac.getResponse().addHeader("loginStatus", "paramsDenied");
                 NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error(Mvcs.getMessage(ac.getRequest(), "system.paramserror")));
@@ -33,6 +38,15 @@ public class XssSqlFilterProcessor extends AbstractProcessor {
             return;
         }
         doNext(ac);
+    }
+
+    protected boolean checkUrl(ActionContext ac) {
+        for (String url : ignoreUrls) {
+            if (ac.getRequest().getRequestURI().startsWith(url)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected boolean checkParams(ActionContext ac) {

@@ -40,6 +40,9 @@ public class Sys_app_conf extends BaseModel implements Serializable {
     @ColDefine(type = ColType.BOOLEAN)
     private boolean disabled;
 
+    @One(field = "opBy")
+    private Sys_user user;
+
     public String getId() {
         return id;
     }
@@ -78,5 +81,13 @@ public class Sys_app_conf extends BaseModel implements Serializable {
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
+    }
+
+    public Sys_user getUser() {
+        return user;
+    }
+
+    public void setUser(Sys_user user) {
+        this.user = user;
     }
 }
