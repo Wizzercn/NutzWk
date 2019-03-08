@@ -65,8 +65,7 @@ public class ApiTest extends Assert {
                 NutMap data = map.getAs("data", NutMap.class);
                 System.out.println("data.token:::" + data.get("token"));
                 System.out.println("data.expires:::" + data.get("expires"));
-                redisService.set("api_token_test:" + appid, data.getString("token"));
-                redisService.expire("api_token_test:" + appid, data.getInt("expires"));
+                redisService.setex("api_token_test:" + appid,  data.getInt("expires"),data.getString("token"));
             }
         }
     }

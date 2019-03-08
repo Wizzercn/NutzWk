@@ -259,8 +259,7 @@ public class SysLoginController {
             h = 60;
         }
         String text = R.captchaNumber(4);
-        redisService.set("platformCaptcha:" + session.getId(), text);
-        redisService.expire("platformCaptcha:" + session.getId(), 300);
+        redisService.setex("platformCaptcha:" + session.getId(),300, text);
         return Images.createCaptcha(text, w, h, null, null, null);
     }
 }
