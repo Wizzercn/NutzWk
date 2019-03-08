@@ -47,7 +47,6 @@
         <dependency>
             <groupId>com.101tec</groupId>
             <artifactId>zkclient</artifactId>
-            <version>${zkclient.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -62,22 +61,18 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-nutz-dao</artifactId>
-            <version>${nutzboot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-jdbc</artifactId>
-            <version>${nutzboot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-redis</artifactId>
-            <version>${nutzboot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-wkcache</artifactId>
-            <version>${nutzboot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
@@ -97,7 +92,6 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>${druid.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba</groupId>
@@ -139,7 +133,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
