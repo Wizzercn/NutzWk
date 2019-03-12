@@ -63,19 +63,18 @@ public class ApiDeployController {
     }
 
     @At("/jar/download/?")
-    @Ok("raw")
-    @Filters
-    public Object jarDownload(String id, HttpServletResponse response) {
+    @Ok("void")
+    public void jarDownload(String id, HttpServletResponse response) {
         try {
             Sys_app_list sysAppList = sysAppListService.fetch(id);
             String fileName = sysAppList.getAppName() + ".jar";
             response.setHeader("Content-Type", "application/java-archive");
             response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
-            return ftpService.download(sysAppList.getFilePath());
+            response.setContentLengthLong(sysAppList.getFileSize());
+            ftpService.download(sysAppList.getFilePath(), response.getOutputStream());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return null;
     }
 
     @At("/conf/download/?")
