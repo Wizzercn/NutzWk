@@ -3,6 +3,8 @@ package cn.wizzer.app.web.modules.controllers.open.ueditor;
 import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.utils.DateUtil;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.nutz.boot.starter.ftp.FtpService;
+import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.lang.Files;
@@ -15,7 +17,6 @@ import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.util.Date;
 
 /**
@@ -24,12 +25,15 @@ import java.util.Date;
 @IocBean
 @At("/open/ueditor/bd")
 public class BdController {
+    @Inject
+    private FtpService ftpService;
+
     @At
     @Ok("json")
     public Object index(@Param("action") String action, HttpServletRequest req) {
         return Json.fromJson(new String(Streams.readBytesAndClose(Files.findFileAsStream("static/assets/plugins/ueditor/nutz/config.json"))).replace("$base", Globals.AppBase));
     }
-    
+
     @AdaptBy(type = UploadAdaptor.class, args = {"ioc:imageUpload"})
     @POST
     @At
@@ -44,13 +48,15 @@ public class BdController {
             } else if (tf == null) {
                 return nutMap.addv("state", "FAIL");
             } else {
-                String uri = "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
-                String f = Globals.AppUploadPath + uri;
-                Files.write(new File(f), tf.getInputStream());
+                String suffixName = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".")).toLowerCase();
+                String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
+                String fileName = R.UU32() + suffixName;
+                String url = Globals.AppFileDomain + filePath + fileName;
+                ftpService.upload(filePath, fileName, tf.getInputStream());
                 nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", Globals.AppUploadBase + uri);
+                nutMap.addv("url", url);
                 nutMap.addv("original", tf.getSubmittedFileName());
-                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
+                nutMap.addv("type", suffixName);
                 nutMap.addv("size", tf.getSize());
                 return nutMap;
             }
@@ -74,13 +80,15 @@ public class BdController {
             } else if (tf == null) {
                 return nutMap.addv("state", "FAIL");
             } else {
-                String uri = "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
-                String f = Globals.AppUploadPath + uri;
-                Files.write(new File(f), tf.getInputStream());
+                String suffixName = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".")).toLowerCase();
+                String filePath = Globals.AppUploadBase + "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
+                String fileName = R.UU32() + suffixName;
+                String url = Globals.AppFileDomain + filePath + fileName;
+                ftpService.upload(filePath, fileName, tf.getInputStream());
                 nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", Globals.AppUploadBase + uri);
+                nutMap.addv("url", url);
                 nutMap.addv("original", tf.getSubmittedFileName());
-                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
+                nutMap.addv("type", suffixName);
                 nutMap.addv("size", tf.getSize());
                 return nutMap;
             }
@@ -104,13 +112,15 @@ public class BdController {
             } else if (tf == null) {
                 return nutMap.addv("state", "FAIL");
             } else {
-                String uri = "/video/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
-                String f = Globals.AppUploadPath + uri;
-                Files.write(new File(f), tf.getInputStream());
+                String suffixName = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".")).toLowerCase();
+                String filePath = Globals.AppUploadBase + "/video/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
+                String fileName = R.UU32() + suffixName;
+                String url = Globals.AppFileDomain + filePath + fileName;
+                ftpService.upload(filePath, fileName, tf.getInputStream());
                 nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", Globals.AppUploadBase + uri);
+                nutMap.addv("url", url);
                 nutMap.addv("original", tf.getSubmittedFileName());
-                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1));
+                nutMap.addv("type", suffixName);
                 nutMap.addv("size", tf.getSize());
                 return nutMap;
             }

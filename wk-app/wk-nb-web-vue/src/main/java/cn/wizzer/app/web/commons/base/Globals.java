@@ -30,12 +30,10 @@ public class Globals {
     public static String AppShrotName = "NutzWk";
     //项目域名
     public static String AppDomain = "http://127.0.0.1";
-    //文件上传路径
-    public static String AppUploadPath = "D://files/upload";
+    //文件访问域名
+    public static String AppFileDomain = "";
     //文件上传路径
     public static String AppUploadBase = "/upload";
-    // 是否启用了队列
-    public static boolean RabbitMQEnabled = false;
     //系统自定义参数
     public static Map<String, String> MyConfig = new HashMap<>();
     //自定义路由
@@ -68,8 +66,8 @@ public class Globals {
                 case "AppDomain":
                     Globals.AppDomain = sysConfig.getConfigValue();
                     break;
-                case "AppUploadPath":
-                    Globals.AppUploadPath = sysConfig.getConfigValue();
+                case "AppFileDomain":
+                    Globals.AppFileDomain = sysConfig.getConfigValue();
                     break;
                 case "AppUploadBase":
                     Globals.AppUploadBase = sysConfig.getConfigValue();

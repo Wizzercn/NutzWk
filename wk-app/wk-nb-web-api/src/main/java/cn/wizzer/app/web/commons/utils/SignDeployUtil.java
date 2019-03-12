@@ -17,7 +17,7 @@ import java.util.Map;
  * Created by wizzer on 2019/3/8.
  */
 @IocBean
-public class SignMoCheckUtil {
+public class SignDeployUtil {
     private static final Log log = Logs.get();
     @Inject
     private PropertiesProxy conf;
@@ -26,8 +26,8 @@ public class SignMoCheckUtil {
 
     public Result checkSign(Map<String, Object> paramMap) {
         try {
-            String mo_appid = conf.get("mo.appid", "");
-            String mo_appkey = conf.get("mo.appkey", "");
+            String mo_appid = conf.get("deploy.appid", "");
+            String mo_appkey = conf.get("deploy.appkey", "");
             String appid = Strings.sNull(paramMap.get("appid"));
             String sign = Strings.sNull(paramMap.get("sign"));
             String timestamp = Strings.sNull(paramMap.get("timestamp"));
@@ -38,7 +38,7 @@ public class SignMoCheckUtil {
             if (Times.getTS() - Long.valueOf(timestamp) > 60 * 1000) {//时间戳相差大于1分钟则为无效的
                 return Result.error(2, "timestamp不正确");
             }
-            String nonceCache = redisService.get("api_sign_mo_nonce:" + appid + "_" + nonce);
+            String nonceCache = redisService.get("api_sign_deploy_nonce:" + appid + "_" + nonce);
             if (Strings.isNotBlank(nonceCache)) {//如果一分钟内nonce是重复的则为无效,让nonce只能使用一次
                 return Result.error(3, "nonce不正确");
 
@@ -47,7 +47,7 @@ public class SignMoCheckUtil {
                 return Result.error(4, "sign签名不正确");
             }
             //nonce保存到缓存
-            redisService.setex("api_sign_mo_nonce:" + appid + "_" + nonce, 60, nonce);
+            redisService.setex("api_sign_deploy_nonce:" + appid + "_" + nonce, 60, nonce);
             return Result.success("验证成功");
         } catch (Exception e) {
             log.error(e.getMessage(), e);

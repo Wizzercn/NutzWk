@@ -162,7 +162,7 @@ layout("/layouts/platform.html"){
                         :show-file-list="false"
                         :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'picurl')}">
 
-                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <img v-if="formData.picurl" :src="'${AppFileDomain!}'+formData.picurl" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
             </el-form-item>
@@ -209,7 +209,7 @@ layout("/layouts/platform.html"){
                         :show-file-list="false"
                         :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'picurl')}">
 
-                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <img v-if="formData.picurl" :src="'${AppFileDomain!}'+formData.picurl" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
             </el-form-item>

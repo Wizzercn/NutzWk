@@ -85,7 +85,7 @@ layout("/layouts/platform.html"){
             <el-table-column label="图片" header-align="left" prop="picUrl2"
                              :show-overflow-tooltip="true">
                 <template slot-scope="scope">
-                    <img v-if="scope.row.picUrl2!=''" :src="scope.row.picUrl2" width="50" height="50">
+                    <img v-if="scope.row.picUrl2!=''" :src="'${AppFileDomain!}'+scope.row.picUrl2" width="50" height="50">
                 </template>
             </el-table-column>
 
@@ -151,7 +151,7 @@ layout("/layouts/platform.html"){
                         :before-upload="beforeImageUpload"
                         :show-file-list="false"
                         :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picUrl2')}">
-                    <img v-if="formData.picUrl2" :src="formData.picUrl2" class="avatar">
+                    <img v-if="formData.picUrl2" :src="'${AppFileDomain!}'+formData.picUrl2" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
             </el-form-item>
@@ -216,7 +216,7 @@ layout("/layouts/platform.html"){
                         :before-upload="beforeImageUpload"
                         :show-file-list="false"
                         :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picUrl2')}">
-                    <img v-if="formData.picUrl2" :src="formData.picUrl2" class="avatar">
+                    <img v-if="formData.picUrl2" :src="'${AppFileDomain!}'+formData.picUrl2" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
             </el-form-item>

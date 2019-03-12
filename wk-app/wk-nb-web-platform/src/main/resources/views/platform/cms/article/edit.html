@@ -107,7 +107,7 @@ layout("/layouts/platform.html"){
                                     </div>
                                     <div id="img" style="padding: 5px;">
                                         <%if(!isEmpty(obj.picurl)){%>
-                                        <img src='${obj.picurl!}' style='width:150px;'>
+                                        <img src='${AppFileDomain!}${obj.picurl!}' style='width:150px;'>
                                         <i class="fa fa-close" onclick="$('#picurl').val('');$('#img').html('');"></i>
                                         <%}%>
                                     </div>
@@ -200,7 +200,7 @@ layout("/layouts/platform.html"){
                 data = JSON.parse(data);
                 if (data.code == 0) {
                     Toast.success(data.msg);
-                    $("#img").html("<img src='" + data.data + "' style='width:150px;height:95px;'>");
+                    $("#img").html("<img src='${AppFileDomain!}" + data.data + "' style='width:150px;height:95px;'>");
                     $("#picurl").val(data.data);
                 } else {
                     clearFile();

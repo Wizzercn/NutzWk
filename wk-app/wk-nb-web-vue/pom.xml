@@ -12,7 +12,7 @@
     <artifactId>wk-nb-web-vue</artifactId>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <commons-lang3.version>3.7</commons-lang3.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
         <bcprov-jdk16.version>140</bcprov-jdk16.version>
         <emoji-java.veision>4.0.0</emoji-java.veision>
         <jsoup.veision>1.11.2</jsoup.veision>
@@ -186,6 +186,11 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-logback-exts</artifactId>
+            <version>${nutzboot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutzboot-starter-ftp</artifactId>
             <version>${nutzboot.version}</version>
         </dependency>
     </dependencies>

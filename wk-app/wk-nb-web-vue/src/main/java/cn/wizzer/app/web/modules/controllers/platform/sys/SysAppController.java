@@ -6,13 +6,13 @@ import cn.wizzer.app.sys.modules.models.Sys_app_task;
 import cn.wizzer.app.sys.modules.services.SysAppConfService;
 import cn.wizzer.app.sys.modules.services.SysAppListService;
 import cn.wizzer.app.sys.modules.services.SysAppTaskService;
-import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.ftp.FtpService;
 import org.nutz.boot.starter.logback.exts.loglevel.LoglevelProperty;
 import org.nutz.boot.starter.logback.exts.loglevel.LoglevelService;
 import org.nutz.dao.Chain;
@@ -32,7 +32,6 @@ import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +55,8 @@ public class SysAppController {
     @Inject
     @Reference
     private SysAppTaskService sysAppTaskService;
+    @Inject
+    private FtpService ftpService;
 
     @At("")
     @Ok("beetl:/platform/sys/app/index.html")
@@ -93,10 +94,10 @@ public class SysAppController {
     @At("/version")
     @Ok("json")
     @RequiresPermissions("sys.operation.app")
-    public Object version() {
+    public Object version(@Param("name") String name) {
         try {
-            List<Sys_app_list> appVerList = sysAppListService.query(Cnd.where("disabled", "=", false).desc("opAt"), new Pager().setPageNumber(1).setPageSize(10));
-            List<Sys_app_conf> confVerList = sysAppConfService.query(Cnd.where("disabled", "=", false).desc("opAt"), new Pager().setPageNumber(1).setPageSize(10));
+            List<Sys_app_list> appVerList = sysAppListService.query(Cnd.where("disabled", "=", false).and("appName", "=", name).desc("opAt"), new Pager().setPageNumber(1).setPageSize(10));
+            List<Sys_app_conf> confVerList = sysAppConfService.query(Cnd.where("disabled", "=", false).and("confName", "=", name).desc("opAt"), new Pager().setPageNumber(1).setPageSize(10));
             return Result.success().addData(NutMap.NEW().addv("appVerList", appVerList).addv("confVerList", confVerList));
         } catch (Exception e) {
             return Result.error();
@@ -197,13 +198,13 @@ public class SysAppController {
     @At("/jar/download/?")
     @Ok("raw")
     @RequiresPermissions("sys.operation.app.jar")
-    public File jarDownload(String id, HttpServletResponse response) {
+    public Object jarDownload(String id, HttpServletResponse response) {
         try {
             Sys_app_list sysAppList = sysAppListService.fetch(id);
-            String fileName = sysAppList.getAppName() + "-" + sysAppList.getAppVersion() + ".jar";
+            String fileName1 = sysAppList.getAppName() + "-" + sysAppList.getAppVersion() + ".jar";
             response.setHeader("Content-Type", "application/java-archive");
-            response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
-            return new File(Globals.AppUploadPath + "/" + sysAppList.getFilePath().replace("/upload", ""));
+            response.setHeader("Content-Disposition", "attachment; filename=" + fileName1);
+            return ftpService.download(sysAppList.getFilePath());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

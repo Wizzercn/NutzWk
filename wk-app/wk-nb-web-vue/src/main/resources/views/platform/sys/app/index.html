@@ -520,7 +520,7 @@ layout("/layouts/platform.html"){
                     appVersion: "",
                     action: "start"
                 };
-                $.post(base + "/platform/sys/app/version", {}, function (data) {
+                $.post(base + "/platform/sys/app/version", {name:self.formData.name}, function (data) {
                     if (data.code == 0) {
                         self.appVerList = data.data.appVerList;
                         self.confVerList = data.data.confVerList;

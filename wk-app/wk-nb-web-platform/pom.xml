@@ -158,6 +158,11 @@
             <version>${nutzboot.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutzboot-starter-ftp</artifactId>
+            <version>${nutzboot.version}</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>

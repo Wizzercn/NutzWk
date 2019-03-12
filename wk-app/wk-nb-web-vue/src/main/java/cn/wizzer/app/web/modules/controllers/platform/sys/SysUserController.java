@@ -322,8 +322,8 @@ public class SysUserController {
                 cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
             }
             OutputStream out = response.getOutputStream();
-            response.addHeader("content-type", "application/shlnd.ms-excel;charset=utf-8");
-            response.addHeader("content-disposition", "attachment; filename=sys_user.xls");
+            response.setHeader("content-type", "application/shlnd.ms-excel;charset=utf-8");
+            response.setHeader("content-disposition", "attachment; filename="+new String("用户信息".getBytes(),"ISO-8859-1")+".xls");
             J4E.toExcel(out, sysUserService.query(cnd, "unit"), j4eConf);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

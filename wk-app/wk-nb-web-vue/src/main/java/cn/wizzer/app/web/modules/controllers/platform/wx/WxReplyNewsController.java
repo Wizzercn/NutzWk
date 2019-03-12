@@ -16,10 +16,10 @@ import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.ftp.FtpService;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
@@ -34,7 +34,6 @@ import org.nutz.weixin.spi.WxApi2;
 import org.nutz.weixin.spi.WxResp;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -59,6 +58,8 @@ public class WxReplyNewsController {
     private CmsArticleService cmsArticleService;
     @Inject
     private WxService wxService;
+    @Inject
+    private FtpService ftpService;
 
     @At({"/", "/index/?"})
     @Ok("beetl:/platform/wx/reply/news/index.html")
@@ -181,12 +182,14 @@ public class WxReplyNewsController {
                 if (resp.errcode() != 0) {
                     return Result.error(resp.errmsg());
                 }
-                String uri = "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
-                String f = Globals.AppUploadPath + uri;
-                Files.write(new File(f), tf.getInputStream());
+                String suffixName = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".")).toLowerCase();
+                String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
+                String fileName = R.UU32() + suffixName;
+                String url = filePath + fileName;
+                ftpService.upload(filePath, fileName, tf.getInputStream());
                 return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("media_id"))
                         .addv("picurl", Strings.sNull(resp.get("url")).replace("http://", "https://"))
-                        .addv("picurl2", Globals.AppUploadBase + uri));
+                        .addv("picurl2", url));
             }
         } catch (Exception e) {
             return Result.error("系统错误");

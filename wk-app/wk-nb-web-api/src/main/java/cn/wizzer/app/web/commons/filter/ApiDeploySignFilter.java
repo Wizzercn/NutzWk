@@ -1,6 +1,6 @@
 package cn.wizzer.app.web.commons.filter;
 
-import cn.wizzer.app.web.commons.utils.SignCheckUtil;
+import cn.wizzer.app.web.commons.utils.SignDeployUtil;
 import cn.wizzer.framework.base.Result;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
@@ -21,12 +21,12 @@ import java.util.Map;
  * 应用管理服务端接口签名
  * Created by wizzer on 2019/3/8.
  */
-public class ApiMoSignFilter implements ActionFilter {
+public class ApiDeploySignFilter implements ActionFilter {
     private static final Log log = Logs.get();
 
     public View match(ActionContext context) {
         try {
-            SignCheckUtil signCheckUtil = context.getIoc().get(SignCheckUtil.class);
+            SignDeployUtil signCheckUtil = context.getIoc().get(SignDeployUtil.class);
             Map<String, Object> paramMap = getParameterMap(context.getRequest());
             log.debug("paramMap:::\r\n" + Json.toJson(paramMap));
             Result result = signCheckUtil.checkSign(paramMap);

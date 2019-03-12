@@ -62,13 +62,13 @@ public class DubboRpcSysMainLauncher {
             dao.insert(conf);
             conf = new Sys_config();
             conf.setConfigKey("AppDomain");
-            conf.setConfigValue("http://127.0.0.1");
+            conf.setConfigValue("http://127.0.0.1:8080");
             conf.setNote("系统域名");
             dao.insert(conf);
             conf = new Sys_config();
-            conf.setConfigKey("AppUploadPath");
-            conf.setConfigValue("D://files/upload");
-            conf.setNote("文件上传文件夹");
+            conf.setConfigKey("AppFileDomain");
+            conf.setConfigValue("");
+            conf.setNote("文件访问域名");
             dao.insert(conf);
             conf = new Sys_config();
             conf.setConfigKey("AppUploadBase");

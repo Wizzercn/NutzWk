@@ -134,7 +134,7 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'site_logo')}">
 
-                            <img v-if="formData.site_logo" :src="formData.site_logo" class="avatar">
+                            <img v-if="formData.site_logo" :src="'${AppFileDomain!}'+formData.site_logo" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
@@ -148,7 +148,7 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'site_wap_logo')}">
 
-                            <img v-if="formData.site_wap_logo" :src="formData.site_wap_logo" class="avatar">
+                            <img v-if="formData.site_wap_logo" :src="'${AppFileDomain!}'+formData.site_wap_logo" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
@@ -195,7 +195,7 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'weibo_qrcode')}">
 
-                            <img v-if="formData.weibo_qrcode" :src="formData.weibo_qrcode" class="avatar">
+                            <img v-if="formData.weibo_qrcode" :src="'${AppFileDomain!}'+formData.weibo_qrcode" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             <div class="el-upload__tip" slot="tip">请上传您的微博二维码</div>
                         </el-upload>
@@ -220,7 +220,7 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'wechat_qrcode')}">
 
-                            <img v-if="formData.wechat_qrcode" :src="formData.wechat_qrcode" class="avatar">
+                            <img v-if="formData.wechat_qrcode" :src="'${AppFileDomain!}'+formData.wechat_qrcode" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             <div class="el-upload__tip" slot="tip">请上传您的微信二维码</div>
                         </el-upload>
@@ -284,7 +284,7 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'site_logo')}">
 
-                            <img v-if="formData.site_logo" :src="formData.site_logo" class="avatar">
+                            <img v-if="formData.site_logo" :src="'${AppFileDomain!}'+formData.site_logo" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
@@ -298,7 +298,7 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'site_wap_logo')}">
 
-                            <img v-if="formData.site_wap_logo" :src="formData.site_wap_logo" class="avatar">
+                            <img v-if="formData.site_wap_logo" :src="'${AppFileDomain!}'+formData.site_wap_logo" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
@@ -345,7 +345,7 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'weibo_qrcode')}">
 
-                            <img v-if="formData.weibo_qrcode" :src="formData.weibo_qrcode" class="avatar">
+                            <img v-if="formData.weibo_qrcode" :src="'${AppFileDomain!}'+formData.weibo_qrcode" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             <div class="el-upload__tip" slot="tip">请上传您的微博二维码</div>
                         </el-upload>
@@ -370,7 +370,7 @@ layout("/layouts/platform.html"){
                                 :show-file-list="false"
                                 :on-success="function(resp,file,fileList){return handleLogoSuccess(resp,file,fileList,'wechat_qrcode')}">
 
-                            <img v-if="formData.wechat_qrcode" :src="formData.wechat_qrcode" class="avatar">
+                            <img v-if="formData.wechat_qrcode" :src="'${AppFileDomain!}'+formData.wechat_qrcode" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             <div class="el-upload__tip" slot="tip">请上传您的微信二维码</div>
                         </el-upload>
@@ -516,7 +516,7 @@ layout("/layouts/platform.html"){
                     this.$set(this.formData, attrName, "");
                 }
             },
-            pageData() {//加载分页数据
+            pageData:function() {//加载分页数据
                 var self = this;
                 sublime.showLoadingbar();//显示loading
                 $.post(base + "/platform/cms/site/data", self.pageForm, function (data) {

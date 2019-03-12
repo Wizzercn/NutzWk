@@ -74,7 +74,7 @@ layout("/layouts/platform.html"){
                                     </div>
                                     <div id="img" style="padding: 5px;">
                                         <%if(!isEmpty(obj.site_logo)){%>
-                                        <img src='${obj.site_logo!}' style='width:150px;'>
+                                        <img src='${AppFileDomain!}${obj.site_logo!}' style='width:150px;'>
                                         <i class="fa fa-close" onclick="$('#site_logo').val('');$('#img').html('');"></i>
                                         <%}%>
                                     </div>
@@ -91,7 +91,7 @@ layout("/layouts/platform.html"){
                                     </div>
                                     <div id="img_wap" style="padding: 5px;">
                                         <%if(!isEmpty(obj.site_wap_logo)){%>
-                                        <img src='${obj.site_wap_logo!}' style='width:150px;'>
+                                        <img src='${AppFileDomain!}${obj.site_wap_logo!}' style='width:150px;'>
                                         <i class="fa fa-close" onclick="$('#site_wap_logo').val('');$('#img_wap').html('');"></i>
                                         <%}%>
                                     </div>
@@ -159,7 +159,7 @@ layout("/layouts/platform.html"){
                                     </div>
                                     <div id="img_weibo" style="padding: 5px;">
                                         <%if(!isEmpty(obj.weibo_qrcode)){%>
-                                        <img src='${obj.weibo_qrcode!}' style='width:150px;height:95px;'>
+                                        <img src='${AppFileDomain!}${obj.weibo_qrcode!}' style='width:150px;height:95px;'>
                                         <i class="fa fa-close" onclick="$('#weibo_qrcode').val('');$('#img_weibo').html('');"></i>
 
                                         <%}%>
@@ -193,7 +193,7 @@ layout("/layouts/platform.html"){
                                     </div>
                                     <div id="img_wechat" style="padding: 5px;">
                                         <%if(!isEmpty(obj.wechat_qrcode)){%>
-                                        <img src='${obj.wechat_qrcode!}' style='width:150px;height:95px;'>
+                                        <img src='${AppFileDomain!}${obj.wechat_qrcode!}' style='width:150px;height:95px;'>
                                         <i class="fa fa-close" onclick="$('#wechat_qrcode').val('');$('#img_wechat').html('');"></i>
 
                                         <%}%>
@@ -270,7 +270,7 @@ layout("/layouts/platform.html"){
                 data = JSON.parse(data);
                 if (data.code == 0) {
                     Toast.success(data.msg);
-                    $("#img").html("<img src='" + data.data + "' style='width:150px;'>");
+                    $("#img").html("<img src='${AppFileDomain!}" + data.data + "' style='width:150px;'>");
                     $("#site_logo").val(data.data);
                 } else {
                     clearFile();
@@ -303,7 +303,7 @@ layout("/layouts/platform.html"){
                 data = JSON.parse(data);
                 if (data.code == 0) {
                     Toast.success(data.msg);
-                    $("#img_wap").html("<img src='" + data.data + "' style='width:150px;'>");
+                    $("#img_wap").html("<img src='${AppFileDomain!}" + data.data + "' style='width:150px;'>");
                     $("#site_wap_logo").val(data.data);
                 } else {
                     clearWapFile();
@@ -336,7 +336,7 @@ layout("/layouts/platform.html"){
                 data = JSON.parse(data);
                 if (data.code == 0) {
                     Toast.success(data.msg);
-                    $("#img_weibo").html("<img src='" + data.data + "' style='width:150px;height:95px;'>");
+                    $("#img_weibo").html("<img src='${AppFileDomain!}" + data.data + "' style='width:150px;height:95px;'>");
                     $("#weibo_qrcode").val(data.data);
                 } else {
                     clearFile_weibo();
@@ -369,7 +369,7 @@ layout("/layouts/platform.html"){
                 data = JSON.parse(data);
                 if (data.code == 0) {
                     Toast.success(data.msg);
-                    $("#img_wechat").html("<img src='" + data.data + "' style='width:150px;height:95px;'>");
+                    $("#img_wechat").html("<img src='${AppFileDomain!}" + data.data + "' style='width:150px;height:95px;'>");
                     $("#wechat_qrcode").val(data.data);
                 } else {
                     clearFile_wechat();

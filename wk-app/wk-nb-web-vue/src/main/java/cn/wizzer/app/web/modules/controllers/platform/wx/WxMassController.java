@@ -18,6 +18,7 @@ import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.boot.starter.ftp.FtpService;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -65,6 +66,8 @@ public class WxMassController {
     private WxConfigService wxConfigService;
     @Inject
     private WxService wxService;
+    @Inject
+    private FtpService ftpService;
 
     @At({"/", "/?"})
     @Ok("beetl:/platform/wx/msg/mass/index.html")
@@ -181,12 +184,13 @@ public class WxMassController {
                 if (resp.errcode() != 0) {
                     return Result.error(resp.errmsg());
                 }
-                String s = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf(".") + 1);
-                String uri = "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
-                String f = Globals.AppUploadPath + uri;
-                Files.write(new File(f), tf.getInputStream());
+                String suffixName = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".")).toLowerCase();
+                String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
+                String fileName = R.UU32() + suffixName;
+                String url = filePath + fileName;
+                ftpService.upload(filePath, fileName, tf.getInputStream());
                 return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("thumb_media_id"))
-                        .addv("picurl", Globals.AppUploadBase + uri));
+                        .addv("picurl", url));
             }
         } catch (Exception e) {
             return Result.error("系统错误");
@@ -214,11 +218,13 @@ public class WxMassController {
                 if (resp.errcode() != 0) {
                     return Result.error(resp.errmsg());
                 }
-                String uri = "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().indexOf("."));
-                String f = Globals.AppUploadPath + uri;
-                Files.write(new File(f), tf.getInputStream());
+                String suffixName = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".") + 1).toLowerCase();
+                String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd");
+                String fileName = R.UU32() + suffixName;
+                String url = filePath + fileName;
+                ftpService.upload(filePath, fileName, tf.getInputStream());
                 return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("media_id"))
-                        .addv("picurl", Globals.AppUploadBase + uri));
+                        .addv("picurl", url));
             }
         } catch (Exception e) {
             return Result.error("系统错误");

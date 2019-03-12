@@ -69,7 +69,7 @@ layout("/layouts/platform.html"){
             <el-table-column label="" header-align="left" prop="picurl"
                              :show-overflow-tooltip="true" width="56">
                 <template slot-scope="scope">
-                    <img v-if="scope.row.picurl!=''" :src="scope.row.picurl" width="30" height="30">
+                    <img v-if="scope.row.picurl!=''" :src="'${AppFileDomain!}'+scope.row.picurl" width="30" height="30">
                 </template>
             </el-table-column>
 
@@ -151,7 +151,7 @@ layout("/layouts/platform.html"){
                         :show-file-list="false"
                         :before-upload="beforeImageUpload"
                         :on-success="function(resp,file,fileList){return handlePicSuccess(resp,file,fileList,'picurl')}">
-                    <img v-if="formData.picurl" :src="formData.picurl" class="avatar">
+                    <img v-if="formData.picurl" :src="'${AppFileDomain!}'+formData.picurl" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
             </el-form-item>
@@ -206,7 +206,7 @@ layout("/layouts/platform.html"){
             :visible.sync="viewDialogVisible"
             width="60%">
         <el-row style="text-align: center">
-            <h4><img v-if="formData.picurl" :src="formData.picurl" width="30" height="30" /> {{formData.title}}</h4>
+            <h4><img v-if="formData.picurl" :src="'${AppFileDomain!}'+formData.picurl" width="30" height="30" /> {{formData.title}}</h4>
         </el-row>
         <el-row>
             <span>作者：{{formData.author}}</span>

@@ -3,9 +3,10 @@ package cn.wizzer.app.web.modules.controllers.open.ueditor;
 import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.utils.DateUtil;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.nutz.boot.starter.ftp.FtpService;
+import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
-import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
@@ -15,7 +16,6 @@ import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.util.Date;
 
 /**
@@ -24,6 +24,8 @@ import java.util.Date;
 @IocBean
 @At("/open/ueditor/bd")
 public class BdController {
+    @Inject
+    private FtpService ftpService;
 
     @AdaptBy(type = UploadAdaptor.class, args = {"ioc:imageUpload"})
     @POST
@@ -39,14 +41,16 @@ public class BdController {
             } else if (tf == null) {
                 return Json.toJson(nutMap.addv("state", "FAIL"));
             } else {
-                String uri = "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/" + R.UU32() + tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf("."));
-                String f = Globals.AppUploadPath + uri;
-                Files.write(new File(f), tf.getInputStream());
+                String suffixName = tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".")).toLowerCase();
+                String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
+                String fileName = R.UU32() + suffixName;
+                String url = Globals.AppFileDomain + filePath + fileName;
+                ftpService.upload(filePath, fileName, tf.getInputStream());
                 nutMap.addv("name", tf.getName());
                 nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", Globals.AppUploadBase + uri);
+                nutMap.addv("url", url);
                 nutMap.addv("originalName", tf.getSubmittedFileName());
-                nutMap.addv("type", tf.getSubmittedFileName().substring(tf.getSubmittedFileName().lastIndexOf(".") + 1));
+                nutMap.addv("type", suffixName);
                 nutMap.addv("size", tf.getSize());
                 if (Strings.isBlank(callback)) {
                     return Json.toJson(nutMap);
