@@ -10,10 +10,12 @@ import cn.wizzer.app.web.commons.filter.ApiDeploySignFilter;
 import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.boot.starter.ftp.FtpService;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Streams;
+import org.nutz.lang.Times;
 import org.nutz.lang.stream.StringInputStream;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -55,38 +57,54 @@ public class ApiDeployController {
             for (Sys_app_task task : list) {
                 ids.add(task.getId());
             }
-            //sysAppTaskService.update(Chain.make("status", 1), Cnd.where("id", "in", ids));
+            sysAppTaskService.update(Chain.make("status", 1), Cnd.where("id", "in", ids));
             return Result.success("获取成功").addData(list);
         } catch (Exception e) {
             return Result.error("获取失败");
         }
     }
 
-    @At("/jar/download/?")
-    @Ok("void")
-    public void jarDownload(String id, HttpServletResponse response) {
+    @At("/report")
+    @Ok("json")
+    @POST
+    public Object report(@Param("hosts") String[] hosts, @Param("hostname") String hostname, @Param("taskid") String taskid, @Param("status") int status, @Param("msg") String msg) {
         try {
-            Sys_app_list sysAppList = sysAppListService.fetch(id);
-            String fileName = sysAppList.getAppName() + ".jar";
-            response.setHeader("Content-Type", "application/java-archive");
-            response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
-            response.setContentLengthLong(sysAppList.getFileSize());
-            ftpService.download(sysAppList.getFilePath(), response.getOutputStream());
+            sysAppTaskService.update(Chain.make("status", status).add("pushResult", msg).add("pushAt", Times.getTS()), Cnd.where("id", "=", taskid));
+            return Result.success("执行成功");
+        } catch (Exception e) {
+            return Result.error("执行失败");
+        }
+    }
+
+    @At("/jar/download")
+    @Ok("void")
+    public void jarDownload(@Param("appname") String appname, @Param("appversion") String appversion, HttpServletResponse response) {
+        try {
+            Sys_app_list sysAppList = sysAppListService.fetch(Cnd.where("appName", "=", appname).and("appVersion", "=", appversion).and("disabled", "=", false));
+            if (sysAppList != null) {
+                String fileName = sysAppList.getAppName() + ".jar";
+                response.setHeader("Content-Type", "application/java-archive");
+                response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+                response.setContentLengthLong(sysAppList.getFileSize());
+                ftpService.download(sysAppList.getFilePath(), response.getOutputStream());
+            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
     }
 
-    @At("/conf/download/?")
+    @At("/conf/download")
     @Ok("void")
-    public void confDownload(String id, HttpServletResponse response) {
+    public void confDownload(@Param("confname") String confname, @Param("confversion") String confversion, HttpServletResponse response) {
         try {
-            Sys_app_conf conf = sysAppConfService.fetch(id);
-            String fileName = conf.getConfName() + "-" + conf.getConfVersion() + ".properties";
-            response.setHeader("Content-Type", "text/plain");
-            response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
-            try (InputStream in = new StringInputStream(conf.getConfData())) {
-                Streams.writeAndClose(response.getOutputStream(), in);
+            Sys_app_conf conf = sysAppConfService.fetch(Cnd.where("confName", "=", confname).and("confVersion", "=", confversion).and("disabled", "=", false));
+            if (conf != null) {
+                String fileName = conf.getConfName() + "-" + conf.getConfVersion() + ".properties";
+                response.setHeader("Content-Type", "text/plain");
+                response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+                try (InputStream in = new StringInputStream(conf.getConfData())) {
+                    Streams.writeAndClose(response.getOutputStream(), in);
+                }
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
