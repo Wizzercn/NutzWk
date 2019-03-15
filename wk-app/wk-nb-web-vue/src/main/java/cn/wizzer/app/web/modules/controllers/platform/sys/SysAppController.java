@@ -128,7 +128,7 @@ public class SysAppController {
 
     @At("/jar")
     @Ok("beetl:/platform/sys/app/jar.html")
-    @RequiresPermissions("sys.operation.app.jar")
+    @RequiresPermissions("sys.operation.app")
     public void jar() {
 
     }
@@ -235,7 +235,7 @@ public class SysAppController {
 
     @At("/conf")
     @Ok("beetl:/platform/sys/app/conf.html")
-    @RequiresPermissions("sys.operation.app.conf")
+    @RequiresPermissions("sys.operation.app")
     public void conf() {
 
     }
