@@ -1,6 +1,7 @@
 <!--#
 layout("/layouts/platform.html"){
 #-->
+<script src="${base!}/assets/platform/plugins/echarts/echarts.min.js"></script>
 <style>
     .host-title {
         width: 180px;
@@ -88,7 +89,7 @@ layout("/layouts/platform.html"){
                 <div class="btn-group tool-button mt5">
                     <span>主机: {{hostName==''?'全部主机':hostName}}</span>
                     <el-button v-if="hostName" style="margin-left:3px" type="text" icon="ti-stats-up"
-                               @click="hostData" title="资源监控"></el-button>
+                               @click="openCupMem" title="资源监控"></el-button>
                     <el-button style="margin-left:3px" type="text" icon="ti-timer"
                                @click="openTask" title="任务列表"></el-button>
                     <el-button style="margin-left:3px" type="text" icon="ti-reload"
@@ -254,8 +255,8 @@ layout("/layouts/platform.html"){
             title="任务列表"
             :visible.sync="taskDialogVisible"
             width="88%">
-        <el-row style="margin-top: -72px;margin-bottom: -70px;">
-            <el-button style="padding-left:88px;" type="text"  icon="ti-reload"
+        <el-row style="margin-top: -72px;margin-bottom: -50px;">
+            <el-button style="padding-left:88px;" type="text" icon="ti-reload"
                        @click="pageData" title="刷新数据"></el-button>
             <el-table
                     :data="tableData"
@@ -358,7 +359,9 @@ layout("/layouts/platform.html"){
                         label="操作"
                         width="80">
                     <template slot-scope="scope">
-                        <el-button v-if="scope.row.status==0" @click="cannelTask(scope.row.id)" size="small" type="text">撤销</el-button>
+                        <el-button v-if="scope.row.status==0" @click="cannelTask(scope.row.id)" size="small"
+                                   type="text">撤销
+                        </el-button>
                         <el-button v-if="scope.row.status!=0" size="small" type="text" disabled>撤销</el-button>
                     </template>
                 </el-table-column>
@@ -373,9 +376,28 @@ layout("/layouts/platform.html"){
                     :total="pageForm.totalCount">
             </el-pagination>
         </el-row>
-        </el-row>
         <span slot="footer" class="dialog-footer">
             <el-button @click="taskDialogVisible = false">关 闭</el-button>
+        </span>
+    </el-dialog>
+
+    <el-dialog
+            title="资源使用情况"
+            :visible.sync="cpuMemDialogVisible"
+            width="88%">
+        <el-row style="margin-top: -72px;margin-bottom: -50px;">
+            <el-button style="padding-left:128px;" type="text" icon="ti-reload"
+                       @click="getCpuMem" title="刷新数据"></el-button>
+            <el-row>
+                <el-col :span="8"><div id="div_cpu" style="width:400px;height:250px"></div></el-col>
+                <el-col :span="8"><div id="div_mem" style="width:400px;height:250px"></div></el-col>
+                <el-col :span="8"><div id="div_net" style="width:400px;height:250px"></div></el-col>
+            </el-row>
+
+
+        </el-row>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="cpuMemDialogVisible = false">关 闭</el-button>
         </span>
     </el-dialog>
 </div>
@@ -387,6 +409,7 @@ layout("/layouts/platform.html"){
                 stopDialogVisible: false,
                 startDialogVisible: false,
                 taskDialogVisible: false,
+                cpuMemDialogVisible: false,
                 stopTitle: "",
                 startTitle: "",
                 hostName: "",
@@ -412,7 +435,10 @@ layout("/layouts/platform.html"){
                     ]
                 },
                 appVerList: [],
-                confVerList: []
+                confVerList: [],
+                netOption: {},
+                cpuOption: {},
+                memOption: {}
             }
         },
         methods: {
@@ -478,6 +504,11 @@ layout("/layouts/platform.html"){
                     return moment(val * 1000).format("MM-DD HH:mm");
                 return "";
             },
+            formatCpuAt: function (val) {
+                if (val && val > 0)
+                    return moment(val * 1000).format("HH:mm:ss");
+                return "";
+            },
             loaddata: function () {
                 this.hostName = "";
                 this.hostData();
@@ -523,7 +554,7 @@ layout("/layouts/platform.html"){
                     appVersion: "",
                     action: "start"
                 };
-                $.post(base + "/platform/sys/app/version", {name:self.formData.name}, function (data) {
+                $.post(base + "/platform/sys/app/version", {name: self.formData.name}, function (data) {
                     if (data.code == 0) {
                         self.appVerList = data.data.appVerList;
                         self.confVerList = data.data.confVerList;
@@ -586,13 +617,13 @@ layout("/layouts/platform.html"){
                     }
                 });
             },
-            openTask:function () {
+            openTask: function () {
                 this.pageData();
-                this.taskDialogVisible=true;
+                this.taskDialogVisible = true;
             },
-            cannelTask:function (id) {
-                var self=this;
-                $.post(base + "/platform/sys/app/task/cannel/"+id, {}, function (data) {
+            cannelTask: function (id) {
+                var self = this;
+                $.post(base + "/platform/sys/app/task/cannel/" + id, {}, function (data) {
                     if (data.code == 0) {
                         self.$message({
                             message: data.msg,
@@ -606,10 +637,251 @@ layout("/layouts/platform.html"){
                         });
                     }
                 }, "json");
+            },
+            getCpuMem: function () {
+                var self = this;
+                $.post(base + "/platform/sys/app/osData", {hostName: self.hostName}, function (data) {
+                    if (data.code == 0) {
+                        var list = data.data;
+                        var net_sent = [];
+                        var net_recv = [];
+                        var time_list = [];
+                        var cpu_percent=[];
+                        var mem_used=[];
+                        var mem_free=[];
+                        var mem_percent=[];
+                        var mem_total=0;
+                        var sent_temp = 0, recv_temp = 0;
+                        var i = 0;
+                        list.forEach(function (o) {
+                            net_sent.push(i === 0 ? 0.1 : ((o.net_sent - sent_temp) / 1024).toFixed(2));
+                            net_recv.push(i === 0 ? 0.1 : ((o.net_recv - recv_temp) / 1024).toFixed(2));
+                            time_list.push(self.formatCpuAt(o.timestamp));
+                            cpu_percent.push(o.cpu_percent);
+                            mem_used.push(o.mem_used);
+                            mem_free.push(o.mem_free);
+                            mem_percent.push(o.mem_percent);
+                            mem_total=o.mem_total;
+                            sent_temp = o.net_sent;
+                            recv_temp = o.net_recv;
+                            i++;
+                        });
+                        var colors = ['#5793f3', '#d14a61', '#675bba','#000000'];
+                        self.netOption = {
+                            color: colors,
+                            tooltip: {
+                                trigger: 'none',
+                                axisPointer: {
+                                    type: 'cross'
+                                }
+                            },
+                            legend: {
+                                data: ['出网kbps', '入网kbps']
+                            },
+                            grid: {
+                                top: 70,
+                                bottom: 50
+                            },
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    axisTick: {
+                                        alignWithLabel: true
+                                    },
+                                    axisLine: {
+                                        onZero: false,
+                                        lineStyle: {
+                                            color: colors[1]
+                                        }
+                                    },
+                                    axisPointer: {
+                                        label: {
+                                            formatter: function (params) {
+                                                return '入网  ' + params.value
+                                                    + (params.seriesData.length ? ' - ' + params.seriesData[0].data + 'kbps' : '');
+                                            }
+                                        }
+                                    },
+                                    data: time_list
+                                },
+                                {
+                                    type: 'category',
+                                    axisTick: {
+                                        alignWithLabel: true
+                                    },
+                                    axisLine: {
+                                        onZero: false,
+                                        lineStyle: {
+                                            color: colors[0]
+                                        }
+                                    },
+                                    axisPointer: {
+                                        label: {
+                                            formatter: function (params) {
+                                                return '出网  ' + params.value
+                                                    + (params.seriesData.length ? ' - ' + params.seriesData[0].data + 'kbps' : '');
+                                            }
+                                        }
+                                    },
+                                    data: time_list
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value'
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '出网kbps',
+                                    type: 'line',
+                                    xAxisIndex: 1,
+                                    smooth: true,
+                                    data: net_sent
+                                },
+                                {
+                                    name: '入网kbps',
+                                    type: 'line',
+                                    smooth: true,
+                                    data: net_recv
+                                }
+                            ]
+                        };
+                        var cpu_title='CPU占用情况';
+                        self.cpuOption = {
+                            color: colors,
+                            tooltip: {
+                                trigger: 'none',
+                                axisPointer: {
+                                    type: 'cross'
+                                }
+                            },
+                            legend: {
+                                data: [cpu_title]
+                            },
+                            grid: {
+                                top: 70,
+                                bottom: 50
+                            },
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    axisTick: {
+                                        alignWithLabel: true
+                                    },
+                                    axisLine: {
+                                        onZero: false,
+                                        lineStyle: {
+                                            color: colors[3]
+                                        }
+                                    },
+                                    axisPointer: {
+                                        label: {
+                                            formatter: function (params) {
+                                                return 'CPU  ' + params.value
+                                                    + (params.seriesData.length ? ' - ' + params.seriesData[0].data + '%' : '');
+                                            }
+                                        }
+                                    },
+                                    data: time_list
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value'
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: cpu_title,
+                                    type: 'line',
+                                    xAxisIndex: 0,
+                                    smooth: true,
+                                    data: cpu_percent
+                                }
+                            ]
+                        };
+                        var mem_title='内存占用情况(总内存'+(mem_total/1024/1024/1024).toFixed(2)+'G)';
+                        self.memOption = {
+                            color: colors,
+                            tooltip: {
+                                trigger: 'none',
+                                axisPointer: {
+                                    type: 'cross'
+                                }
+                            },
+                            legend: {
+                                data: [mem_title]
+                            },
+                            grid: {
+                                top: 70,
+                                bottom: 50
+                            },
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    axisTick: {
+                                        alignWithLabel: true
+                                    },
+                                    axisLine: {
+                                        onZero: false,
+                                        lineStyle: {
+                                            color: colors[3]
+                                        }
+                                    },
+                                    axisPointer: {
+                                        label: {
+                                            formatter: function (params) {
+                                                var dataIndex=params.seriesData[0].dataIndex;
+                                                var temp=' 已用:'+(mem_used[dataIndex]/1024/1024/1024).toFixed(2)+'G';
+                                                temp+=' 空闲:'+(mem_free[dataIndex]/1024/1024/1024).toFixed(2)+'G';
+                                                return '内存  ' + params.value
+                                                    + (params.seriesData.length ? ' - ' + params.seriesData[0].data + '%' +temp: '');                                            }
+                                        }
+                                    },
+                                    data: time_list
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value'
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: mem_title,
+                                    type: 'line',
+                                    xAxisIndex: 0,
+                                    smooth: true,
+                                    data: mem_percent
+                                }
+                            ]
+                        };
+                        var div_cpu = document.getElementById("div_cpu");
+                        div_cpu.style.width = div_cpu.clientWidth + "px";
+                        self.echartCt = echarts.init(div_cpu);
+                        self.echartCt.setOption(self.cpuOption, true);
+                        var div_mem = document.getElementById("div_mem");
+                        div_mem.style.width = div_mem.clientWidth + "px";
+                        self.echartCt = echarts.init(div_mem);
+                        self.echartCt.setOption(self.memOption, true);
+                        var div_net = document.getElementById("div_net");
+                        div_net.style.width = div_net.clientWidth + "px";
+                        self.echartCt = echarts.init(div_net);
+                        self.echartCt.setOption(self.netOption, true);
+
+                    }
+                }, "json");
+            },
+            openCupMem: function () {
+                var self = this;
+                self.cpuMemDialogVisible = true;
+                self.getCpuMem();
             }
         },
         created: function () {
             this.hostData();
+
         }
     });
 </script>

@@ -18,8 +18,10 @@ import org.nutz.boot.starter.logback.exts.loglevel.LoglevelService;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
+import org.nutz.integration.jedis.RedisService;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.stream.StringInputStream;
@@ -33,9 +35,7 @@ import org.nutz.mvc.annotation.Param;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by wizzer on 2019/2/27.
@@ -57,6 +57,8 @@ public class SysAppController {
     private SysAppTaskService sysAppTaskService;
     @Inject
     private FtpService ftpService;
+    @Inject
+    private RedisService redisService;
 
     @At("")
     @Ok("beetl:/platform/sys/app/index.html")
@@ -86,6 +88,26 @@ public class SysAppController {
                 }
             }
             return Result.success().addData(NutMap.NEW().addv("hostList", hostList).addv("appList", dataList));
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At
+    @Ok("json:full")
+    @RequiresPermissions("sys.operation.app")
+    @SuppressWarnings("unchecked")
+    public Object osData(@Param("hostName") String hostName) {
+        try {
+            List<NutMap> hostList = new ArrayList<>();
+            Set<String> set = redisService.keys("logback:deploy:" + hostName + ":*");
+            List<String> list = new ArrayList<>(set);
+            Collections.sort(list);
+            List<NutMap> dataList = new ArrayList<>();
+            for (String key : list) {
+                dataList.add(Json.fromJson(NutMap.class, redisService.get(key)));
+            }
+            return Result.success().addData(dataList);
         } catch (Exception e) {
             return Result.error();
         }

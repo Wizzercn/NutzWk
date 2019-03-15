@@ -12,11 +12,15 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.boot.starter.ftp.FtpService;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
+import org.nutz.integration.jedis.RedisService;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
+import org.nutz.json.JsonFormat;
 import org.nutz.lang.Streams;
 import org.nutz.lang.Times;
 import org.nutz.lang.stream.StringInputStream;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
@@ -46,11 +50,16 @@ public class ApiDeployController {
     private SysAppConfService sysAppConfService;
     @Inject
     private FtpService ftpService;
+    @Inject
+    private RedisService redisService;
 
     @At("/task")
     @Ok("json")
     @POST
-    public Object task(@Param("apps") String[] apps, @Param("hostname") String hostname) {
+    public Object task(@Param("apps") String[] apps, @Param("hostname") String hostname, @Param("timestamp") long timestamp,
+                       @Param("mem_total") long mem_total, @Param("mem_used") long mem_used,
+                       @Param("mem_free") long mem_free, @Param("mem_percent") double mem_percent,
+                       @Param("cpu_percent") double cpu_percent, @Param("net_sent") long net_sent, @Param("net_recv") long net_recv) {
         try {
             List<Sys_app_task> list = sysAppTaskService.query(Cnd.where("name", "in", apps).and("hostName", "=", hostname).and("status", "=", 0));
             List<String> ids = new ArrayList<>();
@@ -62,6 +71,15 @@ public class ApiDeployController {
             long now3 = Times.getTS() - 3 * 60;
             sysAppTaskService.update(Chain.make("status", 3).add("pushAt", Times.getTS()).add("pushResult", "任务超时"),
                     Cnd.where("name", "in", apps).and("hostName", "=", hostname).and("status", "=", 1).and("opAt", "<", now3));
+            NutMap map = NutMap.NEW().addv("mem_total", mem_total)
+                    .addv("mem_used", mem_used)
+                    .addv("mem_free", mem_free)
+                    .addv("mem_percent", mem_percent)
+                    .addv("cpu_percent", cpu_percent)
+                    .addv("net_sent", net_sent)
+                    .addv("net_recv", net_recv)
+                    .addv("timestamp", timestamp);
+            redisService.setex("logback:deploy:" + hostname + ":" + timestamp, 10 * 60, Json.toJson(map, JsonFormat.compact()));
             return Result.success("获取成功").addData(list);
         } catch (Exception e) {
             return Result.error("获取失败");
