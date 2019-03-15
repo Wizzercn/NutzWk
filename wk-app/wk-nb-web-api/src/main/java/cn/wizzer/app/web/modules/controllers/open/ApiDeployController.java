@@ -71,7 +71,7 @@ public class ApiDeployController {
     @At("/report")
     @Ok("json")
     @POST
-    public Object report(@Param("hosts") String[] hosts, @Param("hostname") String hostname, @Param("taskid") String taskid, @Param("status") int status, @Param("msg") String msg) {
+    public Object report(@Param("hostname") String hostname, @Param("taskid") String taskid, @Param("status") int status, @Param("msg") String msg) {
         try {
             sysAppTaskService.update(Chain.make("status", status).add("pushResult", msg).add("pushAt", Times.getTS()), Cnd.where("id", "=", taskid));
             return Result.success("执行成功");
