@@ -50,14 +50,18 @@ public class ApiDeployController {
     @At("/task")
     @Ok("json")
     @POST
-    public Object task(@Param("hosts") String[] hosts, @Param("hostname") String hostname) {
+    public Object task(@Param("apps") String[] apps, @Param("hostname") String hostname) {
         try {
-            List<Sys_app_task> list = sysAppTaskService.query(Cnd.where("name", "in", hosts).and("hostName", "=", hostname).and("status", "=", 0));
+            List<Sys_app_task> list = sysAppTaskService.query(Cnd.where("name", "in", apps).and("hostName", "=", hostname).and("status", "=", 0));
             List<String> ids = new ArrayList<>();
             for (Sys_app_task task : list) {
                 ids.add(task.getId());
             }
             sysAppTaskService.update(Chain.make("status", 1), Cnd.where("id", "in", ids));
+            //大于3分钟将任务设置为超时
+            long now3 = Times.getTS() - 3 * 60;
+            sysAppTaskService.update(Chain.make("status", 3).add("pushAt", Times.getTS()).add("pushResult", "任务超时"),
+                    Cnd.where("name", "in", apps).and("hostName", "=", hostname).and("status", "=", 1).and("opAt", "<", now3));
             return Result.success("获取成功").addData(list);
         } catch (Exception e) {
             return Result.error("获取失败");
