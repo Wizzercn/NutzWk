@@ -9,7 +9,7 @@
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="org.nutz.boot.starter.logback.exts.logfile.LogfileTimeBasedRollingPolicy">
-            <fileNamePattern>~/logs/web-platform-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>/data/nutzwk/logs/web-platform-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>15</maxHistory>
         </rollingPolicy>
         <encoder>
