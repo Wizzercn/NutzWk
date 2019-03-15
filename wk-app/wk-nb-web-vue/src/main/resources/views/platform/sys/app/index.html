@@ -253,7 +253,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="任务列表"
             :visible.sync="taskDialogVisible"
-            width="85%">
+            width="88%">
         <el-row style="margin-top: -72px;margin-bottom: -70px;">
             <el-button style="padding-left:88px;" type="text"  icon="ti-reload"
                        @click="pageData" title="刷新数据"></el-button>
@@ -290,15 +290,18 @@ layout("/layouts/platform.html"){
                 <el-table-column
                         prop="appVersion"
                         label="软件版本"
+                        width="150"
                 >
                     <template slot-scope="scope">
                         安装包:{{scope.row.appVersion}}<br/>
-                        配置文件:{{scope.row.confVersion}}
+                        配置文件:{{scope.row.confVersion}}<br/>
+                        <span v-if="scope.row.processId">进程ID:{{scope.row.processId}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
-                        prop="processId"
-                        label="进程ID"
+                        prop="action"
+                        label="命令"
+                        width="60"
                 >
                 </el-table-column>
                 <el-table-column
