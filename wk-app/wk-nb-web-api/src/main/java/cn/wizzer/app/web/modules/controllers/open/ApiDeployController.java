@@ -78,9 +78,9 @@ public class ApiDeployController {
 
     @At("/jar/download")
     @Ok("void")
-    public void jarDownload(@Param("appname") String appname, @Param("appversion") String appversion, HttpServletResponse response) {
+    public void jarDownload(@Param("name") String name, @Param("version") String version, HttpServletResponse response) {
         try {
-            Sys_app_list sysAppList = sysAppListService.fetch(Cnd.where("appName", "=", appname).and("appVersion", "=", appversion).and("disabled", "=", false));
+            Sys_app_list sysAppList = sysAppListService.fetch(Cnd.where("appName", "=", name).and("appVersion", "=", version).and("disabled", "=", false));
             if (sysAppList != null) {
                 String fileName = sysAppList.getAppName() + ".jar";
                 response.setHeader("Content-Type", "application/java-archive");
@@ -95,9 +95,9 @@ public class ApiDeployController {
 
     @At("/conf/download")
     @Ok("void")
-    public void confDownload(@Param("confname") String confname, @Param("confversion") String confversion, HttpServletResponse response) {
+    public void confDownload(@Param("name") String name, @Param("version") String version, HttpServletResponse response) {
         try {
-            Sys_app_conf conf = sysAppConfService.fetch(Cnd.where("confName", "=", confname).and("confVersion", "=", confversion).and("disabled", "=", false));
+            Sys_app_conf conf = sysAppConfService.fetch(Cnd.where("confName", "=", name).and("confVersion", "=", version).and("disabled", "=", false));
             if (conf != null) {
                 String fileName = conf.getConfName() + "-" + conf.getConfVersion() + ".properties";
                 response.setHeader("Content-Type", "text/plain");
