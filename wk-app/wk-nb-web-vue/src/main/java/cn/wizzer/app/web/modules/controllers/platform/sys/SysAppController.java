@@ -13,6 +13,7 @@ import cn.wizzer.framework.base.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.boot.starter.ftp.FtpService;
+import org.nutz.boot.starter.logback.exts.loglevel.LoglevelCommand;
 import org.nutz.boot.starter.logback.exts.loglevel.LoglevelProperty;
 import org.nutz.boot.starter.logback.exts.loglevel.LoglevelService;
 import org.nutz.dao.Chain;
@@ -414,6 +415,25 @@ public class SysAppController {
         try {
             //加上status条件,防止执行前状态已变更
             sysAppTaskService.update(Chain.make("status", 4), Cnd.where("id", "=", id).and("status", "=", 0));
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error();
+        }
+    }
+
+    @At
+    @Ok("json")
+    @RequiresPermissions("sys.operation.app.loglevel")
+    public Object loglevel(@Param("action") String action, @Param("name") String name, @Param("processId") String processId, @Param("loglevel") String loglevel) {
+        try {
+            LoglevelCommand loglevelCommand = new LoglevelCommand();
+            loglevelCommand.setAction(action);
+            loglevelCommand.setLevel(loglevel);
+            if ("processId".equals(action)) {
+                loglevelCommand.setProcessId(processId);
+            }
+            loglevelCommand.setName(name);
+            loglevelService.changeLoglevel(loglevelCommand);
             return Result.success();
         } catch (Exception e) {
             return Result.error();
