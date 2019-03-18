@@ -52,13 +52,16 @@ public class BdController {
                 String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = Globals.AppFileDomain + filePath + fileName;
-                ftpService.upload(filePath, fileName, tf.getInputStream());
-                nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", url);
-                nutMap.addv("original", tf.getSubmittedFileName());
-                nutMap.addv("type", suffixName);
-                nutMap.addv("size", tf.getSize());
-                return nutMap;
+                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                    nutMap.addv("state", "SUCCESS");
+                    nutMap.addv("url", url);
+                    nutMap.addv("original", tf.getSubmittedFileName());
+                    nutMap.addv("type", suffixName);
+                    nutMap.addv("size", tf.getSize());
+                    return nutMap;
+                } else {
+                    return nutMap.addv("state", "FAIL");
+                }
             }
         } catch (Exception e) {
             return nutMap.addv("state", "FAIL");
@@ -84,13 +87,16 @@ public class BdController {
                 String filePath = Globals.AppUploadBase + "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = Globals.AppFileDomain + filePath + fileName;
-                ftpService.upload(filePath, fileName, tf.getInputStream());
-                nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", url);
-                nutMap.addv("original", tf.getSubmittedFileName());
-                nutMap.addv("type", suffixName);
-                nutMap.addv("size", tf.getSize());
-                return nutMap;
+                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                    nutMap.addv("state", "SUCCESS");
+                    nutMap.addv("url", url);
+                    nutMap.addv("original", tf.getSubmittedFileName());
+                    nutMap.addv("type", suffixName);
+                    nutMap.addv("size", tf.getSize());
+                    return nutMap;
+                } else {
+                    return nutMap.addv("state", "FAIL");
+                }
             }
         } catch (Exception e) {
             return nutMap.addv("state", "FAIL");
@@ -116,13 +122,16 @@ public class BdController {
                 String filePath = Globals.AppUploadBase + "/video/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = Globals.AppFileDomain + filePath + fileName;
-                ftpService.upload(filePath, fileName, tf.getInputStream());
-                nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", url);
-                nutMap.addv("original", tf.getSubmittedFileName());
-                nutMap.addv("type", suffixName);
-                nutMap.addv("size", tf.getSize());
-                return nutMap;
+                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                    nutMap.addv("state", "SUCCESS");
+                    nutMap.addv("url", url);
+                    nutMap.addv("original", tf.getSubmittedFileName());
+                    nutMap.addv("type", suffixName);
+                    nutMap.addv("size", tf.getSize());
+                    return nutMap;
+                } else {
+                    return nutMap.addv("state", "FAIL");
+                }
             }
         } catch (Exception e) {
             return nutMap.addv("state", "FAIL");

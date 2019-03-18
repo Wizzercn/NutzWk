@@ -46,8 +46,11 @@ public class UploadController {
                 String filePath = Globals.AppUploadBase + "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = filePath + fileName;
-                ftpService.upload(filePath, fileName, tf.getInputStream());
-                return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getName()).addv("file_size", tf.getSize()).addv("file_url", url));
+                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                    return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getName()).addv("file_size", tf.getSize()).addv("file_url", url));
+                } else {
+                    return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                }
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -74,8 +77,11 @@ public class UploadController {
                 String filePath = Globals.AppUploadBase + "/video/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = filePath + fileName;
-                ftpService.upload(filePath, fileName, tf.getInputStream());
-                return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getName()).addv("file_size", tf.getSize()).addv("file_url", url));
+                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                    return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getName()).addv("file_size", tf.getSize()).addv("file_url", url));
+                } else {
+                    return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                }
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -102,8 +108,11 @@ public class UploadController {
                 String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = filePath + fileName;
-                ftpService.upload(filePath, fileName, tf.getInputStream());
-                return Result.success("上传成功", url);
+                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                    return Result.success("上传成功", url);
+                } else {
+                    return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                }
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

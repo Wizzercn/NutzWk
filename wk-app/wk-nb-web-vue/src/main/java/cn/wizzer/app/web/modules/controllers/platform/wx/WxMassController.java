@@ -23,7 +23,6 @@ import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
-import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
@@ -40,7 +39,6 @@ import org.nutz.weixin.spi.WxResp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -99,7 +97,7 @@ public class WxMassController {
         if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
             cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
         }
-        return Result.success().addData(wxMassService.listPageLinks(pageNumber, pageSize, cnd,"massSend"));
+        return Result.success().addData(wxMassService.listPageLinks(pageNumber, pageSize, cnd, "massSend"));
     }
 
     @At("/news/?")
@@ -188,9 +186,12 @@ public class WxMassController {
                 String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = filePath + fileName;
-                ftpService.upload(filePath, fileName, tf.getInputStream());
-                return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("thumb_media_id"))
-                        .addv("picurl", url));
+                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                    return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("thumb_media_id"))
+                            .addv("picurl", url));
+                } else {
+                    return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                }
             }
         } catch (Exception e) {
             return Result.error("系统错误");

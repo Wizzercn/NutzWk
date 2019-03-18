@@ -45,17 +45,20 @@ public class BdController {
                 String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = Globals.AppFileDomain + filePath + fileName;
-                ftpService.upload(filePath, fileName, tf.getInputStream());
-                nutMap.addv("name", tf.getName());
-                nutMap.addv("state", "SUCCESS");
-                nutMap.addv("url", url);
-                nutMap.addv("originalName", tf.getSubmittedFileName());
-                nutMap.addv("type", suffixName);
-                nutMap.addv("size", tf.getSize());
-                if (Strings.isBlank(callback)) {
-                    return Json.toJson(nutMap);
-                } else
-                    return "<script>" + callback + "(" + Json.toJson(nutMap) + ")</script>";
+                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                    nutMap.addv("name", tf.getName());
+                    nutMap.addv("state", "SUCCESS");
+                    nutMap.addv("url", url);
+                    nutMap.addv("originalName", tf.getSubmittedFileName());
+                    nutMap.addv("type", suffixName);
+                    nutMap.addv("size", tf.getSize());
+                    if (Strings.isBlank(callback)) {
+                        return Json.toJson(nutMap);
+                    } else
+                        return "<script>" + callback + "(" + Json.toJson(nutMap) + ")</script>";
+                } else {
+                    return Json.toJson(nutMap.addv("state", "FAIL"));
+                }
             }
         } catch (Exception e) {
             return Json.toJson(nutMap.addv("state", "FAIL"));

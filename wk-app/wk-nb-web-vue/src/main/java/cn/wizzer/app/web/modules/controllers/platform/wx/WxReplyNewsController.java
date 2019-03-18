@@ -186,10 +186,13 @@ public class WxReplyNewsController {
                 String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = filePath + fileName;
-                ftpService.upload(filePath, fileName, tf.getInputStream());
-                return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("media_id"))
-                        .addv("picurl", Strings.sNull(resp.get("url")).replace("http://", "https://"))
-                        .addv("picurl2", url));
+                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                    return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("media_id"))
+                            .addv("picurl", Strings.sNull(resp.get("url")).replace("http://", "https://"))
+                            .addv("picurl2", url));
+                } else {
+                    return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                }
             }
         } catch (Exception e) {
             return Result.error("系统错误");
