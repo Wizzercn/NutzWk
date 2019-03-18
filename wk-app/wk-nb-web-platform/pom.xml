@@ -44,10 +44,17 @@
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-core</artifactId>
+            <version>${nutzboot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-dubbo</artifactId>
+            <version>${nutzboot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>com.101tec</groupId>
@@ -88,6 +95,12 @@
             <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-sentinel-dubbo</artifactId>
             <version>${nutzboot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-handler</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
