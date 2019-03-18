@@ -168,12 +168,14 @@ layout("/layouts/platform.html"){
                         :show-file-list="false"
                         :before-upload="beforeJarUpload"
                         :on-success="function(resp,file,fileList){return handleJarSuccess(resp,file,fileList)}"
+                        :on-progress="uploadFileProcess"
                         style="height:180px;"
                         v-if="!formData.fileSize||formData.fileSize==0"
                 >
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    <i class="el-icon-upload" v-if="!fileUploadFlag"></i>
+                    <div class="el-upload__text" v-if="!fileUploadFlag">将文件拖到此处，或<em>点击上传</em></div>
                     <div class="el-upload__tip" slot="tip">只能上传 jar 文件，且不超过120MB</div>
+                    <el-progress v-if="fileUploadFlag == true" type="circle" :percentage="fileUploadPercent" style="margin-top:20px;"></el-progress>
                 </el-upload>
                 <div v-if="formData.fileSize>0" style="color: green;font-size: 12px;">
                     文件大小: {{(formData.fileSize/1024/1024).toFixed(2)}}MB
@@ -220,6 +222,8 @@ layout("/layouts/platform.html"){
                         {required: true, message: '上传文件', trigger: 'blur'}
                     ],
                 },
+                fileUploadFlag:false,
+                fileUploadPercent:0
             }
         },
         methods: {
@@ -368,6 +372,12 @@ layout("/layouts/platform.html"){
                     this.$set(this.formData, "fileSize", 0);
                     this.$set(this.formData, "filePath", "");
                 }
+                this.fileUploadFlag=false;
+            },
+            uploadFileProcess:function(event, file, fileList){
+                console.log(event.percent)
+                this.fileUploadFlag=true;
+                this.fileUploadPercent = event.percent.toFixed(0);
             },
             queryAppName: function (appName, cb) {
                 $.post(base + "/platform/sys/app/jar/search", {appName: appName}, function (data) {
