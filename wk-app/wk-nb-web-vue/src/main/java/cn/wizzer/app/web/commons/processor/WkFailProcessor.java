@@ -15,7 +15,7 @@ import org.nutz.mvc.view.ForwardView;
 public class WkFailProcessor extends ViewProcessor {
 
     private static final Log log = Logs.get();
-    private String errorUri = "/error/500.html";
+    private String errorUri = "/platform/home/500";
 
     @Override
     public void init(NutConfig config, ActionInfo ai) throws Throwable {

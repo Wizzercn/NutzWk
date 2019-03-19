@@ -117,6 +117,12 @@ public class SysHomeController {
         }
     }
 
+    @At("/500")
+    @Ok("re")
+    public Object error500() {
+        return "beetl:/platform/sys/500.html";
+    }
+
     @At(value = {"/", "/index"}, top = true)
     @Ok(">>:/sysadmin")
     public void index() {
