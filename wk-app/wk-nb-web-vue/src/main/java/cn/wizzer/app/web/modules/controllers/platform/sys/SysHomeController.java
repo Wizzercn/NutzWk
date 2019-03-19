@@ -3,6 +3,7 @@ package cn.wizzer.app.web.modules.controllers.platform.sys;
 import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.services.SysMenuService;
 import cn.wizzer.app.web.commons.base.Globals;
+import cn.wizzer.app.web.commons.utils.ShiroUtil;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -29,7 +30,8 @@ public class SysHomeController {
     @Inject
     @Reference
     private SysMenuService sysMenuService;
-
+    @Inject
+    private ShiroUtil shiroUtil;
     @At("")
     @Ok("beetl:/platform/sys/home.html")
     @RequiresAuthentication
@@ -120,7 +122,11 @@ public class SysHomeController {
     @At("/500")
     @Ok("re")
     public Object error500() {
-        return "beetl:/platform/sys/500.html";
+        if(shiroUtil.isAuthenticated()) {
+            return "beetl:/platform/sys/500.html";
+        }else {
+            return ">>:/";
+        }
     }
 
     @At(value = {"/", "/index"}, top = true)
