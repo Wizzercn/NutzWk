@@ -135,7 +135,7 @@ public class SysAppController {
     }
 
     @At("/jar/data")
-    @Ok("json:full")
+    @Ok("json:{locked:'password|salt',ignoreNull:false}")
     @RequiresPermissions("sys.operation.app.jar")
     public Object jarData(@Param("appName") String appName, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
@@ -243,7 +243,7 @@ public class SysAppController {
 
 
     @At("/conf/data")
-    @Ok("json:{locked:'confData',ignoreNull:false}")
+    @Ok("json:{locked:'confData|password|salt',ignoreNull:false}")
     @RequiresPermissions("sys.operation.app.conf")
     public Object confData(@Param("confName") String confName, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
