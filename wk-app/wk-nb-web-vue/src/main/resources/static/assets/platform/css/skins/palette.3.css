@@ -234,3 +234,32 @@ a.btn-color {
   background-color: #353d46;
   color: white;
 }
+
+@media screen and (min-width: 768px) {
+  .app.small-menu .sidebar .main-navigation > ul > li .leftMenu__twoIcon{
+    display: inline;
+  }
+  .app.small-menu .sidebar .main-navigation .nav > li > .sub-menu > li a{
+    padding: 5px 20px!important;
+    color: #59595a;
+  }
+  .app.small-menu .sidebar .main-navigation .nav > li > .sub-menu  li.active,
+  .app.small-menu .sidebar .main-navigation .nav > li > .sub-menu > li  a:hover{
+    background-color: #f1f2f9;
+  }
+  .app.small-menu .sidebar .main-navigation .nav > li > .sub-menu > li > a + .sub-menu > li > a{
+    padding: 5px 20px 5px 40px !important;
+  }
+  .app:not(.small-menu) .main-navigation > ul > li > ul  li.active a,
+  .app:not(.small-menu) .main-navigation > ul > li > ul  li a:hover{
+    color: #fff;
+  }
+}
+
+.main-navigation > ul > li .sub-menu .sub-menu{
+  background-color: #4c5765;
+}
+
+.small-menu .main-navigation > ul > li .sub-menu .sub-menu{
+  background-color: transparent;
+}

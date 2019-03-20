@@ -1,7 +1,7 @@
 /* wx_menu_01 */
 update sys_menu set location=10 where path='0001'
 /* wx_menu_02 */
-insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, showit, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('b0edc6861a494b79b97990dc05f0a524','','0002','微信','Wechat','menu','','','','1','0','wx',NULL,'8','1','','1467471229','0')
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, showit, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('b0edc6861a494b79b97990dc05f0a524','','0002','微信','Wechat','menu','','','fa fa-weixin','1','0','wx',NULL,'8','1','','1467471229','0')
 /* wx_menu_03 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, showit, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('e4256d7b0ffc4a02906cf900322b6213','b0edc6861a494b79b97990dc05f0a524','00020001','微信会员','Member','menu','','','fa fa-user','1','0','wx.user',NULL,'1','1','','1467471292','0')
 /* wx_menu_04 */

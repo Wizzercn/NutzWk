@@ -115,6 +115,12 @@ public class Sys_user extends BaseModel implements Serializable {
     private String loginTheme;
 
     @Column
+    @Comment("菜单样式")
+    @J4EIgnore
+    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private String menuTheme;
+
+    @Column
     @J4EIgnore
     private boolean loginSidebar;
 
@@ -381,5 +387,13 @@ public class Sys_user extends BaseModel implements Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getMenuTheme() {
+        return menuTheme;
+    }
+
+    public void setMenuTheme(String menuTheme) {
+        this.menuTheme = menuTheme;
     }
 }

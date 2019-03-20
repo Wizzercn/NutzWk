@@ -106,7 +106,7 @@ public class DubboRpcSysMainLauncher {
             menu.setName("系统");
             menu.setNote("系统");
             menu.setAliasName("System");
-            menu.setIcon("");
+            menu.setIcon("ti-settings");
             menu.setLocation(0);
             menu.setHref("");
             menu.setTarget("");

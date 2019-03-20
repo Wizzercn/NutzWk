@@ -115,6 +115,26 @@ public class SysLoginController {
     }
 
     /**
+     * 切换菜单位置，对登陆用户有效
+     *
+     * @param theme
+     * @param req
+     */
+    @At("/menuTheme")
+    @RequiresAuthentication
+    public void menuTheme(@Param("menuTheme") String theme, HttpServletRequest req) {
+        if (!Strings.isEmpty(theme)) {
+            Subject subject = SecurityUtils.getSubject();
+            if (subject != null) {
+                Sys_user user = (Sys_user) subject.getPrincipal();
+                user.setMenuTheme(theme);
+                sysUserService.update(Chain.make("menuTheme", theme), Cnd.where("id", "=", user.getId()));
+                sysUserService.deleteCache(user.getId());
+            }
+        }
+    }
+
+    /**
      * 切换布局，对登陆用户有效
      *
      * @param p
@@ -259,7 +279,7 @@ public class SysLoginController {
             h = 60;
         }
         String text = R.captchaNumber(4);
-        redisService.setex("platformCaptcha:" + session.getId(),300, text);
+        redisService.setex("platformCaptcha:" + session.getId(), 300, text);
         return Images.createCaptcha(text, w, h, null, null, null);
     }
 }

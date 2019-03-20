@@ -268,3 +268,16 @@
 	bottom: 5px;
 	right: 5px
 }
+
+.layout-toggleMenu__item{
+	display: inline-block;
+	cursor: pointer;
+	padding: 5px;
+	margin-left: 5px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+
+.layout-toggleMenu__item.is-active{
+	border-color: #a55ee7;
+}

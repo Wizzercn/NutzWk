@@ -2,6 +2,8 @@ package cn.wizzer.app.web.modules.controllers.platform.sys;
 
 import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.services.SysMenuService;
+import cn.wizzer.app.sys.modules.services.SysRoleService;
+import cn.wizzer.app.sys.modules.services.SysUserService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
@@ -37,6 +39,12 @@ public class SysMenuController {
     @Inject
     @Reference
     private SysMenuService sysMenuService;
+    @Inject
+    @Reference
+    private SysUserService sysUserService;
+    @Inject
+    @Reference
+    private SysRoleService sysRoleService;
 
     @At("")
     @Ok("beetl:/platform/sys/menu/index.html")
@@ -126,6 +134,8 @@ public class SysMenuController {
             sysMenuService.save(sysMenu, Strings.sNull(sysMenu.getParentId()), buttons);
             req.setAttribute("name", sysMenu.getName());
             sysMenuService.clearCache();
+            sysUserService.clearCache();
+            sysRoleService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -185,6 +195,8 @@ public class SysMenuController {
             sysMenuService.edit(sysMenu, sysMenu.getParentId(), buttons);
             req.setAttribute("name", sysMenu.getName());
             sysMenuService.clearCache();
+            sysUserService.clearCache();
+            sysRoleService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -214,6 +226,8 @@ public class SysMenuController {
             }
             sysMenuService.updateIgnoreNull(menu);
             sysMenuService.clearCache();
+            sysUserService.clearCache();
+            sysRoleService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -233,6 +247,8 @@ public class SysMenuController {
             }
             sysMenuService.deleteAndChild(menu);
             sysMenuService.clearCache();
+            sysUserService.clearCache();
+            sysRoleService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -248,6 +264,8 @@ public class SysMenuController {
             req.setAttribute("name", sysMenuService.fetch(menuId).getName());
             sysMenuService.update(org.nutz.dao.Chain.make("disabled", false), Cnd.where("id", "=", menuId));
             sysMenuService.clearCache();
+            sysUserService.clearCache();
+            sysRoleService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -263,6 +281,8 @@ public class SysMenuController {
             req.setAttribute("name", sysMenuService.fetch(menuId).getName());
             sysMenuService.update(org.nutz.dao.Chain.make("disabled", true), Cnd.where("id", "=", menuId));
             sysMenuService.clearCache();
+            sysUserService.clearCache();
+            sysRoleService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -319,6 +339,8 @@ public class SysMenuController {
                 }
             }
             sysMenuService.clearCache();
+            sysUserService.clearCache();
+            sysRoleService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();

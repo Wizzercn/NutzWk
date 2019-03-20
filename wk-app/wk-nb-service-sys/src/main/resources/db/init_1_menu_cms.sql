@@ -3,7 +3,7 @@ update sys_menu set location=10 where path='0001'
 /* cms_menu_02 */
 update sys_menu set location=8 where path='0002'
 /* cms_menu_03 */
-insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, showit, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('02e86a61e99746bea34236ea73dd52a5','','0003','CMS','CMS','menu','','','','1','0','cms',NULL,'9','1','1a19ef09b12344b4a797d6e6dfe7fb29','1468895671','0')
+insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, showit, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('02e86a61e99746bea34236ea73dd52a5','','0003','CMS','CMS','menu','','','ti-world','1','0','cms',NULL,'9','1','1a19ef09b12344b4a797d6e6dfe7fb29','1468895671','0')
 /* cms_menu_04 */
 insert into sys_menu (id, parentId, path, name, aliasName, type, href, target, icon, showit, disabled, permission, note, location, hasChildren, opBy, opAt, delFlag) values('077cb6be4c7c41cc8955ee045a4f0286','68cdbf694f71445c8587a20234d6fe31','0003000300020001','添加链接','Add','data','','','','0','0','cms.link.link.add',NULL,'47','0','1a19ef09b12344b4a797d6e6dfe7fb29','1468897043','0')
 /* cms_menu_05 */
