@@ -5,7 +5,7 @@
     <parent>
         <artifactId>wk-parent</artifactId>
         <groupId>cn.wizzer</groupId>
-        <version>5.2.1</version>
+        <version>5.2.2-SNAPSHOT</version>
     </parent>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
