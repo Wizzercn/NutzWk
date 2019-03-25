@@ -28,6 +28,7 @@ public class WkErrorPageHandler extends ErrorPageErrorHandler {
             try {
                 if (isAjax(request)) {
                     response.getWriter().write(Json.toJson(new NutMap("code", "-1").setv("msg", response.getStatus() + " error")));
+                    return;
                 } else {
                     RequestDispatcher rd = request.getRequestDispatcher("/platform/home/" + response.getStatus());
                     rd.forward(request, response);
