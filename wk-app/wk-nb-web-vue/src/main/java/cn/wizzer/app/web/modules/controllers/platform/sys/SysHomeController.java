@@ -32,6 +32,7 @@ public class SysHomeController {
     private SysMenuService sysMenuService;
     @Inject
     private ShiroUtil shiroUtil;
+
     @At("")
     @Ok("beetl:/platform/sys/home.html")
     @RequiresAuthentication
@@ -119,13 +120,33 @@ public class SysHomeController {
         }
     }
 
+    @At("/403")
+    @Ok("re")
+    public Object error403() {
+        if (shiroUtil.isAuthenticated()) {
+            return "beetl:/platform/sys/403.html";
+        } else {
+            return ">>:/error/404.html";
+        }
+    }
+
+    @At("/404")
+    @Ok("re")
+    public Object error404() {
+        if (shiroUtil.isAuthenticated()) {
+            return "beetl:/platform/sys/404.html";
+        } else {
+            return ">>:/error/404.html";
+        }
+    }
+
     @At("/500")
     @Ok("re")
     public Object error500() {
-        if(shiroUtil.isAuthenticated()) {
+        if (shiroUtil.isAuthenticated()) {
             return "beetl:/platform/sys/500.html";
-        }else {
-            return ">>:/";
+        } else {
+            return ">>:/error/500.html";
         }
     }
 
