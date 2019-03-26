@@ -375,7 +375,6 @@ layout("/layouts/platform.html"){
                 this.fileUploadFlag=false;
             },
             uploadFileProcess:function(event, file, fileList){
-                console.log(event.percent)
                 this.fileUploadFlag=true;
                 this.fileUploadPercent = event.percent.toFixed(0);
             },
