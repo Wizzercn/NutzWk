@@ -679,6 +679,47 @@ public interface BaseService<T> {
      * 分页查询
      *
      * @param pageNumber
+     * @param sql
+     * @return
+     */
+    Pagination listPageMap(Integer pageNumber, Sql sql);
+
+
+    /**
+     * 分页查询(sql)
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param sql
+     * @return
+     */
+    Pagination listPageMap(Integer pageNumber, int pageSize, Sql sql);
+
+    /**
+     * 分页查询
+     *
+     * @param pageNumber
+     * @param sql        查询语句
+     * @param countSql   统计语句
+     * @return
+     */
+    Pagination listPageMap(Integer pageNumber, Sql sql, Sql countSql);
+
+    /**
+     * 分页查询
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param sql        查询语句
+     * @param countSql   统计语句
+     * @return
+     */
+    Pagination listPageMap(Integer pageNumber, int pageSize, Sql sql, Sql countSql);
+
+    /**
+     * 分页查询
+     *
+     * @param pageNumber
      * @param tableName
      * @param cnd
      * @return

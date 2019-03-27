@@ -921,6 +921,66 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
      * 分页查询
      *
      * @param pageNumber
+     * @param sql
+     * @return
+     */
+    public Pagination listPageMap(Integer pageNumber, Sql sql) {
+        return listPageMap(pageNumber, DEFAULT_PAGE_NUMBER, sql);
+    }
+
+    /**
+     * 分页查询(sql)
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param sql
+     * @return
+     */
+    public Pagination listPageMap(Integer pageNumber, int pageSize, Sql sql) {
+        pageNumber = getPageNumber(pageNumber);
+        pageSize = getPageSize(pageSize);
+        Pager pager = this.dao().createPager(pageNumber, pageSize);
+        pager.setRecordCount((int) Daos.queryCount(this.dao(), sql));// 记录数需手动设置
+        sql.setPager(pager);
+        sql.setCallback(Sqls.callback.maps());
+        this.dao().execute(sql);
+        return new Pagination(pageNumber, pageSize, pager.getRecordCount(), sql.getList(Map.class));
+    }
+
+    /**
+     * @param pageNumber
+     * @param sql        查询语句
+     * @param countSql   统计语句
+     * @return
+     */
+    public Pagination listPageMap(Integer pageNumber, Sql sql, Sql countSql) {
+        return listPageMap(pageNumber, DEFAULT_PAGE_NUMBER, sql, countSql);
+    }
+
+    /**
+     * @param pageNumber
+     * @param pageSize
+     * @param sql        查询语句
+     * @param countSql   统计语句
+     * @return
+     */
+    public Pagination listPageMap(Integer pageNumber, int pageSize, Sql sql, Sql countSql) {
+        pageNumber = getPageNumber(pageNumber);
+        pageSize = getPageSize(pageSize);
+        Pager pager = this.dao().createPager(pageNumber, pageSize);
+        countSql.setCallback(Sqls.callback.integer());
+        this.dao().execute(countSql);
+        pager.setRecordCount(countSql.getInt());// 记录数需手动设置
+        sql.setPager(pager);
+        sql.setCallback(Sqls.callback.maps());
+        this.dao().execute(sql);
+        return new Pagination(pageNumber, pageSize, pager.getRecordCount(), sql.getList(Map.class));
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param pageNumber
      * @param tableName
      * @param cnd
      * @return
