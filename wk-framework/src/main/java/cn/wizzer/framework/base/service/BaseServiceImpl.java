@@ -825,6 +825,19 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
+     * 自定义查询,并返回当前实体类对象
+     *
+     * @param sql
+     * @return
+     */
+    public List<T> listEntity(Sql sql) {
+        sql.setEntity(getEntity());
+        sql.setCallback(Sqls.callback.entities());
+        this.dao().execute(sql);
+        return sql.getList(getEntityClass());
+    }
+
+    /**
      * 自定义sql获取map key-value
      *
      * @param sql
