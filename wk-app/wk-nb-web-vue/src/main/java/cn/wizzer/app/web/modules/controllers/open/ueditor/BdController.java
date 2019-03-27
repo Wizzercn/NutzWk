@@ -10,6 +10,8 @@ import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.*;
 import org.nutz.mvc.impl.AdaptorErrorContext;
 import org.nutz.mvc.upload.TempFile;
@@ -24,6 +26,8 @@ import java.util.Date;
 @IocBean
 @At("/open/ueditor/bd")
 public class BdController {
+    private static final Log log = Logs.get();
+
     @Inject
     private FtpService ftpService;
 
@@ -61,8 +65,10 @@ public class BdController {
                 }
             }
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             return Json.toJson(nutMap.addv("state", "FAIL"));
         } catch (Throwable e) {
+            log.error(e.getMessage(), e);
             return Json.toJson(nutMap.addv("state", "FAIL"));
         }
     }

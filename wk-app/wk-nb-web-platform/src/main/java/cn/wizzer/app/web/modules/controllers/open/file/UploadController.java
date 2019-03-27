@@ -56,6 +56,7 @@ public class UploadController {
             log.error(e.getMessage(), e);
             return Result.error("系统错误");
         } catch (Throwable e) {
+            log.error(e.getMessage(), e);
             return Result.error("文件格式错误");
         }
     }
@@ -87,6 +88,7 @@ public class UploadController {
             log.error(e.getMessage(), e);
             return Result.error("系统错误");
         } catch (Throwable e) {
+            log.error(e.getMessage(), e);
             return Result.error("文件格式错误");
         }
     }
@@ -118,6 +120,7 @@ public class UploadController {
             log.error(e.getMessage(), e);
             return Result.error("系统错误");
         } catch (Throwable e) {
+            log.error(e.getMessage(), e);
             return Result.error("图片格式错误");
         }
     }

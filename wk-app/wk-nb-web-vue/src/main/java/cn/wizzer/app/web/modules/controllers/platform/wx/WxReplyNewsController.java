@@ -195,8 +195,10 @@ public class WxReplyNewsController {
                 }
             }
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             return Result.error("系统错误");
         } catch (Throwable e) {
+            log.error(e.getMessage(), e);
             return Result.error("图片格式错误");
         }
     }
