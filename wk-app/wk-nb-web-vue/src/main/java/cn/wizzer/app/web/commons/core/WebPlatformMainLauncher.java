@@ -51,11 +51,14 @@ public class WebPlatformMainLauncher {
     public static NbApp warMain(ServletContext sc) {
         NbApp nb = new NbApp().setPrintProcDoc(true);
         nb.getAppContext().setMainPackage("cn.wizzer");
+
         return nb;
     }
 
     public void init() {
         Mvcs.X_POWERED_BY = "nutzwk 5.2.x <wizzer.cn>";
+        Globals.AppBase = Mvcs.getServletContext().getContextPath();
+        Globals.AppRoot = Mvcs.getServletContext().getRealPath("/");
         //注册自定义标签
         groupTemplate.registerTagFactory("cms_channel_list", () -> ioc.get(CmsChannelListTag.class));
         groupTemplate.registerTagFactory("cms_channel", () -> ioc.get(CmsChannelTag.class));
