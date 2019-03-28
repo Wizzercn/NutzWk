@@ -16,28 +16,12 @@ layout("/layouts/platform.html"){
         </div>
     </el-row>
     <el-row class="el-table-container">
-        <el-table :data="treeData" style="width: 100%" :row-style="treeTableShowTr" size="small"
-                  :highlight-current-row="true">
+        <el-table :data="tableData" style="width: 100%" size="small"
+                  :highlight-current-row="true" row-key="id" lazy
+                  :load="loadChild">
             <el-table-column label="菜单名称" header-align="center" prop="name"
                              width="200" :show-overflow-tooltip="true" align="left">
-                <template slot-scope="scope">
-                    <span v-for="(space, levelIndex) in treeTablePath(scope.row.path)" class="ms-tree-space"></span>
-                    <span v-if="treeTableIconShow(scope.row)" @click="treeTableChild(scope.row.id)"
-                          style="cursor: pointer">
-                        <span v-if="!scope.row.expanded"
-                              class="el-tree-node__expand-icon el-icon-caret-right" title="展开"></span>
 
-                        <span v-if="scope.row.expanded"
-                              class="el-tree-node__expand-icon el-icon-caret-right expanded" title="关闭"></span>
-                        <i v-if="scope.row.icon!=''" :class="scope.row.icon"></i>
-                        {{ scope.row.name }}
-                    </span>
-                    <span v-if="!treeTableIconShow(scope.row)">
-                        <span class="ms-tree-space"></span>
-                        <i v-if="scope.row.icon!=''" :class="scope.row.icon"></i>
-                        {{ scope.row.name }}
-                    </span>
-                </template>
             </el-table-column>
 
             <el-table-column label="URL" header-align="center" prop="href"
@@ -331,7 +315,6 @@ layout("/layouts/platform.html"){
                 sortDialogVisible: false,
                 isAddFromSub: false,
                 tableData: [],//后台取出的数据
-                treeData: [],//格式化tableData用于显示的数据
                 formData: {
                     id: "",
                     parentId: "",
@@ -482,7 +465,7 @@ layout("/layouts/platform.html"){
                             type: 'success'
                         });
                         self.sortDialogVisible = false;
-                        self.treeTableChild("");
+                        self.treeTableChild();
                     } else {
                         self.$message({
                             message: data.msg,
@@ -530,7 +513,7 @@ layout("/layouts/platform.html"){
                                     type: 'success'
                                 });
                                 self.addDialogVisible = false;
-                                self.treeTableChild("");
+                                self.initTreeTable();
                             } else {
                                 self.$message({
                                     message: data.msg,
@@ -556,7 +539,7 @@ layout("/layouts/platform.html"){
                                     type: 'success'
                                 });
                                 self.editMenuDialogVisible = false;
-                                self.treeTableChild("");
+                                self.initTreeTable();
                             } else {
                                 self.$message({
                                     message: data.msg,
@@ -579,7 +562,7 @@ layout("/layouts/platform.html"){
                                     type: 'success'
                                 });
                                 self.editDataDialogVisible = false;
-                                self.treeTableChild("");
+                                self.initTreeTable();
                             } else {
                                 self.$message({
                                     message: data.msg,
@@ -590,49 +573,23 @@ layout("/layouts/platform.html"){
                     }
                 });
             },
-            // 显示层级
-            treeTablePath: function (path) {
-                return path.length / 4 - 1;
-            },
-            // 显示行
-            treeTableShowTr: function (row, index) {
-                var parentIndex = this.treeData.findIndex(function (value) {
-                    return value.id === row.row.parentId;
-                });
-                var show = (row.row.parentId ? (this.treeData[parentIndex].expanded && this.treeData[parentIndex]._show) : true);
-                row.row._show = show;
-                return show ? '' : 'display:none;'
-            },
-            treeDataChildren: function (table, data, pid) {//树形数据的级联查找很是头疼
-                var self = this;
-                table.findIndex(function (obj) {
-                    if (pid == obj.id) {//找到这条数据追加下级数据
-                        obj.children = data;
-                        obj.expanded = !obj.expanded;
-                    } else if (obj.children && obj.children.length > 0) {
-                        self.treeDataChildren(obj.children, data, pid);
-                    }
-                });
-            },
-            // 展开下级
-            treeTableChild: function (pid) {
+            initTreeTable: function () {
                 var self = this;
                 var url = base + "/platform/sys/menu/child";
-                $.post(url, {pid: pid}, function (data) {
+                $.post(url, {pid: ""}, function (data) {
                     if (data.code == 0) {
-                        if (pid != undefined && pid != "") {
-                            self.treeDataChildren(self.tableData, data.data, pid);
-                        } else {
-                            self.tableData = data.data;
-                        }
-                        self.treeData = sublime.treeToArray(self.tableData);
+                        self.tableData = data.data;
                     }
                 }, "json");
 
             },
-            // 点击展开和关闭的时候，图标的切换
-            treeTableIconShow: function (record) {
-                return record.hasChildren;
+            loadChild: function (tree, treeNode, resolve) {
+                var url = base + "/platform/sys/menu/child";
+                $.post(url, {pid: tree.id}, function (data) {
+                    if (data.code == 0) {
+                        resolve(data.data);
+                    }
+                }, "json");
             },
             dropdownCommand: function (command) {//监听下拉框事件
                 var self = this;
@@ -702,7 +659,7 @@ layout("/layouts/platform.html"){
                                             message: data.msg,
                                             type: 'success'
                                         });
-                                        self.treeTableChild("");
+                                        self.initTreeTable();
                                     } else {
                                         self.$message({
                                             message: data.msg,
@@ -718,7 +675,7 @@ layout("/layouts/platform.html"){
 
         },
         created: function () {
-            this.treeTableChild("");
+            this.initTreeTable();
         }
     });
 </script>
