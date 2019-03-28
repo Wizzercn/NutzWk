@@ -74,13 +74,38 @@ https://wizzer.cn/donation                捐赠者列表
 *   在单个NB模块下执行 `mvn compile nutzboot:run` 运行或 `mvn package nutzboot:shade` 生成可执行jar包
 *   在项目根目录执行 `mvn -Dnutzboot.dst=E:/dst clean package nutzboot:shade` 可将所有可运行jar包生成到指定位置
 *   启动顺序是 sys --> cms[可选] --> wx[可选] --> task[可选] --> web-platform 或 web-vue --> web-api[可选]
-*   内置配置文件启动  `jar -jar wk-nb-service-sys.jar &` 带参数 `-Dnutz.profiles.active=prod` 可加载 application-prod.properties 文件
-*   外置配置文件启动  `jar -Dnutz.boot.configure.properties.dir=/data/nutzwk/sys/ -jar wk-nb-service-sys.jar &` 此时加载文件夹所有 *.properties 配置文件
-*   生产环境可以使用 [PythonWk](https://github.com/Wizzercn/PythonWk) 进行部署,登陆后台运维中心可在线更新jar包及配置文件
 *   正常启动后访问 `http://127.0.0.1:8080/sysadmin` 用户名 superadmin 密码 1
 *   框架详细介绍及代码生成器的使用等内容请仔细阅读 [wk-wiki](wk-wiki)
 *   若觉得项目复杂上手较难,可以从最简单的一个NB项目学起 [wizzer.cn 源码](https://github.com/Wizzercn/Demo/tree/master/nutzboot-wizzer-cn)
 
+### 项目部署
+
+*   内置配置文件启动  `jar -jar wk-nb-service-sys.jar &` 带参数 `-Dnutz.profiles.active=prod` 可加载 application-prod.properties 文件
+*   外置配置文件启动  `jar -Dnutz.boot.configure.properties.dir=/data/nutzwk/sys/ -jar wk-nb-service-sys.jar &` 此时加载文件夹所有 *.properties 配置文件
+*   生产环境可以使用 [PythonWk](https://github.com/Wizzercn/PythonWk) 进行部署,登陆后台运维中心可在线更新jar包及配置文件等
+
+
+### 分布式事务
+
+*   涉及分布式的NB模块 pom.xml 添加
+    ```xml
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutzboot-starter-fescar</artifactId>
+		</dependency>
+    ```
+*   涉及分布式的NB模块,配置文件中添加
+    ```text
+    fescar.enabled=true
+    # applicationId 无需设置,会自动获取
+    # fescar.applicationId=
+    fescar.txServiceGroup=wk_nb_tx_group
+    ```
+*   下载并启动 [fescar服务端](https://github.com/alibaba/fescar/releases) 
+*   业务方法上加上注解 `@GlobalTransactional(timeoutMills = 300000, name = "dubbo-demo-tx")` 即可
+*   与本地事务注解 `@Aop(TransAop.READ_COMMITTED)` 不冲突
+*   业务方法内不要加 try catch (与本地事务注解一样)要让异常抛出来事务才能工作
+*   分布式事务不是越多越好,可以在核心业务如交易环节增加,建议实现乐观锁来预防脏数据产生
 
 # 鸣谢
 *   [@wendal](https://github.com/wendal) (代码贡献者,技术大牛,Nutz主要作者,无所不知且乐于助人)

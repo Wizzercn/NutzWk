@@ -174,7 +174,7 @@ layout("/layouts/platform.html"){
                 >
                     <i class="el-icon-upload" v-if="!fileUploadFlag"></i>
                     <div class="el-upload__text" v-if="!fileUploadFlag">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">只能上传 jar 文件，且不超过120MB</div>
+                    <div class="el-upload__tip" slot="tip">只能上传 jar 文件，且不超过200MB</div>
                     <el-progress v-if="fileUploadFlag == true" type="circle" :percentage="fileUploadPercent" style="margin-top:20px;"></el-progress>
                 </el-upload>
                 <div v-if="formData.fileSize>0" style="color: green;font-size: 12px;">
@@ -347,13 +347,13 @@ layout("/layouts/platform.html"){
                 }
             },
             beforeJarUpload: function (file) {
-                var isLt120M = file.size / 1024 / 1024 < 120;
+                var isLt120M = file.size / 1024 / 1024 < 200;
                 if (".jar" != file.name.substring(file.name.lastIndexOf("."), file.name.length)) {
                     this.$message.error('只可上传jar文件');
                     return false;
                 }
                 if (!isLt120M) {
-                    this.$message.error('文件大小不能超过120MB');
+                    this.$message.error('文件大小不能超过200MB');
                     return false;
                 }
                 return true;
