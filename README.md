@@ -80,8 +80,8 @@ https://wizzer.cn/donation                捐赠者列表
 
 ### 项目部署
 
-*   内置配置文件启动  `jar -jar wk-nb-service-sys.jar &` 带参数 `-Dnutz.profiles.active=prod` 可加载 application-prod.properties 文件
-*   外置配置文件启动  `jar -Dnutz.boot.configure.properties.dir=/data/nutzwk/sys/ -jar wk-nb-service-sys.jar &` 此时加载文件夹所有 *.properties 配置文件
+*   内置配置文件启动  `nohup jar -jar wk-nb-service-sys.jar &` 带参数 `-Dnutz.profiles.active=prod` 可加载 application-prod.properties 文件
+*   外置配置文件启动  `nohup jar -Dnutz.boot.configure.properties.dir=/data/nutzwk/sys/ -jar wk-nb-service-sys.jar &` 此时加载文件夹所有 *.properties 配置文件
 *   生产环境可以使用 [PythonWk](https://github.com/Wizzercn/PythonWk) 进行部署,登陆后台运维中心可在线更新jar包及配置文件等
 
 
@@ -89,10 +89,10 @@ https://wizzer.cn/donation                捐赠者列表
 
 *   涉及分布式的NB模块 pom.xml 添加
     ```xml
-		<dependency>
-			<groupId>org.nutz</groupId>
-			<artifactId>nutzboot-starter-fescar</artifactId>
-		</dependency>
+    <dependency>
+        <groupId>org.nutz</groupId>
+        <artifactId>nutzboot-starter-fescar</artifactId>
+    </dependency>
     ```
 *   涉及分布式的NB模块,配置文件中添加
     ```text
