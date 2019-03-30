@@ -57,6 +57,12 @@ public interface SysRoleService extends BaseService<Sys_role> {
     void del(String[] roleids);
 
     /**
+     * 保存菜单数据
+     * @param menuIds
+     * @param roleId
+     */
+    void saveMenu(String[] menuIds,String roleId);
+    /**
      * 通过角色ID和菜单父ID获取下级权限菜单
      *
      * @param roleId

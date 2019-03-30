@@ -6,7 +6,7 @@
 
     <groupId>cn.wizzer</groupId>
     <artifactId>wk-parent</artifactId>
-    <version>5.2.2-SNAPSHOT</version>
+    <version>5.2.2</version>
     <modules>
         <module>wk-framework</module>
         <module>wk-app</module>
@@ -16,8 +16,8 @@
     <name>NutzWk-NB</name>
 
     <properties>
-        <nutzboot.version>2.3.3-SNAPSHOT</nutzboot.version>
-        <nutz.version>1.r.68-SNAPSHOT</nutz.version>
+        <nutzboot.version>2.3.3.v20190329</nutzboot.version>
+        <nutz.version>1.r.68.v20190329</nutz.version>
         <zkclient.version>0.11</zkclient.version>
         <mysql-connector-java.version>5.1.47</mysql-connector-java.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
@@ -25,6 +25,7 @@
         <logback.version>1.2.3</logback.version>
         <!-- dubbo 及 sentinel 中netty版本保持一致 -->
         <netty.version>4.1.34.Final</netty.version>
+        <fescar.version>0.4.1</fescar.version>
         <docker.image.prefix>nutzwk</docker.image.prefix>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

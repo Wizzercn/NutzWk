@@ -3,18 +3,17 @@ package cn.wizzer.app.sys.modules.services.impl;
 import cn.wizzer.app.sys.modules.models.Sys_menu;
 import cn.wizzer.app.sys.modules.models.Sys_role;
 import cn.wizzer.app.sys.modules.models.Sys_unit;
+import cn.wizzer.app.sys.modules.services.SysMenuService;
 import cn.wizzer.app.sys.modules.services.SysRoleService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
 import cn.wizzer.framework.page.Pagination;
 import com.alibaba.dubbo.config.annotation.Service;
+import org.nutz.aop.interceptor.async.Async;
 import org.nutz.aop.interceptor.ioc.TransAop;
-import org.nutz.dao.Cnd;
-import org.nutz.dao.DB;
-import org.nutz.dao.Dao;
-import org.nutz.dao.Sqls;
-import org.nutz.dao.entity.Entity;
+import org.nutz.dao.*;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.aop.Aop;
+import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.plugins.wkcache.annotation.CacheDefaults;
@@ -34,6 +33,8 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
     public SysRoleServiceImpl(Dao dao) {
         super(dao);
     }
+    @Inject
+    private SysMenuService sysMenuService;
 
     @CacheResult
     public List<Sys_menu> getMenusAndButtons(String roleId) {
@@ -41,11 +42,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
                 " b.roleId=@roleId and a.disabled=@f order by a.location ASC,a.path asc");
         sql.params().set("roleId", roleId);
         sql.params().set("f", false);
-        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
-        sql.setEntity(entity);
-        sql.setCallback(Sqls.callback.entities());
-        dao().execute(sql);
-        return sql.getList(Sys_menu.class);
+        return sysMenuService.listEntity(sql);
     }
 
     @CacheResult
@@ -54,21 +51,13 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
                 " b.roleId=@roleId and a.type='data' and a.disabled=@f order by a.location ASC,a.path asc");
         sql.params().set("roleId", roleId);
         sql.params().set("f", false);
-        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
-        sql.setEntity(entity);
-        sql.setCallback(Sqls.callback.entities());
-        dao().execute(sql);
-        return sql.getList(Sys_menu.class);
+        return sysMenuService.listEntity(sql);
     }
 
     @CacheResult
     public List<Sys_menu> getDatas() {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and a.type='data' order by a.location ASC,a.path asc");
-        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
-        sql.setEntity(entity);
-        sql.setCallback(Sqls.callback.entities());
-        dao().execute(sql);
-        return sql.getList(Sys_menu.class);
+        return sysMenuService.listEntity(sql);
     }
 
     /**
@@ -91,6 +80,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
     }
 
     @Aop(TransAop.READ_COMMITTED)
+    @Async
     public void del(String roleid) {
         this.dao().clear("sys_user_role", Cnd.where("roleId", "=", roleid));
         this.dao().clear("sys_role_menu", Cnd.where("roleId", "=", roleid));
@@ -98,10 +88,34 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
     }
 
     @Aop(TransAop.READ_COMMITTED)
+    @Async
     public void del(String[] roleids) {
         this.dao().clear("sys_user_role", Cnd.where("roleId", "in", roleids));
         this.dao().clear("sys_role_menu", Cnd.where("roleId", "in", roleids));
         this.delete(roleids);
+    }
+
+    /**
+     * 保存菜单数据
+     * @param menuIds
+     * @param roleId
+     */
+    @Aop(TransAop.READ_COMMITTED)
+    @Async
+    public void saveMenu(String[] menuIds,String roleId){
+        this.clear("sys_role_menu", Cnd.where("roleId", "=", roleId));
+        for (String s : menuIds) {
+            this.insert("sys_role_menu", Chain.make("roleId", roleId).add("menuId", s));
+            Sys_menu menu = sysMenuService.fetch(s);
+            //要把上级菜单插入关联表
+            for (int i = 4; i < menu.getPath().length(); i = i + 4) {
+                Sys_menu tMenu = sysMenuService.fetch(Cnd.where("path", "=", menu.getPath().substring(0, i)));
+                int c = this.count("sys_role_menu", Cnd.where("roleId", "=", roleId).and("menuId", "=", tMenu.getId()));
+                if (c == 0) {
+                    this.insert("sys_role_menu", Chain.make("roleId", roleId).add("menuId", tMenu.getId()));
+                }
+            }
+        }
     }
 
     /**
@@ -120,11 +134,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
         } else {
             sql.vars().set("m", "(a.parentId='' or a.parentId is null)");
         }
-        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
-        sql.setEntity(entity);
-        sql.setCallback(Sqls.callback.entities());
-        dao().execute(sql);
-        return sql.getList(Sys_menu.class);
+        return sysMenuService.listEntity(sql);
     }
 
     /**
@@ -143,9 +153,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
         } else {
             sql.vars().set("m", "(a.parentId='' or a.parentId is null)");
         }
-        sql.setCallback(Sqls.callback.integer());
-        dao().execute(sql);
-        return sql.getInt() > 0;
+        return sysMenuService.count(sql) > 0;
     }
 
     /**
@@ -159,7 +167,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
      */
     public Pagination userSearch(String roleId, String keyword, boolean isAdmin, Sys_unit sysUnit) {
         Sql sql;
-        if (DB.ORACLE.name().equals(this.dao().getJdbcExpert().getDatabaseType())) {
+        if (DB.ORACLE.name().equals(this.dao().getJdbcExpert().getDatabaseType())||DB.DM.name().equals(this.dao().getJdbcExpert().getDatabaseType())) {
             //拼接字符串兼容oracle
             sql = Sqls.create("SELECT a.id AS VALUE,a.loginname||'('||a.username||')' AS label,a.disabled,a.unitid,b.name as unitname FROM sys_user a,sys_unit b WHERE a.unitid=b.id  and a.id NOT IN(SELECT b.userId FROM sys_user_role b WHERE b.roleId=@roleId) $s1 $s2 order by a.opAt desc");
         } else {

@@ -17,7 +17,7 @@ https://wizzer.cn/donation                捐赠者列表
 我们有强大的后援 —— Nutz 社区支持  https://nutz.cn  及 Nutz 使用手册 https://nutzam.com/core/nutz_preface.html
 
 ### QQ交流群
-*  1群: 68428921 (已满)
+*  1群: 68428921
 *  2群: 24457628
 
 # 版本说明
@@ -87,22 +87,27 @@ https://wizzer.cn/donation                捐赠者列表
 
 ### 分布式事务
 
-*   涉及分布式的NB模块 pom.xml 添加
+*   业务走过的链路所有NB模块, pom.xml 添加
     ```xml
     <dependency>
         <groupId>org.nutz</groupId>
         <artifactId>nutzboot-starter-fescar</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.alibaba.fescar</groupId>
+      <artifactId>fescar-dubbo-alibaba</artifactId>
+      <version>${fescar.version}</version>
+    </dependency>  
     ```
-*   涉及分布式的NB模块,配置文件中添加
+*   业务走过的链路所有NB模块, 配置文件中添加
     ```text
     fescar.enabled=true
-    # applicationId 无需设置,会自动获取
+    # applicationId 在本项目中会自动获取无需赋值
     # fescar.applicationId=
-    fescar.txServiceGroup=wk_nb_tx_group
+    fescar.txServiceGroup=my_test_tx_group
     ```
 *   下载并启动 [fescar服务端](https://github.com/alibaba/fescar/releases) 
-*   业务方法上加上注解 `@GlobalTransactional(timeoutMills = 300000, name = "dubbo-demo-tx")` 即可
+*   业务方法上加上注解 `@GlobalTransactional` 即可,可选参数 `timeoutMills = 300000, name = "my_test_tx_group"`
 *   与本地事务注解 `@Aop(TransAop.READ_COMMITTED)` 不冲突
 *   业务方法内不要加 try catch (与本地事务注解一样)要让异常抛出来事务才能工作
 *   分布式事务不是越多越好,可以在核心业务如交易环节增加,建议实现乐观锁来预防脏数据产生

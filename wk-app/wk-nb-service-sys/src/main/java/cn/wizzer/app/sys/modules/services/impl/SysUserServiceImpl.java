@@ -101,11 +101,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
         sql.params().set("userId", userId);
         sql.params().set("f", false);
         sql.params().set("t", true);
-        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
-        sql.setEntity(entity);
-        sql.setCallback(Sqls.callback.entities());
-        dao().execute(sql);
-        return sql.getList(Sys_menu.class);
+        return sysMenuService.listEntity(sql);
     }
 
     /**
@@ -120,11 +116,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
                 " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
         sql.params().set("f", false);
-        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
-        sql.setEntity(entity);
-        sql.setCallback(Sqls.callback.entities());
-        dao().execute(sql);
-        return sql.getList(Sys_menu.class);
+        return sysMenuService.listEntity(sql);
     }
 
     /**
@@ -139,11 +131,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
                 " b.roleId in(select c.roleId from sys_user_role c,sys_role d where c.roleId=d.id and c.userId=@userId and d.disabled=@f) and a.disabled=@f and a.type='data' order by a.location ASC,a.path asc");
         sql.params().set("userId", userId);
         sql.params().set("f", false);
-        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
-        sql.setEntity(entity);
-        sql.setCallback(Sqls.callback.entities());
-        dao().execute(sql);
-        return sql.getList(Sys_menu.class);
+        return sysMenuService.listEntity(sql);
     }
 
     /**
@@ -186,11 +174,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
         } else {
             sql.vars().set("m", "(a.parentId='' or a.parentId is null)");
         }
-        Entity<Sys_menu> entity = dao().getEntity(Sys_menu.class);
-        sql.setEntity(entity);
-        sql.setCallback(Sqls.callback.entities());
-        dao().execute(sql);
-        return sql.getList(Sys_menu.class);
+        return sysMenuService.listEntity(sql);
+
     }
 
     /**
@@ -209,9 +194,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<Sys_user> implements Sys
         } else {
             sql.vars().set("m", "(a.parentId='' or a.parentId is null)");
         }
-        sql.setCallback(Sqls.callback.integer());
-        dao().execute(sql);
-        return sql.getInt() > 0;
+        return sysMenuService.count(sql) > 0;
     }
 
     @CacheRemove(cacheKey = "${args[0]}_*")

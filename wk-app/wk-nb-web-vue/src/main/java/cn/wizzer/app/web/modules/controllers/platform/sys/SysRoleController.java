@@ -278,17 +278,8 @@ public class SysRoleController {
                 role.setUnitid("");
             role.setOpBy(StringUtil.getPlatformUid());
             Sys_role r = sysRoleService.insert(role);
-            for (String s : ids) {
-                sysRoleService.insert("sys_role_menu", Chain.make("roleId", r.getId()).add("menuId", s));
-                Sys_menu menu = sysMenuService.fetch(s);
-                //要把上级菜单插入关联表
-                for (int i = 4; i < menu.getPath().length(); i = i + 4) {
-                    Sys_menu tMenu = sysMenuService.fetch(Cnd.where("path", "=", menu.getPath().substring(0, i)));
-                    int c = sysRoleService.count("sys_role_menu", Cnd.where("roleId", "=", r.getId()).and("menuId", "=", tMenu.getId()));
-                    if (c == 0) {
-                        sysRoleService.insert("sys_role_menu", Chain.make("roleId", r.getId()).add("menuId", tMenu.getId()));
-                    }
-                }
+            if (r != null) {
+                sysRoleService.saveMenu(ids, r.getId());
             }
             sysRoleService.clearCache();
             sysUserService.clearCache();
@@ -386,19 +377,7 @@ public class SysRoleController {
     public Object menuDo(@Param("menuIds") String menuIds, @Param("roleId") String roleId, HttpServletRequest req) {
         try {
             String[] ids = StringUtils.split(menuIds, ",");
-            sysRoleService.clear("sys_role_menu", Cnd.where("roleId", "=", roleId));
-            for (String s : ids) {
-                sysRoleService.insert("sys_role_menu", Chain.make("roleId", roleId).add("menuId", s));
-                Sys_menu menu = sysMenuService.fetch(s);
-                //要把上级菜单插入关联表
-                for (int i = 4; i < menu.getPath().length(); i = i + 4) {
-                    Sys_menu tMenu = sysMenuService.fetch(Cnd.where("path", "=", menu.getPath().substring(0, i)));
-                    int c = sysRoleService.count("sys_role_menu", Cnd.where("roleId", "=", roleId).and("menuId", "=", tMenu.getId()));
-                    if (c == 0) {
-                        sysRoleService.insert("sys_role_menu", Chain.make("roleId", roleId).add("menuId", tMenu.getId()));
-                    }
-                }
-            }
+            sysRoleService.saveMenu(ids, roleId);
             Sys_role role = sysRoleService.fetch(roleId);
             sysRoleService.clearCache();
             sysUserService.clearCache();
