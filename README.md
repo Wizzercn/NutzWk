@@ -107,7 +107,7 @@ https://wizzer.cn/donation                捐赠者列表
     fescar.txServiceGroup=my_test_tx_group
     ```
 *   下载并启动 [fescar服务端](https://github.com/alibaba/fescar/releases) 
-*   业务方法上加上注解 `@GlobalTransactional` 即可,可选参数 `timeoutMills = 300000, name = "my_test_tx_group"`
+*   业务方法上加上注解 `@GlobalTransactional` 即可,可选参数 `timeoutMills = 300000, name = "my_test"`
 *   与本地事务注解 `@Aop(TransAop.READ_COMMITTED)` 不冲突
 *   业务方法内不要加 try catch (与本地事务注解一样)要让异常抛出来事务才能工作
 *   分布式事务不是越多越好,可以在核心业务如交易环节增加,建议实现乐观锁来预防脏数据产生
