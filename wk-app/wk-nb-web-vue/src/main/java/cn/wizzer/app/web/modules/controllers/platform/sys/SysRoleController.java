@@ -17,7 +17,6 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
@@ -281,8 +280,6 @@ public class SysRoleController {
             if (r != null) {
                 sysRoleService.saveMenu(ids, r.getId());
             }
-            sysRoleService.clearCache();
-            sysUserService.clearCache();
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -379,8 +376,6 @@ public class SysRoleController {
             String[] ids = StringUtils.split(menuIds, ",");
             sysRoleService.saveMenu(ids, roleId);
             Sys_role role = sysRoleService.fetch(roleId);
-            sysRoleService.clearCache();
-            sysUserService.clearCache();
             req.setAttribute("name", role.getName());
             return Result.success();
         } catch (Exception e) {
