@@ -41,15 +41,16 @@ https://wizzer.cn/donation                捐赠者列表
 ## NutzWk 5.x 技术选型：
 
 *   核心框架：Nutzboot
-*   分布式框架：Dubbo、Zookeeper、Sentinel
-*   安全框架：Shiro
+*   分布式框架：Dubbo(RPC)、Zookeeper(注册中心)、Sentinel(流控)、Fescar(分布式事务)
+*   安全框架：Shiro、JWT
 *   任务调度：Quartz
 *   数据库连接池：Druid 
 *   支持数据库：MySql、MariaDB、Oracle、SqlServer、达梦等
 *   缓存框架：Redis、Ehcache、Wkcache
 *   订阅发布：Redis
+*   文件系统：Ftp(默认)、FastDfs等
 *   可扩展功能：WebSocket-Nutz、消息队列-Rabbitmq、搜索引擎-Elasticsearch、工作流-Activiti等
-*   前端框架：Bootstrap+JQuery或Vue +Element
+*   前端框架：Bootstrap+JQuery 或 Vue +Element (推荐)
 
 ## NutzWk 5.x 使用说明：
 
@@ -102,7 +103,7 @@ https://wizzer.cn/donation                捐赠者列表
 *   业务走过的链路所有NB模块, 配置文件中添加
     ```text
     fescar.enabled=true
-    # applicationId 在本项目中会自动获取无需赋值
+    # fescar.applicationId 在本项目中会自动获取无需赋值
     # fescar.applicationId=
     fescar.txServiceGroup=my_test_tx_group
     ```
