@@ -1,11 +1,18 @@
 <!--#
 layout("/layouts/platform.html"){
 #-->
-<div class="content-wrap">
-
-    <p>对不起，您没有权限访问该页面。</p>
-
+<div id="app" v-cloak>
+    <el-alert
+            title="对不起，您没有权限访问该页面。"
+            type="error">
+    </el-alert>
 </div>
+<script>
+    new Vue({
+        el: "#app"
+    });
+</script>
+
 <!--#
 }
 #-->
