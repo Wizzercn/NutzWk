@@ -2,6 +2,7 @@ package cn.wizzer.framework.base;
 
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
+import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.Mvcs;
 
@@ -19,6 +20,28 @@ public class Result implements Serializable {
 
     public Result() {
 
+    }
+
+    public Result(Enum src) {
+        Mirror<?> mi = Mirror.me(src);
+        try {
+            this.code = (int) mi.invoke(src, "value");
+        } catch (Exception e1) {
+            try {
+                this.code = (int) mi.invoke(src, "getValue");
+            } catch (Exception e2) {
+                this.code = src.ordinal();
+            }
+        }
+        try {
+            this.msg = Strings.sNull(mi.invoke(src, "text"));
+        } catch (Exception e1) {
+            try {
+                this.msg = Strings.sNull(mi.invoke(src, "getText"));
+            } catch (Exception e2) {
+                this.msg = src.name();
+            }
+        }
     }
 
     public static Result NEW() {
