@@ -11,6 +11,7 @@
         <module>wk-framework</module>
         <module>wk-app</module>
         <module>wk-wiki</module>
+        <module>wk-starter</module>
     </modules>
     <packaging>pom</packaging>
     <name>NutzWk-NB</name>
