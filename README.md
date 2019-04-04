@@ -57,8 +57,8 @@ https://wizzer.cn/donation                捐赠者列表
 | 名称                                     | 介绍                                     |
 | ---------------------------------------- | ---------------------------------------- |
 |[wk-framework](wk-framework) |一些基类及公共方法的封装|
-|[wk-model](wk-app/wk-model) |POJO类|
-|[wk-common](wk-app/wk-common) |接口类|
+|[wk-model](wk-app/wk-model) |POJO类,枚举类,常量类|
+|[wk-common](wk-app/wk-common) |业务接口类|
 |[wk-nb-service-sys](wk-app/wk-nb-service-sys) |系统管理模块,dubbo服务端,NB项目,权限体系|
 |[wk-nb-service-cms](wk-app/wk-nb-service-cms) |CMS管理模块,dubbo服务端,NB项目,ig及wkcache演示|
 |[wk-nb-service-wx](wk-app/wk-nb-service-wx) |微信管理模块,dubbo服务端,NB项目,微信及微信支付功能演示|
