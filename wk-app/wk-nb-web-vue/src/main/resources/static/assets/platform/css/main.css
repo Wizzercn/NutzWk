@@ -375,6 +375,9 @@ body{background:#515e72;color:#59595a;line-height:1.5;direction:ltr;-webkit-font
 .app .sidebar ul > li a {
   position: relative;
 }
+.app .sidebar ul > li > a.active {
+  color: #FFFFFF;
+}
 .app .sidebar ul > li.open > .dropdown-menu {
   display: block;
 }

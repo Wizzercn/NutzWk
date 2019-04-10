@@ -3,8 +3,8 @@ var secondMenus=@shiro.getPrincipalProperty('secondMenus');
 #-->
 
 <!--# for(firstMenu in @secondMenus.get(perpath)){ #-->
-<li <!--# if(mpath==firstMenu.path){#-->class="active"<!--#}#--> <!--#if(@path.indexOf(firstMenu.path)==0){#-->class="open"<!--#}#-->>
-<a <!--# if(!isEmpty(firstMenu.href)){ #-->href="<!--#if(@string.startWith(firstMenu.href,'/')){#-->${base}${firstMenu.href!}<!--#}else{#-->${firstMenu.href!}<!--#}#-->"  <!--#if(@string.startWith(firstMenu.target,'_')){#-->target="${firstMenu.target!}"<!--#}else{#-->${firstMenu.target!}<!--#}#-->  <!--# }else{ #-->href="javascript:;"<!--# } #--> <!--# if(mpath==firstMenu.path){#-->class="active"<!--#}#--> <!--#if(@path.indexOf(firstMenu.path)==0){#-->class="active"<!--#}#-->>
+<li <!--# if(mpath==firstMenu.path){#-->class="active" <!--#}#--> <!--#if(@path.indexOf(firstMenu.path)==0){#-->class="open"<!--#}#-->>
+<a <!--# if(!isEmpty(firstMenu.href)){ #-->href="<!--#if(@string.startWith(firstMenu.href,'/')){#-->${base}${firstMenu.href!}<!--#}else{#-->${firstMenu.href!}<!--#}#-->"  <!--#if(@string.startWith(firstMenu.target,'_')){#-->target="${firstMenu.target!}"<!--#}else{#-->${firstMenu.target!}<!--#}#-->  <!--# }else{ #-->href="javascript:;"<!--# } #--> <!--# if(mpath==firstMenu.path){#--> class="active" <!--#}#--> <!--#if(@path.indexOf(firstMenu.path)==0){#--> class="active"<!--#}#-->>
 <!--# if(!isEmpty(@secondMenus.get(firstMenu.path))){ #-->
 <i class="toggle-accordion"></i>
 <!--# } #-->

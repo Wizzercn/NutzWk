@@ -281,6 +281,7 @@ var sublime = function () {
             if (app.hasClass("small-menu") && parentLink.parent().hasClass("nav") && $(window).width() > 767) {
                 return;
             }
+            otherLinks.find("a").removeClass('active');
             otherLinks.removeClass('open');
             otherLinks.find('.sub-menu').slideUp();
             if (subMenu.is("ul") && (!subMenu.is(":visible")) && (!app.hasClass("small-sidebar"))) {
@@ -528,6 +529,8 @@ var sublime = function () {
             });
 
             $('#topnav a[data-pjax]').on('click', function () {
+                if($(this).attr("href").indexOf("/")<0)
+                    return;
                 $.get(base + "/platform/home/left?url=" + $(this).attr("href"), function (data) {
                     $("#leftnav").html(data);
                     bindLeft();

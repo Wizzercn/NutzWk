@@ -55,10 +55,8 @@ public class SysHomeController {
             url = url.substring(0, url.indexOf("?"));
         Sys_menu menu = sysMenuService.getLeftMenu(url);
         if (menu != null) {
-            if (menu.getPath().length() > 8) {
+            if (menu.getPath().length() >= 8) {
                 path = menu.getPath().substring(0, 8);
-                perpath = menu.getPath().substring(0, 4);
-            } else if (menu.getPath().length() == 8) {
                 perpath = menu.getPath().substring(0, 4);
             }
             req.setAttribute("mpath", menu.getPath());
@@ -107,10 +105,8 @@ public class SysHomeController {
             String perpath = "";
             Sys_menu menu = sysMenuService.getLeftPathMenu(list);
             if (menu != null) {
-                if (menu.getPath().length() > 8) {
+                if (menu.getPath().length() >= 8) {
                     path = menu.getPath().substring(0, 8);
-                    perpath = menu.getPath().substring(0, 4);
-                } else if (menu.getPath().length() == 8) {
                     perpath = menu.getPath().substring(0, 4);
                 }
                 req.setAttribute("mpath", menu.getPath());
