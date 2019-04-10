@@ -17,7 +17,7 @@
     <name>NutzWk-NB</name>
 
     <properties>
-        <nutzboot.version>2.3.4-SNAPSHOT</nutzboot.version>
+        <nutzboot.version>2.3.5-SNAPSHOT</nutzboot.version>
         <nutz.version>1.r.68-SNAPSHOT</nutz.version>
         <zkclient.version>0.11</zkclient.version>
         <mysql-connector-java.version>5.1.47</mysql-connector-java.version>
