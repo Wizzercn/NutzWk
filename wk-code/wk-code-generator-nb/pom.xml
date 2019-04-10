@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <groupId>cn.wizzer.app</groupId>
     <artifactId>wk-code-generator-nb</artifactId>
-    <version>5.2.3</version>
+    <version>5.2.4-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <name>wk-code-generator-nb</name>
@@ -12,7 +12,7 @@
         <evo-inflector-version>1.0.1</evo-inflector-version>
         <velocity-version>1.7</velocity-version>
         <commons-cli-version>1.2</commons-cli-version>
-        <nutz-version>1.r.68.v20190329</nutz-version>
+        <nutz-version>1.r.68-SNAPSHOT</nutz-version>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
     </properties>
