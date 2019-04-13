@@ -858,6 +858,28 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         this.dao().execute(sql);
         return sql.getObject(Map.class);
     }
+    
+    /**
+     * 自定义sql获取NutMap key-value
+     *
+     * @param sql
+     * @return
+     */
+    public NutMap getNutMap(Sql sql) {
+        sql.setCallback(new SqlCallback() {
+            @Override
+            public Object invoke(Connection conn, ResultSet rs, Sql sql)
+                    throws SQLException {
+                NutMap map = NutMap.NEW();
+                while (rs.next()) {
+                    map.put(Strings.sNull(rs.getString(1)), Strings.sNull(rs.getString(2)));
+                }
+                return map;
+            }
+        });
+        this.dao().execute(sql);
+        return sql.getObject(NutMap.class);
+    }
 
     /**
      * 分页查询

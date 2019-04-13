@@ -634,6 +634,14 @@ public interface BaseService<T> {
     Map getMap(Sql sql);
 
     /**
+     * 自定义sql获取NutMap key-value
+     *
+     * @param sql
+     * @return
+     */
+    NutMap getNutMap(Sql sql);
+
+    /**
      * 分页查询
      *
      * @param pageNumber
