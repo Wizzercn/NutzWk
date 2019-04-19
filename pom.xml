@@ -26,7 +26,7 @@
         <logback.version>1.2.3</logback.version>
         <!-- dubbo 及 sentinel 中netty版本保持一致 -->
         <netty.version>4.1.34.Final</netty.version>
-        <fescar.version>0.4.1</fescar.version>
+        <seata.version>0.4.1</seata.version>
         <docker.image.prefix>nutzwk</docker.image.prefix>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

@@ -92,20 +92,20 @@ https://wizzer.cn/donation                捐赠者列表
     ```xml
     <dependency>
         <groupId>org.nutz</groupId>
-        <artifactId>nutzboot-starter-fescar</artifactId>
+        <artifactId>nutzboot-starter-seata</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.alibaba.fescar</groupId>
-      <artifactId>fescar-dubbo-alibaba</artifactId>
-      <version>${fescar.version}</version>
+      <groupId>io.seata</groupId>
+      <artifactId>seata-dubbo-alibaba</artifactId>
+      <version>${seata.version}</version>
     </dependency>  
     ```
 *   业务走过的链路所有NB模块, 配置文件中添加
     ```text
-    fescar.enabled=true
-    # fescar.applicationId 在本项目中会自动获取无需赋值
-    # fescar.applicationId=
-    fescar.txServiceGroup=my_test_tx_group
+    seata.enabled=true
+    # seata.applicationId 在本项目中会自动获取无需赋值
+    # seata.applicationId=
+    seata.txServiceGroup=my_test_tx_group
     ```
 *   下载并启动 [Seata服务端](https://github.com/seata/seata/releases) 
 *   业务方法上加上注解 `@GlobalTransactional` 即可,可选参数 `timeoutMills = 300000, name = "my_test"`
