@@ -115,7 +115,7 @@ public class SysUserController {
             user.setOpBy(StringUtil.getPlatformUid());
             user.setOpAt(Times.getTS());
             sysUserService.updateIgnoreNull(user);
-            sysUserService.clearCache();
+            sysUserService.deleteCache(user.getId());
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -133,7 +133,7 @@ public class SysUserController {
             String pwd = R.captchaNumber(6);
             String hashedPasswordBase64 = new Sha256Hash(pwd, ByteSource.Util.bytes(salt), 1024).toHex();
             sysUserService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", id));
-            sysUserService.clearCache();
+            sysUserService.deleteCache(user.getId());
             req.setAttribute("loginname", user.getLoginname());
             return Result.success("system.success", pwd);
         } catch (Exception e) {
@@ -152,7 +152,7 @@ public class SysUserController {
                 return Result.error("system.not.allow");
             }
             sysUserService.deleteById(userId);
-            sysUserService.clearCache();
+            sysUserService.deleteCache(userId);
             req.setAttribute("loginname", user.getLoginname());
             return Result.success("system.success");
         } catch (Exception e) {
@@ -191,7 +191,7 @@ public class SysUserController {
         try {
             req.setAttribute("loginname", sysUserService.fetch(userId).getLoginname());
             sysUserService.update(Chain.make("disabled", false), Cnd.where("id", "=", userId));
-            sysUserService.clearCache();
+            sysUserService.deleteCache(userId);
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -210,7 +210,7 @@ public class SysUserController {
             }
             req.setAttribute("loginname", loginname);
             sysUserService.update(Chain.make("disabled", true), Cnd.where("id", "=", userId));
-            sysUserService.clearCache();
+            sysUserService.deleteCache(userId);
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
