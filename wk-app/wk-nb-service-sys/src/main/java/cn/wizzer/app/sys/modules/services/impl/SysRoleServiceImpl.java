@@ -84,7 +84,6 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
     }
 
     @Aop(TransAop.READ_COMMITTED)
-    @Async
     public void del(String roleid) {
         this.dao().clear("sys_user_role", Cnd.where("roleId", "=", roleid));
         this.dao().clear("sys_role_menu", Cnd.where("roleId", "=", roleid));
@@ -92,7 +91,6 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
     }
 
     @Aop(TransAop.READ_COMMITTED)
-    @Async
     public void del(String[] roleids) {
         this.dao().clear("sys_user_role", Cnd.where("roleId", "in", roleids));
         this.dao().clear("sys_role_menu", Cnd.where("roleId", "in", roleids));
@@ -106,7 +104,6 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
      * @param roleId
      */
     @Aop(TransAop.READ_COMMITTED)
-    @Async
     public void saveMenu(String[] menuIds, String roleId) {
         this.clear("sys_role_menu", Cnd.where("roleId", "=", roleId));
         for (String s : menuIds) {
