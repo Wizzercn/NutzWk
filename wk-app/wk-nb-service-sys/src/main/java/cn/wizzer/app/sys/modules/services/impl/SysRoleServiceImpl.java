@@ -9,7 +9,6 @@ import cn.wizzer.app.sys.modules.services.SysUserService;
 import cn.wizzer.framework.base.service.BaseServiceImpl;
 import cn.wizzer.framework.page.Pagination;
 import com.alibaba.dubbo.config.annotation.Service;
-import org.nutz.aop.interceptor.async.Async;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.*;
 import org.nutz.dao.sql.Sql;
