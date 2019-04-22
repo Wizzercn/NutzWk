@@ -47,7 +47,7 @@ public class UploadController {
                 String fileName = R.UU32() + suffixName;
                 String url = filePath + fileName;
                 if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
-                    return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getName()).addv("file_size", tf.getSize()).addv("file_url", url));
+                    return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getSubmittedFileName()).addv("file_size", tf.getSize()).addv("file_url", url));
                 } else {
                     return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
                 }
@@ -79,7 +79,7 @@ public class UploadController {
                 String fileName = R.UU32() + suffixName;
                 String url = filePath + fileName;
                 if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
-                    return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getName()).addv("file_size", tf.getSize()).addv("file_url", url));
+                    return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getSubmittedFileName()).addv("file_size", tf.getSize()).addv("file_url", url));
                 } else {
                     return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
                 }
