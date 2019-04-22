@@ -376,7 +376,7 @@ layout("/layouts/platform.html"){
             },
             uploadFileProcess:function(event, file, fileList){
                 this.fileUploadFlag=true;
-                this.fileUploadPercent = event.percent.toFixed(0);
+                this.fileUploadPercent = parseInt(event.percent);
             },
             queryAppName: function (appName, cb) {
                 $.post(base + "/platform/sys/app/jar/search", {appName: appName}, function (data) {
