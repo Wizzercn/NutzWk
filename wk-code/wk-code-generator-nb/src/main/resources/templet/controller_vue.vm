@@ -35,7 +35,7 @@ public class ${table.ControllerClassName}{
     @At("")
     @Ok("beetl:/${table.ViewBasePath}/index.html")
     @RequiresPermissions("${table.Permissions}")
-    public void index() {
+    public void index(HttpServletRequest req) {
     }
 
     @At("/data")

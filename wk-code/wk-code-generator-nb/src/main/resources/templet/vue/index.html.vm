@@ -60,11 +60,11 @@ layout("/layouts/platform.html"){
                             <span class="ti-angle-down"></span>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item :command="{type:'edit',id:scope.row.id}">
+                            <el-dropdown-item :command="{type:'edit',row:scope.row}">
                                 ${msg["globals.button.update"]}
                             </el-dropdown-item>
                             <el-dropdown-item
-                                    :command="{type:'delete',id:scope.row.id}">
+                                    :command="{type:'delete',row:scope.row}">
                                 ${msg["globals.button.delete"]}
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -295,7 +295,7 @@ layout("/layouts/platform.html"){
             dropdownCommand: function (command) {//监听下拉框事件
                 var self = this;
                 if ("edit" == command.type) {
-                    $.post(base + "${table.UriPrefix}/edit/" + command.id, {}, function (data) {
+                    $.post(base + "${table.UriPrefix}/edit/" + command.row.id, {}, function (data) {
                         if (data.code == 0) {
                             self.formData = data.data;//加载后台表单数据
                             self.editDialogVisible = true;//打开编辑窗口
@@ -308,13 +308,13 @@ layout("/layouts/platform.html"){
                     }, "json");
                 }
                 if ("delete" == command.type) {
-                    self.${ttt}confirm('${msg["globals.button.delete.notice"]} ' + command.id, '${msg["globals.button.confirm"]}', {
+                    self.${ttt}confirm('${msg["globals.button.delete.notice"]} ' + command.row.id, '${msg["globals.button.confirm"]}', {
                         confirmButtonText: '${msg["globals.button.confirm"]}',
                         cancelButtonText: '${msg["globals.button.cancel"]}',
                         type: 'warning',
                         callback: function (a, b) {
                             if ("confirm" == a) {//确认后再执行
-                                $.post(base + "${table.UriPrefix}/delete/" + command.id, {}, function (data) {
+                                $.post(base + "${table.UriPrefix}/delete/" + command.row.id, {}, function (data) {
                                     if (data.code == 0) {
                                         self.${ttt}message({
                                             message: data.msg,
