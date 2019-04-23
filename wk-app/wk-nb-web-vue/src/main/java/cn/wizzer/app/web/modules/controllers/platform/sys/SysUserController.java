@@ -264,7 +264,7 @@ public class SysUserController {
                 Sys_user user = (Sys_user) shiroUtil.getPrincipal();
                 if (Strings.isNotBlank(searchUnit)) {
                     Sys_unit unit = sysUnitService.fetch(searchUnit);
-                    if (unit == null || !searchUnit.startsWith(unit.getPath())) {
+                    if (unit == null || !unit.getPath().startsWith(user.getUnit().getPath())) {
                         //防止有人越级访问
                         return Result.error("非法操作");
                     } else
@@ -306,7 +306,7 @@ public class SysUserController {
                 Sys_user user = (Sys_user) shiroUtil.getPrincipal();
                 if (Strings.isNotBlank(searchUnit)) {
                     Sys_unit unit = sysUnitService.fetch(searchUnit);
-                    if (unit == null || !searchUnit.startsWith(unit.getPath())) {
+                    if (unit == null || !unit.getPath().startsWith(user.getUnit().getPath())) {
                         //防止有人越级访问
                         throw Lang.makeThrow("非法操作");
                     } else
