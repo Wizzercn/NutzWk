@@ -4,7 +4,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.nutz.integration.jedis.RedisService;
-import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 
@@ -42,8 +41,7 @@ public class TokenUtil {
             ObjectOutputStream oos = new ObjectOutputStream(bao);
             oos.writeObject(key);
             obj = bao.toByteArray();
-            redisService.set(("api_token:" + appid).getBytes(), obj);
-            redisService.expire(("api_token:" + appid).getBytes(), 7202);//2小时零2秒后自动删除
+            redisService.setex(("api_token:" + appid).getBytes(), 7202, obj);//2小时零2秒后自动删除
         }
         return key;
     }
