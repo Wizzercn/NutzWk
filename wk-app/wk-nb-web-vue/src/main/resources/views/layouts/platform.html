@@ -171,9 +171,7 @@
                         <ul class="sub-menu">
                             <!--# for(thMenu in @secondMenus.get(secondMenu.path)){ #-->
                             <li class="clearfix">
-                                <a <!--# if(!isEmpty(thMenu.href)){ #-->href="
-                                <!--#if(@string.startWith(thMenu.href,'/')){#--> ${base}${thMenu.href!}<!--#}else{#-->
-                                ${thMenu.href!}<!--#}#--> " <!--# }else{ #-->href="javascript:;"<!--# } #-->
+                                <a <!--# if(!isEmpty(thMenu.href)){ #-->href="<!--#if(@string.startWith(thMenu.href,'/')){#-->${base}${thMenu.href!}<!--#}else{#-->${thMenu.href!}<!--#}#-->" <!--# }else{ #-->href="javascript:;"<!--# } #-->
                                 <!--#if(@string.startWith(thMenu.target,'_')){#-->target="${thMenu.target!}"
                                 <!--#}else{#--> ${thMenu.target!}<!--#}#--> >
                                 <span><!--#if(lang=="zh_CN"){#-->${thMenu.name}<!--#}else{#-->${thMenu.aliasName}
@@ -354,11 +352,7 @@
                             if(!isEmpty(@secondMenus.get(firstMenu.path))){
                     #-->
                     <li>
-                        <a <!--# if(!isEmpty(firstMenu.href)){ #-->href="
-                        <!--#if(@string.startWith(firstMenu.href,'/')){#--> ${base}${firstMenu.href!}<!--#}else{#-->
-                        ${firstMenu.href!}<!--#}#--> "  <!--#if(@string.startWith(firstMenu.target,'_')){#-->
-                        target="${firstMenu.target!}"<!--#}else{#--> ${firstMenu.target!}<!--#}#-->  <!--# }else{ #-->
-                        href="javascript:;"<!--# } #--> >
+                        <a <!--# if(!isEmpty(firstMenu.href)){ #-->href="<!--#if(@string.startWith(firstMenu.href,'/')){#-->${base}${firstMenu.href!}<!--#}else{#-->${firstMenu.href!}<!--#}#--> "  <!--#if(@string.startWith(firstMenu.target,'_')){#-->target="${firstMenu.target!}"<!--#}else{#--> ${firstMenu.target!}<!--#}#-->  <!--# }else{ #-->href="javascript:;"<!--# } #--> >
                         <!--# if(!isEmpty(@secondMenus.get(firstMenu.path))){ #-->
                         <i class="toggle-accordion"></i>
                         <!--# } #-->
@@ -373,9 +367,7 @@
                         <ul class="sub-menu">
                             <!--# for(secondMenu in @secondMenus.get(firstMenu.path)){ #-->
                             <li>
-                                <a <!--# if(!isEmpty(secondMenu.href)){ #-->href="
-                                <!--#if(@string.startWith(secondMenu.href,'/')){#--> ${base}${secondMenu.href!}
-                                <!--#}else{#--> ${secondMenu.href!}<!--#}#--> "
+                                <a <!--# if(!isEmpty(secondMenu.href)){ #-->href="<!--#if(@string.startWith(secondMenu.href,'/')){#-->${base}${secondMenu.href!}<!--#}else{#-->${secondMenu.href!}<!--#}#-->"
                                 <!--#if(@string.startWith(secondMenu.target,'_')){#-->target="${secondMenu.target!}"
                                 <!--#}else{#--> ${secondMenu.target!}<!--#}#--> <!--# }else{ #-->href="javascript:;"
                                 <!--# } #--> >
@@ -393,9 +385,7 @@
                                 <ul class="sub-menu">
                                     <!--# for(thMenu in @secondMenus.get(secondMenu.path)){ #-->
                                     <li>
-                                        <a <!--# if(!isEmpty(thMenu.href)){ #-->href="
-                                        <!--#if(@string.startWith(thMenu.href,'/')){#--> ${base}${thMenu.href!}
-                                        <!--#}else{#--> ${thMenu.href!}<!--#}#--> "
+                                        <a <!--# if(!isEmpty(thMenu.href)){ #-->href="<!--#if(@string.startWith(thMenu.href,'/')){#-->${base}${thMenu.href!}<!--#}else{#-->${thMenu.href!}<!--#}#-->"
                                         <!--#if(@string.startWith(thMenu.target,'_')){#-->target="${thMenu.target!}"
                                         <!--#}else{#--> ${thMenu.target!}<!--#}#--> <!--# }else{ #-->href="javascript:;"
                                         <!--# } #--> >
