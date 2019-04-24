@@ -497,7 +497,7 @@
     $(document).ready(function () {
         //菜单位置切换
         function showLeftMenu() {
-            $(".leftMenu a[href='" + location.pathname + "']")
+            $(".leftMenu a[href*='" + location.pathname + "']")
                 .parent("li").addClass("active")
                 .parent(".sub-menu").css({display: "block"})
                 .parents("li").addClass("open")
