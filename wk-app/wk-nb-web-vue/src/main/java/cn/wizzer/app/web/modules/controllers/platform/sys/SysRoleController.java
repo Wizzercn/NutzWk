@@ -216,18 +216,18 @@ public class SysRoleController {
         }
     }
 
-    //加载角色下所有菜单,新建角色
+    //加载可分配的权限菜单
     @At("/menuRole/?")
     @Ok("json")
     @RequiresPermissions("sys.manager.role")
     public Object menuRole(String roleId, HttpServletRequest req) {
         try {
-            List<Sys_menu> userList = sysRoleService.getMenusAndButtons(roleId);
+            List<Sys_menu> hasList = sysRoleService.getMenusAndButtons(roleId);
             List<Sys_menu> list;
             if (shiroUtil.hasRole("sysadmin")) {
                 list = sysMenuService.query(Cnd.orderBy().asc("location").asc("path"));
             } else {
-                list = sysRoleService.getMenusAndButtons(roleId);
+                list = sysUserService.getMenusAndButtons(StringUtil.getPlatformUid());
             }
             NutMap menuMap = NutMap.NEW();
             for (Sys_menu unit : list) {
@@ -239,7 +239,7 @@ public class SysRoleController {
                 menuMap.put(unit.getParentId(), list1);
             }
             List<String> cmenu = new ArrayList<>();
-            for (Sys_menu menu : userList) {
+            for (Sys_menu menu : hasList) {
                 cmenu.add(menu.getId());
             }
             return Result.success().addData(NutMap.NEW().addv("menu", getTree(menuMap, "")).addv("cmenu", cmenu));
