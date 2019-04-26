@@ -105,6 +105,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="新建任务"
             :visible.sync="addDialogVisible"
+            :close-on-click-modal="false"
             width="50%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="name" label="任务名称">
@@ -144,6 +145,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="修改任务"
             :visible.sync="editDialogVisible"
+            :close-on-click-modal="false"
             width="50%">
         <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="name" label="任务名称">
@@ -244,7 +246,7 @@ layout("/layouts/platform.html"){
             },
             formatAt: function (val) {
                 if (val && val > 0)
-                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                    return moment(val * 1000).format("YYYY-MM-DD HH:mm:ss");
                 return "";
             },
             doSearch: function () {
