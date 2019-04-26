@@ -146,7 +146,7 @@ layout("/layouts/platform.html"){
             pageData: function () {//加载分页数据
                 var self = this;
                 sublime.showLoadingbar();//显示loading
-                $.post(base + "/platform/wx/reply/txt/data", self.pageForm, function (data) {
+                $.post(base + "/platform/wx/tpl/log/data", self.pageForm, function (data) {
                     sublime.closeLoadingbar();//关闭loading
                     if (data.code == 0) {
                         self.tableData = data.data.list;
