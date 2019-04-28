@@ -1,5 +1,7 @@
 package cn.wizzer.framework.page;
 
+import org.nutz.lang.Lang;
+
 import java.util.List;
 
 public class Pagination extends SimplePage implements java.io.Serializable {
@@ -53,6 +55,15 @@ public class Pagination extends SimplePage implements java.io.Serializable {
      */
     public <T> List<T> getList() {
         return list;
+    }
+
+    /**
+     * @param classOfT 列表容器內的元素类型
+     * @param <T>      列表容器內的元素类型
+     * @return
+     */
+    public <T> List<T> getList(Class<T> classOfT) {
+        return Lang.collection2list(list, classOfT);
     }
 
 
