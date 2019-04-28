@@ -187,10 +187,10 @@ layout("/layouts/platform.html"){
                             align="left"
                             width="75">
                         <template slot-scope="scope">
-                            <el-button style="padding: 10px 3px" type="text" icon="ti-power-off"
+                            <el-button type="text" icon="ti-power-off"
                                        title="停止"
                                        :disabled="getOffDisabled(scope.row)" @click="openStop(scope.row)"></el-button>
-                            <el-button style="padding: 10px 3px" type="text" icon="ti-desktop"
+                            <el-button type="text" icon="ti-desktop"
                                        title="启动新实例"
                                        :disabled="getStartDisabled(scope.row)"
                                        @click="openStart(scope.row)"></el-button>

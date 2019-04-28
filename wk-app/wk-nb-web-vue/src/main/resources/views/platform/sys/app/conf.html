@@ -49,7 +49,7 @@ layout("/layouts/platform.html"){
                     header-align="center"
                     align="center">
                 <template slot-scope="scope">
-                    <a style="color: #0e5996" :href="base+'/platform/sys/app/conf/download/'+scope.row.id"
+                    <a style="color: #0e5996" :href="'${base!}/platform/sys/app/conf/download/'+scope.row.id"
                        target="_blank">{{scope.row.confName}}-{{scope.row.confVersion}}.properties</a>
                 </template>
             </el-table-column>
