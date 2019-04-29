@@ -19,14 +19,16 @@ layout("/layouts/platform.html"){
         top: 50px;
         left: 0px;
         bottom: 0px;
-        overflow-y: auto;
+        overflow-y: hidden;
         overflow-x: hidden;
         min-height: 550px;
+        height:100%;
     }
 
     .host-list ul {
         padding-left: 0;
         min-height: 550px;
+        height:100%;
     }
 
     .host-list li {
@@ -68,9 +70,9 @@ layout("/layouts/platform.html"){
         cursor: pointer;
     }
 </style>
-<div id="app" v-cloak>
-    <el-row>
-        <el-col :span="4" style="background-color: #D9DEE4;">
+<div id="app" v-cloak style="height: 100%">
+    <el-row style="height: 100%">
+        <el-col :span="4" style="background-color: #D9DEE4;height: 100%;">
             <div class="host-list">
                 <ul>
                     <li @click="loaddata" :class="hostName==''?'active':''">
@@ -427,8 +429,8 @@ layout("/layouts/platform.html"){
                        @click="getCpuMem" title="刷新数据"></el-button>
             <el-row>
                 <el-col :span="8"><div id="div_cpu" style="width:400px;height:250px"></div></el-col>
-                <el-col :span="8"><div id="div_mem" style="width:400px;height:250px"></div></el-col>
-                <el-col :span="8"><div id="div_net" style="width:400px;height:250px"></div></el-col>
+                <el-col :span="8" style="padding-left: 5px;"><div id="div_mem" style="width:400px;height:250px"></div></el-col>
+                <el-col :span="8" style="padding-left: 10px;"><div id="div_net" style="width:400px;height:250px"></div></el-col>
             </el-row>
 
 
