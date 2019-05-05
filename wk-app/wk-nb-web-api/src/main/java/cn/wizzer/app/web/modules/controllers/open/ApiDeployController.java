@@ -59,7 +59,9 @@ public class ApiDeployController {
     public Object task(@Param("apps") String[] apps, @Param("hostname") String hostname, @Param("timestamp") long timestamp,
                        @Param("mem_total") long mem_total, @Param("mem_used") long mem_used,
                        @Param("mem_free") long mem_free, @Param("mem_percent") double mem_percent,
-                       @Param("cpu_percent") double cpu_percent, @Param("net_sent") long net_sent, @Param("net_recv") long net_recv) {
+                       @Param("cpu_percent") double cpu_percent, @Param("net_sent") long net_sent, @Param("net_recv") long net_recv,
+                       @Param("net_tcp") long net_tcp, @Param("hdd_total") long hdd_total, @Param("hdd_used") long hdd_used,
+                       @Param("hdd_free") long hdd_free, @Param("hdd_percent") double hdd_percent) {
         try {
             List<Sys_app_task> list = sysAppTaskService.query(Cnd.where("name", "in", apps).and("hostName", "=", hostname).and("status", "=", 0));
             List<String> ids = new ArrayList<>();
@@ -78,6 +80,11 @@ public class ApiDeployController {
                     .addv("cpu_percent", cpu_percent)
                     .addv("net_sent", net_sent)
                     .addv("net_recv", net_recv)
+                    .addv("net_tcp", net_tcp)
+                    .addv("hdd_total", hdd_total)
+                    .addv("hdd_used", hdd_used)
+                    .addv("hdd_free", hdd_free)
+                    .addv("hdd_percent", hdd_percent)
                     .addv("timestamp", timestamp);
             redisService.setex("logback:deploy:" + hostname + ":" + timestamp, 10 * 60, Json.toJson(map, JsonFormat.compact()));
             return Result.success("获取成功").addData(list);
