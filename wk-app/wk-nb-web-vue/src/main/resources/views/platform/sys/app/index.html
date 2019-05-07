@@ -1,7 +1,7 @@
 <!--#
 layout("/layouts/platform.html"){
 #-->
-<script src="${base!}/assets/platform/plugins/echarts/echarts.min.js"></script>
+<script src="${base!}/assets/platform/plugins/echarts/echarts.js"></script>
 <style>
     .host-title {
         width: 180px;
@@ -22,13 +22,13 @@ layout("/layouts/platform.html"){
         overflow-y: hidden;
         overflow-x: hidden;
         min-height: 550px;
-        height:100%;
+        height: 100%;
     }
 
     .host-list ul {
         padding-left: 0;
         min-height: 550px;
-        height:100%;
+        height: 100%;
     }
 
     .host-list li {
@@ -70,8 +70,8 @@ layout("/layouts/platform.html"){
         cursor: pointer;
     }
 </style>
-<div id="app" v-cloak style="height: 100%">
-    <el-row style="height: 100%">
+<div id="app" v-cloak style="height: 100%;">
+    <el-row style="height: 100%;">
         <el-col :span="4" style="background-color: #D9DEE4;height: 100%;">
             <div class="host-list">
                 <ul>
@@ -118,13 +118,13 @@ layout("/layouts/platform.html"){
                             label="实例名称"
                             header-align="center"
                             align="left"
-                            width="120"
+                            width="130"
                     >
                     </el-table-column>
                     <el-table-column
                             prop="processId"
                             label="进程ID"
-                            width="65"
+                            width="56"
                     >
                     </el-table-column>
                     <el-table-column
@@ -236,10 +236,10 @@ layout("/layouts/platform.html"){
             :visible.sync="loglevelDialogVisible"
             width="40%">
         <el-form label-width="20px">
-            <el-form-item >
-                实例名: {{formData.name}}    进程ID:{{formData.processId||"所有进程"}}
+            <el-form-item>
+                实例名: {{formData.name}} 进程ID:{{formData.processId||"所有进程"}}
             </el-form-item>
-            <el-form-item >
+            <el-form-item>
                 <el-radio-group v-model="formData.loglevel" size="medium">
                     <el-radio label="INFO">INFO</el-radio>
                     <el-radio label="WARN">WARN</el-radio>
@@ -421,18 +421,28 @@ layout("/layouts/platform.html"){
     </el-dialog>
 
     <el-dialog
-            title="资源使用情况"
+            :title="hostName+'  '+hostHdd"
             :visible.sync="cpuMemDialogVisible"
-            width="88%">
-        <el-row style="margin-top: -72px;margin-bottom: -50px;">
-            <el-button style="padding-left:128px;" type="text" icon="ti-reload"
+            width="55%">
+        <el-row style="margin-top: -32px;margin-bottom: -50px;">
+            <el-button type="text" icon="ti-reload"
                        @click="getCpuMem" title="刷新数据"></el-button>
             <el-row>
-                <el-col :span="8"><div id="div_cpu" style="width:400px;height:250px"></div></el-col>
-                <el-col :span="8" style="padding-left: 5px;"><div id="div_mem" style="width:400px;height:250px"></div></el-col>
-                <el-col :span="8" style="padding-left: 10px;"><div id="div_net" style="width:400px;height:250px"></div></el-col>
+                <el-col :span="12">
+                    <div id="div_cpu" style="width:300px;height:200px"></div>
+                </el-col>
+                <el-col :span="12" style="padding-left: 5px;">
+                    <div id="div_tcp" style="width:300px;height:200px"></div>
+                </el-col>
             </el-row>
-
+            <el-row>
+                <el-col :span="12" style="padding-left: 5px;">
+                    <div id="div_mem" style="width:300px;height:200px"></div>
+                </el-col>
+                <el-col :span="12" style="padding-left: 10px;">
+                    <div id="div_net" style="width:300px;height:200px"></div>
+                </el-col>
+            </el-row>
 
         </el-row>
         <span slot="footer" class="dialog-footer">
@@ -449,11 +459,12 @@ layout("/layouts/platform.html"){
                 startDialogVisible: false,
                 taskDialogVisible: false,
                 cpuMemDialogVisible: false,
-                loglevelDialogVisible:false,
-                loglevelDialogTitle:"",
+                loglevelDialogVisible: false,
+                loglevelDialogTitle: "",
                 stopTitle: "",
                 startTitle: "",
                 hostName: "",
+                hostHdd: "",
                 hostList: [],
                 appList: [],
                 tableData: [],
@@ -686,28 +697,32 @@ layout("/layouts/platform.html"){
                         var list = data.data;
                         var net_sent = [];
                         var net_recv = [];
+                        var net_tcp = [];
                         var time_list = [];
-                        var cpu_percent=[];
-                        var mem_used=[];
-                        var mem_free=[];
-                        var mem_percent=[];
-                        var mem_total=0;
+                        var cpu_percent = [];
+                        var mem_used = [];
+                        var mem_free = [];
+                        var mem_percent = [];
+                        var mem_total = 0;
                         var sent_temp = 0, recv_temp = 0;
                         var i = 0;
+                        var disk = list[0];
+                        self.hostHdd = "磁盘已用" + ((disk.hdd_used) / 1024 / 1024 / 1024).toFixed(2) + "GB/总共" + ((disk.hdd_total) / 1024 / 1024 / 1024).toFixed(2) + "GB";
                         list.forEach(function (o) {
                             net_sent.push(i === 0 ? 0.1 : ((o.net_sent - sent_temp) / 1024).toFixed(2));
                             net_recv.push(i === 0 ? 0.1 : ((o.net_recv - recv_temp) / 1024).toFixed(2));
+                            net_tcp.push(o.net_tcp);
                             time_list.push(self.formatCpuAt(o.timestamp));
                             cpu_percent.push(o.cpu_percent);
                             mem_used.push(o.mem_used);
                             mem_free.push(o.mem_free);
                             mem_percent.push(o.mem_percent);
-                            mem_total=o.mem_total;
+                            mem_total = o.mem_total;
                             sent_temp = o.net_sent;
                             recv_temp = o.net_recv;
                             i++;
                         });
-                        var colors = ['#5793f3', '#d14a61', '#675bba','#000000'];
+                        var colors = ['#5793f3', '#d14a61', '#675bba', '#000000', '#EE0BD4', '#16E2BD'];
                         self.netOption = {
                             color: colors,
                             tooltip: {
@@ -720,8 +735,9 @@ layout("/layouts/platform.html"){
                                 data: ['出网kbps', '入网kbps']
                             },
                             grid: {
-                                top: 70,
-                                bottom: 50
+                                top: 50,
+                                bottom: 50,
+                                left: 50
                             },
                             xAxis: [
                                 {
@@ -788,9 +804,9 @@ layout("/layouts/platform.html"){
                                 }
                             ]
                         };
-                        var cpu_title='CPU占用情况';
+                        var cpu_title = 'CPU占用情况';
                         self.cpuOption = {
-                            color: colors,
+                            color: colors[4],
                             tooltip: {
                                 trigger: 'none',
                                 axisPointer: {
@@ -801,8 +817,9 @@ layout("/layouts/platform.html"){
                                 data: [cpu_title]
                             },
                             grid: {
-                                top: 70,
-                                bottom: 50
+                                top: 30,
+                                bottom: 50,
+                                left: 50
                             },
                             xAxis: [
                                 {
@@ -842,9 +859,9 @@ layout("/layouts/platform.html"){
                                 }
                             ]
                         };
-                        var mem_title='内存占用情况(总内存'+(mem_total/1024/1024/1024).toFixed(2)+'G)';
+                        var mem_title = '内存占用情况(总内存' + (mem_total / 1024 / 1024 / 1024).toFixed(2) + 'G)';
                         self.memOption = {
-                            color: colors,
+                            color: colors[5],
                             tooltip: {
                                 trigger: 'none',
                                 axisPointer: {
@@ -855,8 +872,9 @@ layout("/layouts/platform.html"){
                                 data: [mem_title]
                             },
                             grid: {
-                                top: 70,
-                                bottom: 50
+                                top: 30,
+                                bottom: 50,
+                                left: 50
                             },
                             xAxis: [
                                 {
@@ -873,11 +891,12 @@ layout("/layouts/platform.html"){
                                     axisPointer: {
                                         label: {
                                             formatter: function (params) {
-                                                var dataIndex=params.seriesData[0].dataIndex;
-                                                var temp=' 已用:'+(mem_used[dataIndex]/1024/1024/1024).toFixed(2)+'G';
-                                                temp+=' 空闲:'+(mem_free[dataIndex]/1024/1024/1024).toFixed(2)+'G';
+                                                var dataIndex = params.seriesData[0].dataIndex;
+                                                var temp = ' 已用:' + (mem_used[dataIndex] / 1024 / 1024 / 1024).toFixed(2) + 'G';
+                                                temp += ' 空闲:' + (mem_free[dataIndex] / 1024 / 1024 / 1024).toFixed(2) + 'G';
                                                 return '内存  ' + params.value
-                                                    + (params.seriesData.length ? ' - ' + params.seriesData[0].data + '%' +temp: '');                                            }
+                                                    + (params.seriesData.length ? ' - ' + params.seriesData[0].data + '%' + temp : '');
+                                            }
                                         }
                                     },
                                     data: time_list
@@ -898,6 +917,61 @@ layout("/layouts/platform.html"){
                                 }
                             ]
                         };
+                        var tcp_title='TCP连接数';
+                        self.tcpOption = {
+                            color: colors[2],
+                            tooltip: {
+                                trigger: 'none',
+                                axisPointer: {
+                                    type: 'cross'
+                                }
+                            },
+                            legend: {
+                                data: [tcp_title]
+                            },
+                            grid: {
+                                top: 30,
+                                bottom: 50,
+                                left: 50
+                            },
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    axisTick: {
+                                        alignWithLabel: true
+                                    },
+                                    axisLine: {
+                                        onZero: false,
+                                        lineStyle: {
+                                            color: colors[3]
+                                        }
+                                    },
+                                    axisPointer: {
+                                        label: {
+                                            formatter: function (params) {
+                                                return '连接数  ' + params.value
+                                                    + (params.seriesData.length ? ' - ' + params.seriesData[0].data + '个' : '');
+                                            }
+                                        }
+                                    },
+                                    data: time_list
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value'
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: tcp_title,
+                                    type: 'line',
+                                    xAxisIndex: 0,
+                                    smooth: true,
+                                    data: net_tcp
+                                }
+                            ]
+                        };
                         var div_cpu = document.getElementById("div_cpu");
                         div_cpu.style.width = div_cpu.clientWidth + "px";
                         self.echartCt = echarts.init(div_cpu);
@@ -910,7 +984,10 @@ layout("/layouts/platform.html"){
                         div_net.style.width = div_net.clientWidth + "px";
                         self.echartCt = echarts.init(div_net);
                         self.echartCt.setOption(self.netOption, true);
-
+                        var div_tcp = document.getElementById("div_tcp");
+                        div_tcp.style.width = div_tcp.clientWidth + "px";
+                        self.echartCt = echarts.init(div_tcp);
+                        self.echartCt.setOption(self.tcpOption, true);
                     }
                 }, "json");
             },
@@ -919,19 +996,19 @@ layout("/layouts/platform.html"){
                 self.cpuMemDialogVisible = true;
                 self.getCpuMem();
             },
-            openLoglevel:function (obj) {
-                var self=this;
-                self.formData=obj;
-                if(obj.action=="name"){
-                    self.loglevelDialogTitle="实例名: "+obj.name;
+            openLoglevel: function (obj) {
+                var self = this;
+                self.formData = obj;
+                if (obj.action == "name") {
+                    self.loglevelDialogTitle = "实例名: " + obj.name;
                 }
-                if(obj.action=="processId"){
-                    self.loglevelDialogTitle="实例名: "+obj.name+" 进程ID: "+obj.processId;
+                if (obj.action == "processId") {
+                    self.loglevelDialogTitle = "实例名: " + obj.name + " 进程ID: " + obj.processId;
                 }
-                self.loglevelDialogVisible=true;
+                self.loglevelDialogVisible = true;
             },
-            doLoglevel:function () {
-                var self=this;
+            doLoglevel: function () {
+                var self = this;
                 $.post(base + "/platform/sys/app/loglevel", self.formData, function (data) {
                     if (data.code == 0) {
                         self.$message({
