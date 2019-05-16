@@ -41,7 +41,7 @@ https://wizzer.cn/donation                捐赠者列表
 ## NutzWk 5.x 技术选型：
 
 *   核心框架：Nutzboot
-*   分布式框架：Dubbo(RPC)、Zookeeper(注册中心)、Sentinel(流控)、Seata(分布式事务)
+*   分布式框架：Dubbo(RPC)、Zookeeper(注册中心)、Sentinel(流控-可选)、Seata(分布式事务-可选)
 *   安全框架：Shiro、JWT
 *   任务调度：Quartz
 *   数据库连接池：Druid 
