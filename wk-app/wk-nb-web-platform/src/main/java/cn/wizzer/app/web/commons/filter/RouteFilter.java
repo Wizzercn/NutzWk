@@ -21,7 +21,7 @@ public class RouteFilter implements Filter {
         HttpServletResponse res2 = (HttpServletResponse) res;
         res2.setCharacterEncoding("utf-8");
         req2.setCharacterEncoding("utf-8");
-        Sys_route route = Globals.RouteMap.get(Strings.sNull(req2.getRequestURI()).replace(Globals.AppBase, ""));
+        Sys_route route = Globals.RouteMap.getAs(Strings.sNull(req2.getRequestURI()).replace(Globals.AppBase, ""), Sys_route.class);
         if (route != null) {
             if ("show".equals(route.getType())) {
                 res2.sendRedirect(route.getToUrl());

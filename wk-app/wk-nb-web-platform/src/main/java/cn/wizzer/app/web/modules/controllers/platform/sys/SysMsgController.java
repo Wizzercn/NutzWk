@@ -77,9 +77,9 @@ public class SysMsgController {
         List<Sys_msg> list = sysMsgService.query(cnd, pager);
         List<Map> mapList = new ArrayList<>();
         for (Sys_msg msg : list) {
-            Map map = Lang.obj2map(msg);
-            map.put("all_num", sysMsgUserService.count(Cnd.where("msgId", "=", msg.getId())));
-            map.put("unread_num", sysMsgUserService.count(Cnd.where("msgId", "=", msg.getId()).and("status", "=", 0)));
+            NutMap map = Lang.obj2nutmap(msg);
+            map.put("all_num", sysMsgUserService.count(Cnd.where("msgId", "=", map.get("id", ""))));
+            map.put("unread_num", sysMsgUserService.count(Cnd.where("msgId", "=", map.get("id", "")).and("status", "=", 0)));
             mapList.add(map);
         }
         re.put("data", mapList);
