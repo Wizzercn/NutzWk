@@ -27,7 +27,7 @@ public class WxService {
     private JedisPool jedisPool;
 
     public synchronized WxApi2 getWxApi2(String wxid) {
-        WxApi2Impl wxApi2 = Globals.WxMap.get(wxid);
+        WxApi2Impl wxApi2 = Globals.WxMap.getAs(wxid, WxApi2Impl.class);
         if (wxApi2 == null) {
             Wx_config appInfo = wxConfigService.fetch(Cnd.where("id", "=", wxid));
             RedisAccessTokenStore redisAccessTokenStore = new RedisAccessTokenStore();//如果是集群部署请启用RedisAccessTokenStore

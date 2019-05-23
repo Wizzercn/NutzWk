@@ -9,11 +9,9 @@ import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
-import org.nutz.weixin.impl.WxApi2Impl;
+import org.nutz.lang.util.NutMap;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by wizzer on 2016/12/19.
@@ -35,11 +33,11 @@ public class Globals {
     //文件上传路径
     public static String AppUploadBase = "/upload";
     //系统自定义参数
-    public static Map<String, String> MyConfig = new HashMap<>();
+    public static NutMap MyConfig = NutMap.NEW();
     //自定义路由
-    public static Map<String, Sys_route> RouteMap = new HashMap<>();
+    public static NutMap RouteMap = NutMap.NEW();
     //微信map
-    public static Map<String, WxApi2Impl> WxMap = new HashMap<>();
+    public static NutMap WxMap = NutMap.NEW();
     @Inject
     @Reference
     private SysConfigService sysConfigService;

@@ -70,9 +70,9 @@ public class SysMsgController {
             List<Map> mapList = new ArrayList<>();
             Pagination pagination = sysMsgService.listPage(pageNumber, pageSize, cnd);
             for (Object msg : pagination.getList()) {
-                Map map = Lang.obj2map(msg);
-                map.put("all_num", sysMsgUserService.count(Cnd.where("msgId", "=", map.getOrDefault("id", ""))));
-                map.put("unread_num", sysMsgUserService.count(Cnd.where("msgId", "=", map.getOrDefault("id", "")).and("status", "=", 0)));
+                NutMap map = Lang.obj2nutmap(msg);
+                map.put("all_num", sysMsgUserService.count(Cnd.where("msgId", "=", map.get("id", ""))));
+                map.put("unread_num", sysMsgUserService.count(Cnd.where("msgId", "=", map.get("id", "")).and("status", "=", 0)));
                 mapList.add(map);
             }
             pagination.setList(mapList);
