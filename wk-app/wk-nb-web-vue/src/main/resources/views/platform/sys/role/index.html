@@ -133,6 +133,7 @@ layout("/layouts/platform.html"){
             append-to-body
             title="新建角色"
             :visible.sync="addDialogVisible"
+            :close-on-click-modal="false"
             width="70%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item class="is-required" prop="parentUnit" label="所属单位" label-width="80px">
@@ -199,6 +200,7 @@ layout("/layouts/platform.html"){
             append-to-body
             title="修改角色"
             :visible.sync="editDialogVisible"
+            :close-on-click-modal="false"
             width="40%">
         <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="name" label="角色名称">
@@ -262,6 +264,7 @@ layout("/layouts/platform.html"){
             append-to-body
             :title="menuDialogTitle"
             :visible.sync="menuDialogVisible"
+            :close-on-click-modal="false"
             width="70%">
         <el-row style="margin-bottom: 3px;">
             <el-button size="small" @click="menuRoleSelAll">全选</el-button>
@@ -294,6 +297,7 @@ layout("/layouts/platform.html"){
             append-to-body
             :title="userDialogTitle"
             :visible.sync="userDialogVisible"
+            :close-on-click-modal="false"
             width="70%">
         <div class="block">
             <el-select

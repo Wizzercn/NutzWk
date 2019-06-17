@@ -76,6 +76,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="新建字典"
             :visible.sync="addDialogVisible"
+            :close-on-click-modal="false"
             width="50%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="parentId" label="上级字典" label-width="80px">
@@ -119,6 +120,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="修改字典"
             :visible.sync="editDialogVisible"
+            :close-on-click-modal="false"
             width="50%">
         <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="name" label="字典名称">

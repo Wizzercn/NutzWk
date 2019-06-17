@@ -179,6 +179,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="新建用户"
             :visible.sync="addDialogVisible"
+            :close-on-click-modal="false"
             width="40%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item class="is-required" prop="parentUnit" label="所属单位" label-width="80px">
@@ -240,6 +241,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="编辑用户"
             :visible.sync="editDialogVisible"
+            :close-on-click-modal="false"
             width="40%">
         <el-form :model="formData" ref="editForm" :rules="editRules" size="small" label-width="80px">
             <el-form-item prop="loginname" label="用户名">

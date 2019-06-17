@@ -72,6 +72,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="新增参数"
             :visible.sync="addDialogVisible"
+            :close-on-click-modal="false"
             width="40%">
         <el-form :model="formData" ref="addForm" :rules="formRules" label-width="80px">
             <el-form-item prop="configKey" label="参数名">
@@ -96,6 +97,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="修改参数"
             :visible.sync="editDialogVisible"
+            :close-on-click-modal="false"
             width="40%">
         <el-form :model="formData" ref="editForm" :rules="formRules" label-width="80px">
             <el-form-item prop="configKey" label="参数名">
