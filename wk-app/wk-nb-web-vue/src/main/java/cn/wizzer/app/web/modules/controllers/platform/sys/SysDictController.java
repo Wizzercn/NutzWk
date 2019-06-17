@@ -140,9 +140,9 @@ public class SysDictController {
             dict.setOpAt(Times.getTS());
             sysDictService.updateIgnoreNull(dict);
             sysDictService.clearCache();
-            return Result.success("system.success");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("system.error");
+            return Result.error();
         }
     }
 
@@ -234,7 +234,7 @@ public class SysDictController {
         try {
             String[] menuIds = StringUtils.split(ids, ",");
             int i = 0;
-            sysDictService.execute(Sqls.create("update sys_menu set location=0"));
+            sysDictService.execute(Sqls.create("update sys_dict set location=0"));
             for (String s : menuIds) {
                 if (!Strings.isBlank(s)) {
                     sysDictService.update(org.nutz.dao.Chain.make("location", i), Cnd.where("id", "=", s));
