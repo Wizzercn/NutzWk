@@ -3,6 +3,7 @@ package cn.wizzer.app.cms.modules.models;
 import cn.wizzer.framework.base.model.BaseModel;
 import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.*;
+import org.nutz.dao.interceptor.annotation.PrevInsert;
 
 import java.io.Serializable;
 
@@ -17,7 +18,7 @@ public class Cms_channel extends BaseModel implements Serializable {
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("uuid()")})
+    @PrevInsert(els = {@EL("uuid()")})
     private String id;
 
     @Column

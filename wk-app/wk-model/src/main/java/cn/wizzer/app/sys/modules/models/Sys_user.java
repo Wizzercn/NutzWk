@@ -2,6 +2,7 @@ package cn.wizzer.app.sys.modules.models;
 
 import cn.wizzer.framework.base.model.BaseModel;
 import org.nutz.dao.entity.annotation.*;
+import org.nutz.dao.interceptor.annotation.PrevInsert;
 import org.nutz.integration.json4excel.annotation.J4EIgnore;
 import org.nutz.integration.json4excel.annotation.J4EName;
 
@@ -22,7 +23,7 @@ public class Sys_user extends BaseModel implements Serializable {
     @Comment("ID")
     @J4EIgnore
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("uuid()")})
+    @PrevInsert(els = {@EL("uuid()")})
     private String id;
 
     @Column

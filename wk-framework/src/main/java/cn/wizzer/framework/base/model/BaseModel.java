@@ -1,6 +1,7 @@
 package cn.wizzer.framework.base.model;
 
 import org.nutz.dao.entity.annotation.*;
+import org.nutz.dao.interceptor.annotation.PrevInsert;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 import org.nutz.lang.Strings;
@@ -17,24 +18,24 @@ public abstract class BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
     @Comment("操作人")
-    @Prev(els = @EL("$me.uid()"))
+    @PrevInsert(els = @EL("$me.uid()"))
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String opBy;
 
     @Column
     @Comment("操作时间")
-    @Prev(els = @EL("$me.now()"))
+    @PrevInsert(els = @EL("$me.now()"))
     //Long不要用ColDefine定义,兼容oracle/mysql,支持2038年以后的时间戳
     private Long opAt;
 
     @Column
     @Comment("删除标记")
-    @Prev(els = @EL("$me.flag()"))
+    @PrevInsert(els = @EL("$me.flag()"))
     @ColDefine(type = ColType.BOOLEAN)
     private Boolean delFlag;
 
-    public String toString() {
-        return String.format("/*%s*/%s", super.toString(), Json.toJson(this, JsonFormat.compact()));
+    public String toJsonString() {
+        return Json.toJson(this, JsonFormat.compact());
     }
 
     public Boolean flag() {

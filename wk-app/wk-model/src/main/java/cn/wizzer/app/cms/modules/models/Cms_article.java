@@ -3,6 +3,7 @@ package cn.wizzer.app.cms.modules.models;
 import cn.wizzer.framework.base.model.BaseModel;
 import org.nutz.dao.DB;
 import org.nutz.dao.entity.annotation.*;
+import org.nutz.dao.interceptor.annotation.PrevInsert;
 
 import java.io.Serializable;
 
@@ -16,8 +17,8 @@ public class Cms_article extends BaseModel implements Serializable {
     @Name
     @Comment("ID")
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("uuid()")})
-    //@Prev(els = {@EL("ig(view.tableName,'')")}) 主键生成器示例
+    @PrevInsert(els = {@EL("uuid()")})
+    //@PrevInsert(els = {@EL("ig(view.tableName,'')")}) 主键生成器示例
     private String id;
 
     @Column

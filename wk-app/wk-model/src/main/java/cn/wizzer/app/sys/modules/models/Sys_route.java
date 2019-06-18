@@ -2,6 +2,7 @@ package cn.wizzer.app.sys.modules.models;
 
 import cn.wizzer.framework.base.model.BaseModel;
 import org.nutz.dao.entity.annotation.*;
+import org.nutz.dao.interceptor.annotation.PrevInsert;
 
 import java.io.Serializable;
 
@@ -14,7 +15,7 @@ public class Sys_route extends BaseModel implements Serializable {
     @Column
     @Name
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @Prev(els = {@EL("uuid()")})
+    @PrevInsert(els = {@EL("uuid()")})
     private String id;
 
     @Column
