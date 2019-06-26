@@ -17,6 +17,7 @@ https://wizzer.cn/donation                捐赠者列表
 我们有强大的后援 —— Nutz 社区支持  https://nutz.cn  及 Nutz 使用手册 https://nutzam.com/core/nutz_preface.html
 
 ### QQ交流群
+
 *  1群: 68428921(已满)
 *  2群: 24457628
 
@@ -40,7 +41,7 @@ https://wizzer.cn/donation                捐赠者列表
 
 ## NutzWk 5.x 技术选型：
 
-*   核心框架：Nutzboot
+*   核心框架：NutzBoot、Nutz
 *   分布式框架：Dubbo(RPC)、Zookeeper(注册中心)、Sentinel(流控-可选)、Seata(分布式事务-可选)
 *   安全框架：Shiro、JWT
 *   任务调度：Quartz
@@ -50,7 +51,7 @@ https://wizzer.cn/donation                捐赠者列表
 *   订阅发布：Redis
 *   文件系统：Ftp(默认)、FastDfs等
 *   可扩展功能：WebSocket-Nutz、消息队列-Rabbitmq、搜索引擎-Elasticsearch、工作流-Activiti等
-*   前端框架：Bootstrap+JQuery 或 Vue +Element (推荐)
+*   前端框架：Bootstrap + JQuery 或 Vue + Element (推荐)
 
 ## NutzWk 5.x 使用说明：
 
@@ -86,40 +87,15 @@ https://wizzer.cn/donation                捐赠者列表
 *   生产环境可以使用 [PythonWk](https://github.com/Wizzercn/PythonWk) 进行部署,登陆后台运维中心可在线更新jar包及配置文件等
 
 
-### 分布式事务
-
-*   业务走过的链路所有NB模块, pom.xml 添加
-    ```xml
-    <dependency>
-        <groupId>org.nutz</groupId>
-        <artifactId>nutzboot-starter-seata</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.seata</groupId>
-      <artifactId>seata-dubbo-alibaba</artifactId>
-      <version>${seata.version}</version>
-    </dependency>  
-    ```
-*   业务走过的链路所有NB模块, 配置文件中添加
-    ```text
-    seata.enabled=true
-    # seata.applicationId 在本项目中会自动获取无需赋值
-    # seata.applicationId=
-    seata.txServiceGroup=my_test_tx_group
-    ```
-*   下载并启动 [Seata服务端](https://github.com/seata/seata/releases) 
-*   业务方法上加上注解 `@GlobalTransactional` 即可,可选参数 `timeoutMills = 300000, name = "my_test"`
-*   与本地事务注解 `@Aop(TransAop.READ_COMMITTED)` 不冲突
-*   业务方法内不要加 try catch (与本地事务注解一样)要让异常抛出来事务才能工作
-*   分布式事务不是越多越好,可以在核心业务如交易环节增加,建议实现乐观锁来预防脏数据产生
-
 # 鸣谢
+
 *   [@wendal](https://github.com/wendal) (代码贡献者,技术大牛,Nutz主要作者,无所不知且乐于助人)
 *   [@rekoe](https://github.com/Rekoe) (代码贡献者)
-*   [@enilu](https://github.com/enilu) (3.x 代码生成器及IDEA插件贡献者)
-*   [@loyalove](https://github.com/loyalove) (3.x Vue代码贡献者)
-*   [@threefish](https://github.com/threefish) (控制类快速定位模板页面IDEA插件贡献者)
-*   以及交流群里热心的小伙伴们~ QQ交流群: 24457628
+*   [@enilu](https://github.com/enilu) (v3.x 代码生成器及IDEA插件贡献者)
+*   [@loyalove](https://github.com/loyalove) (v3.x Vue代码贡献者)
+*   [@threefish](https://github.com/threefish) (NutzCodeInsight 插件作者)
+
+<a href="graphs/contributors"><img src="https://opencollective.com/nutzwk/contributors.svg?width=890&button=false" /></a>
 
 
 # 关于
@@ -129,24 +105,3 @@ https://wizzer.cn/donation                捐赠者列表
 *   另外提供付费的培训服务，含源码解析、设计思路、疑难解答、项目辅导等
 *   联系方式 QQ：11624317  微信：wizzer
 *   欢迎打赏，以资鼓励 [https://wizzer.cn/donation](https://wizzer.cn/donation)
-
-## Credits
-
-### Contributors
-
-This project exists thanks to all the people who contribute. 
-
-<a href="graphs/contributors"><img src="https://opencollective.com/nutzwk/contributors.svg?width=890&button=false" /></a>
-
-### Backers
-
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/nutzwk#backer)]
-
-<a href="https://opencollective.com/nutzwk#backers" target="_blank"><img src="https://opencollective.com/nutzwk/backers.svg?width=890"></a>
-
-### Sponsors
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/nutzwk#sponsor)]
-
-<a href="https://opencollective.com/nutzwk/sponsor/0/website" target="_blank"><img src="https://opencollective.com/nutzwk/sponsor/0/avatar.svg"></a>
-
