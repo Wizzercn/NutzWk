@@ -95,7 +95,7 @@ https://wizzer.cn/donation                捐赠者列表
 *   [@loyalove](https://github.com/loyalove) (v3.x Vue代码贡献者)
 *   [@threefish](https://github.com/threefish) (NutzCodeInsight 插件作者)
 
-<a href="graphs/contributors"><img src="https://opencollective.com/nutzwk/contributors.svg?width=890&button=false" /></a>
+<a href="https://github.com/Wizzercn/NutzWk/graphs/contributors"><img src="https://opencollective.com/nutzwk/contributors.svg?width=890&button=false" /></a>
 
 
 # 关于
