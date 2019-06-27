@@ -292,7 +292,6 @@ layout("/layouts/platform.html"){
                                 });
                                 self.addDialogVisible = false;
                                 self.initTreeTable();
-                                self.tableKey=+new Date();
                             } else {
                                 self.$message({
                                     message: data.msg,
@@ -316,7 +315,6 @@ layout("/layouts/platform.html"){
                                 });
                                 self.editDialogVisible = false;
                                 self.initTreeTable();
-                                self.tableKey=+new Date();
                             } else {
                                 self.$message({
                                     message: data.msg,
@@ -333,6 +331,7 @@ layout("/layouts/platform.html"){
                 $.post(url, {pid: ""}, function (data) {
                     if (data.code == 0) {
                         self.tableData = data.data;
+                        self.tableKey=+new Date();
                     }
                 }, "json");
 
@@ -401,7 +400,6 @@ layout("/layouts/platform.html"){
                                             type: 'success'
                                         });
                                         self.initTreeTable();
-                                        self.tableKey=+new Date();
                                     } else {
                                         self.$message({
                                             message: data.msg,
