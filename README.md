@@ -22,7 +22,7 @@ https://wizzer.cn/donation                捐赠者列表
 
 # 版本说明
 
-本版是 NutzWk 5.x 的单应用版本（非微服务，删除了Dubbo、Zookeeper 等微服务相关依赖），管理后台Vue，非常适合小微型项目，本版非主推版本，仅做研究交流之用。
+本版是 NutzWk 5.x 的微服务单应用版本（删除了Dubbo、Zookeeper 等微服务相关依赖），管理后台Vue，非常适合小微型项目，本版非主推版本，仅做研究交流之用。
 
 安装必要条件： redis + mysql（或 MariaDB、Oracle、SqlServer、达梦等）
 
