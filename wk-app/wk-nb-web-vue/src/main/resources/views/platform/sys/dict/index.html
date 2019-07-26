@@ -80,7 +80,7 @@ layout("/layouts/platform.html"){
             width="50%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="parentId" label="上级字典" label-width="80px">
-                <el-cascader v-if="!isAddFromSub" :props="props" :options="menuOptions" v-model="parentMenu" placeholder="不选择则为顶级"></el-cascader>
+                <el-cascader v-if="!isAddFromSub" :props="props" :options="menuOptions" v-model="parentMenu" placeholder="不选择则为顶级" style="width: 100%"></el-cascader>
                 <el-input v-if="isAddFromSub" type="text" v-model="formData.parentName" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item prop="name" label="字典名称">
