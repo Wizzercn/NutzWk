@@ -129,6 +129,12 @@
             <artifactId>emoji-java</artifactId>
             <version>${emoji-java.veision}</version>
         </dependency>
+        <!-- api token web server -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
         <!-- html -->
         <dependency>
             <groupId>org.jsoup</groupId>

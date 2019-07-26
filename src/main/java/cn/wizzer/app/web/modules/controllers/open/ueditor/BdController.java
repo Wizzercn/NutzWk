@@ -4,9 +4,11 @@ import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.web.commons.utils.DateUtil;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.boot.starter.ftp.FtpService;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
+import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
@@ -30,6 +32,8 @@ public class BdController {
 
     @Inject
     private FtpService ftpService;
+    @Inject
+    private PropertiesProxy conf;
 
     @AdaptBy(type = UploadAdaptor.class, args = {"ioc:imageUpload"})
     @POST
@@ -49,7 +53,24 @@ public class BdController {
                 String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = Globals.AppFileDomain + filePath + fileName;
-                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                if (conf.getBoolean("ftp.enabled")) {
+                    if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                        nutMap.addv("name", tf.getName());
+                        nutMap.addv("state", "SUCCESS");
+                        nutMap.addv("url", url);
+                        nutMap.addv("originalName", tf.getSubmittedFileName());
+                        nutMap.addv("type", suffixName);
+                        nutMap.addv("size", tf.getSize());
+                        if (Strings.isBlank(callback)) {
+                            return Json.toJson(nutMap);
+                        } else
+                            return "<script>" + callback + "(" + Json.toJson(nutMap) + ")</script>";
+                    } else {
+                        return Json.toJson(nutMap.addv("state", "FAIL"));
+                    }
+                } else {
+                    String staticPath = conf.get("jetty.staticPath", "/files");
+                    Files.write(staticPath + url, tf.getInputStream());
                     nutMap.addv("name", tf.getName());
                     nutMap.addv("state", "SUCCESS");
                     nutMap.addv("url", url);
@@ -60,8 +81,6 @@ public class BdController {
                         return Json.toJson(nutMap);
                     } else
                         return "<script>" + callback + "(" + Json.toJson(nutMap) + ")</script>";
-                } else {
-                    return Json.toJson(nutMap.addv("state", "FAIL"));
                 }
             }
         } catch (Exception e) {

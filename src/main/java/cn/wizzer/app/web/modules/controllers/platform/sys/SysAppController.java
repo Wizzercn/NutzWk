@@ -11,7 +11,6 @@ import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
 import cn.wizzer.framework.base.Result;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.nutz.boot.starter.ftp.FtpService;
 import org.nutz.boot.starter.logback.exts.loglevel.LoglevelCommand;
 import org.nutz.boot.starter.logback.exts.loglevel.LoglevelProperty;
 import org.nutz.boot.starter.logback.exts.loglevel.LoglevelService;
@@ -52,8 +51,6 @@ public class SysAppController {
     private SysAppConfService sysAppConfService;
     @Inject
     private SysAppTaskService sysAppTaskService;
-    @Inject
-    private FtpService ftpService;
     @Inject
     private RedisService redisService;
 
@@ -213,22 +210,6 @@ public class SysAppController {
             return Result.error();
         }
     }
-
-//    @At("/jar/download/?")
-//    @Ok("void")
-//    @RequiresPermissions("sys.operation.app.jar")
-//    public void jarDownload(String id, HttpServletResponse response) {
-//        try {
-//            Sys_app_list sysAppList = sysAppListService.fetch(id);
-//            String fileName1 = sysAppList.getAppName() + "-" + sysAppList.getAppVersion() + ".jar";
-//            response.setHeader("Content-Type", "application/java-archive");
-//            response.setHeader("Content-Disposition", "attachment; filename=" + fileName1);
-//            response.setContentLengthLong(sysAppList.getFileSize());
-//            ftpService.download(sysAppList.getFilePath(), response.getOutputStream());
-//        } catch (Exception e) {
-//            log.error(e.getMessage(), e);
-//        }
-//    }
 
     @At("/conf")
     @Ok("beetl:/platform/sys/app/conf.html")

@@ -5,8 +5,10 @@ import cn.wizzer.app.web.commons.utils.DateUtil;
 import cn.wizzer.framework.base.Result;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.boot.starter.ftp.FtpService;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Files;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
@@ -28,6 +30,8 @@ public class UploadController {
     private static final Log log = Logs.get();
     @Inject
     private FtpService ftpService;
+    @Inject
+    private PropertiesProxy conf;
 
     @AdaptBy(type = UploadAdaptor.class, args = {"ioc:fileUpload"})
     @POST
@@ -46,10 +50,16 @@ public class UploadController {
                 String filePath = Globals.AppUploadBase + "/file/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = filePath + fileName;
-                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
-                    return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getSubmittedFileName()).addv("file_size", tf.getSize()).addv("file_url", url));
+                if (conf.getBoolean("ftp.enabled")) {
+                    if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                        return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getSubmittedFileName()).addv("file_size", tf.getSize()).addv("file_url", url));
+                    } else {
+                        return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                    }
                 } else {
-                    return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                    String staticPath = conf.get("jetty.staticPath", "/files");
+                    Files.write(staticPath + url, tf.getInputStream());
+                    return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getSubmittedFileName()).addv("file_size", tf.getSize()).addv("file_url", url));
                 }
             }
         } catch (Exception e) {
@@ -78,10 +88,16 @@ public class UploadController {
                 String filePath = Globals.AppUploadBase + "/video/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = filePath + fileName;
-                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
-                    return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getSubmittedFileName()).addv("file_size", tf.getSize()).addv("file_url", url));
+                if (conf.getBoolean("ftp.enabled")) {
+                    if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                        return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getSubmittedFileName()).addv("file_size", tf.getSize()).addv("file_url", url));
+                    } else {
+                        return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                    }
                 } else {
-                    return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                    String staticPath = conf.get("jetty.staticPath", "/files");
+                    Files.write(staticPath + url, tf.getInputStream());
+                    return Result.success("上传成功", NutMap.NEW().addv("file_type", suffixName).addv("file_name", tf.getSubmittedFileName()).addv("file_size", tf.getSize()).addv("file_url", url));
                 }
             }
         } catch (Exception e) {
@@ -110,10 +126,16 @@ public class UploadController {
                 String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = filePath + fileName;
-                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
-                    return Result.success("上传成功", url);
+                if (conf.getBoolean("ftp.enabled")) {
+                    if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                        return Result.success("上传成功", url);
+                    } else {
+                        return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                    }
                 } else {
-                    return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                    String staticPath = conf.get("jetty.staticPath", "/files");
+                    Files.write(staticPath + url, tf.getInputStream());
+                    return Result.success("上传成功", url);
                 }
             }
         } catch (Exception e) {

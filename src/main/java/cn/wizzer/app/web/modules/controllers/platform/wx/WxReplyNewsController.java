@@ -17,8 +17,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.boot.starter.ftp.FtpService;
 import org.nutz.dao.Cnd;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
@@ -55,6 +57,8 @@ public class WxReplyNewsController {
     private WxService wxService;
     @Inject
     private FtpService ftpService;
+    @Inject
+    private PropertiesProxy conf;
 
     @At({"/", "/index/?"})
     @Ok("beetl:/platform/wx/reply/news/index.html")
@@ -181,12 +185,20 @@ public class WxReplyNewsController {
                 String filePath = Globals.AppUploadBase + "/image/" + DateUtil.format(new Date(), "yyyyMMdd") + "/";
                 String fileName = R.UU32() + suffixName;
                 String url = filePath + fileName;
-                if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                if (conf.getBoolean("ftp.enabled")) {
+                    if (ftpService.upload(filePath, fileName, tf.getInputStream())) {
+                        return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("media_id"))
+                                .addv("picurl", Strings.sNull(resp.get("url")).replace("http://", "https://"))
+                                .addv("picurl2", url));
+                    } else {
+                        return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
+                    }
+                } else {
+                    String staticPath = conf.get("jetty.staticPath", "/files");
+                    Files.write(staticPath + url, tf.getInputStream());
                     return Result.success("上传成功", NutMap.NEW().addv("id", resp.get("media_id"))
                             .addv("picurl", Strings.sNull(resp.get("url")).replace("http://", "https://"))
                             .addv("picurl2", url));
-                } else {
-                    return Result.error("上传失败，请检查ftp用户是否有创建目录权限");
                 }
             }
         } catch (Exception e) {
