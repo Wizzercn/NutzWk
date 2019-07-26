@@ -8,7 +8,7 @@ layout("/layouts/platform.html"){
         </div>
     </el-row>
     <el-row class="el-table-container">
-        <el-table :data="tableData" style="width: 100%" size="small"
+        <el-table :key="tableKey" :data="tableData" style="width: 100%" size="small"
                   :highlight-current-row="true" row-key="id" lazy
                   :load="loadChild">
             <el-table-column label="单位名称" header-align="center" prop="name"
@@ -52,21 +52,11 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="新建单位"
             :visible.sync="addDialogVisible"
+            :close-on-click-modal="false"
             width="40%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="parentId" label="上级单位" label-width="80px">
-                <el-cascader
-                        style="width: 100%"
-                        tabindex="1"
-                        :options="options"
-                        :show-all-levels="false"
-                        v-model="parentUnit"
-                        :fetch-suggestions="unitQuery"
-                        @active-item-change="unitChange"
-                        @change="unitChange2"
-                        @select="unitSelect"
-                        placeholder="不选择则为顶级"
-                ></el-cascader>
+                <el-cascader :props="props" :options="options" v-model="parentUnit" placeholder="不选择则为顶级" style="width: 100%"></el-cascader>
             </el-form-item>
             <el-form-item prop="name" label="单位名称">
                 <el-input maxlength="100" placeholder="单位名称"
@@ -115,6 +105,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="编辑单位"
             :visible.sync="editDialogVisible"
+            :close-on-click-modal="false"
             width="40%">
         <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="name" label="单位名称">
@@ -170,6 +161,7 @@ layout("/layouts/platform.html"){
                 addDialogVisible: false,
                 editDialogVisible: false,
                 tableData: [],//后台取出的数据
+                tableKey:"",
                 formData: {
                     id: "",
                     parentId: ""
@@ -184,56 +176,28 @@ layout("/layouts/platform.html"){
                     ]
                 },
                 options: [],
-                parentUnit: []
+                parentUnit: [],
+                props: {
+                    lazy: true,
+                    checkStrictly:true,
+                    multiple:false,
+                    lazyLoad: function (node, resolve) {
+                        var url = base + "/platform/sys/unit/tree";
+                        $.post(url, {pid: node.value}, function (data) {
+                            if (data.code == 0) {
+                                resolve(data.data);
+                            }
+                        }, "json");
+                    }
+                }
             }
         },
         methods: {
-            //级联选择器从后台动态获取下级数据
-            loadTree: function (val, cb) {
-                var url = base + "/platform/sys/unit/tree";
-                $.post(url, {pid: val}, function (data) {
-                    if (data.code == 0) {
-                        cb(data.data);
-                    }
-                }, "json");
-            },
-            unitQuery: function (queryString, cb) {
-                cb(this.options);
-            },
-            unitSelect: function (val) {
-            },
-            unitTree: function (table, data, pid) {//树形数据的级联查找很是头疼
-                var self = this;
-                table.findIndex(function (obj) {
-                    if (pid == obj.value) {
-                        obj.children = data;
-                    } else if (obj.children && obj.children.length > 0) {
-                        self.unitTree(obj.children, data, pid);
-                    }
-                });
-            },
-            unitChange2: function (val) {
-                var self = this;
-                if (val[0] == "root") {
-                    self.parentUnit = [];
-                }
-            },
-            unitChange: function (val) {
-                var self = this;
-                var pid = val[val.length - 1];
-                self.parentUnit = val;
-                this.loadTree(pid, function (tree) {
-                    self.unitTree(self.options, tree, pid);
-                });
-            },
             openAdd: function () {
-                var self = this;
                 this.addDialogVisible = true;
                 this.formData = {};//打开新增窗口,表单先清空
                 this.parentUnit = [];
-                this.loadTree("", function (val) {
-                    self.options = val;
-                });
+                this.options=[];
             },
             doAdd: function () {
                 var self = this;
@@ -289,6 +253,7 @@ layout("/layouts/platform.html"){
                 $.post(url, {pid: ""}, function (data) {
                     if (data.code == 0) {
                         self.tableData = data.data;
+                        self.tableKey=+new Date();
                     }
                 }, "json");
 

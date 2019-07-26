@@ -15,10 +15,9 @@ import org.nutz.lang.Times;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.adaptor.WhaleAdaptor;
-import org.nutz.mvc.annotation.AdaptBy;
-import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Ok;
-import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by wizzer on 2016/6/28.
@@ -48,20 +47,20 @@ public class CmsSiteController {
     @At
     @Ok("json:full")
     @RequiresPermissions("cms.content.article")
-    public Object data(@Param("siteName") String siteName, @Param("siteDomain") String siteDomain,
-                       @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize,
-                       @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
-        Cnd cnd = Cnd.where("delFlag", "=", false);
-        if (Strings.isNotBlank(siteName)) {
-            cnd.and("site_name", "like", "%" + siteName + "%");
+    public Object data(@Param("siteName") String siteName,@Param("siteDomain")String siteDomain,
+            @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize,
+            @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
+        Cnd cnd = Cnd.where("delFlag","=",false);
+        if(Strings.isNotBlank(siteName)){
+            cnd.and("site_name","like","%"+siteName+"%");
         }
-        if (Strings.isNotBlank(siteDomain)) {
-            cnd.and("site_domain", "like", "%" + siteDomain + "%");
+        if(Strings.isNotBlank(siteDomain)){
+            cnd.and("site_domain","like","%"+siteDomain+"%");
         }
         if (Strings.isNotBlank(pageOrderName) && Strings.isNotBlank(pageOrderBy)) {
             cnd.orderBy(pageOrderName, PageUtil.getOrder(pageOrderBy));
         }
-        return Result.success().addData(cmsSiteService.listPage(pageNumber, pageSize, cnd));
+        return Result.success().addData(cmsSiteService.listPage(pageNumber,pageSize, cnd));
     }
 
     @At("/add")

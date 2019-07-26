@@ -90,7 +90,7 @@ public class CmsChannelController {
         try {
             List<NutMap> treeList = new ArrayList<>();
             if (Strings.isBlank(pid)) {
-                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单");
+                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单").addv("leaf",true);
                 treeList.add(root);
             }
             Cnd cnd = Cnd.NEW();
@@ -106,6 +106,9 @@ public class CmsChannelController {
                 NutMap map = NutMap.NEW().addv("value", menu.getId()).addv("label", menu.getName());
                 if (menu.isHasChildren()) {
                     map.addv("children", new ArrayList<>());
+                    map.addv("leaf",false);
+                }else {
+                    map.addv("leaf",true);
                 }
                 treeList.add(map);
             }
@@ -121,6 +124,9 @@ public class CmsChannelController {
     @SLog(tag = "新建栏目", msg = "栏目名称:${args[0].name}")
     public Object addDo(@Param("..") Cms_channel channel, @Param(value = "parentId",df = "") String parentId, HttpServletRequest req) {
         try {
+            if("root".equals(parentId)){
+                parentId="";
+            }
             channel.setOpBy(StringUtil.getPlatformUid());
             cmsChannelService.save(channel, parentId);
             cmsChannelService.clearCache();

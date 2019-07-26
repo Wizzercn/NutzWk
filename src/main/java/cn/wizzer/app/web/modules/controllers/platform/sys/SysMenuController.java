@@ -81,7 +81,7 @@ public class SysMenuController {
         try {
             List<NutMap> treeList = new ArrayList<>();
             if (Strings.isBlank(pid)) {
-                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单");
+                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单").addv("leaf", true);
                 treeList.add(root);
             }
             Cnd cnd = Cnd.NEW();
@@ -97,6 +97,9 @@ public class SysMenuController {
                 NutMap map = NutMap.NEW().addv("value", menu.getId()).addv("label", menu.getName());
                 if (menu.isHasChildren()) {
                     map.addv("children", new ArrayList<>());
+                    map.addv("leaf", false);
+                } else {
+                    map.addv("leaf", true);
                 }
                 treeList.add(map);
             }
@@ -124,10 +127,14 @@ public class SysMenuController {
                     return Result.error("sys.role.code");
                 }
             }
+            String parentId = sysMenu.getParentId();
+            if ("root".equals(sysMenu.getParentId())) {
+                parentId = "";
+            }
             sysMenu.setHasChildren(false);
             sysMenu.setShowit(true);
             sysMenu.setOpBy(StringUtil.getPlatformUid());
-            sysMenuService.save(sysMenu, Strings.sNull(sysMenu.getParentId()), buttons);
+            sysMenuService.save(sysMenu, Strings.sNull(parentId), buttons);
             req.setAttribute("name", sysMenu.getName());
             sysMenuService.clearCache();
             sysUserService.clearCache();

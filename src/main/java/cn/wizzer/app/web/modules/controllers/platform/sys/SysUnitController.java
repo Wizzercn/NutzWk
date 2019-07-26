@@ -93,7 +93,7 @@ public class SysUnitController {
             List<Sys_unit> list = new ArrayList<>();
             List<NutMap> treeList = new ArrayList<>();
             if (Strings.isBlank(pid)) {
-                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择单位");
+                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择单位").addv("leaf",true);
                 treeList.add(root);
             }
             if (shiroUtil.hasRole("sysadmin")) {
@@ -124,6 +124,9 @@ public class SysUnitController {
                 NutMap map = NutMap.NEW().addv("value", unit.getId()).addv("label", unit.getName());
                 if (unit.isHasChildren()) {
                     map.addv("children", new ArrayList<>());
+                    map.addv("leaf",false);
+                }else {
+                    map.addv("leaf",true);
                 }
                 treeList.add(map);
             }
@@ -139,6 +142,9 @@ public class SysUnitController {
     @SLog(tag = "新建单位", msg = "单位名称:${args[0].name}")
     public Object addDo(@Param("..") Sys_unit unit, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
+            if("root".equals(parentId)){
+                parentId="";
+            }
             unit.setOpBy(StringUtil.getPlatformUid());
             sysUnitService.save(unit, parentId);
             return Result.success();

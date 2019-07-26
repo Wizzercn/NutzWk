@@ -26,11 +26,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <url>https://nbshop.wizzer.cn</url>
+    <url>https://nutzwk.wizzer.cn</url>
     <description>java web development framework, base on nutz</description>
     <issueManagement>
         <system>Github Issue</system>
-        <url>https://github.com/Wizzercn/NbShop/issues</url>
+        <url>https://github.com/Wizzercn/NutzWk/issues</url>
     </issueManagement>
     <licenses>
         <license>
@@ -47,9 +47,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git://github.com/Wizzercn/NbShop.git</connection>
-        <developerConnection>scm:git:git://github.com/Wizzercn/NbShop.git</developerConnection>
-        <url>git://github.com/Wizzercn/NbShop.git</url>
+        <connection>scm:git:git://github.com/Wizzercn/NutzWk.git</connection>
+        <developerConnection>scm:git:git://github.com/Wizzercn/NutzWk.git</developerConnection>
+        <url>git://github.com/Wizzercn/NutzWk.git</url>
     </scm>
     <dependencies>
         <dependency>

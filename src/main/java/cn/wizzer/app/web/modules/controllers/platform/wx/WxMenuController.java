@@ -76,7 +76,7 @@ public class WxMenuController {
     @At("/child")
     @Ok("json")
     @RequiresAuthentication
-    public Object child(@Param("pid") String pid,@Param("wxid") String wxid, HttpServletRequest req) {
+    public Object child(@Param("pid") String pid, @Param("wxid") String wxid, HttpServletRequest req) {
         List<Wx_menu> list = new ArrayList<>();
         List<NutMap> treeList = new ArrayList<>();
         Cnd cnd = Cnd.NEW();
@@ -85,7 +85,7 @@ public class WxMenuController {
         } else {
             cnd.and("parentId", "=", pid);
         }
-        cnd.and("wxid","=",wxid);
+        cnd.and("wxid", "=", wxid);
         cnd.asc("location").asc("path");
         list = wxMenuService.query(cnd);
         for (Wx_menu menu : list) {
@@ -103,11 +103,11 @@ public class WxMenuController {
     @At("/tree")
     @Ok("json")
     @RequiresAuthentication
-    public Object tree(@Param("pid") String pid,@Param("wxid") String wxid, HttpServletRequest req) {
+    public Object tree(@Param("pid") String pid, @Param("wxid") String wxid, HttpServletRequest req) {
         try {
             List<NutMap> treeList = new ArrayList<>();
             if (Strings.isBlank(pid)) {
-                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单");
+                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单").addv("leaf", true);
                 treeList.add(root);
             }
             Cnd cnd = Cnd.NEW();
@@ -116,13 +116,16 @@ public class WxMenuController {
             } else {
                 cnd.and("parentId", "=", pid);
             }
-            cnd.and("wxid","=",wxid);
+            cnd.and("wxid", "=", wxid);
             cnd.asc("location").asc("path");
             List<Wx_menu> list = wxMenuService.query(cnd);
             for (Wx_menu menu : list) {
                 NutMap map = NutMap.NEW().addv("value", menu.getId()).addv("label", menu.getMenuName());
                 if (menu.isHasChildren()) {
                     map.addv("children", new ArrayList<>());
+                    map.addv("leaf", false);
+                } else {
+                    map.addv("leaf", true);
                 }
                 treeList.add(map);
             }
@@ -137,8 +140,11 @@ public class WxMenuController {
     @Ok("json")
     @RequiresPermissions("wx.conf.menu.add")
     @SLog(tag = "添加菜单", msg = "菜单名称:${args[0].menuName}")
-    public Object addDo(@Param("..") Wx_menu menu, @Param(value = "parentId",df = "") String parentId, HttpServletRequest req) {
+    public Object addDo(@Param("..") Wx_menu menu, @Param(value = "parentId", df = "") String parentId, HttpServletRequest req) {
         try {
+            if ("root".equals(parentId)) {
+                parentId = "";
+            }
             if (Strings.isBlank(menu.getWxid())) {
                 return Result.error("请选择公众号");
             }

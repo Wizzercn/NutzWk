@@ -4,18 +4,7 @@ layout("/layouts/platform.html"){
 <div id="app" v-cloak>
     <el-row class="header navbar bg-white shadow">
         <div class="btn-group tool-button mt5">
-            <el-cascader
-                    style="width: 100%"
-                    tabindex="1"
-                    :options="options"
-                    :show-all-levels="false"
-                    v-model="parentUnit"
-                    :fetch-suggestions="unitQuery"
-                    @active-item-change="unitChange"
-                    @change="unitChange2"
-                    @select="unitSelect"
-                    placeholder="请选择单位"
-            ></el-cascader>
+            <el-cascader :props="props" v-model="parentUnitSearch" placeholder="请选择单位"></el-cascader>
         </div>
         <div class="btn-group tool-button mt5">
             <el-input placeholder="请输入内容" v-model="pageForm.searchKeyword" @keyup.enter.native="doSearch">
@@ -48,10 +37,12 @@ layout("/layouts/platform.html"){
     </el-row>
     <el-row class="el-table-container">
         <el-table
+                :key="tableKey"
                 :data="tableData"
                 @sort-change='pageOrder'
                 size="small"
                 header-align="center"
+                :default-sort = "{prop: 'opAt', order: 'descending'}"
                 style="width: 100%"
                 @selection-change="handleSelectionChange"
         >
@@ -130,6 +121,15 @@ layout("/layouts/platform.html"){
                 </template>
             </el-table-column>
             <el-table-column
+                    sortable
+                    prop="opAt"
+                    label="操作时间"
+                    header-align="center" align="center">
+                <template slot-scope="scope">
+                    {{formatAt(scope.row.opAt)}}
+                </template>
+            </el-table-column>
+            <el-table-column
                     prop="userOnline"
                     label="操作"
                     width="120">
@@ -179,21 +179,11 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="新建用户"
             :visible.sync="addDialogVisible"
+            :close-on-click-modal="false"
             width="40%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item class="is-required" prop="parentUnit" label="所属单位" label-width="80px">
-                <el-cascader
-                        style="width: 100%"
-                        tabindex="1"
-                        :options="options"
-                        :show-all-levels="false"
-                        v-model="parentUnit"
-                        :fetch-suggestions="unitQuery"
-                        @active-item-change="unitChange"
-                        @change="unitChange2"
-                        @select="unitSelect"
-                        placeholder="请选择单位"
-                ></el-cascader>
+                <el-cascader :props="props" v-model="parentUnit" placeholder="请选择单位" style="width: 100%"></el-cascader>
             </el-form-item>
             <el-form-item prop="loginname" label="用户名">
                 <el-input maxlength="100" placeholder="用户名"
@@ -240,6 +230,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="编辑用户"
             :visible.sync="editDialogVisible"
+            :close-on-click-modal="false"
             width="40%">
         <el-form :model="formData" ref="editForm" :rules="editRules" size="small" label-width="80px">
             <el-form-item prop="loginname" label="用户名">
@@ -329,7 +320,7 @@ layout("/layouts/platform.html"){
                 }
             };
             var validateUnit = function (rule, value, callback) {
-                if (self.parentUnit.length < 1 || self.parentUnit[self.parentUnit.length - 1] == "") {
+                if (self.parentUnit.length < 1 || self.parentUnit[self.parentUnit.length - 1] == ""|| self.parentUnit[self.parentUnit.length - 1] == "root") {
                     callback(new Error('请选择所属单位!'));
                 } else {
                     callback();
@@ -346,8 +337,10 @@ layout("/layouts/platform.html"){
                     isLeaf: 'leaf'
                 },
                 tableData: [],
+                tableKey:"",
                 options: [],
                 parentUnit: [],
+                parentUnitSearch:[],
                 pageForm: {
                     searchUnit: "",
                     searchName: "",
@@ -407,55 +400,25 @@ layout("/layouts/platform.html"){
                 roleDialogTitle: "查看用户权限",
                 roleTableData: [],//treeTable后台取出的数据
                 userId: "",//当前用户ID
-                multipleSelection: []
+                multipleSelection: [],
+                props: {
+                    lazy: true,
+                    checkStrictly:true,
+                    multiple:false,
+                    lazyLoad: function (node, resolve) {
+                        var url = base + "/platform/sys/unit/tree";
+                        $.post(url, {pid: node.value}, function (data) {
+                            if (data.code == 0) {
+                                resolve(data.data);
+                            }
+                        }, "json");
+                    }
+                }
 
             }
         },
         methods: {
-            //级联选择器从后台动态获取下级数据
-            loadTree: function (val, cb) {
-                var url = base + "/platform/sys/unit/tree";
-                $.post(url, {pid: val}, function (data) {
-                    if (data.code == 0) {
-                        cb(data.data);
-                    }
-                }, "json");
-            },
-            initTree: function () {
-                var self = this;
-                this.loadTree("", function (val) {
-                    self.options = val;
-                });
-            },
-            unitQuery: function (queryString, cb) {
-                cb(this.options);
-            },
-            unitSelect: function (val) {
-            },
-            unitTree: function (table, data, pid) {//树形数据的级联查找很是头疼
-                var self = this;
-                table.findIndex(function (obj) {
-                    if (pid == obj.value) {
-                        obj.children = data;
-                    } else if (obj.children && obj.children.length > 0) {
-                        self.unitTree(obj.children, data, pid);
-                    }
-                });
-            },
-            unitChange2:function(val){
-                var self = this;
-                if(val[0]=="root"){
-                    self.parentUnit=[];
-                }
-            },
-            unitChange: function (val) {
-                var self = this;
-                self.parentUnit = val;
-                var pid = val[val.length - 1];
-                this.loadTree(pid, function (tree) {
-                    self.unitTree(self.options, tree, pid);
-                });
-            }, pageOrder: function (column) {//按字段排序
+            pageOrder: function (column) {//按字段排序
                 this.pageForm.pageOrderName = column.prop;
                 this.pageForm.pageOrderBy = column.order;
                 this.pageData();
@@ -490,7 +453,11 @@ layout("/layouts/platform.html"){
                 return "";
             },
             doSearch: function () {
-                this.pageForm.searchUnit = this.parentUnit[this.parentUnit.length - 1];
+                var unit=this.parentUnitSearch[this.parentUnitSearch.length - 1];
+                if("root"==unit){
+                    unit="";
+                }
+                this.pageForm.searchUnit = unit;
                 this.pageForm.pageNumber = 1;
                 this.pageData();
             },
@@ -512,6 +479,7 @@ layout("/layouts/platform.html"){
                                     message: data.msg,
                                     type: 'success'
                                 });
+                                self.parentUnitSearch=[];
                                 self.doSearch();//查询是带条件的,加载新建用户选择的单位用户数据
                                 //self.pageData();
                                 self.addDialogVisible = false;
@@ -712,7 +680,6 @@ layout("/layouts/platform.html"){
             }
         },
         created: function () {
-            this.initTree();
             this.pageData();
         }
     });

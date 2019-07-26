@@ -31,7 +31,7 @@ layout("/layouts/platform.html"){
         </div>
     </el-row>
     <el-row class="el-table-container">
-        <el-table :data="tableData" style="width: 100%"  size="small"
+        <el-table :key="tableKey" :data="tableData" style="width: 100%"  size="small"
                   :highlight-current-row="true" row-key="id" lazy
                   :load="loadChild">
             <el-table-column label="菜单名称" header-align="center" prop="menuName"
@@ -98,12 +98,8 @@ layout("/layouts/platform.html"){
                              style="width: 100%"
                              tabindex="1"
                              :options="menuOptions"
-                             :show-all-levels="false"
+                             :props="props"
                              v-model="parentMenu"
-                             :fetch-suggestions="menuQuery"
-                             @active-item-change="menuChange"
-                             @change="menuChange2"
-                             @select="menuSelect"
                              placeholder="不选择则为顶级"
                 ></el-cascader>
                 <el-input v-if="isAddFromSub" type="text" v-model="formData.parentName" :disabled="true"></el-input>
@@ -197,12 +193,8 @@ layout("/layouts/platform.html"){
                              style="width: 100%"
                              tabindex="1"
                              :options="menuOptions"
-                             :show-all-levels="false"
+                             :props="props"
                              v-model="parentMenu"
-                             :fetch-suggestions="menuQuery"
-                             @active-item-change="menuChange"
-                             @change="menuChange2"
-                             @select="menuSelect"
                              placeholder="不选择则为顶级"
                 ></el-cascader>
                 <el-input v-if="isAddFromSub" type="text" v-model="formData.parentName" :disabled="true"></el-input>
@@ -365,6 +357,7 @@ layout("/layouts/platform.html"){
                     pageOrderBy: "descending"
                 },
                 tableData: [],//后台取出的数据
+                tableKey:"",
                 formData: {},
                 formRules: {
                     menuName: [
@@ -395,6 +388,19 @@ layout("/layouts/platform.html"){
                     children: 'children',
                     label: 'label'
                 },
+                props: {
+                    lazy: true,
+                    checkStrictly:true,
+                    multiple:false,
+                    lazyLoad: function (node, resolve) {
+                        var url = base + "/platform/wx/conf/menu/tree";
+                        $.post(url, {pid: node.value,wxid:"<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"}, function (data) {
+                            if (data.code == 0) {
+                                resolve(data.data);
+                            }
+                        }, "json");
+                    }
+                }
             }
         },
         methods: {
@@ -404,6 +410,7 @@ layout("/layouts/platform.html"){
                 $.post(url, {pid: "",wxid:"<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"}, function (data) {
                     if (data.code == 0) {
                         self.tableData = data.data;
+                        self.tableKey=+new Date();
                     }
                 }, "json");
 
@@ -420,44 +427,6 @@ layout("/layouts/platform.html"){
                 if (val > 0)
                     return moment(val * 1000).format("YYYY-MM-DD HH:mm");
                 return "";
-            },
-            menuQuery: function (queryString, cb) {
-                cb(this.menuOptions);
-            },
-            menuSelect: function (val) {
-            },
-            menuTree: function (table, data, pid) {//树形数据的级联查找很是头疼
-                var self = this;
-                table.findIndex(function (obj) {
-                    if (pid == obj.value) {
-                        obj.children = data;
-                    } else if (obj.children && obj.children.length > 0) {
-                        self.menuTree(obj.children, data, pid);
-                    }
-                });
-            },
-            menuChange2: function (val) {
-                var self = this;
-                if (val[0] == "root") {
-                    self.parentMenu = [];
-                }
-            },
-            menuChange: function (val) {
-                var self = this;
-                var pid = val[val.length - 1];
-                self.parentMenu = val;
-                self.menuLoadTree(pid, function (tree) {
-                    self.menuTree(self.menuOptions, tree, pid);
-                });
-            },
-            menuLoadTree: function (val, cb) {
-                var self = this;
-                var url = base + "/platform/wx/conf/menu/tree";
-                $.post(url, {pid: val,wxid:"<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->"}, function (data) {
-                    if (data.code == 0) {
-                        cb(data.data);
-                    }
-                }, "json");
             },
             handleSelectionChange: function (val) {
                 this.selectData = val;
@@ -476,9 +445,8 @@ layout("/layouts/platform.html"){
                 };//打开新增窗口,表单先清空
                 if (self.$refs["addForm"])
                     self.$refs["addForm"].resetFields();
-                self.menuLoadTree("", function (val) {
-                    self.menuOptions = val;
-                });
+                self.menuOptions=[];
+                self.parentMenu=[];
                 self.queryKeyword();
             },
             doAdd: function () {

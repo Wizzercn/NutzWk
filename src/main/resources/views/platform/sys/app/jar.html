@@ -66,7 +66,7 @@ layout("/layouts/platform.html"){
                     label="文件下载"
                     header-align="center">
                 <template slot-scope="scope">
-                    <a style="color: #0e5996" :href="'${base!}/platform/sys/app/jar/download/'+scope.row.id" target="_blank">{{scope.row.appName}}-{{scope.row.appVersion}}.jar</a>
+                    {{scope.row.appName}}-{{scope.row.appVersion}}.jar
                 </template>
             </el-table-column>
             <el-table-column

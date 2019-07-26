@@ -16,7 +16,7 @@ layout("/layouts/platform.html"){
         </div>
     </el-row>
     <el-row class="el-table-container">
-        <el-table :data="tableData" style="width: 100%" size="small"
+        <el-table :key="tableKey" :data="tableData" style="width: 100%" size="small"
                   :highlight-current-row="true" row-key="id" lazy
                   :load="loadChild">
             <el-table-column label="菜单名称" header-align="center" prop="name"
@@ -93,21 +93,11 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="新建菜单"
             :visible.sync="addDialogVisible"
+            :close-on-click-modal="false"
             width="50%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="parentId" label="上级菜单" label-width="80px">
-                <el-cascader v-if="!isAddFromSub"
-                             style="width: 100%"
-                             tabindex="1"
-                             :options="menuOptions"
-                             :show-all-levels="false"
-                             v-model="parentMenu"
-                             :fetch-suggestions="menuQuery"
-                             @active-item-change="menuChange"
-                             @change="menuChange2"
-                             @select="menuSelect"
-                             placeholder="不选择则为顶级"
-                ></el-cascader>
+                <el-cascader v-if="!isAddFromSub" :options="menuOptions" :props="props" v-model="parentMenu" placeholder="不选择则为顶级" style="width: 100%"></el-cascader>
                 <el-input v-if="isAddFromSub" type="text" v-model="formData.parentName" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item prop="name" label="菜单名称">
@@ -181,6 +171,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="修改菜单"
             :visible.sync="editMenuDialogVisible"
+            :close-on-click-modal="false"
             width="50%">
         <el-form :model="formData" ref="editMenuForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="parentId" label="上级菜单" label-width="80px">
@@ -315,6 +306,7 @@ layout("/layouts/platform.html"){
                 sortDialogVisible: false,
                 isAddFromSub: false,
                 tableData: [],//后台取出的数据
+                tableKey:"",
                 formData: {
                     id: "",
                     parentId: "",
@@ -348,6 +340,19 @@ layout("/layouts/platform.html"){
                     children: 'children',
                     label: 'label'
                 },
+                props: {
+                    lazy: true,
+                    checkStrictly:true,
+                    multiple:false,
+                    lazyLoad: function (node, resolve) {
+                        var url = base + "/platform/sys/menu/tree";
+                        $.post(url, {pid: node.value}, function (data) {
+                            if (data.code == 0) {
+                                resolve(data.data);
+                            }
+                        }, "json");
+                    }
+                }
             }
         },
         methods: {
@@ -360,43 +365,6 @@ layout("/layouts/platform.html"){
                 } else {
                     callback();
                 }
-            },
-            menuLoadTree: function (val, cb) {
-                var url = base + "/platform/sys/menu/tree";
-                $.post(url, {pid: val}, function (data) {
-                    if (data.code == 0) {
-                        cb(data.data);
-                    }
-                }, "json");
-            },
-            menuQuery: function (queryString, cb) {
-                cb(this.menuOptions);
-            },
-            menuSelect: function (val) {
-            },
-            menuTree: function (table, data, pid) {//树形数据的级联查找很是头疼
-                var self = this;
-                table.findIndex(function (obj) {
-                    if (pid == obj.value) {
-                        obj.children = data;
-                    } else if (obj.children && obj.children.length > 0) {
-                        self.menuTree(obj.children, data, pid);
-                    }
-                });
-            },
-            menuChange2: function (val) {
-                var self = this;
-                if (val[0] == "root") {
-                    self.parentMenu = [];
-                }
-            },
-            menuChange: function (val) {
-                var self = this;
-                var pid = val[val.length - 1];
-                self.parentMenu = val;
-                self.menuLoadTree(pid, function (tree) {
-                    self.menuTree(self.menuOptions, tree, pid);
-                });
             },
             formRadioChange: function (val) {
                 this.formData.children = val;
@@ -465,7 +433,7 @@ layout("/layouts/platform.html"){
                             type: 'success'
                         });
                         self.sortDialogVisible = false;
-                        self.treeTableChild();
+                        self.initTreeTable();
                     } else {
                         self.$message({
                             message: data.msg,
@@ -479,6 +447,7 @@ layout("/layouts/platform.html"){
                 self.isAddFromSub = false;
                 self.addDialogVisible = true;
                 self.parentMenu = [];
+                self.menuOptions= [];
                 //表单还原为初始值
                 self.formData = {
                     id: "",
@@ -491,9 +460,6 @@ layout("/layouts/platform.html"){
                 };
                 if (this.$refs["addForm"])
                     this.$refs["addForm"].resetFields();
-                self.menuLoadTree("", function (val) {
-                    self.menuOptions = val;
-                });
             },
             doAdd: function () {
                 var self = this;
@@ -579,6 +545,7 @@ layout("/layouts/platform.html"){
                 $.post(url, {pid: ""}, function (data) {
                     if (data.code == 0) {
                         self.tableData = data.data;
+                        self.tableKey=+new Date();
                     }
                 }, "json");
 
