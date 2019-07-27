@@ -30,6 +30,7 @@ public class WkErrorPageHandler extends ErrorPageErrorHandler {
                     response.getWriter().write(Json.toJson(new NutMap("code", "-1").setv("msg", response.getStatus() + " error")));
                     return;
                 } else {
+                    request.setAttribute("original_request_uri", request.getRequestURI());
                     RequestDispatcher rd = request.getRequestDispatcher("/platform/home/" + response.getStatus());
                     rd.forward(request, response);
                     return;

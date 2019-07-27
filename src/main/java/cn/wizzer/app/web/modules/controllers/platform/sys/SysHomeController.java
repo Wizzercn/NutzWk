@@ -116,8 +116,8 @@ public class SysHomeController {
 
     @At("/403")
     @Ok("re")
-    public Object error403() {
-        if (shiroUtil.isAuthenticated()) {
+    public Object error403(HttpServletRequest req) {
+        if (Strings.sNull(req.getAttribute("original_request_uri")).startsWith("/platform") && shiroUtil.isAuthenticated()) {
             return "beetl:/platform/sys/403.html";
         } else {
             return ">>:/error/404.html";
@@ -126,8 +126,8 @@ public class SysHomeController {
 
     @At("/404")
     @Ok("re")
-    public Object error404() {
-        if (shiroUtil.isAuthenticated()) {
+    public Object error404(HttpServletRequest req) {
+        if (Strings.sNull(req.getAttribute("original_request_uri")).startsWith("/platform") && shiroUtil.isAuthenticated()) {
             return "beetl:/platform/sys/404.html";
         } else {
             return ">>:/error/404.html";
@@ -136,8 +136,8 @@ public class SysHomeController {
 
     @At("/500")
     @Ok("re")
-    public Object error500() {
-        if (shiroUtil.isAuthenticated()) {
+    public Object error500(HttpServletRequest req) {
+        if (Strings.sNull(req.getAttribute("original_request_uri")).startsWith("/platform") && shiroUtil.isAuthenticated()) {
             return "beetl:/platform/sys/500.html";
         } else {
             return ">>:/error/500.html";
