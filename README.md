@@ -27,3 +27,8 @@ https://wizzer.cn/donation                捐赠者列表
 安装必要条件： redis + mysql（或 MariaDB、Oracle、SqlServer、达梦等）
 
 项目启动：直接运行 MyMainLauncher 即可
+
+* mvn package nutzboot:shade 生成可执行jar包
+
+* 正常启动后访问 http://127.0.0.1:8080/sysadmin 用户名 superadmin 密码 1
+
