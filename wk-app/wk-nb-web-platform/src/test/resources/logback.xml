@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="false" scanPeriod="60000" debug="false">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <logger name="java" additivity="false" />
+    <logger name="org.eclipse.jetty" level="INFO"/>
+    <logger name="org.apache.zookeeper" level="INFO"/>
+    <logger name="com.alibaba.dubbo.remoting" level="INFO"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</configuration>
