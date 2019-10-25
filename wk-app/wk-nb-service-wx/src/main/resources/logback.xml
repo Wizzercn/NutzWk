@@ -30,7 +30,7 @@
     <logger name="java" additivity="false" />
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="org.apache.zookeeper" level="INFO"/>
-    <logger name="com.alibaba.dubbo.remoting" level="INFO"/>
+    <logger name="com.alibaba.dubbo" level="INFO"/>
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />
