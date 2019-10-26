@@ -23,7 +23,7 @@ public class Sys_user extends BaseModel implements Serializable {
     @Comment("ID")
     @J4EIgnore
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    @PrevInsert(els = {@EL("uuid()")})
+    @PrevInsert(uu32 = true)
     private String id;
 
     @Column
@@ -79,6 +79,12 @@ public class Sys_user extends BaseModel implements Serializable {
     @J4EName("手机号码")
     @ColDefine(type = ColType.VARCHAR, width = 32)
     private String mobile;
+
+    @Column
+    @Comment("创建时间")
+    @J4EIgnore
+    @PrevInsert(now = true)
+    private Long createAt;
 
     @Column
     @Comment("登陆时间")
@@ -228,6 +234,14 @@ public class Sys_user extends BaseModel implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Long getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Long createAt) {
+        this.createAt = createAt;
     }
 
     public Long getLoginAt() {
