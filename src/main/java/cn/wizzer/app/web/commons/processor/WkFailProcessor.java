@@ -31,6 +31,7 @@ public class WkFailProcessor extends ViewProcessor {
             if (NutShiro.isAjax(ac.getRequest())) {
                 NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error(Mvcs.getMessage(ac.getRequest(), "system.exception")));
             } else {
+                ac.getRequest().setAttribute("original_request_uri",ac.getRequest().getRequestURI());
                 new ForwardView(errorUri).render(ac.getRequest(), ac.getResponse(), Mvcs.getMessage(ac.getRequest(), "system.exception"));
             }
         }

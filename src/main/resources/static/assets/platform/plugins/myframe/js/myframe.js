@@ -1,5 +1,5 @@
-if(typeof jQuery==='undefined'){throw new Error('Bootstrap\'s JavaScript requires jQuery')}
-+function($){'use strict';function transitionEnd(){var el=document.createElement('bootstrap')
+if(typeof jQuery==='undefined'){throw new Error('myframe\'s JavaScript requires jQuery')}
++function($){'use strict';function transitionEnd(){var el=document.createElement('myframe')
 var transEndEventNames={WebkitTransition:'webkitTransitionEnd',MozTransition:'transitionend',OTransition:'oTransitionEnd otransitionend',transition:'transitionend'}
 for(var name in transEndEventNames){if(el.style[name]!==undefined){return{end:transEndEventNames[name]}}}
 return false}
