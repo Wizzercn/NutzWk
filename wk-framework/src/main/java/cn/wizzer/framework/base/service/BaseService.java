@@ -582,6 +582,27 @@ public interface BaseService<T> {
     List<T> query(Condition cnd, Pager pager);
 
     /**
+     * 查询获取NutMap对象
+     *
+     * @param keyColumnName   作为key的字段名
+     * @param valueColumnName 作为value的字段名
+     * @param cnd             查询条件
+     * @return
+     */
+    NutMap query(String keyColumnName, String valueColumnName, Condition cnd);
+
+    /**
+     * 查询获取NutMap对象
+     *
+     * @param tableName       表名
+     * @param keyColumnName   作为key的字段名
+     * @param valueColumnName 作为value的字段名
+     * @param cnd             查询条件
+     * @return
+     */
+    NutMap query(String tableName, String keyColumnName, String valueColumnName, Condition cnd);
+
+    /**
      * 计算子节点TREEID
      *
      * @param tableName
