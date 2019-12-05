@@ -23,6 +23,7 @@ https://wizzer.cn/donation                捐赠者列表
 
 # 版本说明
 
+*   NutzWk v6.x 微服务+前后端分离,开发中...
 *   NutzWk v5.x 微服务版本(分支名:[v5.x](https://github.com/Wizzercn/NutzWk/tree/v5.x),微服务dubbo分布式版本)
 *   NutzWk v5.x-mini 微服务版本(分支名:[v5.x-mini](https://github.com/Wizzercn/NutzWk/tree/v5.x-mini),微服务非分布式版本)
 *   NutzWk v4.x 模块化版本(分支名:[v4.x](https://github.com/Wizzercn/NutzWk/tree/v4.x),统一提供代码生成器及IDEA可视化插件)
