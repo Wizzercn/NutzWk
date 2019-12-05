@@ -584,20 +584,16 @@ layout("/layouts/platform.html"){
             },
             remoteMethod: function (query) {
                 var self = this;
-                if (query !== '') {
-                    self.loading = true;
-                    $.post(base + "/platform/sys/role/userSearch", {
-                        query: query,
-                        roleId: self.roleId
-                    }, function (data) {
-                        if (data.code == 0) {
-                            self.dbUsers = data.data.list;
-                        }
-                        self.loading = false;
-                    }, "json");
-                } else {
-                    self.selUsers = [];
-                }
+                self.loading = true;
+                $.post(base + "/platform/sys/role/userSearch", {
+                    query: query,
+                    roleId: self.roleId
+                }, function (data) {
+                    if (data.code == 0) {
+                        self.dbUsers = data.data.list;
+                    }
+                    self.loading = false;
+                }, "json");
             },
             doUserLoad: function () {
                 var self = this;
@@ -735,6 +731,7 @@ layout("/layouts/platform.html"){
                     self.userDialogVisible = true;
                     self.roleId = command.id;
                     self.userForm.roleId = command.id;
+                    self.remoteMethod('');
                     self.doUserLoad();
                 }
                 if ("enable" == command.type || "disable" == command.type) {
@@ -817,6 +814,7 @@ layout("/layouts/platform.html"){
                         });
                         self.selUsers = [];//清除已选择的用户
                         self.dbUsers = [];//清除数据库查询的用户,已添加到角色的用户不应该还存在so..
+                        self.remoteMethod('');
                         self.doUserLoad();
                     } else {
                         self.$message({
@@ -850,6 +848,7 @@ layout("/layouts/platform.html"){
                         });
                         self.selUsers = [];//清除已选择的用户
                         self.dbUsers = [];//清除数据库查询的用户,已移除的用户应该能重新被查询到..
+                        self.remoteMethod('');
                         self.doUserLoad();
                     } else {
                         self.$message({
