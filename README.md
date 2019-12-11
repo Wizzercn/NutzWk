@@ -91,19 +91,17 @@ https://wizzer.cn/donation                捐赠者列表
 
 # 鸣谢
 
-*   [@wendal](https://github.com/wendal) (代码贡献者,技术大牛,Nutz主要作者,无所不知且乐于助人)
-*   [@rekoe](https://github.com/Rekoe) (代码贡献者)
-*   [@enilu](https://github.com/enilu) (v3.x 代码生成器及IDEA插件贡献者)
-*   [@loyalove](https://github.com/loyalove) (v3.x Vue代码贡献者)
-*   [@threefish](https://github.com/threefish) (NutzCodeInsight 插件作者)
+*   [@wendal](https://github.com/wendal)
+*   [@rekoe](https://github.com/Rekoe)
+*   [@enilu](https://github.com/enilu)
+*   [@loyalove](https://github.com/loyalove)
+*   [@threefish](https://github.com/threefish)
 
 <a href="https://github.com/Wizzercn/NutzWk/graphs/contributors"><img src="https://opencollective.com/nutzwk/contributors.svg?width=890&button=false" /></a>
 
 
 # 关于
 
-*   **本项目完全开源，商用完全免费**
-*   建议企业用户打赏500￥以上，支持项目持续发展，以及得到更好的技术支持
-*   另外提供付费的培训服务，含源码解析、设计思路、疑难解答、项目辅导等
+*   提供付费的培训服务，含源码解析、设计思路、疑难解答、项目辅导等
 *   联系方式 QQ：11624317  微信：wizzer
 *   欢迎打赏，以资鼓励 [https://wizzer.cn/donation](https://wizzer.cn/donation)
