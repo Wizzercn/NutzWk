@@ -19,6 +19,7 @@
     <script src="${base!}/assets/platform/plugins/vue/vue.min.js"></script>
     <!-- import JavaScript -->
     <script src="${base!}/assets/platform/plugins/element-ui/lib/index.js"></script>
+    <script src="${base!}/assets/platform/plugins/element-ui/lib/i18n/${lang,escape}.js"></script>
     <script src="${base!}/assets/platform/plugins/jquery/jquery-1.11.1.min.js"></script>
     <script src="${base!}/assets/platform/plugins/slimscroll/jquery.slimscroll.min.js"></script>
     <!-- pjax是异步加载html片段的工具,模拟前端路由机制 -->
@@ -50,6 +51,7 @@
         var base = "${base!}";
         var loginPjax = "${@shiro.getPrincipalProperty('loginPjax')}";
         var isLeftMenu = "${isLeftMenu!}";
+        ELEMENT.locale(ELEMENT.lang['${lang,escape}']);
     </script>
 </head>
 <body>
