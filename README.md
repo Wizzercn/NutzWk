@@ -25,12 +25,12 @@ https://wizzer.cn/donation                捐赠者列表
 
 | 版本名称 | 版本特点 | 版本地址 | 运行方式 | 后端主要技术| 前端主要技术 | 浏览器兼容性 |
 | ---------|---------| ----------| ----------| ----------|----------|----------|
-| BudWk v6.x| 微服务分布式 + 前后端分离 |[v6.x](https://github.com/budwk/budwk-nutzboot)| jar,war | nutzboot + dubbo + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
-| BudWk v6.x-mini| 微服务单应用 + 前后端分离 |[v6.x-mini](https://github.com/budwk/budwk-nutzboot)| jar,war | nutzboot + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
-| NutzWk v5.x| 微服务分布式 + 前端混合模式 |[v5.x](https://github.com/Wizzercn/NutzWk/tree/v5.x)| jar,war | nutzboot + dubbo + shiro | vue + elementUI + jquery 或 jquery + bootstrap 两个版本 | Chrome,IE9+ |
+| BudWk v6.x 开发中 | 微服务分布式 + 前后端分离 |[v6.x](https://github.com/budwk/budwk-nutzboot)| jar,war | nutzboot + dubbo + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
+| BudWk v6.x-mini 开发中| 微服务单应用 + 前后端分离 |[v6.x-mini](https://github.com/budwk/budwk-nutzboot)| jar,war | nutzboot + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
+| NutzWk v5.x| 微服务分布式 + 前端混合模式 |[v5.x](https://github.com/Wizzercn/NutzWk/tree/v5.x)| jar,war | nutzboot + dubbo + shiro + beetl | vue + elementUI + jquery 或 jquery + bootstrap 两个版本 | Chrome,IE9+ |
 | NutzWk v5.x-mini| 微服务单应用 + 前端混合模式 |[v5.x-mini](https://github.com/Wizzercn/NutzWk/tree/v5.x-mini)| jar,war | nutzboot + shiro + beetl | vue + elementUI + jquery | Chrome,IE9+ |
 | NutzWk v4.x| 模块化单应用 |[v4.x](https://github.com/Wizzercn/NutzWk/tree/v4.x)| war | nutz + shiro + beetl | jquery + bootstrap | Chrome,IE7 + |
-| NutzWk v3.x| 单应用 |[v3.x](https://github.com/Wizzercn/NutzWk/tree/v3.x)| war | nutz + shiro + beetl或velocity两个版本 | jquery + bootstrap | Chrome,IE7 + |
+| NutzWk v3.x| 单应用 |[v3.x](https://github.com/Wizzercn/NutzWk/tree/v3.x)| war | nutz + shiro + beetl 或 nutz + shiro + velocity 两个版本 | jquery + bootstrap | Chrome,IE7 + |
 | NutzWk v1.x| 单应用 |[v1.x](https://github.com/Wizzercn/NutzWk/tree/v1.x)| war | nutz + shiro + velocity | jquery + easyUI | IE6 + |
 
 
