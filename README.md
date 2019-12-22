@@ -23,13 +23,15 @@ https://wizzer.cn/donation                捐赠者列表
 
 # 版本说明
 
-*   BudWk v6.x 微服务+前后端分离,开发中...([v6.x](https://github.com/budwk/budwk-nutzboot) 起更名为 BudWk, dubbo分布式版本 )
-*   BudWk v6.x-mini 微服务+前后端分离,开发中...([v6.x-mini](https://github.com/budwk/budwk-nutzboot) 起更名为 BudWk, 单应用非分布式 )
-*   NutzWk v5.x 微服务版本(分支名:[v5.x](https://github.com/Wizzercn/NutzWk/tree/v5.x),微服务dubbo分布式版本)
-*   NutzWk v5.x-mini 微服务版本(分支名:[v5.x-mini](https://github.com/Wizzercn/NutzWk/tree/v5.x-mini),微服务非分布式版本)
-*   NutzWk v4.x 模块化版本(分支名:[v4.x](https://github.com/Wizzercn/NutzWk/tree/v4.x),统一提供代码生成器及IDEA可视化插件)
-*   NutzWk v3.x 单应用版本(分支名:[v3.x](https://github.com/Wizzercn/NutzWk/tree/v3.x),CMS+微信+系统+权限+常用功能封装 beetl/velocity)
-*   NutzWk v1.0 传统版(分支名:[v1.x](https://github.com/Wizzercn/NutzWk/tree/v1.x),velocity 支持IE6)
+| 版本名称 | 版本特点 | 版本地址 | 运行方式 | 后端主要技术| 前端主要技术 | 浏览器兼容性 |
+| ---------|---------| ----------| ----------| ----------|----------|----------|
+| BudWk v6.x| 微服务分布式 + 前后端分离 |[v6.x](https://github.com/budwk/budwk-nutzboot)| jar,war | nutzboot + dubbo + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
+| BudWk v6.x-mini| 微服务单应用 + 前后端分离 |[v6.x-mini](https://github.com/budwk/budwk-nutzboot)| jar,war | nutzboot + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
+| NutzWk v5.x| 微服务分布式 + 前端混合模式 |[v5.x](https://github.com/Wizzercn/NutzWk/tree/v5.x)| jar,war | nutzboot + dubbo + shiro | vue + elementUI + jquery 或 jquery + bootstrap 两个版本 | Chrome,IE9+ |
+| NutzWk v5.x-mini| 微服务单应用 + 前端混合模式 |[v5.x-mini](https://github.com/Wizzercn/NutzWk/tree/v5.x-mini)| jar,war | nutzboot + shiro + beetl | vue + elementUI + jquery | Chrome,IE9+ |
+| NutzWk v4.x| 模块化单应用 |[v4.x](https://github.com/Wizzercn/NutzWk/tree/v4.x)| war | nutz + shiro + beetl | jquery + bootstrap | Chrome,IE7 + |
+| NutzWk v3.x| 单应用 |[v3.x](https://github.com/Wizzercn/NutzWk/tree/v3.x)| war | nutz + shiro + beetl或velocity两个版本 | jquery + bootstrap | Chrome,IE7 + |
+| NutzWk v1.x| 单应用 |[v1.x](https://github.com/Wizzercn/NutzWk/tree/v1.x)| war | nutz + shiro + velocity | jquery + easyUI | IE6 + |
 
 
 # 本版说明(v5.x)
