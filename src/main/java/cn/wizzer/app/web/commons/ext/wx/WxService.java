@@ -4,14 +4,14 @@ import cn.wizzer.app.web.commons.base.Globals;
 import cn.wizzer.app.wx.modules.models.Wx_config;
 import cn.wizzer.app.wx.modules.services.WxConfigService;
 import org.nutz.dao.Cnd;
+import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.weixin.at.impl.RedisAccessTokenStore;
+import org.nutz.weixin.at.impl.JedisAgenAccessTokenStore;
 import org.nutz.weixin.impl.WxApi2Impl;
 import org.nutz.weixin.spi.WxApi2;
-import redis.clients.jedis.JedisPool;
 
 /**
  * Created by wizzer on 2018/3/17.
@@ -22,15 +22,13 @@ public class WxService {
     @Inject
     private WxConfigService wxConfigService;
     @Inject
-    private JedisPool jedisPool;
+    private JedisAgent jedisAgent;
 
     public synchronized WxApi2 getWxApi2(String wxid) {
         WxApi2Impl wxApi2 = Globals.WxMap.getAs(wxid, WxApi2Impl.class);
         if (wxApi2 == null) {
             Wx_config appInfo = wxConfigService.fetch(Cnd.where("id", "=", wxid));
-            RedisAccessTokenStore redisAccessTokenStore = new RedisAccessTokenStore();//如果是集群部署请启用RedisAccessTokenStore
-            redisAccessTokenStore.setTokenKey("nutzwk:wx:token:" + wxid);
-            redisAccessTokenStore.setJedisPool(jedisPool);
+            JedisAgenAccessTokenStore redisAccessTokenStore = new JedisAgenAccessTokenStore("nutzwk:wx:token:" + wxid, jedisAgent);
             wxApi2 = new WxApi2Impl();
             wxApi2.setAppid(appInfo.getAppid());
             wxApi2.setAppsecret(appInfo.getAppsecret());
