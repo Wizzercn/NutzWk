@@ -10,7 +10,7 @@ https://nutzwk.wizzer.cn                 V5演示地址
 
 https://demo.budwk.com                 V6演示地址
 
-https://wizzer.cn/donation                捐赠者列表
+https://budwk.com/donation                捐赠者列表
 
 # 前言
 
@@ -109,4 +109,4 @@ https://wizzer.cn/donation                捐赠者列表
 
 *   提供付费的培训服务，含源码解析、设计思路、疑难解答、项目辅导等
 *   联系方式 QQ：11624317  微信：wizzer
-*   欢迎打赏，以资鼓励 [https://wizzer.cn/donation](https://wizzer.cn/donation)
+*   欢迎打赏，以资鼓励 [https://budwk.com/donation](https://budwk.com/donation)
