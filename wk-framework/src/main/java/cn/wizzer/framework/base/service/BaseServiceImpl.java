@@ -19,6 +19,7 @@ import org.nutz.service.EntityService;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -860,6 +861,19 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
     }
 
     /**
+     * 自定义SQL返回NutMap记录集，区分大小写
+     *
+     * @param sql
+     * @return
+     */
+    @Override
+    public List<NutMap> listMap(Sql sql) {
+        sql.setCallback(Sqls.callback.maps());
+        this.dao().execute(sql);
+        return sql.getList(NutMap.class);
+    }
+
+    /**
      * 自定义查询,并返回当前实体类对象
      *
      * @param sql
@@ -1156,6 +1170,39 @@ public class BaseServiceImpl<T> extends EntityService<T> implements BaseService<
         return new Pagination(pageNumber, pageSize, pager.getRecordCount(), list);
     }
 
+    /**
+     * 分页查询并返回包含实体类内容的NutMap对象
+     *
+     * @param pageNumber
+     * @param cnd
+     * @return
+     */
+    @Override
+    public Pagination listPageMap(Integer pageNumber, Condition cnd) {
+        return listPageMap(pageNumber, DEFAULT_PAGE_NUMBER, cnd);
+    }
+
+    /**
+     * 分页查询并返回包含实体类内容的NutMap对象
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param cnd
+     * @return
+     */
+    @Override
+    public Pagination listPageMap(Integer pageNumber, int pageSize, Condition cnd) {
+        pageNumber = getPageNumber(pageNumber);
+        pageSize = getPageSize(pageSize);
+        Pager pager = this.dao().createPager(pageNumber, pageSize);
+        List<T> list = this.dao().query(this.getEntityClass(), cnd, pager);
+        pager.setRecordCount(this.dao().count(this.getEntityClass(), cnd));
+        List<NutMap> mapList = new ArrayList<>();
+        for (Object obj : list) {
+            mapList.add(Lang.obj2nutmap(obj));
+        }
+        return new Pagination(pageNumber, pageSize, pager.getRecordCount(), mapList);
+    }
 
     /**
      * 默认页码

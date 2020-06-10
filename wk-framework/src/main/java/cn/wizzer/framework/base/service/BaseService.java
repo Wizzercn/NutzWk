@@ -639,6 +639,14 @@ public interface BaseService<T> {
     List<Record> list(Sql sql);
 
     /**
+     * 自定义SQL返回NutMap记录集，区分大小写
+     *
+     * @param sql
+     * @return
+     */
+    List<NutMap> listMap(Sql sql);
+
+    /**
      * 自定义查询,并返回当前实体类对象
      *
      * @param sql
@@ -817,6 +825,25 @@ public interface BaseService<T> {
      * @return
      */
     Pagination listPage(Integer pageNumber, int pageSize, String tableName, Condition cnd);
+
+    /**
+     * 分页查询并返回包含实体类内容的NutMap对象
+     *
+     * @param pageNumber
+     * @param cnd
+     * @return
+     */
+    Pagination listPageMap(Integer pageNumber, Condition cnd);
+
+    /**
+     * 分页查询并返回包含实体类内容的NutMap对象
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param cnd
+     * @return
+     */
+    Pagination listPageMap(Integer pageNumber, int pageSize, Condition cnd);
 
 
     /**
