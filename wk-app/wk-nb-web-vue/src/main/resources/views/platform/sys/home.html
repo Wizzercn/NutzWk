@@ -36,8 +36,7 @@ layout("/layouts/platform.html"){
     }
 
     .bg-box-content {
-        width: 575px;
-        margin: 10px auto;
+        margin: 20px 20px;
     }
 
     .bg_box .item_coupon_box .item_coupon {
@@ -103,9 +102,74 @@ layout("/layouts/platform.html"){
         font-size: 12px;
         text-decoration: none;
     }
+    .bg-box-content-bywave {
+        margin: 20px 20px;
+    }
+
+    .bg_box-bywave .item_limited{
+        width: 200px;
+        height: 157px;
+        margin-left: 350px;
+        position: relative;
+        overflow: hidden;
+        float: left;
+        z-index: 9999;
+        top:-10px;
+    }
+
+    .bg_box-bywave .item_limited .item_bywave_url a{
+        display: block;
+        width: 160px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        overflow: hidden;
+        font-size: 16px;
+        background: #fc68a6;
+        border: #fc68a6;
+        color: #fff;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .bg_box-bywave {
+        width: 575px;
+        height: 157px;
+        position: relative;
+        float: left;
+        box-shadow: 0 0 5px #666;
+        background-size: 22%;
+        background-position: 100% 100%, 0 0;
+        background-repeat: no-repeat, repeat;
+        z-index: 9;
+    }
+
+    .bg_box-bywave .text-title {
+        font-family: 'Poppins', sans-serif;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 35px;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        color: #2f3538;
+        position: relative;
+        padding-left: 20px;
+        padding-top: 20px;
+    }
+
+    .bg_box-bywave .text-title span {
+        display: block;
+        font-size: 14px;
+        text-transform: capitalize;
+        font-weight: 500;
+        letter-spacing: 0;
+        font-family: 'Quicksand', sans-serif;
+        margin-bottom: 10px;
+        color: #aebfc7;
+    }
 </style>
 <div id="app" v-cloak>
-    <div class="el-row" style="padding: 20px;margin-bottom: 20px;">
+    <div class="el-row" style="padding: 20px;margin-bottom: 20px;display: flex;">
         <div class="bg-box-content">
             <div class="bg_box" style="position: relative;">
                 <div class="item_coupon_box">
@@ -120,6 +184,17 @@ layout("/layouts/platform.html"){
                             href='https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=jfp1pk7u'
                             target='_blank'>立即领取</a></span>
                 </div>
+            </div>
+        </div>
+        <div class="bg-box-content-bywave">
+            <div class="bg_box-bywave" style="position: relative;">
+                <div class="text-title">
+                    <span> 总是想窥探这个世界，却求而不得</span>现在有一把钥匙就在眼前
+                </div>
+                <div class="item_limited"><span class="item_bywave_url"><a
+                        href="https://bywave.io/aff.php?aff=3368"
+                        target="_blank"
+                >现在开始</a></span></div>
             </div>
         </div>
     </div>
