@@ -30,10 +30,10 @@ https://budwk.com/donation                捐赠者列表
 *   v6.x - zookeeper 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - mini 微服务单应用版本（一个 jar 或 war 包） ```前后端分离,前端 nuxt + vue + elementUI```
 *   v5.x - zookeeper 微服务分布式版本 ```前端 jQuery + bootsrtap 或 jQuery + vue.js + elementUI```
-*   v5.x - mini 微服务单应用版本（一个 jar 或 war 包 ```前端 jQuery + bootsrtap 或 jQuery + vue.js + elementUI```
-*   v4.x ```前端 jQuery + bootsrtap```
-*   v3.x ```前端 jQuery + bootsrtap```
-*   v1.x ```前端 jQuery + easyUI```
+*   v5.x - mini 微服务单应用版本（一个 jar 或 war 包） ```前端 jQuery + bootsrtap 或 jQuery + vue.js + elementUI```
+*   v4.x 单应用版本（war 包） ```前端 jQuery + bootsrtap```
+*   v3.x 单应用版本（war 包） ```前端 jQuery + bootsrtap```
+*   v1.x 单应用版本（war 包）  ```前端 jQuery + easyUI```
 
 | 版本名称 | 版本特点 | 版本地址 | 运行方式 | 后端主要技术| 前端主要技术 | 浏览器兼容性 |
 | ---------|---------| ----------| ----------| ----------|----------|----------|
