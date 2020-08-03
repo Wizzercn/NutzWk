@@ -31,13 +31,14 @@ https://budwk.com/donation                捐赠者列表
 *   v6.x - mini 微服务单应用版本（一个 jar 或 war 包） ```前后端分离,前端 nuxt + vue + elementUI```
 *   v5.x - zookeeper 微服务分布式版本 ```前端 jQuery + bootsrtap 或 jQuery + vue.js + elementUI```
 *   v5.x - mini 微服务单应用版本（一个 jar 或 war 包） ```前端 jQuery + bootsrtap 或 jQuery + vue.js + elementUI```
-*   v4.x 单应用版本（war 包） ```前端 jQuery + bootsrtap```
-*   v3.x 单应用版本（war 包） ```前端 jQuery + bootsrtap```
-*   v1.x 单应用版本（war 包）  ```前端 jQuery + easyUI```
+*   v4.x - 单应用版本（war 包） ```前端 jQuery + bootsrtap```
+*   v3.x - 单应用版本（war 包） ```前端 jQuery + bootsrtap```
+*   v1.x - 单应用版本（war 包）  ```前端 jQuery + easyUI```
 
 | 版本名称 | 版本特点 | 版本地址 | 运行方式 | 后端主要技术| 前端主要技术 | 浏览器兼容性 |
 | ---------|---------| ----------| ----------| ----------|----------|----------|
-| BudWk v6.x | 微服务分布式 + 前后端分离 |[v6.x](https://github.com/budwk/budwk-nutzboot/tree/v6.x)| jar,war | nutzboot + dubbo + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
+| BudWk v6.x-nacos | 微服务分布式 + 前后端分离 |[v6.x-nacos](https://github.com/budwk/budwk-nutzboot/tree/v6.x-nacos)| jar,war | nutzboot + dubbo + nacos + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
+| BudWk v6.x-zookeeper | 微服务分布式 + 前后端分离 |[v6.x-zookeeper](https://github.com/budwk/budwk-nutzboot/tree/v6.x-zookeeper)| jar,war | nutzboot + dubbo + zookeeper + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
 | BudWk v6.x-mini | 微服务单应用 + 前后端分离 |[v6.x-mini](https://github.com/budwk/budwk-nutzboot/tree/v6.x-mini)| jar,war | nutzboot + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
 | NutzWk v5.x| 微服务分布式 + 前端混合模式 |[v5.x](https://github.com/Wizzercn/NutzWk/tree/v5.x)| jar,war | nutzboot + dubbo + shiro + beetl | vue + elementUI + jquery 或 jquery + bootstrap 两个版本 | Chrome,IE9+ |
 | NutzWk v5.x-mini| 微服务单应用 + 前端混合模式 |[v5.x-mini](https://github.com/Wizzercn/NutzWk/tree/v5.x-mini)| jar,war | nutzboot + shiro + beetl | vue + elementUI + jquery | Chrome,IE9+ |
