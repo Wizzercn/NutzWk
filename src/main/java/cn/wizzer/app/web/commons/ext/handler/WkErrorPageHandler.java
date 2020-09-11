@@ -23,7 +23,7 @@ public class WkErrorPageHandler extends ErrorPageErrorHandler {
     private static final Log log = Logs.get();
 
     @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (response.getStatus() == 403 || response.getStatus() == 404 || response.getStatus() == 500) {
             try {
                 if (isAjax(request)) {

@@ -6,9 +6,11 @@ NutzWk 开源企业级Java Web开发框架
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![PowerByNutz](https://img.shields.io/badge/PowerBy-Nutz-green.svg)](https://github.com/nutzam/nutz)
 
-https://nutzwk.wizzer.cn                 演示地址
+https://nutzwk.wizzer.cn                 V5演示地址
 
-https://wizzer.cn/donation                捐赠者列表
+https://demo.budwk.com                 V6演示地址
+
+https://budwk.com/donation                捐赠者列表
 
 # 前言
 

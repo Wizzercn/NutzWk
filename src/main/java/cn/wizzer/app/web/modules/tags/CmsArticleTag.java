@@ -1,7 +1,7 @@
 package cn.wizzer.app.web.modules.tags;
 
 import cn.wizzer.app.cms.modules.services.CmsArticleService;
-import org.beetl.core.GeneralVarTagBinding;
+import org.beetl.core.tag.GeneralVarTagBinding;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;

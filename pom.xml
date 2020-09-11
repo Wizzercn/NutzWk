@@ -6,13 +6,13 @@
     <packaging>jar</packaging>
     <groupId>cn.wizzer</groupId>
     <artifactId>wk-mini</artifactId>
-    <version>5.2.6</version>
+    <version>5.2.7-mini</version>
     <name>NutzWk-Mini</name>
 
     <properties>
         <nutzwk.version>5.2.6</nutzwk.version>
-        <nutzboot.version>2.3.7.v20190731</nutzboot.version>
-        <nutz.version>1.r.68.v20190731</nutz.version>
+        <nutzboot.version>2.4.0.v20200427</nutzboot.version>
+        <nutz.version>1.r.68.v20200309</nutz.version>
         <mysql-connector-java.version>5.1.48</mysql-connector-java.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <slf4j.version>1.7.25</slf4j.version>
