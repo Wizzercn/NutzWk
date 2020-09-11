@@ -3,7 +3,7 @@ package cn.wizzer.app.web.modules.tags;
 import cn.wizzer.app.cms.modules.models.Cms_channel;
 import cn.wizzer.app.cms.modules.services.CmsChannelService;
 import com.alibaba.dubbo.config.annotation.Reference;
-import org.beetl.core.GeneralVarTagBinding;
+import org.beetl.core.tag.GeneralVarTagBinding;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
