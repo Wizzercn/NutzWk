@@ -26,10 +26,11 @@ https://budwk.com/donation                捐赠者列表
 
 # 版本说明
 
-*   v6.x - nacos 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - zookeeper 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```
+*   v6.x - nacos 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - mini 微服务单应用版本（一个 jar 或 war 包） ```前后端分离,前端 nuxt + vue + elementUI```
 *   v5.x - zookeeper 微服务分布式版本 ```前端 jQuery + bootsrtap 或 jQuery + vue.js + elementUI```
+*   v5.x - nacos 微服务分布式版本 ```前端 jQuery + bootsrtap 或 jQuery + vue.js + elementUI```
 *   v5.x - mini 微服务单应用版本（一个 jar 或 war 包） ```前端 jQuery + bootsrtap 或 jQuery + vue.js + elementUI```
 *   v4.x - 单应用版本（war 包） ```前端 jQuery + bootsrtap```
 *   v3.x - 单应用版本（war 包） ```前端 jQuery + bootsrtap```
@@ -37,30 +38,31 @@ https://budwk.com/donation                捐赠者列表
 
 | 版本名称 | 版本特点 | 版本地址 | 运行方式 | 后端主要技术| 前端主要技术 | 浏览器兼容性 |
 | ---------|---------| ----------| ----------| ----------|----------|----------|
-| BudWk v6.x-nacos | 微服务分布式 + 前后端分离 |[v6.x-nacos](https://github.com/budwk/budwk-nutzboot/tree/v6.x-nacos)| jar,war | nutzboot + dubbo + nacos + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
 | BudWk v6.x-zookeeper | 微服务分布式 + 前后端分离 |[v6.x-zookeeper](https://github.com/budwk/budwk-nutzboot/tree/v6.x-zookeeper)| jar,war | nutzboot + dubbo + zookeeper + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
+| BudWk v6.x-nacos | 微服务分布式 + 前后端分离 |[v6.x-nacos](https://github.com/budwk/budwk-nutzboot/tree/v6.x-nacos)| jar,war | nutzboot + dubbo + nacos + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
 | BudWk v6.x-mini | 微服务单应用 + 前后端分离 |[v6.x-mini](https://github.com/budwk/budwk-nutzboot/tree/v6.x-mini)| jar,war | nutzboot + shiro | nuxt + vue + elementUI | Chrome,IE10+ |
-| NutzWk v5.x| 微服务分布式 + 前端混合模式 |[v5.x](https://github.com/Wizzercn/NutzWk/tree/v5.x)| jar,war | nutzboot + dubbo + shiro + beetl | vue + elementUI + jquery 或 jquery + bootstrap 两个版本 | Chrome,IE9+ |
+| NutzWk v5.x-zookeeper| 微服务分布式 + 前端混合模式 |[v5.x-zookeeper](https://github.com/Wizzercn/NutzWk/tree/v5.x-zookeeper)| jar,war | nutzboot + dubbo + zookeeper + shiro + beetl | vue + elementUI + jquery 或 jquery + bootstrap 两个版本 | Chrome,IE9+ |
+| NutzWk v5.x-nacos| 微服务分布式 + 前端混合模式 |[v5.x-nacos](https://github.com/Wizzercn/NutzWk/tree/v5.x-nacos)| jar,war | nutzboot + dubbo + nacos + shiro + beetl | vue + elementUI + jquery 或 jquery + bootstrap 两个版本 | Chrome,IE9+ |
 | NutzWk v5.x-mini| 微服务单应用 + 前端混合模式 |[v5.x-mini](https://github.com/Wizzercn/NutzWk/tree/v5.x-mini)| jar,war | nutzboot + shiro + beetl | vue + elementUI + jquery | Chrome,IE9+ |
 | NutzWk v4.x| 模块化单应用 |[v4.x](https://github.com/Wizzercn/NutzWk/tree/v4.x)| war | nutz + shiro + beetl | jquery + bootstrap | Chrome,IE7 + |
 | NutzWk v3.x| 单应用 |[v3.x](https://github.com/Wizzercn/NutzWk/tree/v3.x)| war | nutz + shiro + beetl 或 nutz + shiro + velocity 两个版本 | jquery + bootstrap | Chrome,IE7 + |
 | NutzWk v1.x| 单应用 |[v1.x](https://github.com/Wizzercn/NutzWk/tree/v1.x)| war | nutz + shiro + velocity | jquery + easyUI | IE6 + |
 
 
-# 本版说明(v5.x)
+# 本版说明(v5.x-nacos)
 
-## NutzWk 5.x 运行必备环境：
+## NutzWk 5.x-nacos 运行必备环境：
 
 *   JDK 8 181 + 或 OpenJDK 11 +
 *   Maven 3.5.3 +
 *   Redis 4.0.8 +
 *   MySql 5.7 + 或 MariaDB、Oracle、SqlServer、达梦等
-*   Zookeeper 3.4.11 +
+*   Nacos 1.3.2 +
 
-## NutzWk 5.x 技术选型：
+## NutzWk 5.x-nacos 技术选型：
 
 *   核心框架：NutzBoot、Nutz
-*   分布式框架：Dubbo(RPC)、Zookeeper(注册中心)、Sentinel(流控-可选)、Seata(分布式事务-可选)
+*   分布式框架：Dubbo(RPC)、Nacos(注册中心|配置中心)、Sentinel(流控-可选)、Seata(分布式事务-可选)
 *   安全框架：Shiro、JWT
 *   任务调度：Quartz
 *   数据库连接池：Druid 
