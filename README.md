@@ -59,7 +59,7 @@ https://budwk.com/donation                捐赠者列表
 *   MySql 5.7 + 或 MariaDB、Oracle、SqlServer、达梦等
 *   Zookeeper 3.4.11 +
 
-## NutzWk 5.x 技术选型：
+## NutzWk 5.x-zookeeper 技术选型：
 
 *   核心框架：NutzBoot、Nutz
 *   分布式框架：Dubbo(RPC)、Zookeeper(注册中心)、Sentinel(流控-可选)、Seata(分布式事务-可选)
