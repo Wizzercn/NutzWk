@@ -4,7 +4,7 @@ import cn.wizzer.app.cms.modules.models.Cms_link;
 import cn.wizzer.app.cms.modules.services.CmsLinkService;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.beetl.core.GeneralVarTagBinding;
+import org.beetl.core.tag.GeneralVarTagBinding;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
