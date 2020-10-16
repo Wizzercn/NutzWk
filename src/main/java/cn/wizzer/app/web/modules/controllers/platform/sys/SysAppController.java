@@ -30,6 +30,8 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -93,9 +95,13 @@ public class SysAppController {
     @SuppressWarnings("unchecked")
     public Object osData(@Param("hostName") String hostName) {
         try {
-            List<NutMap> hostList = new ArrayList<>();
-            Set<String> set = redisService.keys("logback:deploy:" + hostName + ":*");
-            List<String> list = new ArrayList<>(set);
+            List<String> list = new ArrayList<>();
+            ScanParams match = new ScanParams().match("logback:deploy:" + hostName + ":*");
+            ScanResult<String> scan = null;
+            do {
+                scan = redisService.scan(scan == null ? ScanParams.SCAN_POINTER_START : scan.getStringCursor(), match);
+                list.addAll(scan.getResult());//增量式迭代查询,可能还有下个循环,应该是追加
+            } while (!scan.isCompleteIteration());
             Collections.sort(list);
             List<NutMap> dataList = new ArrayList<>();
             for (String key : list) {

@@ -13,6 +13,8 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.lang.util.NutMap;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 import java.util.Set;
 
@@ -34,14 +36,18 @@ public class WebTestDemo extends Assert {
 
     @Test
     public void test_service_inject() {
-            Set<String> set = redisService.keys("logback:loglevel:list:*");
-            NutMap map = NutMap.NEW();
-            for (String key : set) {
+        NutMap map = NutMap.NEW();
+        ScanParams match = new ScanParams().match("logback:loglevel:list:*");
+        ScanResult<String> scan = null;
+        do {
+            scan = redisService.scan(scan == null ? ScanParams.SCAN_POINTER_START : scan.getStringCursor(), match);
+            for (String key : scan.getResult()) {
                 String[] keys = key.split(":");
                 String name = keys[3];
                 LoglevelProperty loglevelProperty = Json.fromJson(LoglevelProperty.class, redisService.get(key));
                 map.addv2(name, loglevelProperty);
             }
+        } while (!scan.isCompleteIteration());
         System.out.println(Json.toJson(map));
     }
 
