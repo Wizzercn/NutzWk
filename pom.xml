@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <groupId>cn.wizzer</groupId>
     <artifactId>wk-mini</artifactId>
-    <version>5.2.7-mini</version>
+    <version>5.2.8-mini</version>
     <name>NutzWk-Mini</name>
 
     <properties>
