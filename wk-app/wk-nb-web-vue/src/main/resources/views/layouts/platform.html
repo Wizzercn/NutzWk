@@ -463,7 +463,7 @@
 
     function ws_ping() {
         if (ws) {
-            ws.send(JSON.stringify({room: "${@shiro.getPrincipalProperty('loginname')}", "action": "msg"}));
+            ws.send("{}");
         } else {
             connect();
         }
