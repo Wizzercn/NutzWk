@@ -59,10 +59,12 @@ public class WkNotifyService {
                 scan = redisService.scan(scan == null ? ScanParams.SCAN_POINTER_START : scan.getStringCursor(), match);
                 for (String room : scan.getResult()) {
                     pubSubService.fire(room, msg);
+                    getMsg(room.split(":")[1]);
                 }
             } while (!scan.isCompleteIteration());
         } else if ("user".equals(innerMsg.getType())) {//用户消息发送给指定在线用户
             for (String room : rooms) {
+                getMsg(room);
                 ScanParams match = new ScanParams().match("wsroom:" + room + ":*");
                 ScanResult<String> scan = null;
                 do {
