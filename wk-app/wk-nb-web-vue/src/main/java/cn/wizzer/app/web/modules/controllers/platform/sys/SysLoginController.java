@@ -58,6 +58,7 @@ public class SysLoginController {
     private RedisService redisService;
 
     @Inject
+    @Reference
     private SysMsgService sysMsgService;
 
     @Inject("refer:shiroWebSessionManager")

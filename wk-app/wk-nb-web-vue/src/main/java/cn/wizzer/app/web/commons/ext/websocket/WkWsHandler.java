@@ -1,6 +1,7 @@
 package cn.wizzer.app.web.commons.ext.websocket;
 
 import cn.wizzer.app.sys.modules.services.SysMsgService;
+import com.alibaba.dubbo.config.annotation.Reference;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
@@ -14,6 +15,7 @@ public class WkWsHandler extends SimpleWsHandler {
     private static final Log log = Logs.get();
 
     @Inject
+    @Reference
     private SysMsgService sysMsgService;
 
     /**

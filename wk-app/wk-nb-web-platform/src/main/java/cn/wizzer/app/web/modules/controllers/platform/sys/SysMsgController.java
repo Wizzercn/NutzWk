@@ -1,33 +1,32 @@
 package cn.wizzer.app.web.modules.controllers.platform.sys;
 
+import cn.wizzer.app.sys.modules.models.Sys_msg;
+import cn.wizzer.app.sys.modules.services.SysMsgService;
 import cn.wizzer.app.sys.modules.services.SysMsgUserService;
 import cn.wizzer.app.sys.modules.services.SysUserService;
-import cn.wizzer.app.web.commons.ext.websocket.WkNotifyService;
-import cn.wizzer.framework.base.Result;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.StringUtil;
+import cn.wizzer.framework.base.Result;
 import cn.wizzer.framework.page.OffsetPager;
 import cn.wizzer.framework.page.datatable.DataTableColumn;
 import cn.wizzer.framework.page.datatable.DataTableOrder;
-import cn.wizzer.app.sys.modules.models.Sys_msg;
-import cn.wizzer.app.sys.modules.services.SysMsgService;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.alibaba.dubbo.config.annotation.Reference;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.pager.Pager;
-import org.nutz.json.Json;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.ioc.loader.annotation.Inject;
-import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -47,8 +46,7 @@ public class SysMsgController {
     @Inject
     @Reference
     private SysUserService sysUserService;
-    @Inject
-    private WkNotifyService wkNotifyService;
+
 
     @At("")
     @Ok("beetl:/platform/sys/msg/index.html")
@@ -103,11 +101,7 @@ public class SysMsgController {
         try {
             sysMsg.setSendAt(Times.getTS());
             sysMsg.setOpBy(StringUtil.getPlatformUid());
-            Sys_msg sys_msg = sysMsgService.saveMsg(sysMsg, users);
-            if (sys_msg != null) {
-                wkNotifyService.notify(sys_msg, users);
-            }
-            sysMsgUserService.clearCache();
+            sysMsgService.saveMsg(sysMsg, users);
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
