@@ -1,5 +1,6 @@
 package cn.wizzer.app.web.commons.ext.websocket;
 
+import cn.wizzer.app.sys.modules.services.SysMsgService;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
@@ -12,7 +13,7 @@ import org.nutz.plugins.mvc.websocket.handler.SimpleWsHandler;
 public class WkWsHandler extends SimpleWsHandler {
     private static final Log log = Logs.get();
     @Inject
-    private WkNotifyService wkNotifyService;
+    private SysMsgService sysMsgService;
 
     /**
      * 加入房间 对应的消息是  {action:"join", room:"wendal"}
@@ -36,7 +37,7 @@ public class WkWsHandler extends SimpleWsHandler {
             room = prefix + room;
             log.debugf("session(id=%s) join room(name=%s)", session.getId(), room);
             roomProvider.join(room, session.getId());
-            wkNotifyService.getMsg(room.split(":")[1]);
+            sysMsgService.getMsg(room.split(":")[1]);
         }
     }
 

@@ -41,8 +41,6 @@ public class SysMsgController {
     private SysMsgUserService sysMsgUserService;
     @Inject
     private SysUserService sysUserService;
-    @Inject
-    private WkNotifyService wkNotifyService;
 
     @At({"/", "/list/?"})
     @Ok("beetl:/platform/sys/msg/index.html")
@@ -109,11 +107,7 @@ public class SysMsgController {
             sysMsg.setSendAt(Times.getTS());
             sysMsg.setOpBy(StringUtil.getPlatformUid());
             String[] users = StringUtils.split(nutMap.getString("users", ""), ",");
-            Sys_msg sys_msg = sysMsgService.saveMsg(sysMsg, users);
-            if (sys_msg != null) {
-                wkNotifyService.notify(sys_msg, users);
-            }
-            sysMsgUserService.clearCache();
+            sysMsgService.saveMsg(sysMsg, users);
             return Result.success();
         } catch (Exception e) {
             return Result.error();

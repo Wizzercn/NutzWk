@@ -2,9 +2,9 @@ package cn.wizzer.app.web.modules.controllers.platform.sys;
 
 import cn.wizzer.app.sys.modules.models.Sys_log;
 import cn.wizzer.app.sys.modules.models.Sys_user;
+import cn.wizzer.app.sys.modules.services.SysMsgService;
 import cn.wizzer.app.sys.modules.services.SysUserService;
 import cn.wizzer.app.web.commons.base.Globals;
-import cn.wizzer.app.web.commons.ext.websocket.WkNotifyService;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaEmptyException;
 import cn.wizzer.app.web.commons.shiro.exception.CaptchaIncorrectException;
 import cn.wizzer.app.web.commons.shiro.filter.PlatformAuthenticationFilter;
@@ -55,7 +55,7 @@ public class SysLoginController {
     @Inject
     private RedisService redisService;
     @Inject
-    private WkNotifyService wkNotifyService;
+    private SysMsgService sysMsgService;
     @Inject("refer:shiroWebSessionManager")
     private DefaultWebSessionManager webSessionManager;
 
@@ -191,7 +191,7 @@ public class SysLoginController {
                     if (oldUser != null && !Strings.sNull(oldUser.getLoginSessionId()).equals(session.getId())) {
                         Session oldSession = webSessionManager.getSessionDAO().readSession(oldUser.getLoginSessionId());
                         if (oldSession != null) {
-                            wkNotifyService.offline(oldUser.getLoginname(), oldUser.getLoginSessionId());//通知另外一个用户被踢下线
+                            sysMsgService.offline(oldUser.getLoginname(), oldUser.getLoginSessionId());//通知另外一个用户被踢下线
                             oldSession.stop();
                             webSessionManager.getSessionDAO().delete(oldSession);
                         }
