@@ -4,7 +4,6 @@ import cn.wizzer.app.sys.modules.models.Sys_msg;
 import cn.wizzer.app.sys.modules.services.SysMsgService;
 import cn.wizzer.app.sys.modules.services.SysMsgUserService;
 import cn.wizzer.app.sys.modules.services.SysUserService;
-import cn.wizzer.app.web.commons.ext.websocket.WkNotifyService;
 import cn.wizzer.app.web.commons.slog.annotation.SLog;
 import cn.wizzer.app.web.commons.utils.PageUtil;
 import cn.wizzer.app.web.commons.utils.StringUtil;
@@ -45,8 +44,6 @@ public class SysMsgController {
     @Inject
     @Reference
     private SysUserService sysUserService;
-    @Inject
-    private WkNotifyService wkNotifyService;
 
     @At({"/", "/list/?"})
     @Ok("beetl:/platform/sys/msg/index.html")
@@ -113,11 +110,7 @@ public class SysMsgController {
             sysMsg.setSendAt(Times.getTS());
             sysMsg.setOpBy(StringUtil.getPlatformUid());
             String[] users = StringUtils.split(nutMap.getString("users", ""), ",");
-            Sys_msg sys_msg = sysMsgService.saveMsg(sysMsg, users);
-            if (sys_msg != null) {
-                wkNotifyService.notify(sys_msg, users);
-            }
-            sysMsgUserService.clearCache();
+            sysMsgService.saveMsg(sysMsg, users);
             return Result.success();
         } catch (Exception e) {
             return Result.error();
