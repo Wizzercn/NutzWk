@@ -42,7 +42,7 @@ layout("/layouts/platform.html"){
                 @sort-change='pageOrder'
                 size="small"
                 header-align="center"
-                :default-sort = "{prop: 'opAt', order: 'descending'}"
+                :default-sort = "{prop: 'createdAt', order: 'descending'}"
                 style="width: 100%"
                 @selection-change="handleSelectionChange"
         >
@@ -122,11 +122,11 @@ layout("/layouts/platform.html"){
             </el-table-column>
             <el-table-column
                     sortable
-                    prop="opAt"
+                    prop="createdAt"
                     label="操作时间"
                     header-align="center" align="center">
                 <template slot-scope="scope">
-                    {{formatAt(scope.row.opAt)}}
+                    {{formatAt(scope.row.createdAt)}}
                 </template>
             </el-table-column>
             <el-table-column
@@ -449,7 +449,7 @@ layout("/layouts/platform.html"){
             },
             formatAt: function (val) {
                 if (val > 0)
-                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                    return moment(val).format("YYYY-MM-DD HH:mm");
                 return "";
             },
             doSearch: function () {

@@ -1,0 +1,18 @@
+var chain={
+	"default" : {
+		"ps" : [
+			  "com.budwk.app.web.commons.proc.LogTimeProcessor",
+			  "com.budwk.app.web.commons.proc.GlobalsSettingProcessor",
+			  "org.nutz.mvc.impl.processor.UpdateRequestAttributesProcessor",
+		      "org.nutz.mvc.impl.processor.EncodingProcessor",
+		      "org.nutz.mvc.impl.processor.ModuleProcessor",
+              "com.budwk.app.web.commons.proc.NutShiroProcessor",
+              "com.budwk.app.web.commons.proc.XssSqlFilterProcessor",
+		      "org.nutz.mvc.impl.processor.ActionFiltersProcessor",
+		      "org.nutz.mvc.impl.processor.AdaptorProcessor",
+		      "org.nutz.mvc.impl.processor.MethodInvokeProcessor",
+			  "org.nutz.mvc.impl.processor.ViewProcessor"
+		],
+		"error" : 'com.budwk.app.web.commons.proc.WkFailProcessor'
+	}
+};

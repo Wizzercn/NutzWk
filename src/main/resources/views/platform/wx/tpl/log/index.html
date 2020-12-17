@@ -38,7 +38,7 @@ layout("/layouts/platform.html"){
                 header-align="center"
                 style="width: 100%"
                 @selection-change="handleSelectionChange"
-                :default-sort="{prop: 'opAt', order: 'descending'}"
+                :default-sort="{prop: 'createdAt', order: 'descending'}"
         >
             <el-table-column
                     type="selection"
@@ -65,9 +65,9 @@ layout("/layouts/platform.html"){
                 </template>
             </el-table-column>
 
-            <el-table-column sortable label="发送时间" header-align="center" align="center" prop="opAt">
+            <el-table-column sortable label="发送时间" header-align="center" align="center" prop="createdAt">
                 <template slot-scope="scope">
-                    {{formatAt(scope.row.opAt)}}
+                    {{formatAt(scope.row.createdAt)}}
                 </template>
             </el-table-column>
 
@@ -123,7 +123,7 @@ layout("/layouts/platform.html"){
                     pageNumber: 1,
                     pageSize: 10,
                     totalCount: 0,
-                    pageOrderName: "opAt",
+                    pageOrderName: "createdAt",
                     pageOrderBy: "descending"
                 },
                 tableData: [],
@@ -165,7 +165,7 @@ layout("/layouts/platform.html"){
             },
             formatAt: function (val) {
                 if (val > 0)
-                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                    return moment(val).format("YYYY-MM-DD HH:mm");
                 return "";
             },
             handleSelectionChange: function (val) {

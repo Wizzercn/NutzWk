@@ -16,14 +16,14 @@ layout("/layouts/platform.html"){
             </a>
         </div>
         <div class="btn-group tool-button mt5">
-            <a href="${base}/platform/sys/msg/user/all/system" data-pjax
+            <a href="${base}/platform/sys/msg/user/all?type=system" data-pjax
                class="el-button el-button--default el-button--medium"
                :class="{'el-msg-active':'system'==pageForm.searchType}">
                 系统消息<span v-if="unreadnum.system>0">({{unreadnum.system}})</span>
             </a>
         </div>
         <div class="btn-group tool-button mt5">
-            <a href="${base}/platform/sys/msg/user/all/user" data-pjax
+            <a href="${base}/platform/sys/msg/user/all?type=user" data-pjax
                class="el-button el-button--default el-button--medium"
                :class="{'el-msg-active':'user'==pageForm.searchType}">
                 用户消息<span v-if="unreadnum.user>0">({{unreadnum.user}})</span>
@@ -113,7 +113,7 @@ layout("/layouts/platform.html"){
                     pageNumber: 1,
                     pageSize: 10,
                     totalCount: 0,
-                    pageOrderName: "opAt",
+                    pageOrderName: "createdAt",
                     pageOrderBy: "descending"
                 },
                 formData: {
@@ -159,7 +159,7 @@ layout("/layouts/platform.html"){
             },
             formatAt: function (val) {
                 if (val && val > 0)
-                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                    return moment(val).format("YYYY-MM-DD HH:mm");
                 return "";
             },
             handleSelectionChange: function (val) {

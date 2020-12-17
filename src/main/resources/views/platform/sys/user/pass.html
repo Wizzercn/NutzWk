@@ -5,26 +5,20 @@
         <h4 class="modal-title">${msg['index.user.password']}</h4>
     </div>
     <div class="modal-body">
-        <el-form :model="passForm" ref="passForm" :rules="passRules">
-            <el-row>
-                <el-form-item prop="oldPassword">
-                    <el-input maxlength="20" placeholder="${msg['index.user.oldpass']}" v-model="passForm.oldPassword"
+        <el-form :model="passForm" ref="passForm" :rules="passRules" label-width="100px">
+            <el-form-item label="${msg['index.user.oldpass']}" prop="oldPassword">
+                    <el-input size="small" maxlength="20" placeholder="${msg['index.user.oldpass']}" v-model="passForm.oldPassword"
                               auto-complete="off" tabindex="1" type="password"></el-input>
                 </el-form-item>
-            </el-row>
-            <el-row>
-                <el-form-item prop="newPassword">
-                    <el-input maxlength="20" placeholder="${msg['index.user.newpass']}" v-model="passForm.newPassword"
+                <el-form-item label="输入新密码" prop="newPassword">
+                    <el-input size="small" maxlength="20" placeholder="${msg['index.user.newpass']}" v-model="passForm.newPassword"
                               auto-complete="off" tabindex="2" type="password"></el-input>
                 </el-form-item>
-            </el-row>
-            <el-row>
-                <el-form-item prop="passwordAgain">
-                    <el-input maxlength="20" placeholder="${msg['index.user.rightpass']}"
+                <el-form-item label="确认新密码" prop="passwordAgain">
+                    <el-input size="small" maxlength="20" placeholder="${msg['index.user.rightpass']}"
                               v-model="passForm.passwordAgain"
                               auto-complete="off" tabindex="3" type="password"></el-input>
                 </el-form-item>
-            </el-row>
         </el-form>
     </div>
     <div class="el-dialog__footer">

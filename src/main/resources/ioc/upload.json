@@ -2,7 +2,7 @@ var ioc={
     tmpFilePool : {
         type : 'org.nutz.filepool.NutFilePool',
         // 临时文件最大个数为 1000 个
-        args : [ "~/nutzwk/upload/tmp", 1000 ]
+        args : [ "~/budcms/upload/tmp", 1000 ]
     },
     uploadImageContext : {
         type : 'org.nutz.mvc.upload.UploadingContext',

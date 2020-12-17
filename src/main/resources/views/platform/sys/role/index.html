@@ -26,7 +26,7 @@ layout("/layouts/platform.html"){
                 @sort-change='pageOrder'
                 size="small"
                 header-align="center"
-                :default-sort = "{prop: 'opAt', order: 'descending'}"
+                :default-sort = "{prop: 'createdAt', order: 'descending'}"
                 style="width: 100%"
         >
             <el-table-column
@@ -72,11 +72,11 @@ layout("/layouts/platform.html"){
             </el-table-column>
             <el-table-column
                     sortable
-                    prop="opAt"
+                    prop="createdAt"
                     label="操作时间"
                     header-align="center" align="center">
                 <template slot-scope="scope">
-                    {{formatAt(scope.row.opAt)}}
+                    {{formatAt(scope.row.createdAt)}}
                 </template>
             </el-table-column>
             <el-table-column
@@ -91,13 +91,13 @@ layout("/layouts/platform.html"){
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item :command="{type:'role',id:scope.row.id,name:scope.row.name}">
-                                查看权限
+                                查看系统权限
                             </el-dropdown-item>
                             <el-dropdown-item :command="{type:'menu',id:scope.row.id,name:scope.row.name}">
-                                分配权限
+                                分配系统权限
                             </el-dropdown-item>
                             <el-dropdown-item :command="{type:'user',id:scope.row.id,name:scope.row.name}">
-                                分配用户
+                                关联用户
                             </el-dropdown-item>
                             <el-dropdown-item divided :command="{type:'enable',id:scope.row.id,name:scope.row.name,row:scope.row}">
                                 启用
@@ -388,6 +388,7 @@ layout("/layouts/platform.html"){
                     <el-button @click="userDialogVisible = false">关 闭</el-button>
                   </span>
     </el-dialog>
+
 </div>
 <script>
     new Vue({
@@ -477,6 +478,9 @@ layout("/layouts/platform.html"){
                 addMenuData: [],
                 doMenuData: [],
                 doMenuCheckedData: [],//已分配的权限选中状态
+                doCmsData: [],
+                doCmsCheckedData: [],//已分配的CMS权限
+                doCmsForm: {},
                 userForm: {
                     roleId: "",
                     pageNumber: 1,
@@ -537,7 +541,7 @@ layout("/layouts/platform.html"){
             },
             formatAt: function (val) {
                 if (val > 0)
-                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                    return moment(val).format("YYYY-MM-DD HH:mm");
                 return "";
             },
             doSearch: function () {
@@ -887,6 +891,25 @@ layout("/layouts/platform.html"){
             },
             menuRoleSelClear:function () {
                 this.$refs["doMenuTree"].setCheckedKeys([]);
+            },
+            clearButtons:function (list){
+                for(var o of list){
+                    this.$set(o,"buttons",[]);
+                    if(o.hasChildren){
+                        this.clearButtons(o.children);
+                    }
+                }
+            },
+            selParentChannel:function (list,pid,keys){
+                var self = this;
+                list.forEach(function (o) {
+                    if(pid===o.id){
+                        keys.push(pid);
+                    }
+                    if(o.children){
+                        self.selParentChannel(o.children,pid,keys);
+                    }
+                });
             }
         },
         created: function () {

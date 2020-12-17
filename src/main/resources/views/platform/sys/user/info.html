@@ -1,0 +1,92 @@
+<div id="infoApp">
+    <div class="el-dialog__header">
+        <button type="button" data-dismiss="modal" aria-hidden="true" aria-label="Close" class="el-dialog__headerbtn"><i
+                class="el-dialog__close el-icon el-icon-close"></i></button>
+        <h4 class="modal-title">个人资料</h4>
+    </div>
+    <div class="modal-body">
+        <el-form :model="infoForm" ref="infoForm" :rules="infoRules" label-width="100px">
+            <el-row style="padding-bottom: 2px;">
+                <el-alert
+                        title="请完善个人资料"
+                        type="warning">
+                </el-alert>
+            </el-row>
+            <el-form-item label="姓名" prop="username">
+                <el-input size="small" maxlength="20" placeholder="姓名"
+                          v-model="infoForm.username"
+                          auto-complete="off" tabindex="1" ></el-input>
+            </el-form-item>
+            <el-form-item label="手机号码" prop="mobile">
+                <el-input size="small" maxlength="11" placeholder="手机号码"
+                          v-model="infoForm.mobile"
+                          auto-complete="off" tabindex="2" ></el-input>
+            </el-form-item>
+            <el-form-item label="电子邮箱" prop="email">
+                <el-input size="small" maxlength="50" placeholder="Email"
+                          v-model="infoForm.email"
+                          auto-complete="off" tabindex="3"></el-input>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div class="el-dialog__footer">
+        <span class="dialog-footer">
+            <button type="button" class="el-button el-button--default" data-dismiss="modal">
+                <span>${msg['system.cancel']}</span>
+            </button>
+            <button type="button" class="el-button el-button--primary" @click="doInfo">
+                <span>${msg['system.confirm']}</span>
+            </button>
+        </span>
+    </div>
+</div>
+<script type="text/javascript">
+    new Vue({
+        el: '#infoApp',
+        data: function () {
+            return {
+                infoForm: {
+                    username: "<!--#if(user.username!=user.mobile){#-->${user.username!}<!--#}#-->",
+                    mobile: "${user.mobile!}",
+                    email: "${user.email!}"
+                },
+                infoRules: {
+                    username: [
+                        {required: true, message: '请输入姓名', trigger: ['blur','change']}
+                    ],
+                    mobile: [
+                        {required: true, message: '请输入手机号码', trigger: ['blur','change']},
+                        {pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码'}
+                    ],
+                    email: [
+                        {required: true, message: '请输入Email', trigger: ['blur','change']},
+                        {type: 'email', message: '请输入正确的Email'}
+                    ]
+                },
+            }
+        },
+        methods: {
+            doInfo: function () {
+                var self = this
+                self.$refs["infoForm"].validate(function (valid) {
+                    if (valid) {
+                        $.post(base + "/platform/sys/user/doChangeInfo", self.infoForm, function (data) {
+                            if (data.code == 0) {
+                                $('#homeDetail').modal('hide');
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'success'
+                                });
+                            } else {
+                                self.$message({
+                                    message: data.msg,
+                                    type: 'error'
+                                });
+                            }
+                        }, "json");
+                    }
+                });
+            }
+        }
+    });
+</script>

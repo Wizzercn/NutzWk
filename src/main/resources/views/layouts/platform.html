@@ -100,7 +100,7 @@
                 <img src="${base!}/assets/platform/img/panel/boxed.png" alt="">
             </a>
         </div>
-        <div class="options-container">
+        <div class="options-container" >
             <h6>菜单位置</h6>
             <div class="layout-toggleMenu__item ${isLeftMenu?'is-active':''}" data-position="left">左侧</div>
             <div class="layout-toggleMenu__item ${!isLeftMenu?'is-active':''}" data-position="top">顶部</div>
@@ -184,12 +184,8 @@
                     </li><!--# } #-->
                 </ul><!--# } #-->
             </li><!--# }#-->
-            <!--# if(@shiro.hasRole("wizzer")){#-->
-            <!--项目开发请删除-->
-            <li>
-                <a href="${base}/platform/sys/test" data-pjax>捐赠管理</a>
-            </li>
-            <!--# }#-->
+        </ul>
+        <ul class="nav navbar-nav hidden-xs" style="display: ${isLeftMenu?'initial':'none'};">
             <li>
                 <a href="https://budwk.com/donation" target="_blank">捐赠清单</a>
             </li>
@@ -199,41 +195,12 @@
             <li>
                 <a href="https://nutz.cn" target="_blank">Nutz 社区</a>
             </li>
+            <li>
+                <a href="https://github.com/Wizzercn/NutzWk/tree/v5.x-mini" target="_blank">本站源码</a>
+            </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-
-            <li class="dropdown hidden-xs">
-                <a href="javascript:;" data-toggle="dropdown">
-                    <i class="ti-more-alt"></i>
-                </a>
-                <ul class="dropdown-menu animated zoomIn">
-                    <li class="dropdown-header">Quick Links</li>
-                    <li>
-                        <a href="javascript:;">Start New Campaign</a>
-                    </li>
-                    <li>
-                        <a href="javascript:;">Review Campaigns</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a href="javascript:;">Settings</a>
-                    </li>
-                    <li>
-                        <a href="javascript:;">Wish List</a>
-                    </li>
-                    <li>
-                        <a href="javascript:;">Purchases History</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a href="javascript:;">Activity Log</a>
-                    </li>
-                    <li>
-                        <a href="javascript:;">Settings</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="language-dropdown dropdown hidden-xs">
+            <li class="language-dropdown dropdown hidden-xs" >
                 <a href="javascript:;" data-toggle="dropdown" id="language">
                     <!--# if(lang==null||lang=="zh_CN"){ #-->
                     <img src="${base!}/assets/platform/img/flags/cn.png" class="flag"/>
@@ -286,7 +253,7 @@
                     <i class="ti-angle-down ti-caret hidden-xs"></i>
                 </a>
                 <ul class="dropdown-menu animated fadeInLeft">
-                    <li>
+                    <li style="display: none">
                         <a href="${base!}/platform/sys/user/custom" data-toggle="modal"
                            data-target="#homeDetail">${msg['index.custommenu']}</a>
                     </li>
@@ -295,14 +262,18 @@
                             ${msg['index.user.layout']}
                         </a>
                     </li>
-                    <li class="dropdown hidden-xs">
+                    <li style="display: none" class="dropdown hidden-xs">
                         <a href="${base!}/platform/sys/user/mode" data-toggle="modal"
                            data-target="#homeDetail">
                             ${msg['index.user.mode']}
                         </a>
                     </li>
                     <li>
-                        <a href="${base!}/platform/sys/user/pass" data-toggle="modal"
+                        <a id="userInfo" href="${base!}/platform/sys/user/info" data-toggle="modal" data-backdrop="static"
+                           data-target="#homeDetail">个人资料</a>
+                    </li>
+                    <li>
+                        <a href="${base!}/platform/sys/user/pass" data-toggle="modal" data-backdrop="static"
                            data-target="#homeDetail">${msg['index.user.password']}</a>
                     </li>
                 </ul>
@@ -516,11 +487,10 @@
                 if (parseInt("${@shiro.getPrincipalProperty('loginCount')}") > 0 || !${@config.getOrDefault("WebNotification",true)})
                     return;
                 Push.create('Thank You!', {
-                    body: '欢迎选用 NutzWk!',
+                    body: '欢迎选用 ArchiAI !',
                     icon: base + '/assets/platform/img/notice.png',
                     timeout: 5000,
                     onClick: function () {
-                        window.open("https://wizzer.cn"); //just added the window.open to a OnClick event.
                         this.close();
                     },
                     vibrate: [100, 100, 100]
@@ -600,6 +570,12 @@
                     };
                 }
             }
+
+            $.post(base + "/platform/home/needInfo", {}, function (d) {
+                if(d.code===0&&d.data){
+                    $("#userInfo").trigger("click");
+                }
+            });
         } catch (ex) {
             if (console)
                 console.info(ex);

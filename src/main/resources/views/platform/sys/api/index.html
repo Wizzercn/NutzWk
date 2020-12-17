@@ -45,11 +45,11 @@ layout("/layouts/platform.html"){
             </el-table-column>
             <el-table-column
                     sortable
-                    prop="opAt"
+                    prop="createdAt"
                     label="创建时间"
                     header-align="center" align="center">
                 <template slot-scope="scope">
-                    {{formatAt(scope.row.opAt)}}
+                    {{formatAt(scope.row.createdAt)}}
                 </template>
             </el-table-column>
             <el-table-column
@@ -189,7 +189,7 @@ layout("/layouts/platform.html"){
             },
             formatAt: function (val) {
                 if (val && val > 0)
-                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                    return moment(val).format("YYYY-MM-DD HH:mm");
                 return "";
             },
             doSearch: function () {

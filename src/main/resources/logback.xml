@@ -8,8 +8,8 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="org.nutz.boot.starter.logback.exts.logfile.LogfileTimeBasedRollingPolicy">
-            <fileNamePattern>/data/NutzWk-Mini/logs/mini-%d{yyyy-MM-dd}.log</fileNamePattern>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/data/budwk5mini/logs/mini-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>15</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -29,6 +29,8 @@
 
     <logger name="java" additivity="false" />
     <logger name="org.eclipse.jetty" level="INFO"/>
+    <logger name="org.quartz" level="INFO"/>
+    <logger name="org.nutz" level="DEBUG"/>
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />

@@ -353,7 +353,7 @@ layout("/layouts/platform.html"){
                     pageNumber: 1,
                     pageSize: 10,
                     totalCount: 0,
-                    pageOrderName: "opAt",
+                    pageOrderName: "createdAt",
                     pageOrderBy: "descending"
                 },
                 tableData: [],//后台取出的数据
@@ -425,7 +425,7 @@ layout("/layouts/platform.html"){
             },
             formatAt: function (val) {
                 if (val > 0)
-                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                    return moment(val).format("YYYY-MM-DD HH:mm");
                 return "";
             },
             handleSelectionChange: function (val) {
@@ -589,7 +589,7 @@ layout("/layouts/platform.html"){
                     searchKeyword: queryString,
                     pageNumber: 1,
                     pageSize: 10,
-                    pageOrderName: "opAt",
+                    pageOrderName: "createdAt",
                     pageOrderBy: "descending"
                 }, function (data) {
                     if (data.code == 0) {
@@ -611,7 +611,7 @@ layout("/layouts/platform.html"){
                     searchKeyword: queryString,
                     pageNumber: 1,
                     pageSize: 10,
-                    pageOrderName: "opAt",
+                    pageOrderName: "createdAt",
                     pageOrderBy: "descending"
                 }, function (data) {
                     if (data.code == 0) {

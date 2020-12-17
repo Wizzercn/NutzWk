@@ -222,7 +222,7 @@ layout("/layouts/platform.html"){
             },
             formatAt: function (val) {
                 if (val && val > 0)
-                    return moment(val * 1000).format("YYYY-MM-DD HH:mm");
+                    return moment(val).format("YYYY-MM-DD HH:mm");
                 return "";
             },
             doSearch: function () {

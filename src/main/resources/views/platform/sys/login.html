@@ -29,97 +29,190 @@
 <![endif]-->
 <div id="app" v-cloak>
     <div class="login-container">
+        <div class="login-border">
+            <el-row type="flex">
+                <el-col :span="12" class="login-left">
+                    <img
+                            src="${base!}/assets/platform/img/banner.png"
+                            style="height: 485px"
+                    />
+                </el-col>
 
-        <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
-                 label-position="left">
+                <el-col>
+                    <div class="login-main">
+                        <h4 class="title">${AppName!}系统登录</h4>
+                        <el-tabs v-model="activeName" style="max-height: 275px;">
+                            <el-tab-pane label="用户登录" name="signin">
+                            <span slot="label">
+                              <i slot="prefix" class>
+                                <i class="el-icon-user"></i>
+                              </i>
+                              用户登录
+                            </span>
+                                <el-form
+                                        ref="loginForm"
+                                        :model="loginForm"
+                                        :rules="loginRules"
+                                        class="login-form"
+                                        auto-complete="on"
+                                        label-position="left"
+                                >
+                                    <el-form-item prop="username">
+                                        <el-input
+                                                v-model="loginForm.username"
+                                                type="text"
+                                                auto-complete="off"
+                                                placeholder="账号或手机号码"
+                                                prefix-icon="el-icon-user"
+                                        >
+                                        </el-input>
+                                    </el-form-item>
+                                    <el-form-item prop="password">
+                                        <el-input
+                                                v-model="loginForm.password"
+                                                type="password"
+                                                auto-complete="off"
+                                                placeholder="密码"
+                                                @keyup.enter.native="handleLogin"
+                                                prefix-icon="el-icon-lock"
+                                        >
+                                        </el-input>
+                                    </el-form-item>
+                                    <el-form-item prop="platformCaptcha">
+                                        <el-input
+                                                v-model="loginForm.platformCaptcha"
+                                                auto-complete="off"
+                                                placeholder="验证码"
+                                                style="width: 60%"
+                                                @keyup.enter.native="handleLogin"
+                                                prefix-icon="el-icon-key"
+                                        >
+                                        </el-input>
+                                        <div class="login-code">
+                                            <img :src="codeUrl" @click="getCode"/>
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item style="width: 100%">
+                                        <el-button
+                                                :loading="loading"
+                                                size="medium"
+                                                type="primary"
+                                                style="width: 100%"
+                                                @click.native.prevent="handleLogin"
+                                        >
+                                            <span v-if="!loading">登 录</span>
+                                            <span v-else>登 录 中...</span>
+                                        </el-button>
+                                    </el-form-item>
+                                </el-form>
+                            </el-tab-pane>
+                            <el-tab-pane label="用户注册" name="signup">
+                            <span slot="label">
+                              <i slot="prefix" class>
+                                  <i class="el-icon-mobile-phone"></i>
+                              </i>
+                              用户注册
+                            </span>
 
-            <div class="title-container">
-                <h3 class="title">${AppName!}</h3>
-                <div class="lang">
-                    <el-dropdown size="small" @command="handleCommand">
-                        <!--# if(lang==null||lang=="zh_CN"){ #-->
-                        <img src="${base!}/assets/platform/img/flags/cn.png" class="flag">
-                        <!--# }else{ #-->
-                        <img src="${base!}/assets/platform/img/flags/us.png" class="flag">
-                        <!--# } #-->
-                        <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item command="en_US">
-                                <img src="${base!}/assets/platform/img/flags/us.png" class="flag">
-                                <span class="language">English</span>
-                            </el-dropdown-item>
-                            <el-dropdown-item command="zh_CN">
-                                <img src="${base!}/assets/platform/img/flags/cn.png" class="flag">
-                                <span class="language">中文</span>
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
-                </div>
-            </div>
-
-            <el-form-item prop="username">
-
-                <el-input
-                        v-model="loginForm.username"
-                        placeholder="${msg['login.username']}"
-                        name="username"
-                        type="text"
-                        auto-complete="on" prefix-icon="ti-user"
-                >
-                </el-input>
-            </el-form-item>
-
-            <el-form-item prop="password">
-                <el-input
-                        :type="passwordType"
-                        v-model="loginForm.password"
-                        placeholder="${msg['login.password']}"
-                        name="password"
-                        auto-complete="on"
-                        @keyup.enter.native="doLogin" prefix-icon="ti-lock">
-                    <i
-                            class="ti-eye"
-                            slot="suffix"
-                            @click="showPwd">
-                    </i>
-                </el-input>
-            </el-form-item>
-
-            <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"
-                       @click.native.prevent="doLogin">${msg['login.submit']}
-            </el-button>
-
-            <el-button class="thirdparty-button" type="info" @click="showDialog=true">${msg['login.thirdparty']}
-            </el-button>
-            <el-row>
-                <p class="cp"><a href="https://Wizzer.cn" target="_blank">Wizzer.cn</a> ©
-                    <span>{{year}}</span>
-                </p>
+                                <el-form
+                                        ref="regForm"
+                                        class="login-form"
+                                        status-icon
+                                        :rules="regRules"
+                                        :model="regForm"
+                                        label-width="0"
+                                >
+                                    <el-form-item prop="mobile">
+                                        <el-input
+                                                v-model="regForm.mobile"
+                                                auto-complete="off"
+                                                placeholder="请输入手机号码"
+                                                @keyup.enter.native="handleReg"
+                                                prefix-icon="el-icon-mobile-phone"
+                                        >
+                                        </el-input>
+                                    </el-form-item>
+                                    <el-form-item prop="password">
+                                        <el-input
+                                                v-model="regForm.password"
+                                                :type="passwordType"
+                                                auto-complete="off"
+                                                placeholder="请输入账号密码"
+                                                @keyup.enter.native="handleReg"
+                                                prefix-icon="el-icon-lock"
+                                        >
+                                            <i
+                                                    class="ti-eye"
+                                                    slot="suffix"
+                                                    @click="showPwd">
+                                            </i>
+                                        </el-input>
+                                    </el-form-item>
+                                    <el-form-item prop="code">
+                                        <el-input
+                                                v-model="regForm.code"
+                                                auto-complete="off"
+                                                placeholder="请输入验证码"
+                                                @keyup.enter.native="handleSend"
+                                                prefix-icon="el-icon-key"
+                                        >
+                                            <template slot="append">
+          <span style="cursor: pointer;"
+                  class="msg-text"
+                  :class="[{ display: msgKey }]"
+                  @click="handleSend"
+          >
+            {{ msgText }}
+          </span>
+                                            </template>
+                                        </el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button
+                                                size="medium"
+                                                type="primary"
+                                                style="width: 100%"
+                                                @click.native.prevent="handleReg"
+                                        >
+                                            <span v-if="!regLoading">注 册</span>
+                                            <span v-else>注 册 中...</span>
+                                        </el-button>
+                                    </el-form-item>
+                                </el-form>
+                            </el-tab-pane>
+                        </el-tabs>
+                        <div class="third-login">
+                            <el-divider>第三方登录</el-divider>
+                            <div class="third-way">
+                <span class="third-icon" @click="handleSocial()">
+                        <img src="/assets/platform/img/svg/github.svg" style="width: 32px;height: 32px;"/>
+                </span>
+                                <span class="third-icon" @click="handleSocial()">
+                  <img src="/assets/platform/img/svg/wechat.svg" style="width: 32px;height: 32px;"/>
+                </span>
+                                <span class="third-icon" @click="handleSocial()">
+                  <img src="/assets/platform/img/svg/qq.svg" style="width: 32px;height: 32px;"/>
+                </span>
+                                <span class="third-icon" @click="handleSocial()">
+                  <img src="/assets/platform/img/svg/alipay.svg" style="width: 32px;height: 32px;"/>
+                </span>
+                            </div>
+                        </div>
+                    </div>
+                </el-col>
             </el-row>
-        </el-form>
+        </div>
 
-        <el-dialog title="${msg['login.thirdparty']}" :visible.sync="showDialog" append-to-body>
-            ${msg['login.thirdparty']}
-            <br>
-            <br>
-            <br>
-        </el-dialog>
-
-        <el-dialog title="${msg['login.error.verifycode']}" :visible.sync="captchaVisible" @close="closeCaptchaForm"
-                   append-to-body width="350px">
-            <el-form :model="captchaForm" ref="captchaForm" :rules="codeRules">
-                <el-row class="captcha_row">
-                    <el-form-item prop="verifycode">
-                        <el-input maxlength="4" placeholder="${msg['login.captcha']}" v-model="captchaForm.verifycode"
-                                  auto-complete="off" @keyup.enter.native="doCode"></el-input>
-                    </el-form-item>
-                    <img id="captcha_img" :src="codeUrl" @click="changeCode"/>
-                </el-row>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="closeCaptchaForm">取 消</el-button>
-                <el-button type="primary" @click="doCode">确 定</el-button>
+        <div id="el-login-footer" class="login-footer">
+            <span>
+                <a href="https://BudWk.com" target="_blank">BudWk.com</a> ©
+                    <span>{{year}}</span>
             </span>
-        </el-dialog>
+            <span>⋅</span>
+            <a href="https://beian.miit.gov.cn" target="_blank">
+                ${@config.getString("DomainBeian","皖ICP备15001937号-3")}
+            </a>
+        </div>
     </div>
 </div>
 </body>
@@ -129,101 +222,178 @@
 <script src="${base!}/assets/platform/plugins/element-ui/lib/index.js"></script>
 <script src="${base!}/assets/platform/plugins/jquery/jquery-1.11.1.min.js"></script>
 <script>
+    var MSGINIT = '发送验证码';
+    var MSGSCUCCESS = '{time}秒后重发';
+    var MSGTIME = 60;
+    function isPhone(str) {
+        var reg = /^1[3456789]\d{9}$/
+        return reg.test(str)
+    }
     new Vue({
         el: '#app',
         data: function () {
+            var validateCode = function (rule, value, callback) {
+                if (value.length !== 4) {
+                    callback(new Error('请输入4位数的验证码'))
+                } else {
+                    callback()
+                }
+            }
             return {
+                activeName: 'signin',
+                msgText: MSGINIT,
+                msgTime: MSGTIME,
+                msgKey: false,
                 year: 2018,
                 captchaVisible: false,
-                codeUrl: "${base!}/platform/login/captcha",
-                captchaForm: {
-                    verifycode:""
-                },
+                codeUrl: "",
                 loginForm: {
                     username: 'superadmin',
                     password: '1',
-                    platformCaptcha: ""
+                    platformKey: '',
+                    grantType: 'captcha',
                 },
                 loginRules: {
                     username: [
-                        {required: true, message: '请输入用户名', trigger: 'blur'}
+                        {required: true, trigger: ['blur', 'change'], message: '用户名不能为空'},
                     ],
                     password: [
-                        {required: true, message: '请输入密码', trigger: 'blur'}
-                    ]
+                        {required: true, trigger: ['blur', 'change'], message: '密码不能为空'},
+                    ],
+                    platformCaptcha: [
+                        {required: true, trigger: ['blur', 'change'], message: '验证码不能为空'},
+                    ],
                 },
-                codeRules: {
-                    verifycode: [
-                        {required: true, message: '请输入验证码', trigger: 'blur'}
-                    ]
+                regForm: {
+                    mobile: '',
+                    password: '',
+                    code: ''
+                },
+                regRules: {
+                    mobile: [
+                        {required: true, message: '请输入手机号码', trigger: ['blur', 'change']},
+                        {pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码'}
+                    ],
+                    password: [
+                        {required: true, message: '请输入密码', trigger: ['blur', 'change']},
+                        {min: 8, max: 20, message: '密码长度必须是8-20位', trigger: 'change'}
+                    ],
+                    code: [{ required: true, trigger: ['blur', 'change'], validator: validateCode }],
                 },
                 passwordType: 'password',
                 loading: false,
+                regLoading: false,
                 showDialog: false
             }
         },
         methods: {
-            showPwd: function () {
+
+            getCode: function () {
+                var _self = this;
+                $.get("${base!}/platform/login/captcha",
+                    function (d) {
+                        _self.codeUrl = d.data.codeUrl
+                        _self.loginForm.platformKey = d.data.key
+                    }, 'json'
+                );
+            },
+            showPwd: function (){
                 if (this.passwordType === 'password') {
                     this.passwordType = ''
                 } else {
                     this.passwordType = 'password'
                 }
             },
-            changeCode: function () {
-                this.captchaForm.verifycode=""
-                this.codeUrl = '${base!}/platform/login/captcha?_=' + new Date().getTime()
+            handleSend: function (){
+                var _self = this;
+                if(!isPhone(_self.regForm.mobile)){
+                    _self.$message({
+                        message: '请输入手机号码',
+                        type: 'error'
+                    })
+                    return false;
+                }
+                if (_self.msgKey) return;
+                $.get("${base!}/platform/login/sendsms?mobile="+_self.regForm.mobile,
+                    function (d) {
+                        if(d.code===0){
+                            _self.$message({
+                                message: "短信发送成功，请注意查收！（实际没发送）",
+                                type: 'success',
+                                duration: 8000
+                            });
+                            _self.msgText = MSGSCUCCESS.replace('{time}', _self.msgTime);
+                            _self.msgKey = true
+                            var time = setInterval(() => {
+                                _self.msgTime--;
+                                _self.msgText = MSGSCUCCESS.replace('{time}', _self.msgTime);
+                                if (_self.msgTime === 0) {
+                                    _self.msgTime = MSGTIME
+                                    _self.msgText = MSGINIT
+                                    _self.msgKey = false
+                                    clearInterval(time)
+                                }
+                            }, 1000)
+                        }else {
+                            _self.$message({
+                                message: d.msg,
+                                type: 'error'
+                            })
+                        }
+                    }, 'json'
+                );
             },
-            closeCaptchaForm: function () {
-                this.captchaForm.platformCaptcha = ""
-                this.captchaVisible = false
-            },
-            openCaptchaForm: function () {
-                this.captchaForm.platformCaptcha = ""
-                this.captchaVisible = true
-                this.changeCode()
-            },
-            doCode: function () {
-                var self = this
-                self.$refs["captchaForm"].validate(function (valid) {
-                    if(valid){
-                        self.doLogin()
-                    }
-                })
-            },
-            doLogin: function () {
-                var self = this
-                self.loginForm.platformCaptcha=self.captchaForm.verifycode
-                self.$refs["loginForm"].validate(function (valid) {
+            handleLogin: function () {
+                var _self = this
+                _self.$refs["loginForm"].validate(function (valid) {
                     if (valid) {
-                        $.post("${base!}/platform/login/doLogin", self.loginForm, function (d) {
+                        $.post("${base!}/platform/login/doLogin", _self.loginForm, function (d) {
                             if (d.code == 0) {
                                 window.location.href = "${base!}/platform/home"
-                            } else if (d.code == 1) {
-                                self.openCaptchaForm()
-                                self.$message({
-                                    message: d.msg,
-                                    type: 'error'
-                                })
-                            } else if (d.code == 2) {
-                                self.openCaptchaForm()
                             } else {
-                                self.changeCode()
-                                self.$message({
+                                _self.$message({
                                     message: d.msg,
                                     type: 'error'
-                                })
+                                });
+                                _self.getCode();
                             }
                         }, "json");
                     }
                 });
             },
-            handleCommand: function (command) {
-                window.location.href = "?lang=" + command
+            handleReg: function () {
+                var _self=this;
+                _self.$refs["regForm"].validate(function (valid) {
+                    if (valid) {
+                        _self.regLoading =  true;
+                        $.post("${base!}/platform/login/doReg", _self.regForm, function (d) {
+                            if (d.code == 0) {
+                                _self.$message({
+                                    message: '注册成功，请登录！',
+                                    type: 'success',
+                                    duration: 5000
+                                });
+                                _self.activeName="signin";
+                                _self.$set(_self.loginForm,'username',_self.regForm.mobile);
+                                _self.$refs["regForm"].resetFields();
+                            } else {
+                                _self.$message({
+                                    message: d.msg,
+                                    type: 'error'
+                                });
+                            }
+                            _self.regLoading =  false;
+                        }, "json");
+                    }
+                });
+            },
+            handleSocial: function (type) {
+                this.$message.error('敬请期待');
             }
         },
         created: function () {
-            this.year = new Date().getFullYear()
+            this.year = new Date().getFullYear();
+            this.getCode();
         }
     })
 </script>
@@ -232,100 +402,127 @@
         height: 100%;
     }
 
-    body {
-        margin: 0 0 0 0;
+    html body {
+        position: relative;
+        height: 100vh;
+        padding: 0;
+        margin: 0;
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        color: #2c3e50;
+        background: #f6f8f9;
+        -webkit-font-smoothing: antialiased;
     }
 
     .login-container {
-        background-color: #2d3a4b;
-        height: 100%;
-        position: fixed;
-        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-image: url(${base!}/assets/platform/img/svg/background.svg);
+        background-color: #f0f2f5;
     }
 
-    .login-container .login-form {
-        left: 0;
-        margin: 120px auto;
-        padding: 35px 35px 15px;
-        position: absolute;
-        right: 0;
-        width: 520px;
+    @media screen and (max-width: 768px) {
+        .login-left {
+            display: none;
+        }
     }
 
-    .login-container .title-container .title {
-        color: #eee;
-        font-size: 26px;
+    a {
+        color: #1890ff;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .login-main {
+        width: 323px;
+        height: 455px;
+        padding: 25px 25px 5px 25px;
+        background: #ffffff;
+    }
+
+    .title {
+        margin: 10px auto 40px auto;
+        font-size: 20px;
         font-weight: 700;
-        margin: 0 auto 40px;
+        color: rgba(0, 0, 0, 0.85);
         text-align: center;
     }
 
-    .login-container .title-container .set-language {
-        color: #fff;
-        position: absolute;
-        right: 0;
-        top: 5px;
+
+    .login-form .el-input {
+        height: 38px;
     }
 
-    .login-container .show-pwd {
-        color: #889aa4;
+    .login-form input {
+        height: 38px;
+    }
+
+    .login-form .input-icon {
+        width: 14px;
+        height: 39px;
+        margin-left: 2px;
+    }
+
+    .login-tip {
+        font-size: 13px;
+        color: #bfbfbf;
+        text-align: center;
+    }
+
+    .login-code {
+        display: inline-block;
+        float: right;
+        width: 38%;
+        height: 38px;
+    }
+
+    .login-code img {
+        vertical-align: middle;
         cursor: pointer;
-        font-size: 16px;
-        position: absolute;
-        right: 10px;
-        top: 7px;
-        user-select: none;
     }
 
-    .thirdparty-button {
-        position: absolute;
-        bottom: -10px;
-        right: 35px;
-    }
-
-    .cp {
-        color: #ffffff;
-        position: absolute;
-        top: 50px;
-        text-align: center;
+    .login-footer {
+        position: fixed;
+        bottom: 1rem;
         width: 100%;
-        font-size: 12px;
+        height: 1rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1rem;
+        color: #2c3e50;
+        text-align: center;
     }
 
-    .cp a {
-        color: #ffffff;
+    .tips {
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #fff;
     }
 
-    .lang {
-        text-align: right;
+    .third-login {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        margin: 10px 0 30px 0;
+        vertical-align: middle;
     }
 
-    .flag {
+    .third-login .third-icon {
+        margin: 0 20px;
         cursor: pointer;
-        width: 16px;
-        margin-top: -2px;
+        fill: rgba(0, 0, 0, 0.2);
     }
 
-    .captcha_row {
-        float: left;
-        margin: 10px;
-        bottom: 30px;
+    .third-way {
+        display: flex;
+        justify-content: center;
+        width: 323px;
     }
 
-    .captcha_row div {
-        width: 120px;
-        float: left;
-    }
-
-    .captcha_row img {
-        width: 120px;
-        margin-left: 5px;
-        float: left;
-    }
-
-    #captcha_img {
-        height: 40px;
-        cursor: pointer;
+    .third-icon:hover {
+        fill: rebeccapurple;
     }
 </style>
 </html>

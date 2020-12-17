@@ -41,3 +41,6 @@
 .ie-must-go-die .ie-container a:visited {
     color: inherit;
 }
+.button-delete-color {
+    color: #da3e16;
+}

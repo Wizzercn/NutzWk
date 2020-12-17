@@ -27,7 +27,7 @@ layout("/layouts/platform.html"){
                 size="small"
                 header-align="center"
                 style="width: 100%"
-                :default-sort="{prop: 'opAt', order: 'descending'}"
+                :default-sort="{prop: 'createdAt', order: 'descending'}"
         >
             <el-table-column
                     sortable
@@ -55,16 +55,16 @@ layout("/layouts/platform.html"){
             </el-table-column>
             <el-table-column
                     sortable
-                    prop="opAt"
+                    prop="createdAt"
                     label="上传时间"
                     header-align="center" align="center">
                 <template slot-scope="scope">
-                    {{formatAt(scope.row.opAt)}}
+                    {{formatAt(scope.row.createdAt)}}
                 </template>
             </el-table-column>
             <el-table-column
                     sortable
-                    prop="opAt"
+                    prop="createdBy"
                     label="上传人"
                     header-align="center" align="center">
                 <template slot-scope="scope">
@@ -201,7 +201,7 @@ layout("/layouts/platform.html"){
                     pageNumber: 1,
                     pageSize: 10,
                     totalCount: 0,
-                    pageOrderName: "opAt",
+                    pageOrderName: "createdAt",
                     pageOrderBy: "descending",
                     confName: ""
                 },
