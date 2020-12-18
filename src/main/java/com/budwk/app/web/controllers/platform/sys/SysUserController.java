@@ -66,7 +66,7 @@ public class SysUserController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.user.add")
-    @SLog(tag = "新建用户", msg = "用户名:${args[0].loginname}")
+    @SLog(tag = "新建用户", msg = "用户名:${user.loginname}")
     public Object addDo(@Param("..") Sys_user user, HttpServletRequest req) {
         try {
             if (Strings.isNotBlank(user.getLoginname())) {
@@ -115,7 +115,7 @@ public class SysUserController {
     @At
     @Ok("json")
     @RequiresPermissions("sys.manager.user.edit")
-    @SLog(tag = "修改用户", msg = "用户名:${args[1]}->${args[0].loginname}")
+    @SLog(tag = "修改用户", msg = "用户名:${user.loginname}")
     public Object editDo(@Param("..") Sys_user user, HttpServletRequest req) {
         try {
             user.setUpdatedBy(ShiroUtil.getPlatformUid());
@@ -206,7 +206,7 @@ public class SysUserController {
     @At("/disable/?")
     @Ok("json")
     @RequiresPermissions("sys.manager.user.edit")
-    @SLog(tag = "禁用用户", msg = "用户名:${args[1].getAttribute('loginname')}")
+    @SLog(tag = "禁用用户", msg = "用户名:${req.getAttribute('loginname')}")
     public Object disable(String userId, HttpServletRequest req) {
         try {
             String loginname = sysUserService.fetch(userId).getLoginname();
@@ -358,7 +358,7 @@ public class SysUserController {
     @RequiresAuthentication
     public Object modeDo(@Param("mode") String mode, HttpServletRequest req) {
         try {
-            if(Globals.MyConfig.getBoolean("AppDemoEnv")){
+            if ("superadmin".equals(ShiroUtil.getPlatformLoginname()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
                 return Result.error("演示环境，不予操作");
             }
             sysUserService.update(Chain.make("loginPjax", "true".equals(mode)), Cnd.where("id", "=", ShiroUtil.getPlatformUid()));
@@ -382,7 +382,7 @@ public class SysUserController {
     @RequiresAuthentication
     public Object customDo(@Param("ids") String ids, HttpServletRequest req) {
         try {
-            if(Globals.MyConfig.getBoolean("AppDemoEnv")){
+            if ("superadmin".equals(ShiroUtil.getPlatformLoginname()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
                 return Result.error("演示环境，不予操作");
             }
             sysUserService.update(Chain.make("customMenu", ids), Cnd.where("id", "=", ShiroUtil.getPlatformUid()));
@@ -406,7 +406,7 @@ public class SysUserController {
     @Ok("json")
     @RequiresAuthentication
     public Object doChangePassword(@Param("oldPassword") String oldPassword, @Param("newPassword") String newPassword, HttpServletRequest req) {
-        if(Globals.MyConfig.getBoolean("AppDemoEnv")){
+        if ("superadmin".equals(ShiroUtil.getPlatformLoginname()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
             return Result.error("演示环境，不予操作");
         }
         Subject subject = SecurityUtils.getSubject();
@@ -429,7 +429,7 @@ public class SysUserController {
     @Ok("json")
     @RequiresAuthentication
     public Object doChangeInfo(@Param("username") String username, @Param("mobile") String mobile, @Param("email") String email, HttpServletRequest req) {
-        if(Globals.MyConfig.getBoolean("AppDemoEnv")){
+        if ("superadmin".equals(ShiroUtil.getPlatformLoginname()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
             return Result.error("演示环境，不予操作");
         }
         sysUserService.update(Chain.make("username", username).add("mobile", mobile).add("email", email), Cnd.where("id", "=", ShiroUtil.getPlatformUid()));
