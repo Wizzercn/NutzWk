@@ -11,7 +11,7 @@
     <properties>
         <nutzboot.version>2.4.2-SNAPSHOT</nutzboot.version>
         <nutz.version>1.r.68-SNAPSHOT</nutz.version>
-        <mysql-connector-java.version>5.1.48</mysql-connector-java.version>
+        <mysql-connector-java.version>8.0.16</mysql-connector-java.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
