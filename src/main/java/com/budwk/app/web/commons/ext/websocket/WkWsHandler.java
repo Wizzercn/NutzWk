@@ -32,7 +32,7 @@ public class WkWsHandler extends SimpleWsHandler {
             room = RedisConstant.REDIS_KEY_WSROOM + room;
             log.debugf("session(id=%s) join room(name=%s)", session.getId(), room);
             roomProvider.join(room, session.getId());
-            sysMsgService.getMsg(room.split(":")[1]);
+            sysMsgService.getMsg(room.split(":")[2]);
         }
     }
 

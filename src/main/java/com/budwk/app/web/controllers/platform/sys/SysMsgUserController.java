@@ -163,6 +163,8 @@ public class SysMsgUserController {
             int num = sysMsgUserService.count(Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
             if (num > 0) {
                 req.setAttribute("obj", sysMsgService.fetch(id));
+                sysMsgUserService.update(Chain.make("status",1),Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
+                sysMsgUserService.deleteCache(ShiroUtil.getPlatformLoginname());
             } else {
                 req.setAttribute("obj", null);
             }
@@ -180,6 +182,8 @@ public class SysMsgUserController {
             int num = sysMsgUserService.count(Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
             if (num > 0) {
                 req.setAttribute("obj", sysMsgService.fetch(id));
+                sysMsgUserService.update(Chain.make("status",1),Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
+                sysMsgUserService.deleteCache(ShiroUtil.getPlatformLoginname());
             } else {
                 req.setAttribute("obj", null);
             }
@@ -197,6 +201,8 @@ public class SysMsgUserController {
             int num = sysMsgUserService.count(Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
             if (num > 0) {
                 req.setAttribute("obj", sysMsgService.fetch(id));
+                sysMsgUserService.update(Chain.make("status",1),Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
+                sysMsgUserService.deleteCache(ShiroUtil.getPlatformLoginname());
             } else {
                 req.setAttribute("obj", null);
             }
