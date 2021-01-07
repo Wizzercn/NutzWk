@@ -91,6 +91,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="新建菜单"
             :visible.sync="addDialogVisible"
+            :close-on-click-modal="false"
             width="50%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="parentId" label="上级菜单" label-width="80px">
@@ -186,6 +187,7 @@ layout("/layouts/platform.html"){
     <el-dialog
             title="修改菜单"
             :visible.sync="editDialogVisible"
+            :close-on-click-modal="false"
             width="50%">
         <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="80px">
             <el-form-item prop="parentId" label="上级菜单" label-width="80px">
