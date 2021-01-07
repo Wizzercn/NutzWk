@@ -102,7 +102,7 @@ layout("/layouts/platform.html"){
             :visible.sync="addDialogVisible"
             width="50%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="80px">
-            <el-form-item prop="siteid" label="所属站点">
+            <el-form-item prop="siteId" label="所属站点">
                 <span>{{site.site_name}}</span>
             </el-form-item>
             <el-form-item prop="parentId" label="上级栏目" label-width="80px">
@@ -398,7 +398,7 @@ layout("/layouts/platform.html"){
                         if (!self.isAddFromSub) {//如果不是添加子菜单，则从级联选择框取父节点ID
                             self.formData.parentId = self.parentMenu[self.parentMenu.length - 1] || "";
                         }
-                        self.formData.siteid = self.site.id;
+                        self.formData.siteId = self.site.id;
                         $.post(url, self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
