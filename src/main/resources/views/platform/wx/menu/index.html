@@ -641,7 +641,7 @@ layout("/layouts/platform.html"){
             },
             checkedChange2: function (val) {
                 if (this.checked2) {
-                    var str = "${AppDomain!}${base!}/public/wx/wechat/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->/oauth?goto_url=$s";
+                    var str = "${AppDomain!}${base!}/public/wechat/<!--#if(!isEmpty(wxConfig)){#-->${wxConfig.id!}<!--#}#-->/oauth?goto_url=$s";
                     this.formData.url = str.replace("$s", this.formData.url);
                 } else {
                     var url = this.formData.url;
