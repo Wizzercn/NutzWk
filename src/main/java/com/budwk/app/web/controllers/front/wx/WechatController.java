@@ -31,7 +31,7 @@ import java.net.URLEncoder;
  * Created by wizzer on 2016/8/6.
  */
 @IocBean
-@At("/public/wechat")
+@At("/public/wx/wechat")
 public class WechatController {
     private static final Log log = Logs.get();
     @Inject
