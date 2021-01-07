@@ -87,7 +87,7 @@ layout("/layouts/platform.html"){
             width="60%">
         <el-form :model="formData" ref="addForm" :rules="formRules" size="small" label-width="120px">
             <el-form-item label="配置URL">
-                ${AppDomain!}${base!}/open/weixin/api/{{formData.id}}
+                ${AppDomain!}${base!}/public/weixin/api/{{formData.id}}
                 <el-alert
                         title="URL需为公网可访问地址，[系统] - [系统管理] - [系统参数] - 修改 AppDomain 配置项"
                         type="success">
@@ -168,7 +168,7 @@ layout("/layouts/platform.html"){
             width="60%">
         <el-form :model="formData" ref="editForm" :rules="formRules" size="small" label-width="120px">
             <el-form-item label="配置URL">
-                ${AppDomain!}${base!}/open/weixin/api/{{formData.id}}
+                ${AppDomain!}${base!}/public/weixin/api/{{formData.id}}
                 <el-alert
                         title="URL需为公网可访问地址，[系统] - [系统管理] - [系统参数] - 修改 AppDomain 配置项"
                         type="success">
