@@ -19,9 +19,11 @@ import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.integration.jedis.RedisService;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
+import org.nutz.lang.Files;
 import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.stream.StringInputStream;
@@ -36,6 +38,7 @@ import redis.clients.jedis.ScanResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,6 +62,8 @@ public class SysAppController {
     private SysAppTaskService sysAppTaskService;
     @Inject
     private RedisService redisService;
+    @Inject
+    private PropertiesProxy conf;
 
     @At("")
     @Ok("beetl:/platform/sys/app/index.html")
@@ -188,6 +193,9 @@ public class SysAppController {
     @SLog(tag = "删除Jar包", msg = "ID:${id}")
     public Object jarDelete(String id, HttpServletRequest req) {
         try {
+            Sys_app_list appList = sysAppListService.fetch(id);
+            String staticPath = conf.get("jetty.staticPath", "/files");
+            Files.deleteFile(new File(staticPath + appList.getFilePath()));
             sysAppListService.delete(id);
             return Result.success();
         } catch (Exception e) {
