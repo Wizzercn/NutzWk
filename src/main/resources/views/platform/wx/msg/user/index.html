@@ -53,7 +53,6 @@ layout("/layouts/platform.html"){
             <el-table-column label="昵称" header-align="left" prop="nickname"
                              :show-overflow-tooltip="true" width="180">
                 <template slot-scope="scope">
-                    <img v-if="scope.row.headimgurl!=''" :src="scope.row.headimgurl" width="30" height="30">
                     <span>{{scope.row.nickname}}</span>
                 </template>
             </el-table-column>
