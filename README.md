@@ -8,19 +8,19 @@ NutzWk 开源企业级Java Web开发框架
 
 https://nutzwk.wizzer.cn                 V5演示地址
 
-https://demo.budwk.com                 V6演示地址
+https://demo.budwk.com                 V7演示地址
 
-https://budwk.com/donation                捐赠者列表
+https://budwk.com                官网
 
 # 前言
 
-本框架自2012年开始用于商业项目，至今已服务于全国各地公司大大小小数千个项目，行业涉及政务、电商、物联网等，随着个人经验积累及从事行业的不同分别发布了1.x至6.x多个版本，您可以根据项目规模选择不同版本。本项目案例众多，省厅级项目、市级平台、大数据项目、电商平台、物联网平台等等。
+本框架自2012年开始用于商业项目，至今已服务于全国各地公司大大小小数千个项目，行业涉及政务、电商、物联网等，随着个人经验积累及从事行业的不同分别发布了1.x至7.x多个版本，您可以根据项目规模选择不同版本。本项目案例众多，省厅级项目、市级平台、大数据项目、电商平台、物联网平台等等。
 
 我们有强大的后援 —— Nutz 社区支持  https://nutz.cn  及 Nutz 使用手册 https://nutzam.com/core/nutz_preface.html
 
 ### QQ交流群
-*  1群: 68428921(已满)
-*  2群: 24457628
+*  1群: 24457628
+*  2群: 68428921
 
 # 版本说明
 
@@ -46,6 +46,7 @@ NutzWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管�
 
 # 版本说明
 
+*   v7.x - nacos 微服务网关+组件化+API化版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - nacos 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - zookeeper 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - mini 微服务单应用版本（一个 jar 或 war 包） ```前后端分离,前端 nuxt + vue + elementUI```
@@ -58,6 +59,7 @@ NutzWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管�
 
 | 版本名称 | 版本特点 | 版本地址 | 运行方式 | 后端主要技术| 前端主要技术 | 浏览器兼容性 |
 | ---------|---------| ----------| ----------| ----------|----------|----------|
+| BudWk v7.x | 微服务网关+组件化+API化 + 前后端分离 |[v7.x](https://github.com/budwk/budwk/tree/v7.x)| jar,war | nutzboot + dubbo + nacos  | nuxt + vue + elementUI | Chrome,Edge,IE12+ |
 | BudWk v6.x-nacos | 微服务分布式 + 前后端分离 |[v6.x-nacos](https://github.com/budwk/budwk/tree/v6.x-nacos)| jar,war | nutzboot + dubbo + nacos + shiro | nuxt + vue + elementUI | Chrome,Edge,IE12+ |
 | BudWk v6.x-zookeeper | 微服务分布式 + 前后端分离 |[v6.x-zookeeper](https://github.com/budwk/budwk/tree/v6.x-zookeeper)| jar,war | nutzboot + dubbo + zookeeper + shiro | nuxt + vue + elementUI | Chrome,Edge,IE12+ |
 | BudWk v6.x-mini | 微服务单应用 + 前后端分离 |[v6.x-mini](https://github.com/budwk/budwk/tree/v6.x-mini)| jar,war | nutzboot + shiro | nuxt + vue + elementUI | Chrome,Edge,IE12+ |
