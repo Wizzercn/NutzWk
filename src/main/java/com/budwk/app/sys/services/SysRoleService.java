@@ -13,6 +13,13 @@ import java.util.List;
  */
 public interface SysRoleService extends BaseService<Sys_role> {
     /**
+     * 获取角色权限
+     *
+     * @param role 角色对象
+     * @return
+     */
+    List<String> getPermissionList(Sys_role role);
+    /**
      * 通过角色ID获取菜单及数据权限
      *
      * @param roleId

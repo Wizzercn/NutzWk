@@ -6,7 +6,7 @@ import com.budwk.app.web.commons.base.Globals;
 import com.budwk.app.web.commons.ext.wx.WxService;
 import com.budwk.app.base.utils.DateUtil;
 import com.budwk.app.base.result.Result;;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -41,14 +41,14 @@ public class WxPayTestController {
 
     @At("")
     @Ok("beetl:/platform/wx/pay/index.html")
-    @RequiresAuthentication
+    @SaCheckLogin
     public void index() {
 
     }
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object payWxpay(@Param("money") int money, HttpServletRequest req) {
         try {
             Wx_config config = wxConfigService.fetch(Cnd.NEW().limit(1, 1));
@@ -78,7 +78,7 @@ public class WxPayTestController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object redpack(@Param("redpack") int redpack, @Param("openid") String openid, HttpServletRequest req) {
         try {
             Wx_config config = wxConfigService.fetch(Cnd.NEW().limit(1, 1));
@@ -112,7 +112,7 @@ public class WxPayTestController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object redpackGroup(@Param("redpack") int redpack, @Param("openid") String openid, HttpServletRequest req) {
         try {
             Wx_config config = wxConfigService.fetch(Cnd.NEW().limit(1, 1));
@@ -146,7 +146,7 @@ public class WxPayTestController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object transfers(@Param("redpack") int redpack, @Param("openid") String openid, HttpServletRequest req) {
         try {
             Wx_config config = wxConfigService.fetch(Cnd.NEW().limit(1, 1));

@@ -1,5 +1,7 @@
 package com.budwk.app.web.controllers.platform.cms;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.budwk.app.base.result.Result;
 import com.budwk.app.base.utils.PageUtil;
 import com.budwk.app.cms.models.Cms_article;
 import com.budwk.app.cms.models.Cms_channel;
@@ -7,10 +9,8 @@ import com.budwk.app.cms.models.Cms_site;
 import com.budwk.app.cms.services.CmsArticleService;
 import com.budwk.app.cms.services.CmsChannelService;
 import com.budwk.app.cms.services.CmsSiteService;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.base.result.Result;;
-import com.budwk.app.web.commons.utils.ShiroUtil;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -27,7 +27,10 @@ import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+;
 
 /**
  * Created by wizzer on 2016/6/28.
@@ -45,7 +48,7 @@ public class CmsArticleController {
 
     @At(value = {"", "/?"})
     @Ok("beetl:/platform/cms/article/index.html")
-    @RequiresPermissions("cms.content.article")
+    @SaCheckPermission("cms.content.article")
     public void index(String siteId, HttpServletRequest req) {
         Cms_site site = null;
         List<Cms_site> siteList = cmsSiteService.query();
@@ -61,7 +64,7 @@ public class CmsArticleController {
 
     @At("/tree/?")
     @Ok("json")
-    @RequiresPermissions("cms.content.article")
+    @SaCheckPermission("cms.content.article")
     public Object tree(String siteid, @Param("pid") String pid) {
         try {
             List<Cms_channel> list = cmsChannelService.query(Cnd.where("siteid", "=", siteid).asc("location").asc("path"));
@@ -100,7 +103,7 @@ public class CmsArticleController {
 
     @At("/data/?")
     @Ok("json:full")
-    @RequiresPermissions("cms.content.article")
+    @SaCheckPermission("cms.content.article")
     public Object data(String siteid, @Param("channelId") String channelId,
                        @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
@@ -123,7 +126,7 @@ public class CmsArticleController {
 
     @At("/addDo/?")
     @Ok("json")
-    @RequiresPermissions("cms.content.article.add")
+    @SaCheckPermission("cms.content.article.add")
     @SLog(tag = "添加文章", msg = "文章标题:${args[1].title}")
     @AdaptBy(type = WhaleAdaptor.class)
     public Object addDo(String siteId, @Param("..") Cms_article article, @Param("time_param") long[] time, HttpServletRequest req) {
@@ -132,7 +135,7 @@ public class CmsArticleController {
             article.setEndAt(time[1] / 1000);
             article.setSiteId(siteId);
             article.setStatus(0);
-            article.setCreatedBy(ShiroUtil.getPlatformUid());
+            article.setCreatedBy(SecurityUtil.getUserId());
             cmsArticleService.insert(article);
             cmsArticleService.clearCache();
             return Result.success();
@@ -143,7 +146,7 @@ public class CmsArticleController {
 
     @At("/edit/?")
     @Ok("json")
-    @RequiresPermissions("cms.content.article")
+    @SaCheckPermission("cms.content.article")
     public Object edit(String id, HttpServletRequest req) {
         try {
             Cms_article article = cmsArticleService.fetch(id);
@@ -155,7 +158,7 @@ public class CmsArticleController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("cms.content.article.edit")
+    @SaCheckPermission("cms.content.article.edit")
     @SLog(tag = "修改文章", msg = "文章标题:${args[0].title}")
     @AdaptBy(type = WhaleAdaptor.class)
     public Object editDo(@Param("..") Cms_article article, @Param("time_param") long[] time, HttpServletRequest req) {
@@ -163,7 +166,7 @@ public class CmsArticleController {
             article.setPublishAt(time[0] / 1000);
             article.setEndAt(time[1] / 1000);
             article.setStatus(0);
-            article.setUpdatedBy(ShiroUtil.getPlatformUid());
+            article.setUpdatedBy(SecurityUtil.getUserId());
             cmsArticleService.updateIgnoreNull(article);
             cmsArticleService.clearCache();
             return Result.success();
@@ -176,7 +179,7 @@ public class CmsArticleController {
 
     @At("/enable/?")
     @Ok("json")
-    @RequiresPermissions("cms.content.article.edit")
+    @SaCheckPermission("cms.content.article.edit")
     @SLog(tag = "发布文章", msg = "文章标题:${args[1].getAttribute('title')}")
     public Object enable(String id, HttpServletRequest req) {
         try {
@@ -191,7 +194,7 @@ public class CmsArticleController {
 
     @At("/disable/?")
     @Ok("json")
-    @RequiresPermissions("cms.content.article.edit")
+    @SaCheckPermission("cms.content.article.edit")
     @SLog(tag = "取消发布", msg = "文章标题:${args[1].getAttribute('title')}")
     public Object disable(String id, HttpServletRequest req) {
         try {
@@ -206,13 +209,13 @@ public class CmsArticleController {
 
     @At({"/delete/?", "/delete"})
     @Ok("json")
-    @RequiresPermissions("cms.content.article.delete")
+    @SaCheckPermission("cms.content.article.delete")
     @SLog(tag = "删除文章", msg = "ID:${args[2].getAttribute('id')}")
     public Object delete(String oneId, @Param("ids") String[] ids, HttpServletRequest req) {
         try {
             if (ids != null && ids.length > 0) {
                 cmsArticleService.delete(ids);
-                req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
+                req.setAttribute("id", Arrays.toString(ids));
             } else {
                 cmsArticleService.delete(oneId);
                 req.setAttribute("id", oneId);

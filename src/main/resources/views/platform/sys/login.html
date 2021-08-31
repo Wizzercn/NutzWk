@@ -389,11 +389,21 @@
             },
             handleSocial: function (type) {
                 this.$message.error('敬请期待');
+            },
+            errorMsg: function (){
+                var errorMsg = "${error_message!}";
+                if(errorMsg){
+                    this.$message({
+                        message: errorMsg,
+                        type: 'error'
+                    });
+                }
             }
         },
         created: function () {
             this.year = new Date().getFullYear();
             this.getCode();
+            this.errorMsg();
         }
     })
 </script>

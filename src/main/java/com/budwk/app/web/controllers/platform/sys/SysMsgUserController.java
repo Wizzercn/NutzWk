@@ -1,13 +1,13 @@
 package com.budwk.app.web.controllers.platform.sys;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaMode;
 import com.budwk.app.base.result.Result;
 import com.budwk.app.sys.services.SysMsgService;
 import com.budwk.app.sys.services.SysMsgUserService;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.web.commons.utils.ShiroUtil;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
@@ -24,6 +24,7 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 
 @IocBean
 @At("/platform/sys/msg/user")
@@ -36,14 +37,14 @@ public class SysMsgUserController {
 
     @At("/all")
     @Ok("beetl:/platform/sys/msg/user/indexAll.html")
-    @RequiresPermissions("sys.msg.all")
+    @SaCheckPermission("sys.msg.all")
     public void index(@Param("type") String type, HttpServletRequest req) {
         req.setAttribute("type", Strings.isBlank(type) ? "all" : type);
     }
 
     @At("/read")
     @Ok("beetl:/platform/sys/msg/user/indexRead.html")
-    @RequiresPermissions("sys.msg.read")
+    @SaCheckPermission("sys.msg.read")
     public void read(@Param("type") String type, HttpServletRequest req) {
         req.setAttribute("type", Strings.isBlank(type) ? "all" : type);
 
@@ -51,14 +52,14 @@ public class SysMsgUserController {
 
     @At("/unread")
     @Ok("beetl:/platform/sys/msg/user/indexUnread.html")
-    @RequiresPermissions("sys.msg.unread")
+    @SaCheckPermission("sys.msg.unread")
     public void unread(@Param("type") String type, HttpServletRequest req) {
         req.setAttribute("type", Strings.isBlank(type) ? "all" : type);
     }
 
     @At("/data/?")
     @Ok("json:full")
-    @RequiresPermissions(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, logical = Logical.OR)
+    @SaCheckPermission(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, mode = SaMode.OR)
     public Object data(String status, @Param("searchType") String type, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();
@@ -68,7 +69,7 @@ public class SysMsgUserController {
             if (Strings.isNotBlank(status) && "unread".equals(status)) {
                 cnd.and("a.status", "=", 0);
             }
-            cnd.and("a.loginname", "=", ShiroUtil.getPlatformLoginname());
+            cnd.and("a.loginname", "=", SecurityUtil.getUserLoginname());
             cnd.and("a.delFlag", "=", false);
             cnd.desc("a.createdAt");
             if (Strings.isNotBlank(type) && !"all".equals(type)) {
@@ -86,22 +87,22 @@ public class SysMsgUserController {
 
     @At({"/delete/?", "/delete"})
     @Ok("json")
-    @RequiresPermissions(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, logical = Logical.OR)
+    @SaCheckPermission(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, mode = SaMode.OR)
     @SLog(tag = "站内消息", msg = "${req.getAttribute('id')}")
     public Object delete(String id, @Param("ids") String[] ids, HttpServletRequest req) {
         try {
             if (ids != null && ids.length > 0) {
                 sysMsgUserService.update(Chain.make("delFlag", true)
                         .add("updatedAt", System.currentTimeMillis())
-                        .add("updatedBy", ShiroUtil.getPlatformUid()), Cnd.where("id", "in", ids).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
-                req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
+                        .add("updatedBy", SecurityUtil.getUserId()), Cnd.where("id", "in", ids).and("loginname", "=", SecurityUtil.getUserLoginname()));
+                req.setAttribute("id", Arrays.toString(ids));
             } else {
                 sysMsgUserService.update(Chain.make("delFlag", true)
                         .add("updatedAt", System.currentTimeMillis())
-                        .add("updatedBy", ShiroUtil.getPlatformUid()), Cnd.where("id", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
+                        .add("updatedBy", SecurityUtil.getUserId()), Cnd.where("id", "=", id).and("loginname", "=", SecurityUtil.getUserLoginname()));
                 req.setAttribute("id", id);
             }
-            sysMsgUserService.deleteCache(ShiroUtil.getPlatformLoginname());
+            sysMsgUserService.deleteCache(SecurityUtil.getUserLoginname());
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -110,12 +111,12 @@ public class SysMsgUserController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object unread_num() {
         try {
             NutMap nutMap = NutMap.NEW();
-            nutMap.put("system", sysMsgUserService.count(Sqls.create("SELECT count(*) from sys_msg a,sys_msg_user b WHERE a.id=b.msgId AND a.type='system' AND a.delFlag=false AND b.status=0 AND b.delFlag=false AND b.loginname=@loginname").setParam("loginname", ShiroUtil.getPlatformLoginname())));
-            nutMap.put("user", sysMsgUserService.count(Sqls.create("SELECT count(*) from sys_msg a,sys_msg_user b WHERE a.id=b.msgId AND a.type='user' AND a.delFlag=false AND b.status=0 AND b.delFlag=false AND b.loginname=@loginname").setParam("loginname", ShiroUtil.getPlatformLoginname())));
+            nutMap.put("system", sysMsgUserService.count(Sqls.create("SELECT count(*) from sys_msg a,sys_msg_user b WHERE a.id=b.msgId AND a.type='system' AND a.delFlag=false AND b.status=0 AND b.delFlag=false AND b.loginname=@loginname").setParam("loginname", SecurityUtil.getUserLoginname())));
+            nutMap.put("user", sysMsgUserService.count(Sqls.create("SELECT count(*) from sys_msg a,sys_msg_user b WHERE a.id=b.msgId AND a.type='user' AND a.delFlag=false AND b.status=0 AND b.delFlag=false AND b.loginname=@loginname").setParam("loginname", SecurityUtil.getUserLoginname())));
             return Result.success().addData(nutMap);
         } catch (Exception e) {
             return Result.error();
@@ -124,15 +125,15 @@ public class SysMsgUserController {
 
     @At("/status/read")
     @Ok("json")
-    @RequiresPermissions(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, logical = Logical.OR)
+    @SaCheckPermission(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, mode = SaMode.OR)
     @SLog(tag = "站内消息", msg = "${req.getAttribute('id')}")
     public Object read(@Param("ids") String[] ids, HttpServletRequest req) {
         try {
             sysMsgUserService.update(Chain.make("status", 1).add("readAt", Times.getTS())
                     .add("createdAt", System.currentTimeMillis())
-                    .add("createdBy", ShiroUtil.getPlatformUid()), Cnd.where("id", "in", ids).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
-            sysMsgUserService.deleteCache(ShiroUtil.getPlatformLoginname());
-            req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
+                    .add("createdBy", SecurityUtil.getUserId()), Cnd.where("id", "in", ids).and("loginname", "=", SecurityUtil.getUserLoginname()));
+            sysMsgUserService.deleteCache(SecurityUtil.getUserLoginname());
+            req.setAttribute("id", Arrays.toString(ids));
             return Result.success("system.success");
         } catch (Exception e) {
             return Result.error("system.error");
@@ -141,13 +142,13 @@ public class SysMsgUserController {
 
     @At("/status/readAll")
     @Ok("json")
-    @RequiresPermissions(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, logical = Logical.OR)
+    @SaCheckPermission(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, mode = SaMode.OR)
     @SLog(tag = "站内消息", msg = "readAll")
     public Object readAll(HttpServletRequest req) {
         try {
             sysMsgUserService.update(Chain.make("status", 1).add("readAt", Times.getTS())
-                    .add("createdAt", System.currentTimeMillis()).add("createdBy", ShiroUtil.getPlatformUid()), Cnd.where("loginname", "=", ShiroUtil.getPlatformLoginname()));
-            sysMsgUserService.deleteCache(ShiroUtil.getPlatformLoginname());
+                    .add("createdAt", System.currentTimeMillis()).add("createdBy", SecurityUtil.getUserId()), Cnd.where("loginname", "=", SecurityUtil.getUserLoginname()));
+            sysMsgUserService.deleteCache(SecurityUtil.getUserLoginname());
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -156,15 +157,15 @@ public class SysMsgUserController {
 
     @At("/all/detail/?")
     @Ok("beetl:/platform/sys/msg/user/detailAll.html")
-    @RequiresPermissions(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, logical = Logical.OR)
+    @SaCheckPermission(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, mode = SaMode.OR)
     public void allDetail(String id, HttpServletRequest req) {
         if (!Strings.isBlank(id)) {
             //判断用户是否是正常获取消息
-            int num = sysMsgUserService.count(Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
+            int num = sysMsgUserService.count(Cnd.where("msgid", "=", id).and("loginname", "=", SecurityUtil.getUserLoginname()));
             if (num > 0) {
                 req.setAttribute("obj", sysMsgService.fetch(id));
-                sysMsgUserService.update(Chain.make("status",1),Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
-                sysMsgUserService.deleteCache(ShiroUtil.getPlatformLoginname());
+                sysMsgUserService.update(Chain.make("status", 1), Cnd.where("msgid", "=", id).and("loginname", "=", SecurityUtil.getUserLoginname()));
+                sysMsgUserService.deleteCache(SecurityUtil.getUserLoginname());
             } else {
                 req.setAttribute("obj", null);
             }
@@ -175,15 +176,15 @@ public class SysMsgUserController {
 
     @At("/read/detail/?")
     @Ok("beetl:/platform/sys/msg/user/detailRead.html")
-    @RequiresPermissions(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, logical = Logical.OR)
+    @SaCheckPermission(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, mode = SaMode.OR)
     public void readDetail(String id, HttpServletRequest req) {
         if (!Strings.isBlank(id)) {
             //判断用户是否是正常获取消息
-            int num = sysMsgUserService.count(Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
+            int num = sysMsgUserService.count(Cnd.where("msgid", "=", id).and("loginname", "=", SecurityUtil.getUserLoginname()));
             if (num > 0) {
                 req.setAttribute("obj", sysMsgService.fetch(id));
-                sysMsgUserService.update(Chain.make("status",1),Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
-                sysMsgUserService.deleteCache(ShiroUtil.getPlatformLoginname());
+                sysMsgUserService.update(Chain.make("status", 1), Cnd.where("msgid", "=", id).and("loginname", "=", SecurityUtil.getUserLoginname()));
+                sysMsgUserService.deleteCache(SecurityUtil.getUserLoginname());
             } else {
                 req.setAttribute("obj", null);
             }
@@ -194,15 +195,15 @@ public class SysMsgUserController {
 
     @At("/unread/detail/?")
     @Ok("beetl:/platform/sys/msg/user/detailUnread.html")
-    @RequiresPermissions(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, logical = Logical.OR)
+    @SaCheckPermission(value = {"sys.msg.all", "sys.msg.read", "sys.msg.unread"}, mode = SaMode.OR)
     public void unreadDetail(String id, HttpServletRequest req) {
         if (!Strings.isBlank(id)) {
             //判断用户是否是正常获取消息
-            int num = sysMsgUserService.count(Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
+            int num = sysMsgUserService.count(Cnd.where("msgid", "=", id).and("loginname", "=", SecurityUtil.getUserLoginname()));
             if (num > 0) {
                 req.setAttribute("obj", sysMsgService.fetch(id));
-                sysMsgUserService.update(Chain.make("status",1),Cnd.where("msgid", "=", id).and("loginname", "=", ShiroUtil.getPlatformLoginname()));
-                sysMsgUserService.deleteCache(ShiroUtil.getPlatformLoginname());
+                sysMsgUserService.update(Chain.make("status", 1), Cnd.where("msgid", "=", id).and("loginname", "=", SecurityUtil.getUserLoginname()));
+                sysMsgUserService.deleteCache(SecurityUtil.getUserLoginname());
             } else {
                 req.setAttribute("obj", null);
             }

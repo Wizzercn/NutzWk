@@ -1,5 +1,6 @@
 package com.budwk.app.web.controllers.platform.wx;
 
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.wx.models.Wx_config;
 import com.budwk.app.wx.models.Wx_mass;
 import com.budwk.app.wx.models.Wx_mass_news;
@@ -13,10 +14,9 @@ import com.budwk.app.web.commons.ext.wx.WxService;
 import com.budwk.app.web.commons.slog.annotation.SLog;
 import com.budwk.app.base.utils.DateUtil;
 import com.budwk.app.base.utils.PageUtil;
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import com.budwk.app.base.result.Result;;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.nutz.boot.starter.ftp.FtpService;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.impl.PropertiesProxy;
@@ -68,7 +68,7 @@ public class WxMassController {
 
     @At({"/", "/?"})
     @Ok("beetl:/platform/wx/msg/mass/index.html")
-    @RequiresPermissions("wx.msg.mass")
+    @SaCheckPermission("wx.msg.mass")
     public void index(String wxid, HttpServletRequest req, HttpSession session) {
         Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
@@ -84,7 +84,7 @@ public class WxMassController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("wx.msg.mass")
+    @SaCheckPermission("wx.msg.mass")
     public Object massData(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (Strings.isNotBlank(wxid)) {
@@ -101,7 +101,7 @@ public class WxMassController {
 
     @At("/news/?")
     @Ok("beetl:/platform/wx/msg/mass/news.html")
-    @RequiresPermissions("wx.msg.mass")
+    @SaCheckPermission("wx.msg.mass")
     public void news(String wxid, HttpServletRequest req, HttpSession session) {
         req.setAttribute("wxid", wxid);
         session.setAttribute("wxid", wxid);
@@ -109,7 +109,7 @@ public class WxMassController {
 
     @At("/newsData/?")
     @Ok("json:full")
-    @RequiresPermissions("wx.msg.mass")
+    @SaCheckPermission("wx.msg.mass")
     public Object newsData(String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
@@ -123,7 +123,7 @@ public class WxMassController {
 
     @At("/deleteNews/?")
     @Ok("json")
-    @RequiresPermissions("wx.msg.mass.delNews")
+    @SaCheckPermission("wx.msg.mass.delNews")
     @SLog(tag = "删除图文", msg = "图文标题:${args[1].getAttribute('title')}}")
     public Object deleteNews(String id, HttpServletRequest req) {
         try {
@@ -138,11 +138,11 @@ public class WxMassController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("wx.msg.mass.addNews")
+    @SaCheckPermission("wx.msg.mass.addNews")
     @SLog(tag = "添加图文", msg = "图文标题:${args[0].title}")
     public Object addDo(@Param("..") Wx_mass_news news, HttpServletRequest req) {
         try {
-            news.setCreatedBy(ShiroUtil.getPlatformUid());
+            news.setCreatedBy(SecurityUtil.getUserId());
             wxMassNewsService.insert(news);
             return Result.success();
         } catch (Exception e) {
@@ -152,7 +152,7 @@ public class WxMassController {
 
     @At("/newsDetail/?")
     @Ok("json")
-    @RequiresPermissions("wx.msg.mass")
+    @SaCheckPermission("wx.msg.mass")
     public Object newsDetail(String id, HttpServletRequest req) {
         try {
             return Result.success().addData(wxMassNewsService.fetch(id));
@@ -165,7 +165,7 @@ public class WxMassController {
     @POST
     @At("/uploadThumb/?")
     @Ok("json")
-    @RequiresPermissions("wx.msg.mass")
+    @SaCheckPermission("wx.msg.mass")
     @SuppressWarnings("deprecation")
     //AdaptorErrorContext必须是最后一个参数
     public Object uploadThumb(String wxid, @Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
@@ -210,7 +210,7 @@ public class WxMassController {
     @POST
     @At("/uploadImage/?")
     @Ok("json")
-    @RequiresPermissions("wx.msg.mass")
+    @SaCheckPermission("wx.msg.mass")
     @SuppressWarnings("deprecation")
     //AdaptorErrorContext必须是最后一个参数
     public Object uploadImage(String wxid, @Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
@@ -249,21 +249,21 @@ public class WxMassController {
 
     @At("/send/?")
     @Ok("beetl:/platform/wx/msg/mass/send.html")
-    @RequiresPermissions("wx.msg.mass")
+    @SaCheckPermission("wx.msg.mass")
     public void send(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
     }
 
     @At("/select/?")
     @Ok("beetl:/platform/wx/msg/mass/select.html")
-    @RequiresPermissions("wx.msg.mass")
+    @SaCheckPermission("wx.msg.mass")
     public void select(String wxid, HttpServletRequest req) {
         req.setAttribute("wxid", wxid);
     }
 
     @At
     @Ok("json")
-    @RequiresPermissions("wx.msg.mass.pushNews")
+    @SaCheckPermission("wx.msg.mass.pushNews")
     @SLog(tag = "群发消息", msg = "群发名称:${args[0].name}")
     public Object sendDo(@Param("..") Wx_mass mass, @Param("receivers") String openids, @Param("newsids") String newsids, HttpServletRequest req) {
         try {

@@ -69,6 +69,14 @@ public class Result implements Serializable {
         return new Result(0, "system.success", data);
     }
 
+    public boolean isSuccess() {
+        return this.code == ResultCode.SUCCESS.code;
+    }
+
+    public static Result error(IResultCode resultCode) {
+        return new Result(resultCode.getCode(), resultCode.getMsg(), null);
+    }
+
     public static Result error(int code, String content) {
         return new Result(code, content, null);
     }

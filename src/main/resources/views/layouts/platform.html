@@ -31,25 +31,29 @@
     <script src="${base!}/assets/platform/plugins/moment/moment.min.js"></script>
     <!-- 浏览器通知 -->
     <script src="${base!}/assets/platform/plugins/push/push.min.js"></script>
+    <!-- 浏览器通知 -->
+    <script src="${base!}/assets/platform/plugins/toastr/toastr.js"></script>
+    <link rel="stylesheet" href="${base!}/assets/platform/plugins/toastr/toastr.css">
+
     <script src="${base!}/assets/platform/js/main.js"></script>
     <script src="${base!}/assets/platform/js/offscreen.js"></script>
-    <!--# if(@shiro.getPrincipalProperty('loginTheme')!=null){ #-->
-    <link rel="stylesheet" href="${base!}/assets/platform/css/skins/${@shiro.getPrincipalProperty('loginTheme')}"
+    <!--# if(@auth.getPrincipalProperty('loginTheme')!=null){ #-->
+    <link rel="stylesheet" href="${base!}/assets/platform/css/skins/${@auth.getPrincipalProperty('loginTheme')}"
           id="skin">
     <!--# }else{ #-->
     <link rel="stylesheet" href="${base!}/assets/platform/css/skins/palette.css" id="skin">
     <!--# } #-->
     <!--#
        var isLeftMenu = false;
-       if(@shiro.getPrincipalProperty('menuTheme') == "top"){
+       if(@auth.getPrincipalProperty('menuTheme') == "top"){
            isLeftMenu = false;
-       }else if(@shiro.getPrincipalProperty('menuTheme') == "left"){
+       }else if(@auth.getPrincipalProperty('menuTheme') == "left"){
            isLeftMenu = true;
        }
    #-->
     <script type="text/javascript">
         var base = "${base!}";
-        var loginPjax = "${@shiro.getPrincipalProperty('loginPjax')}";
+        var loginPjax = "${@auth.getPrincipalProperty('loginPjax')}";
         var isLeftMenu = "${isLeftMenu!}";
         ELEMENT.locale(ELEMENT.lang['${lang,escape}']);
     </script>
@@ -64,21 +68,21 @@
         <div class="options-container color-options">
             <h6>${msg['index.themes']}</h6>
             <a onclick="sublime.changeTheme('palette.css')" href="${base!}/assets/platform/css/skins/palette.css"
-               class="css_orange cs_color cs_1 <!--#if(@shiro.getPrincipalProperty('loginTheme')==null || 'palette.css' == @shiro.getPrincipalProperty('loginTheme')){#-->active<!--#}#-->">
+               class="css_orange cs_color cs_1 <!--#if(@auth.getPrincipalProperty('loginTheme')==null || 'palette.css' == @auth.getPrincipalProperty('loginTheme')){#-->active<!--#}#-->">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
             </a>
             <a onclick="sublime.changeTheme('palette.2.css')" href="${base!}/assets/platform/css/skins/palette.2.css"
-               class="css_orange cs_color cs_2 <!--#if('palette.2.css' == @shiro.getPrincipalProperty('loginTheme')){#-->active<!--# }#-->">
+               class="css_orange cs_color cs_2 <!--#if('palette.2.css' == @auth.getPrincipalProperty('loginTheme')){#-->active<!--# }#-->">
                 <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
             </a>
             <a onclick="sublime.changeTheme('palette.3.css')" href="${base!}/assets/platform/css/skins/palette.3.css"
-               class="css_orange cs_color cs_3 <!--#if('palette.3.css' == @shiro.getPrincipalProperty('loginTheme')){#-->active<!--# }#-->">
+               class="css_orange cs_color cs_3 <!--#if('palette.3.css' == @auth.getPrincipalProperty('loginTheme')){#-->active<!--# }#-->">
                 <div></div>
                 <div></div>
                 <div></div>
@@ -87,15 +91,15 @@
         </div>
         <div class="options-container">
             <h6>${msg['index.layout']}</h6>
-            <a class="pg-val toggle-sidebar toggle-active <!--#if(@shiro.getPrincipalProperty('loginSidebar')){#--> active<!--#}#-->"
+            <a class="pg-val toggle-sidebar toggle-active <!--#if(@auth.getPrincipalProperty('loginSidebar')){#--> active<!--#}#-->"
                href="javascript:;">
                 <img src="${base!}/assets/platform/img/panel/small.png" alt="">
             </a>
-            <a class="pg-val toggle-scroll toggle-active <!--#if(@shiro.getPrincipalProperty('loginScroll')){#-->active<!--#}#-->"
+            <a class="pg-val toggle-scroll toggle-active <!--#if(@auth.getPrincipalProperty('loginScroll')){#-->active<!--#}#-->"
                href="javascript:;">
                 <img src="${base!}/assets/platform/img/panel/scroll.png" alt="">
             </a>
-            <a class="pg-val toggle-boxed toggle-active <!--#if(@shiro.getPrincipalProperty('loginBoxed')){#-->active<!--#}#-->"
+            <a class="pg-val toggle-boxed toggle-active <!--#if(@auth.getPrincipalProperty('loginBoxed')){#-->active<!--#}#-->"
                href="javascript:;">
                 <img src="${base!}/assets/platform/img/panel/boxed.png" alt="">
             </a>
@@ -109,7 +113,7 @@
     </div>
 </div>
 <div id="mainApp"
-     class="app <!--#if(@shiro.getPrincipalProperty('loginSidebar')){#--> small-menu <!--#}#--> <!--#if(@shiro.getPrincipalProperty('loginScroll')){#--> fixed-scroll <!--#}#--> <!--#if(@shiro.getPrincipalProperty('loginBoxed')){#--> boxed <!--#}#-->">
+     class="app <!--#if(@auth.getPrincipalProperty('loginSidebar')){#--> small-menu <!--#}#--> <!--#if(@auth.getPrincipalProperty('loginScroll')){#--> fixed-scroll <!--#}#--> <!--#if(@auth.getPrincipalProperty('loginBoxed')){#--> boxed <!--#}#-->">
     <header class="header header-fixed navbar">
         <div class="brand">
 
@@ -118,8 +122,8 @@
 
             <a href="${base!}/platform/home" data-pjax class="navbar-brand">
                 <img src="${base!}/assets/platform/img/logo.png" alt=""
-                     class="o_img <!--#if(!@shiro.getPrincipalProperty('loginSidebar')){#-->o_hide<!--#}#-->">
-                <span class="heading-font o_img <!--#if(@shiro.getPrincipalProperty('loginSidebar')){#-->o_hide<!--#}#-->">
+                     class="o_img <!--#if(!@auth.getPrincipalProperty('loginSidebar')){#-->o_hide<!--#}#-->">
+                <span class="heading-font o_img <!--#if(@auth.getPrincipalProperty('loginSidebar')){#-->o_hide<!--#}#-->">
 		            <img src="${base!}/assets/platform/img/logoa.png">
                 </span>
             </a>
@@ -137,8 +141,8 @@
         </ul>
         <ul id="topnav" class="nav navbar-nav hidden-xs" style="display: ${!isLeftMenu?'initial':'none'};">
             <!--#
-            var secondMenus=@shiro.getPrincipalProperty('secondMenus');
-            for(firstMenu in @shiro.getPrincipalProperty('firstMenus')){
+            var secondMenus=@auth.getPrincipalProperty('secondMenus');
+            for(firstMenu in @auth.getPrincipalProperty('firstMenus')){
            #-->
             <li class="dropdown">
 
@@ -249,7 +253,7 @@
 
             <li class="off-right">
                 <a href="javascript:;" data-toggle="dropdown">
-                    <span class="hidden-xs ml10">${@shiro.getPrincipalProperty('username')}</span>
+                    <span class="hidden-xs ml10">${@auth.getPrincipalProperty('username')}</span>
                     <i class="ti-angle-down ti-caret hidden-xs"></i>
                 </a>
                 <ul class="dropdown-menu animated fadeInLeft">
@@ -294,15 +298,15 @@
                 <ul class="nav">
                     <li>
                         <a href="javascript:;">
-                            <!--#if(!isEmpty(@shiro.getPrincipalProperty('customMenus'))){#-->
+                            <!--#if(!isEmpty(@auth.getPrincipalProperty('customMenus'))){#-->
                             <i class="toggle-accordion"></i>
                             <!--#}#-->
                             <i class="ti-heart"></i>
                             <span>${msg['index.custommenu']}</span>
                         </a>
-                        <!--#if(!isEmpty(@shiro.getPrincipalProperty('customMenus'))){#-->
+                        <!--#if(!isEmpty(@auth.getPrincipalProperty('customMenus'))){#-->
                         <ul class="sub-menu">
-                            <!--#for(o in @shiro.getPrincipalProperty('customMenus')){#-->
+                            <!--#for(o in @auth.getPrincipalProperty('customMenus')){#-->
 
                             <li>
                                 <a <!--#if(!isEmpty(o.href)){#-->href="${base}${o.href}"
@@ -321,7 +325,7 @@
 
                 <ul id="leftMenu" class="nav leftMenu" style="display: ${isLeftMenu?'initial':'none'};">
                     <!--#
-                        for(firstMenu in @shiro.getPrincipalProperty('firstMenus')){
+                        for(firstMenu in @auth.getPrincipalProperty('firstMenus')){
                             if(!isEmpty(@secondMenus.get(firstMenu.path))){
                     #-->
                     <li>
@@ -481,41 +485,26 @@
             })
         });
 
-        //浏览器通知 + websocket
-        if (${@config.getOrDefault("WebNotification",true)}) {
-            Push.Permission.request(function () {
-                if (parseInt("${@shiro.getPrincipalProperty('loginCount')}") > 0 || !${@config.getOrDefault("WebNotification",true)})
-                    return;
-                Push.create('Thank You!', {
-                    body: '欢迎选用 ArchiAI !',
-                    icon: base + '/assets/platform/img/notice.png',
-                    timeout: 5000,
-                    onClick: function () {
-                        this.close();
-                    },
-                    vibrate: [100, 100, 100]
-                });
-            }, function () {
-
-            });
-        }
         try {
             connect();
             ws.onmessage = function (event) {
                 var re = JSON.parse(event.data);
-                if (re.action == "notify" && Push.Permission.has() && ${@config.getOrDefault("WebNotification",true)}) {
-                    Push.create(re.title, {
-                        body: re.body,
-                        icon: base + '/assets/img/notice.png',
-                        timeout: 8000,
-                        onClick: function () {
-                            if (re.url) {
-                                window.open(base + re.url);
-                            } //just added the window.open to a OnClick event.
-                            this.close();
-                        },
-                        vibrate: [100, 100, 100]
-                    });
+                if (re.action == "notify" && ${@config.getOrDefault("WebNotification",true)}) {
+                    toastr.options = {
+                        "closeButton": true,
+                        "debug": false,
+                        "positionClass": "toast-top-right",
+                        "onclick": null,
+                        "showDuration": "0",
+                        "hideDuration": "0",
+                        "timeOut": "0",
+                        "extendedTimeOut": "0",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    };
+                    toastr.info(re.body, re.title);
                 } else if (re.action == "innerMsg") {
                     if (re.size > 0) {
                         $("#innerMsgNum").html(re.size);
@@ -524,6 +513,23 @@
                         $("#innerMsg").hide();
                     }
                     msg_get(re.list);
+                    toastr.options = {
+                        "closeButton": true,
+                        "debug": false,
+                        "positionClass": "toast-top-right",
+                        "onclick": null,
+                        "showDuration": "0",
+                        "hideDuration": "0",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "0",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    };
+                    if(re.size>0){
+                        toastr.info('您有'+re.size+'条新消息，请查收！');
+                    }
                 } else if (re.action == "offline") {
                     $("#dialogOffline").modal().show();
                     $("#okOffline").on("click", function () {
@@ -533,7 +539,7 @@
             };
             ws.onopen = function (event) {
                 ws.send(JSON.stringify({
-                    room: "${@shiro.getPrincipalProperty('loginname')}:${@shiro.getSessionId()}",
+                    room: "${@auth.getPrincipalProperty('loginname')}:${@auth.getSessionId()}",
                     "action": "join"
                 }));
                 ws_ping();
@@ -553,7 +559,7 @@
                         _gap_time = new Date().getTime() - _beforeUnload_time;
                         if (_gap_time <= 5) {
                             ws.send(JSON.stringify({
-                                room: "${@shiro.getPrincipalProperty('loginname')}:${@shiro.getSessionId()}",
+                                room: "${@auth.getPrincipalProperty('loginname')}:${@auth.getSessionId()}",
                                 "action": "left"
                             }));
                         } else {//浏览器刷新
@@ -563,7 +569,7 @@
                         _beforeUnload_time = new Date().getTime();
                         if (is_fireFox) {//火狐关闭执行
                             ws.send(JSON.stringify({
-                                room: "${@shiro.getPrincipalProperty('loginname')}:${@shiro.getSessionId()}",
+                                room: "${@auth.getPrincipalProperty('loginname')}:${@auth.getSessionId()}",
                                 "action": "left"
                             }));
                         }

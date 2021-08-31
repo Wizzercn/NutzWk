@@ -1,6 +1,6 @@
 package com.budwk.app.web.commons.ext.sms;
 
-import com.budwk.app.web.commons.exception.SmsException;
+import com.budwk.app.base.exception.BaseException;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.common.profile.ClientProfile;
@@ -31,9 +31,9 @@ public class SmsService {
      * @param mobile 手机号
      * @param text   验证码
      * @return true发送成功
-     * @throws SmsException
+     * @throws BaseException
      */
-    public boolean sendCode(String mobile, String text) throws SmsException {
+    public boolean sendCode(String mobile, String text) throws BaseException {
         try {
             if (!conf.getBoolean("sms.enabled")) {
                 return true;
@@ -60,7 +60,7 @@ public class SmsService {
             log.debug(SendSmsResponse.toJsonString(resp));
             return true;
         } catch (TencentCloudSDKException tencentCloudSDKException) {
-            throw new SmsException(tencentCloudSDKException.getMessage());
+            throw new BaseException(tencentCloudSDKException.getMessage());
         }
     }
 
@@ -70,9 +70,9 @@ public class SmsService {
      * @param mobile 手机号码(最多200)
      * @param param  模板参数值
      * @return
-     * @throws SmsException
+     * @throws BaseException
      */
-    public boolean sendMsg(String[] mobile, String[] param) throws SmsException {
+    public boolean sendMsg(String[] mobile, String[] param) throws BaseException {
         try {
             if (!conf.getBoolean("sms.enabled")) {
                 return true;
@@ -97,7 +97,7 @@ public class SmsService {
             log.debug(SendSmsResponse.toJsonString(resp));
             return true;
         } catch (TencentCloudSDKException tencentCloudSDKException) {
-            throw new SmsException(tencentCloudSDKException.getMessage());
+            throw new BaseException(tencentCloudSDKException.getMessage());
         }
     }
 }

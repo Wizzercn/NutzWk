@@ -1,5 +1,6 @@
 package com.budwk.app.web.controllers.platform.sys;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.budwk.app.base.page.Pagination;
 import com.budwk.app.base.result.Result;
 import com.budwk.app.base.utils.PageUtil;
@@ -7,10 +8,9 @@ import com.budwk.app.sys.models.Sys_msg;
 import com.budwk.app.sys.services.SysMsgService;
 import com.budwk.app.sys.services.SysMsgUserService;
 import com.budwk.app.sys.services.SysUserService;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -45,14 +45,14 @@ public class SysMsgController {
 
     @At({"/", "/list/?"})
     @Ok("beetl:/platform/sys/msg/index.html")
-    @RequiresPermissions("sys.manager.msg")
+    @SaCheckPermission("sys.manager.msg")
     public void index(String type, HttpServletRequest req) {
         req.setAttribute("type", Strings.isBlank(type) ? "all" : type);
     }
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("sys.manager.msg")
+    @SaCheckPermission("sys.manager.msg")
     public Object data(@Param("searchType") String searchType, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();
@@ -79,7 +79,7 @@ public class SysMsgController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("sys.manager.msg")
+    @SaCheckPermission("sys.manager.msg")
     public Object user_view_data(@Param("type") String type, @Param("id") String id, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();
@@ -99,14 +99,14 @@ public class SysMsgController {
 
     @At("/addDo")
     @Ok("json")
-    @RequiresPermissions("sys.manager.msg.add")
+    @SaCheckPermission("sys.manager.msg.add")
     @SLog(tag = "站内消息", msg = "${args[0].title}")
     public Object addDo(@Param("..") NutMap nutMap, HttpServletRequest req) {
         try {
             Sys_msg sysMsg = nutMap.getAs("msg", Sys_msg.class);
             sysMsg.setNote(nutMap.getString("note", ""));
             sysMsg.setSendAt(Times.getTS());
-            sysMsg.setCreatedBy(ShiroUtil.getPlatformUid());
+            sysMsg.setCreatedBy(SecurityUtil.getUserId());
             String[] users = StringUtils.split(nutMap.getString("users", ""), ",");
             sysMsgService.saveMsg(sysMsg, users);
             return Result.success();
@@ -117,7 +117,7 @@ public class SysMsgController {
 
     @At
     @Ok("json:{locked:'password|salt',ignoreNull:false}")
-    @RequiresPermissions("sys.manager.user")
+    @SaCheckPermission("sys.manager.user")
     public Object user_data(@Param("searchUnit") String searchUnit, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();
@@ -135,7 +135,7 @@ public class SysMsgController {
 
     @At({"/delete/?"})
     @Ok("json")
-    @RequiresPermissions("sys.manager.msg.delete")
+    @SaCheckPermission("sys.manager.msg.delete")
     @SLog(tag = "站内消息", msg = "站内信标题:${req.getAttribute('title')}")
     public Object delete(String id, HttpServletRequest req) {
         try {

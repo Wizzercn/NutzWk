@@ -31,7 +31,7 @@ public class WkWebSocket extends AbstractWsEndpoint implements PubSub {
     protected JedisAgent jedisAgent;
     @Inject("refer:$ioc")
     protected Ioc ioc;
-    @Inject("java:$conf.getInt('shiro.session.cache.redis.ttl')")
+    @Inject("java:$conf.getInt('security.timeout')")
     private int REDIS_KEY_SESSION_TTL;
 
     public WsHandler createHandler(Session session, EndpointConfig config) {

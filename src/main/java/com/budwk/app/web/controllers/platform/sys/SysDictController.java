@@ -1,13 +1,13 @@
 package com.budwk.app.web.controllers.platform.sys;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.budwk.app.base.result.Result;
 import com.budwk.app.sys.models.Sys_dict;
 import com.budwk.app.sys.services.SysDictService;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.base.result.Result;;
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+;
+
 /**
  * Created by wizzer on 2016/6/24.
  */
@@ -37,7 +39,7 @@ public class SysDictController {
 
     @At("")
     @Ok("beetl:/platform/sys/dict/index.html")
-    @RequiresPermissions("sys.manager.dict")
+    @SaCheckPermission("sys.manager.dict")
     public Object index() {
         return sysDictService.query(Cnd.where("parentId", "=", "").or("parentId", "is", null).asc("location").asc("path"));
     }
@@ -45,7 +47,7 @@ public class SysDictController {
 
     @At("/child")
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object child(@Param("pid") String pid, HttpServletRequest req) {
         List<Sys_dict> list = new ArrayList<>();
         List<NutMap> treeList = new ArrayList<>();
@@ -71,12 +73,12 @@ public class SysDictController {
 
     @At("/tree")
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object tree(@Param("pid") String pid, HttpServletRequest req) {
         try {
             List<NutMap> treeList = new ArrayList<>();
             if (Strings.isBlank(pid)) {
-                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单").addv("leaf",true);
+                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单").addv("leaf", true);
                 treeList.add(root);
             }
             Cnd cnd = Cnd.NEW();
@@ -91,9 +93,9 @@ public class SysDictController {
                 NutMap map = NutMap.NEW().addv("value", sysDict.getId()).addv("label", sysDict.getName());
                 if (sysDict.isHasChildren()) {
                     map.addv("children", new ArrayList<>());
-                    map.addv("leaf",false);
-                }else {
-                    map.addv("leaf",true);
+                    map.addv("leaf", false);
+                } else {
+                    map.addv("leaf", true);
                 }
                 treeList.add(map);
             }
@@ -105,15 +107,15 @@ public class SysDictController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.dict.add")
+    @SaCheckPermission("sys.manager.dict.add")
     @SLog(tag = "新建字典", msg = "字典名称:${args[0].name}")
-    public Object addDo(@Param("..") Sys_dict dict, @Param(value = "parentId",df = "") String parentId, HttpServletRequest req) {
+    public Object addDo(@Param("..") Sys_dict dict, @Param(value = "parentId", df = "") String parentId, HttpServletRequest req) {
         try {
-            if("root".equals(parentId)){
-                parentId="";
+            if ("root".equals(parentId)) {
+                parentId = "";
             }
             dict.setHasChildren(false);
-            dict.setCreatedBy(ShiroUtil.getPlatformUid());
+            dict.setCreatedBy(SecurityUtil.getUserId());
             sysDictService.save(dict, parentId);
             sysDictService.clearCache();
             return Result.success("system.success");
@@ -124,7 +126,7 @@ public class SysDictController {
 
     @At("/edit/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.dict")
+    @SaCheckPermission("sys.manager.dict")
     public Object edit(String id, HttpServletRequest req) {
         try {
             return Result.success().addData(sysDictService.fetch(id));
@@ -135,11 +137,11 @@ public class SysDictController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.dict.edit")
+    @SaCheckPermission("sys.manager.dict.edit")
     @SLog(tag = "编辑字典", msg = "字典名称:${args[0].name}")
     public Object editDo(@Param("..") Sys_dict dict, @Param("parentId") String parentId, HttpServletRequest req) {
         try {
-            dict.setUpdatedBy(ShiroUtil.getPlatformUid());
+            dict.setUpdatedBy(SecurityUtil.getUserId());
             sysDictService.updateIgnoreNull(dict);
             sysDictService.clearCache();
             return Result.success();
@@ -150,7 +152,7 @@ public class SysDictController {
 
     @At("/delete/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.dict.delete")
+    @SaCheckPermission("sys.manager.dict.delete")
     @SLog(tag = "删除字典", msg = "字典名称:${args[1].getAttribute('name')}")
     public Object delete(String id, HttpServletRequest req) {
         try {
@@ -166,7 +168,7 @@ public class SysDictController {
 
     @At("/enable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.dict.edit")
+    @SaCheckPermission("sys.manager.dict.edit")
     @SLog(tag = "启用菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
     public Object enable(String menuId, HttpServletRequest req) {
         try {
@@ -181,7 +183,7 @@ public class SysDictController {
 
     @At("/disable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.dict.edit")
+    @SaCheckPermission("sys.manager.dict.edit")
     @SLog(tag = "禁用菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
     public Object disable(String menuId, HttpServletRequest req) {
         try {
@@ -196,7 +198,7 @@ public class SysDictController {
 
     @At("/menuAll")
     @Ok("json")
-    @RequiresPermissions("sys.manager.dict")
+    @SaCheckPermission("sys.manager.dict")
     public Object menuAll(HttpServletRequest req) {
         try {
             List<Sys_dict> list = sysDictService.query(Cnd.NEW().asc("location").asc("path"));
@@ -231,7 +233,7 @@ public class SysDictController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.dict.edit")
+    @SaCheckPermission("sys.manager.dict.edit")
     public Object sortDo(@Param("ids") String ids, HttpServletRequest req) {
         try {
             String[] menuIds = StringUtils.split(ids, ",");

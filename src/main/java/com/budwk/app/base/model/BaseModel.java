@@ -1,5 +1,6 @@
 package com.budwk.app.base.model;
 
+import cn.dev33.satoken.stp.StpUtil;
 import lombok.Data;
 import org.nutz.dao.entity.annotation.*;
 import org.nutz.dao.interceptor.annotation.PrevInsert;
@@ -7,13 +8,12 @@ import org.nutz.dao.interceptor.annotation.PrevUpdate;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 import org.nutz.lang.Strings;
-import org.nutz.mvc.Mvcs;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
 /**
  * Created by wizzer on 2016/6/21.
+ * Update by wizzer on 2021/8/30.
  */
 @Data
 public abstract class BaseModel implements Serializable {
@@ -71,13 +71,10 @@ public abstract class BaseModel implements Serializable {
             return uid;
         }
         try {
-            HttpServletRequest request = Mvcs.getReq();
-            if (request != null) {
-                return Strings.sNull(request.getSession(true).getAttribute("platform_uid"));
-            }
+            return StpUtil.getLoginIdAsString();
         } catch (Exception e) {
+            return "";
         }
-        return "";
     }
 
     public String updatedByUid() {
@@ -86,12 +83,9 @@ public abstract class BaseModel implements Serializable {
             return uid;
         }
         try {
-            HttpServletRequest request = Mvcs.getReq();
-            if (request != null) {
-                return Strings.sNull(request.getSession(true).getAttribute("platform_uid"));
-            }
+            return StpUtil.getLoginIdAsString();
         } catch (Exception e) {
+            return "";
         }
-        return "";
     }
 }

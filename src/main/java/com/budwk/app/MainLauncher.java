@@ -1,13 +1,17 @@
 package com.budwk.app;
 
+import cn.dev33.satoken.SaManager;
+import cn.dev33.satoken.config.SaTokenConfig;
 import com.budwk.app.sys.models.*;
 import com.budwk.app.sys.services.SysTaskService;
 import com.budwk.app.task.services.TaskPlatformService;
+import com.budwk.app.web.commons.auth.satoken.SaTokenContextImpl;
+import com.budwk.app.web.commons.auth.satoken.SaTokenDaoRedisImpl;
+import com.budwk.app.web.commons.auth.satoken.StpInterfaceImpl;
 import com.budwk.app.web.commons.base.Globals;
 import com.budwk.app.web.commons.ext.pubsub.WebPubSub;
 import com.budwk.app.web.tags.*;
-import com.budwk.app.sys.models.*;
-import com.budwk.app.web.tags.*;
+import lombok.extern.slf4j.Slf4j;
 import org.beetl.core.GroupTemplate;
 import org.nutz.boot.NbApp;
 import org.nutz.dao.Chain;
@@ -17,16 +21,15 @@ import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.jedis.JedisAgent;
-import org.nutz.integration.shiro.ShiroSessionProvider;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Mirror;
-import org.nutz.log.Log;
-import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
-import org.nutz.mvc.annotation.*;
+import org.nutz.mvc.annotation.ChainBy;
+import org.nutz.mvc.annotation.Encoding;
+import org.nutz.mvc.annotation.Localization;
 import org.quartz.Scheduler;
 
 import javax.management.MBeanServer;
@@ -46,9 +49,9 @@ import java.util.List;
 @Localization(value = "locales/", defaultLocalizationKey = "zh_CN")
 @Encoding(input = "UTF-8", output = "UTF-8")
 @ChainBy(args = "chain/mvc-chain.json")
-@SessionBy(ShiroSessionProvider.class)
+@Slf4j
 public class MainLauncher {
-    private static final Log log = Logs.get();
+    protected static final String PRE = "security.";
     @Inject("refer:$ioc")
     private Ioc ioc;
     @Inject
@@ -91,15 +94,29 @@ public class MainLauncher {
         init_sys();
         init_task();
         ioc.get(Globals.class);
+        init_auth();
+    }
+
+    public void init_auth() {
+        SaTokenConfig saTokenConfig = conf.makeDeep(SaTokenConfig.class, PRE);
+        String tokenName = conf.get(PRE + "tokenName", "token");
+        // 注意这里的token默认超时时间与控制中心 websocket 超时时间保持一致
+        saTokenConfig.setTimeout(conf.getLong(PRE + "timeout", 86400));
+        saTokenConfig.setTokenName(tokenName);
+        saTokenConfig.setIsV(false);
+        SaManager.setConfig(saTokenConfig);
+        SaManager.setSaTokenContext(ioc.get(SaTokenContextImpl.class));
+        SaManager.setSaTokenDao(ioc.get(SaTokenDaoRedisImpl.class));
+        SaManager.setStpInterface(ioc.get(StpInterfaceImpl.class));
     }
 
 
     private void init_task() {
-        if (!dao.exists("sys_qrtz_triggers")) {
+        if (log.isDebugEnabled() && !dao.exists("sys_qrtz_triggers") && !dao.exists("sys_qrtz_triggers".toUpperCase())) {
             //执行Quartz SQL脚本
             String dbType = dao.getJdbcExpert().getDatabaseType();
             log.debug("dbType:::" + dbType);
-            FileSqlManager fmq = new FileSqlManager("quartz/" + dbType.toLowerCase() + ".sql");
+            FileSqlManager fmq = new FileSqlManager("db/quartz/" + dbType.toLowerCase() + ".sql");
             List<Sql> sqlListq = fmq.createCombo(fmq.keys());
             Sql[] sqlsq = sqlListq.toArray(new Sql[sqlListq.size()]);
             for (Sql sql : sqlsq) {
@@ -120,13 +137,15 @@ public class MainLauncher {
     }
 
     private void init_sys() {
-        //通过POJO类创建表结构
-        try {
-            Daos.createTablesInPackage(dao, "com.budwk", false);
-            //通过POJO类修改表结构
-            //Daos.migration(dao, "com.budwk", true, false);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (log.isDebugEnabled()) {
+            //通过POJO类创建表结构
+            try {
+                Daos.createTablesInPackage(dao, "com.budwk", false);
+                //通过POJO类修改表结构
+                //Daos.migration(dao, "com.budwk", true, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         // 若必要的数据表不存在，则初始化数据库
         if (0 == dao.count(Sys_user.class)) {
@@ -159,7 +178,7 @@ public class MainLauncher {
             conf = new Sys_config();
             conf.setConfigKey("SessionOnlyOne");
             conf.setConfigValue("true");
-            conf.setNote("用户登录只允许一个Session实例(为true时退出登录会更新sys_user表在线状态)");
+            conf.setNote("用户登录只允许一个Session实例(踢其他人下线)");
             dao.insert(conf);
             conf = new Sys_config();
             conf.setConfigKey("WebNotification");
@@ -792,83 +811,6 @@ public class MainLauncher {
             menu.setType("data");
             dao.insert(menu);
 
-            //运维中心
-            menu = new Sys_menu();
-            menu.setDisabled(false);
-            menu.setPath("00010004");
-            menu.setName("运维中心");
-            menu.setNote("运维中心");
-            menu.setAliasName("Operation");
-            menu.setIcon("ti-shield");
-            menu.setLocation(0);
-            menu.setHref("");
-            menu.setTarget("");
-            menu.setShowit(true);
-            menu.setHasChildren(true);
-            menu.setParentId(m0.getId());
-            menu.setType("menu");
-            menu.setPermission("sys.operation");
-            Sys_menu op0 = dao.insert(menu);
-            //应用管理
-            menu = new Sys_menu();
-            menu.setDisabled(false);
-            menu.setPath("000100040002");
-            menu.setName("应用管理");
-            menu.setAliasName("App");
-            menu.setLocation(0);
-            menu.setHref("/platform/sys/app");
-            menu.setTarget("data-pjax");
-            menu.setShowit(true);
-            menu.setPermission("sys.operation.app");
-            menu.setParentId(op0.getId());
-            menu.setType("menu");
-            Sys_menu op02 = dao.insert(menu);
-            menu = new Sys_menu();
-            menu.setDisabled(false);
-            menu.setPath("0001000400020001");
-            menu.setName("配置文件管理");
-            menu.setAliasName("AppConfig");
-            menu.setLocation(1);
-            menu.setShowit(false);
-            menu.setPermission("sys.operation.app.conf");
-            menu.setParentId(op02.getId());
-            menu.setType("data");
-            dao.insert(menu);
-            menu = new Sys_menu();
-            menu.setDisabled(false);
-            menu.setPath("0001000400020002");
-            menu.setName("Jar包管理");
-            menu.setAliasName("AppJar");
-            menu.setLocation(2);
-            menu.setShowit(false);
-            menu.setPermission("sys.operation.app.jar");
-            menu.setParentId(op02.getId());
-            menu.setType("data");
-            dao.insert(menu);
-            menu = new Sys_menu();
-            menu.setDisabled(false);
-            menu.setPath("0001000400020003");
-            menu.setName("实例管理");
-            menu.setAliasName("AppInstance");
-            menu.setLocation(3);
-            menu.setShowit(false);
-            menu.setPermission("sys.operation.app.instance");
-            menu.setParentId(op02.getId());
-            menu.setType("data");
-            dao.insert(menu);
-            menu = new Sys_menu();
-            menu.setDisabled(false);
-            menu.setPath("0001000400020004");
-            menu.setName("修改日志等级");
-            menu.setAliasName("Loglevel");
-            menu.setLocation(4);
-            menu.setShowit(false);
-            menu.setPermission("sys.operation.app.loglevel");
-            menu.setParentId(op02.getId());
-            menu.setType("data");
-            dao.insert(menu);
-
-
             //初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
@@ -905,13 +847,15 @@ public class MainLauncher {
             user.setLoginScroll(true);
             user.setLoginSidebar(false);
             user.setLoginPjax(true);
-            user.setUnitid(dbunit.getId());
+            user.setUnitId(dbunit.getId());
+            user.setUnitPath(dbunit.getPath());
+            user.setMenuTheme("left");
             Sys_user dbuser = dao.insert(user);
             //不同的插入数据方式(安全)
             dao.insert("sys_user_unit", org.nutz.dao.Chain.make("userId", dbuser.getId()).add("unitId", dbunit.getId()));
             dao.insert("sys_user_role", Chain.make("userId", dbuser.getId()).add("roleId", dbrole.getId()));
             //执行SQL脚本
-            FileSqlManager fm = new FileSqlManager("db/");
+            FileSqlManager fm = new FileSqlManager("db/menu/");
             List<Sql> sqlList = fm.createCombo(fm.keys());
             Sql[] sqls = sqlList.toArray(new Sql[sqlList.size()]);
             for (Sql sql : sqls) {

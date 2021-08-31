@@ -1,8 +1,8 @@
 package com.budwk.app.web.commons.proc;
 
 import com.budwk.app.base.result.Result;
+import com.budwk.app.base.utils.WebUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.nutz.integration.shiro.NutShiro;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
@@ -15,7 +15,6 @@ import org.nutz.mvc.impl.processor.AbstractProcessor;
 import org.nutz.mvc.view.ForwardView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -42,9 +41,9 @@ public class XssSqlFilterProcessor extends AbstractProcessor {
 
     public void process(ActionContext ac) throws Throwable {
         if (checkUrl(ac) && checkParams(ac)) {
-            if (NutShiro.isAjax(ac.getRequest())) {
+            if (WebUtil.isAjax(ac.getRequest())) {
                 ac.getResponse().addHeader("loginStatus", "paramsDenied");
-                NutShiro.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error(Mvcs.getMessage(ac.getRequest(), "system.paramserror")));
+                WebUtil.rendAjaxResp(ac.getRequest(), ac.getResponse(), Result.error(Mvcs.getMessage(ac.getRequest(), "system.paramserror")));
             } else {
                 new ForwardView(lerrorUri).render(ac.getRequest(), ac.getResponse(), Mvcs.getMessage(ac.getRequest(), "system.paramserror"));
             }

@@ -1,13 +1,14 @@
 package com.budwk.app.web.controllers.platform.sys;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.stp.StpUtil;
 import com.budwk.app.base.result.Result;
 import com.budwk.app.sys.models.Sys_menu;
 import com.budwk.app.sys.models.Sys_user;
 import com.budwk.app.sys.services.SysMenuService;
 import com.budwk.app.sys.services.SysUserService;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.base.Globals;
-import com.budwk.app.web.commons.utils.ShiroUtil;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
@@ -36,9 +37,9 @@ public class SysHomeController {
 
     @At("")
     @Ok("re")
-    @RequiresAuthentication
+    @SaCheckLogin
     public String home(HttpSession session, HttpServletRequest req) {
-        if (ShiroUtil.hasRole("sysadmin")) {
+        if (StpUtil.hasRole("sysadmin")) {
             return "beetl:/platform/sys/dashboard.html";
         }
         return "beetl:/platform/sys/home.html";
@@ -48,7 +49,7 @@ public class SysHomeController {
     @At("/needInfo")
     @Ok("json")
     public Object needInfo() {
-        Sys_user user = sysUserService.fetch(ShiroUtil.getPlatformUid());
+        Sys_user user = sysUserService.fetch(SecurityUtil.getUserId());
         if (Strings.isBlank(user.getUsername()) || Strings.isBlank(user.getMobile()) || Strings.isBlank(user.getEmail())) {
             return Result.success().addData(true);
         } else {
@@ -58,7 +59,7 @@ public class SysHomeController {
 
     @At
     @Ok("beetl:/platform/sys/left.html")
-    @RequiresAuthentication
+    @SaCheckLogin
     public void left(@Param("url") String url, HttpServletRequest req) {
         String path = "";
         String perpath = "";
@@ -82,7 +83,7 @@ public class SysHomeController {
 
     @At
     @Ok("beetl:/platform/sys/left.html")
-    @RequiresAuthentication
+    @SaCheckLogin
     public void path(@Param("url") String url, HttpServletRequest req) {
         url = Strings.sNull(url).trim();
         if (Strings.sBlank(url).indexOf("//") > 0) {
@@ -134,7 +135,8 @@ public class SysHomeController {
     @At("/403")
     @Ok("re")
     public Object error403(HttpServletRequest req) {
-        if (Strings.sNull(req.getAttribute("original_request_uri")).startsWith("/platform") && ShiroUtil.isAuthenticated()) {
+        StpUtil.checkLogin();
+        if (Strings.sNull(req.getAttribute("original_request_uri")).startsWith("/platform")) {
             return "beetl:/platform/sys/403.html";
         } else {
             return ">>:/error/404.html";
@@ -144,7 +146,8 @@ public class SysHomeController {
     @At("/404")
     @Ok("re")
     public Object error404(HttpServletRequest req) {
-        if (Strings.sNull(req.getAttribute("original_request_uri")).startsWith("/platform") && ShiroUtil.isAuthenticated()) {
+        StpUtil.checkLogin();
+        if (Strings.sNull(req.getAttribute("original_request_uri")).startsWith("/platform")) {
             return "beetl:/platform/sys/404.html";
         } else {
             return ">>:/error/404.html";
@@ -154,7 +157,8 @@ public class SysHomeController {
     @At("/500")
     @Ok("re")
     public Object error500(HttpServletRequest req) {
-        if (Strings.sNull(req.getAttribute("original_request_uri")).startsWith("/platform") && ShiroUtil.isAuthenticated()) {
+        StpUtil.checkLogin();
+        if (Strings.sNull(req.getAttribute("original_request_uri")).startsWith("/platform")) {
             return "beetl:/platform/sys/500.html";
         } else {
             return ">>:/error/500.html";

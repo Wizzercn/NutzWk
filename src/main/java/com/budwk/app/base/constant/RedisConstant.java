@@ -15,4 +15,19 @@ public class RedisConstant {
 
     public final static String REDIS_KEY_API_SIGN_DEPLOY_NONCE = PLATFORM_REDIS_PREFIX + "api:sign:deploy:nonce:";
     public final static String REDIS_KEY_API_SIGN_OPEN_NONCE = PLATFORM_REDIS_PREFIX + "api:sign:open:nonce:";
+
+    /**
+     * Token 缓存前缀
+     */
+    public static final String TOKEN = PLATFORM_REDIS_PREFIX + "token:";
+
+    /**
+     * 验证码前缀
+     */
+    public static final String UCENTER_CAPTCHA = PLATFORM_REDIS_PREFIX + "ucenter:captcha:";
+
+    /**
+     * 短信验证码前缀
+     */
+    public static final String UCENTER_SMSCODE = PLATFORM_REDIS_PREFIX + "ucenter:smscode:";
 }

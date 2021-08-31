@@ -1,5 +1,6 @@
 package com.budwk.app.web.controllers.platform.wx;
 
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.wx.models.Wx_config;
 import com.budwk.app.wx.models.Wx_reply_img;
 import com.budwk.app.wx.services.WxConfigService;
@@ -10,9 +11,8 @@ import com.budwk.app.base.utils.PageUtil;
 import com.budwk.app.web.commons.base.Globals;
 import com.budwk.app.web.commons.ext.wx.WxService;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.nutz.boot.starter.ftp.FtpService;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.impl.PropertiesProxy;
@@ -57,7 +57,7 @@ public class WxReplyImgController {
 
     @At({"/", "/index/?"})
     @Ok("beetl:/platform/wx/reply/img/index.html")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public void index(String wxid, HttpServletRequest req) {
         Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
@@ -73,11 +73,11 @@ public class WxReplyImgController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("wx.reply.img.add")
+    @SaCheckPermission("wx.reply.img.add")
     @SLog(tag = "添加回复图片", msg = "图片路径:${args[0].picurl}")
     public Object addDo(@Param("..") Wx_reply_img img, HttpServletRequest req) {
         try {
-            img.setCreatedBy(ShiroUtil.getPlatformUid());
+            img.setCreatedBy(SecurityUtil.getUserId());
             wxReplyImgService.insert(img);
             return Result.success();
         } catch (Exception e) {
@@ -87,7 +87,7 @@ public class WxReplyImgController {
 
     @At("/edit/?")
     @Ok("json")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public Object edit(String id) {
         try {
             return Result.success().addData(wxReplyImgService.fetch(id));
@@ -98,7 +98,7 @@ public class WxReplyImgController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("wx.reply.img.edit")
+    @SaCheckPermission("wx.reply.img.edit")
     @SLog(tag = "修改回复图片", msg = "图片路径:${args[0].picurl}")
     public Object editDo(@Param("..") Wx_reply_img img, HttpServletRequest req) {
         try {
@@ -111,7 +111,7 @@ public class WxReplyImgController {
 
     @At("/delete/?")
     @Ok("json")
-    @RequiresPermissions("wx.reply.img.delete")
+    @SaCheckPermission("wx.reply.img.delete")
     @SLog(tag = "删除回复图片", msg = "图片路径:${args[1].getAttribute('picurl')}}")
     public Object delete(String id, HttpServletRequest req) {
         try {
@@ -125,7 +125,7 @@ public class WxReplyImgController {
 
     @At("/delete")
     @Ok("json")
-    @RequiresPermissions("wx.reply.img.delete")
+    @SaCheckPermission("wx.reply.img.delete")
     @SLog(tag = "删除回复图片", msg = "ID:${args[0]}")
     public Object deletes(@Param("ids") String ids, HttpServletRequest req) {
         try {
@@ -138,7 +138,7 @@ public class WxReplyImgController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public Object data(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (Strings.isNotBlank(wxid)) {
@@ -154,7 +154,7 @@ public class WxReplyImgController {
     @POST
     @At("/uploadImage/?")
     @Ok("json")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     @SuppressWarnings("deprecation")
     //AdaptorErrorContext必须是最后一个参数
     public Object uploadImage(String wxid, @Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {

@@ -2,7 +2,7 @@ package com.budwk.app.web.controllers.open.ueditor;
 
 import com.budwk.app.web.commons.base.Globals;
 import com.budwk.app.base.utils.DateUtil;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.nutz.boot.starter.ftp.FtpService;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -39,7 +39,7 @@ public class BdController {
     @POST
     @At
     @Ok("raw")
-    @RequiresAuthentication
+    @SaCheckLogin
     //AdaptorErrorContext必须是最后一个参数
     public Object uploadimage(@Param("Filedata") TempFile tf, @Param("callback") String callback, HttpServletRequest req, AdaptorErrorContext err) {
         NutMap nutMap = new NutMap();

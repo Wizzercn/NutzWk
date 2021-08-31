@@ -1,5 +1,6 @@
 package com.budwk.app.web.controllers.platform.wx;
 
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.wx.models.Wx_config;
 import com.budwk.app.wx.models.Wx_reply_txt;
 import com.budwk.app.wx.services.WxConfigService;
@@ -7,9 +8,8 @@ import com.budwk.app.wx.services.WxReplyTxtService;
 import com.budwk.app.base.result.Result;
 import com.budwk.app.base.utils.PageUtil;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -40,7 +40,7 @@ public class WxReplyTxtController {
 
     @At({"/", "/index/?"})
     @Ok("beetl:/platform/wx/reply/txt/index.html")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public void index(String wxid, HttpServletRequest req, HttpSession session) {
         Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
@@ -56,11 +56,11 @@ public class WxReplyTxtController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("wx.reply.txt.add")
+    @SaCheckPermission("wx.reply.txt.add")
     @SLog(tag = "添加回复文本", msg = "文本标题:${args[0].title}")
     public Object addDo(@Param("..") Wx_reply_txt txt, HttpServletRequest req) {
         try {
-            txt.setCreatedBy(ShiroUtil.getPlatformUid());
+            txt.setCreatedBy(SecurityUtil.getUserId());
             wxReplyTxtService.insert(txt);
             return Result.success();
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class WxReplyTxtController {
 
     @At("/edit/?")
     @Ok("json")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public Object edit(String id) {
         try {
             return Result.success().addData(wxReplyTxtService.fetch(id));
@@ -81,7 +81,7 @@ public class WxReplyTxtController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("wx.reply.txt.edit")
+    @SaCheckPermission("wx.reply.txt.edit")
     @SLog(tag = "修改回复文本", msg = "文本标题:${args[0].title}")
     public Object editDo(@Param("..") Wx_reply_txt txt, HttpServletRequest req) {
         try {
@@ -94,7 +94,7 @@ public class WxReplyTxtController {
 
     @At("/delete/?")
     @Ok("json")
-    @RequiresPermissions("wx.reply.txt.delete")
+    @SaCheckPermission("wx.reply.txt.delete")
     @SLog(tag = "删除回复文本", msg = "文本标题:${args[1].getAttribute('title')}}")
     public Object delete(String id, HttpServletRequest req) {
         try {
@@ -108,7 +108,7 @@ public class WxReplyTxtController {
 
     @At("/delete")
     @Ok("json")
-    @RequiresPermissions("wx.reply.txt.delete")
+    @SaCheckPermission("wx.reply.txt.delete")
     @SLog(tag = "删除回复文本", msg = "ID:${args[0]}")
     public Object deletes(@Param("ids") String ids, HttpServletRequest req) {
         try {
@@ -121,7 +121,7 @@ public class WxReplyTxtController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public Object data(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (Strings.isNotBlank(wxid)) {

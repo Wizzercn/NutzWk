@@ -1,22 +1,20 @@
 package com.budwk.app.web.controllers.platform.sys;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.stp.StpUtil;
 import com.budwk.app.base.result.Result;
 import com.budwk.app.base.utils.PageUtil;
+import com.budwk.app.base.utils.PwdUtil;
 import com.budwk.app.sys.models.Sys_menu;
 import com.budwk.app.sys.models.Sys_unit;
 import com.budwk.app.sys.models.Sys_user;
 import com.budwk.app.sys.services.SysMenuService;
 import com.budwk.app.sys.services.SysUnitService;
 import com.budwk.app.sys.services.SysUserService;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.base.Globals;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.web.commons.utils.ShiroUtil;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ByteSource;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.integration.json4excel.J4E;
@@ -40,8 +38,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-;
-
 /**
  * Created by wizzer on 2016/6/23.
  */
@@ -58,14 +54,14 @@ public class SysUserController {
 
     @At("")
     @Ok("beetl:/platform/sys/user/index.html")
-    @RequiresPermissions("sys.manager.user")
+    @SaCheckPermission("sys.manager.user")
     public void index() {
 
     }
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.user.add")
+    @SaCheckPermission("sys.manager.user.add")
     @SLog(tag = "新建用户", msg = "用户名:${user.loginname}")
     public Object addDo(@Param("..") Sys_user user, HttpServletRequest req) {
         try {
@@ -89,10 +85,10 @@ public class SysUserController {
             }
             String salt = R.UU32();
             user.setSalt(salt);
-            user.setPassword(new Sha256Hash(user.getPassword(), ByteSource.Util.bytes(salt), 1024).toHex());
+            user.setPassword(PwdUtil.getPassword(user.getPassword(), salt));
             user.setLoginPjax(true);
             user.setLoginCount(0);
-            user.setCreatedBy(ShiroUtil.getPlatformUid());
+            user.setUnitPath(sysUnitService.fetch(user.getId()).getPath());
             sysUserService.insert(user);
             sysUserService.clearCache();
             return Result.success();
@@ -103,7 +99,7 @@ public class SysUserController {
 
     @At("/edit/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.user")
+    @SaCheckPermission("sys.manager.user")
     public Object edit(String id) {
         try {
             return Result.success().addData(sysUserService.fetchLinks(sysUserService.fetch(id), "unit"));
@@ -114,11 +110,10 @@ public class SysUserController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.user.edit")
+    @SaCheckPermission("sys.manager.user.edit")
     @SLog(tag = "修改用户", msg = "用户名:${user.loginname}")
     public Object editDo(@Param("..") Sys_user user, HttpServletRequest req) {
         try {
-            user.setUpdatedBy(ShiroUtil.getPlatformUid());
             sysUserService.updateIgnoreNull(user);
             sysUserService.deleteCache(user.getId());
             return Result.success();
@@ -129,14 +124,14 @@ public class SysUserController {
 
     @At("/resetPwd/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.user.edit")
+    @SaCheckPermission("sys.manager.user.edit")
     @SLog(tag = "重置密码", msg = "用户名:${args[1].getAttribute('loginname')}")
     public Object resetPwd(String id, HttpServletRequest req) {
         try {
             Sys_user user = sysUserService.fetch(id);
             String salt = R.UU32();
             String pwd = R.captchaNumber(6);
-            String hashedPasswordBase64 = new Sha256Hash(pwd, ByteSource.Util.bytes(salt), 1024).toHex();
+            String hashedPasswordBase64 = PwdUtil.getPassword(pwd, salt);
             sysUserService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", id));
             sysUserService.deleteCache(user.getId());
             req.setAttribute("loginname", user.getLoginname());
@@ -148,7 +143,7 @@ public class SysUserController {
 
     @At("/delete/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.user.delete")
+    @SaCheckPermission("sys.manager.user.delete")
     @SLog(tag = "删除用户", msg = "用户名:${args[1].getAttribute('loginname')}")
     public Object delete(String userId, HttpServletRequest req) {
         try {
@@ -167,7 +162,7 @@ public class SysUserController {
 
     @At("/delete")
     @Ok("json")
-    @RequiresPermissions("sys.manager.user.delete")
+    @SaCheckPermission("sys.manager.user.delete")
     @SLog(tag = "批量删除用户", msg = "用户ID:${args[1].getAttribute('ids')}")
     public Object deletes(@Param("ids") String[] userIds, HttpServletRequest req) {
         try {
@@ -190,7 +185,7 @@ public class SysUserController {
 
     @At("/enable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.user.edit")
+    @SaCheckPermission("sys.manager.user.edit")
     @SLog(tag = "启用用户", msg = "用户名:${args[1].getAttribute('loginname')}")
     public Object enable(String userId, HttpServletRequest req) {
         try {
@@ -205,7 +200,7 @@ public class SysUserController {
 
     @At("/disable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.user.edit")
+    @SaCheckPermission("sys.manager.user.edit")
     @SLog(tag = "禁用用户", msg = "用户名:${req.getAttribute('loginname')}")
     public Object disable(String userId, HttpServletRequest req) {
         try {
@@ -224,7 +219,7 @@ public class SysUserController {
 
     @At("/menu/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.user")
+    @SaCheckPermission("sys.manager.user")
     public Object menu(String id, @Param("pid") String pid, HttpServletRequest req) {
         try {
             List<Sys_menu> list = sysUserService.getRoleMenus(id, pid);
@@ -246,25 +241,25 @@ public class SysUserController {
 
     @At
     @Ok("json:{locked:'password|salt',ignoreNull:false}")
-    @RequiresPermissions("sys.manager.user")
+    @SaCheckPermission("sys.manager.user")
     public Object data(@Param("searchUnit") String searchUnit, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();
-            if (ShiroUtil.hasRole("sysadmin")) {
+            if (StpUtil.hasRole("sysadmin")) {
                 if (Strings.isNotBlank(searchUnit)) {
                     cnd.and("unitid", "=", searchUnit);
                 }
             } else {
-                Sys_user user = (Sys_user) ShiroUtil.getPrincipal();
+                Sys_user user = sysUserService.getUserById(SecurityUtil.getUserId());
                 if (Strings.isNotBlank(searchUnit)) {
                     Sys_unit unit = sysUnitService.fetch(searchUnit);
                     if (unit == null || !unit.getPath().startsWith(user.getUnit().getPath())) {
                         //防止有人越级访问
                         return Result.error("非法操作");
                     } else
-                        cnd.and("unitid", "=", searchUnit);
+                        cnd.and("unitId", "=", searchUnit);
                 } else {
-                    cnd.and("unitid", "=", user.getUnitid());
+                    cnd.and("unitId", "=", user.getUnitId());
                 }
             }
             if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
@@ -281,7 +276,7 @@ public class SysUserController {
 
     @At
     @Ok("void")
-    @RequiresPermissions("sys.manager.user")
+    @SaCheckPermission("sys.manager.user")
     public void export(@Param("searchUnit") String searchUnit, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy, HttpServletResponse response) {
         try {
             J4EConf j4eConf = J4EConf.from(Sys_user.class);
@@ -292,21 +287,21 @@ public class SysUserController {
                 }
             }
             Cnd cnd = Cnd.NEW();
-            if (ShiroUtil.hasRole("sysadmin")) {
+            if (StpUtil.hasRole("sysadmin")) {
                 if (Strings.isNotBlank(searchUnit)) {
                     cnd.and("unitid", "=", searchUnit);
                 }
             } else {
-                Sys_user user = (Sys_user) ShiroUtil.getPrincipal();
+                Sys_user user = sysUserService.getUserById(SecurityUtil.getUserId());
                 if (Strings.isNotBlank(searchUnit)) {
                     Sys_unit unit = sysUnitService.fetch(searchUnit);
                     if (unit == null || !unit.getPath().startsWith(user.getUnit().getPath())) {
                         //防止有人越级访问
                         throw Lang.makeThrow("非法操作");
                     } else
-                        cnd.and("unitid", "=", searchUnit);
+                        cnd.and("unitId", "=", searchUnit);
                 } else {
-                    cnd.and("unitid", "=", user.getUnitid());
+                    cnd.and("unitId", "=", user.getUnitId());
                 }
             }
             if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
@@ -326,44 +321,43 @@ public class SysUserController {
 
     @At
     @Ok("beetl:/platform/sys/user/pass.html")
-    @RequiresAuthentication
+    @SaCheckLogin
     public void pass() {
 
     }
 
     @At
     @Ok("beetl:/platform/sys/user/info.html")
-    @RequiresAuthentication
+    @SaCheckLogin
     public void info(HttpServletRequest req) {
-        Sys_user user = sysUserService.fetch(ShiroUtil.getPlatformUid());
+        Sys_user user = sysUserService.fetch(SecurityUtil.getUserId());
         req.setAttribute("user", user);
     }
 
     @At
     @Ok("beetl:/platform/sys/user/custom.html")
-    @RequiresAuthentication
+    @SaCheckLogin
     public void custom() {
 
     }
 
     @At
     @Ok("beetl:/platform/sys/user/mode.html")
-    @RequiresAuthentication
+    @SaCheckLogin
     public void mode() {
 
     }
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object modeDo(@Param("mode") String mode, HttpServletRequest req) {
         try {
-            if ("superadmin".equals(ShiroUtil.getPlatformLoginname()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
+            if ("superadmin".equals(SecurityUtil.getUserUsername()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
                 return Result.error("演示环境，不予操作");
             }
-            sysUserService.update(Chain.make("loginPjax", "true".equals(mode)), Cnd.where("id", "=", ShiroUtil.getPlatformUid()));
-            Subject subject = SecurityUtils.getSubject();
-            Sys_user user = (Sys_user) subject.getPrincipal();
+            sysUserService.update(Chain.make("loginPjax", "true".equals(mode)), Cnd.where("id", "=", SecurityUtil.getUserId()));
+            Sys_user user = sysUserService.getUserById(SecurityUtil.getUserId());
             if ("true".equals(mode)) {
                 user.setLoginPjax(true);
             } else {
@@ -379,15 +373,14 @@ public class SysUserController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object customDo(@Param("ids") String ids, HttpServletRequest req) {
         try {
-            if ("superadmin".equals(ShiroUtil.getPlatformLoginname()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
+            if ("superadmin".equals(SecurityUtil.getUserLoginname()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
                 return Result.error("演示环境，不予操作");
             }
-            sysUserService.update(Chain.make("customMenu", ids), Cnd.where("id", "=", ShiroUtil.getPlatformUid()));
-            Subject subject = SecurityUtils.getSubject();
-            Sys_user user = (Sys_user) subject.getPrincipal();
+            sysUserService.update(Chain.make("customMenu", ids), Cnd.where("id", "=", SecurityUtil.getUserId()));
+            Sys_user user = sysUserService.getUserById(SecurityUtil.getUserId());
             if (Strings.isNotBlank(ids)) {
                 user.setCustomMenu(ids);
                 user.setCustomMenus(sysMenuService.query(Cnd.where("id", "in", ids.split(","))));
@@ -404,17 +397,16 @@ public class SysUserController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object doChangePassword(@Param("oldPassword") String oldPassword, @Param("newPassword") String newPassword, HttpServletRequest req) {
-        if ("superadmin".equals(ShiroUtil.getPlatformLoginname()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
+        if ("superadmin".equals(SecurityUtil.getUserLoginname()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
             return Result.error("演示环境，不予操作");
         }
-        Subject subject = SecurityUtils.getSubject();
-        Sys_user user = (Sys_user) subject.getPrincipal();
-        String old = new Sha256Hash(oldPassword, user.getSalt(), 1024).toHex();
+        Sys_user user = sysUserService.getUserById(SecurityUtil.getUserId());
+        String old = PwdUtil.getPassword(oldPassword, user.getSalt());
         if (old.equals(user.getPassword())) {
             String salt = R.UU32();
-            String hashedPasswordBase64 = new Sha256Hash(newPassword, ByteSource.Util.bytes(salt), 1024).toHex();
+            String hashedPasswordBase64 = PwdUtil.getPassword(newPassword, salt);
             user.setSalt(salt);
             user.setPassword(hashedPasswordBase64);
             sysUserService.update(Chain.make("salt", salt).add("password", hashedPasswordBase64), Cnd.where("id", "=", user.getId()));
@@ -427,13 +419,13 @@ public class SysUserController {
 
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object doChangeInfo(@Param("username") String username, @Param("mobile") String mobile, @Param("email") String email, HttpServletRequest req) {
-        if ("superadmin".equals(ShiroUtil.getPlatformLoginname()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
+        if ("superadmin".equals(SecurityUtil.getUserLoginname()) && Globals.MyConfig.getBoolean("AppDemoEnv")) {
             return Result.error("演示环境，不予操作");
         }
-        sysUserService.update(Chain.make("username", username).add("mobile", mobile).add("email", email), Cnd.where("id", "=", ShiroUtil.getPlatformUid()));
-        sysUserService.deleteCache(ShiroUtil.getPlatformUid());
+        sysUserService.update(Chain.make("username", username).add("mobile", mobile).add("email", email), Cnd.where("id", "=", SecurityUtil.getUserId()));
+        sysUserService.deleteCache(SecurityUtil.getUserId());
         return Result.success();
     }
 }

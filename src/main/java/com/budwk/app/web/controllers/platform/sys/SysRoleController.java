@@ -1,5 +1,6 @@
 package com.budwk.app.web.controllers.platform.sys;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.budwk.app.base.result.Result;
 import com.budwk.app.base.utils.PageUtil;
 import com.budwk.app.cms.services.CmsChannelService;
@@ -12,11 +13,11 @@ import com.budwk.app.sys.services.SysMenuService;
 import com.budwk.app.sys.services.SysRoleService;
 import com.budwk.app.sys.services.SysUnitService;
 import com.budwk.app.sys.services.SysUserService;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
@@ -34,8 +35,6 @@ import org.nutz.mvc.annotation.Param;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-
-;
 
 /**
  * Created by wizzer on 2016/6/28.
@@ -59,14 +58,14 @@ public class SysRoleController {
 
     @At("")
     @Ok("beetl:/platform/sys/role/index.html")
-    @RequiresPermissions("sys.manager.role")
+    @SaCheckPermission("sys.manager.role")
     public void index() {
 
     }
 
     @At("/tree")
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object tree(@Param("pid") String pid, HttpServletRequest req) {
         try {
             List<Sys_unit> list = new ArrayList<>();
@@ -76,7 +75,7 @@ public class SysRoleController {
                 treeList.add(root);
 
             }
-            if (ShiroUtil.hasRole("sysadmin")) {
+            if (StpUtil.hasRole("sysadmin")) {
                 if (Strings.isBlank(pid)) {
                     NutMap sys = NutMap.NEW().addv("value", "system").addv("label", "系统角色");
                     treeList.add(sys);
@@ -90,9 +89,9 @@ public class SysRoleController {
                 cnd.asc("location").asc("path");
                 list = sysUnitService.query(cnd);
             } else {
-                Sys_user user = (Sys_user) ShiroUtil.getPrincipal();
+                Sys_user user = sysUserService.getUserById(SecurityUtil.getUserId());
                 if (user != null && Strings.isBlank(pid)) {
-                    list = sysUnitService.query(Cnd.where("id", "=", user.getUnitid()).asc("path"));
+                    list = sysUnitService.query(Cnd.where("id", "=", user.getUnitId()).asc("path"));
                 } else {
                     Cnd cnd = Cnd.NEW();
                     if (Strings.isBlank(pid)) {
@@ -119,18 +118,18 @@ public class SysRoleController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("sys.manager.role")
+    @SaCheckPermission("sys.manager.role")
     public Object data(@Param("searchUnit") String searchUnit, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();
-            if (ShiroUtil.hasRole("sysadmin")) {
+            if (StpUtil.hasRole("sysadmin")) {
                 if ("system".equals(searchUnit)) {
                     cnd.and("unitid", "=", "");
                 } else if (Strings.isNotBlank(searchUnit)) {
                     cnd.and("unitid", "=", searchUnit);
                 }
             } else {
-                Sys_user user = (Sys_user) ShiroUtil.getPrincipal();
+                Sys_user user = sysUserService.getUserById(SecurityUtil.getUserId());
                 if (Strings.isNotBlank(searchUnit)) {
                     Sys_unit unit = sysUnitService.fetch(searchUnit);
                     if (unit == null || !unit.getPath().startsWith(user.getUnit().getPath())) {
@@ -139,7 +138,7 @@ public class SysRoleController {
                     } else
                         cnd.and("unitid", "=", searchUnit);
                 } else {
-                    cnd.and("unitid", "=", user.getUnitid());
+                    cnd.and("unitid", "=", user.getUnitId());
                 }
             }
             if (Strings.isNotBlank(searchName) && Strings.isNotBlank(searchKeyword)) {
@@ -156,7 +155,7 @@ public class SysRoleController {
 
     @At("/enable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.role.edit")
+    @SaCheckPermission("sys.manager.role.edit")
     @SLog(tag = "启用角色", msg = "角色名称:${args[1].getAttribute('name')}")
     public Object enable(String roleId, HttpServletRequest req) {
         try {
@@ -173,7 +172,7 @@ public class SysRoleController {
 
     @At("/disable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.role.edit")
+    @SaCheckPermission("sys.manager.role.edit")
     @SLog(tag = "禁用角色", msg = "角色名称:${args[1].getAttribute('name')}")
     public Object disable(String roleId, HttpServletRequest req) {
         try {
@@ -191,14 +190,14 @@ public class SysRoleController {
     //加载当前用户所拥有的所有权限菜单
     @At("/menuAll")
     @Ok("json")
-    @RequiresPermissions("sys.manager.role")
+    @SaCheckPermission("sys.manager.role")
     public Object menuAll(HttpServletRequest req) {
         try {
             List<Sys_menu> list;
-            if (ShiroUtil.hasRole("sysadmin")) {
+            if (StpUtil.hasRole("sysadmin")) {
                 list = sysMenuService.query(Cnd.orderBy().asc("location").asc("path"));
             } else {
-                list = sysUserService.getMenusAndButtons(ShiroUtil.getPlatformUid());
+                list = sysUserService.getMenusAndButtons(SecurityUtil.getUserId());
             }
             NutMap menuMap = NutMap.NEW();
             for (Sys_menu unit : list) {
@@ -218,15 +217,15 @@ public class SysRoleController {
     //加载可分配的权限菜单
     @At("/menuRole/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.role")
+    @SaCheckPermission("sys.manager.role")
     public Object menuRole(String roleId, HttpServletRequest req) {
         try {
             List<Sys_menu> hasList = sysRoleService.getMenusAndButtons(roleId);
             List<Sys_menu> list;
-            if (ShiroUtil.hasRole("sysadmin")) {
+            if (StpUtil.hasRole("sysadmin")) {
                 list = sysMenuService.query(Cnd.orderBy().asc("location").asc("path"));
             } else {
-                list = sysUserService.getMenusAndButtons(ShiroUtil.getPlatformUid());
+                list = sysUserService.getMenusAndButtons(SecurityUtil.getUserId());
             }
             NutMap menuMap = NutMap.NEW();
             for (Sys_menu unit : list) {
@@ -263,7 +262,7 @@ public class SysRoleController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.role.add")
+    @SaCheckPermission("sys.manager.role.add")
     @SLog(tag = "添加角色", msg = "角色名称:${args[1].name}")
     public Object addDo(@Param("menuIds") String menuIds, @Param("..") Sys_role role, HttpServletRequest req) {
         try {
@@ -274,7 +273,7 @@ public class SysRoleController {
             String[] ids = StringUtils.split(menuIds, ",");
             if ("root".equals(role.getUnitid()) || "system".equals(role.getUnitid()))
                 role.setUnitid("");
-            role.setCreatedBy(ShiroUtil.getPlatformUid());
+            role.setCreatedBy(SecurityUtil.getUserId());
             Sys_role r = sysRoleService.insert(role);
             if (r != null) {
                 sysRoleService.saveMenu(ids, r.getId());
@@ -288,7 +287,7 @@ public class SysRoleController {
     //查看角色拥有的权限
     @At("/menu/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.role")
+    @SaCheckPermission("sys.manager.role")
     public Object menu(String id, @Param("pid") String pid) {
         try {
             List<Sys_menu> list = sysRoleService.getRoleMenus(id, pid);
@@ -310,7 +309,7 @@ public class SysRoleController {
 
     @At("/delete/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.role.delete")
+    @SaCheckPermission("sys.manager.role.delete")
     @SLog(tag = "删除角色", msg = "角色名称:${args[1].getAttribute('name')}")
     public Object delete(String roleId, HttpServletRequest req) {
         try {
@@ -330,7 +329,7 @@ public class SysRoleController {
 
     @At("/edit/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.role")
+    @SaCheckPermission("sys.manager.role")
     public Object edit(String roleId, HttpServletRequest req) {
         try {
             return Result.success().addData(sysRoleService.fetch(roleId));
@@ -342,7 +341,7 @@ public class SysRoleController {
     //修改角色
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.role.edit")
+    @SaCheckPermission("sys.manager.role.edit")
     @SLog(tag = "修改角色", msg = "角色名称:${args[0].name}")
     public Object editDo(@Param("..") Sys_role role, HttpServletRequest req) {
         try {
@@ -355,7 +354,7 @@ public class SysRoleController {
             }
             if ("root".equals(role.getUnitid()) || "system".equals(role.getUnitid()))
                 role.setUnitid("");
-            role.setUpdatedBy(ShiroUtil.getPlatformUid());
+            role.setUpdatedBy(SecurityUtil.getUserId());
             sysRoleService.updateIgnoreNull(role);
             sysRoleService.clearCache();
             sysUserService.clearCache();
@@ -367,7 +366,7 @@ public class SysRoleController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.role.menu")
+    @SaCheckPermission("sys.manager.role.menu")
     @SLog(tag = "分配角色菜单", msg = "角色名称:${args[2].getAttribute('name')}")
     public Object menuDo(@Param("menuIds") String menuIds, @Param("roleId") String roleId, HttpServletRequest req) {
         try {
@@ -383,7 +382,7 @@ public class SysRoleController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("sys.manager.role")
+    @SaCheckPermission("sys.manager.role")
     public Object user(@Param("roleId") String roleId, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword,
                        @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
@@ -404,11 +403,11 @@ public class SysRoleController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("sys.manager.role")
+    @SaCheckPermission("sys.manager.role")
     public Object userSearch(@Param("query") String keyword, @Param("roleId") String roleId) {
         try {
-            Sys_user user = (Sys_user) ShiroUtil.getPrincipal();
-            return Result.success().addData(sysRoleService.userSearch(roleId, keyword, ShiroUtil.hasRole("sysadmin"), user.getUnit()));
+            Sys_user user = sysUserService.getUserById(SecurityUtil.getUserId());
+            return Result.success().addData(sysRoleService.userSearch(roleId, keyword, StpUtil.hasRole("sysadmin"), user.getUnit()));
         } catch (Exception e) {
             return Result.error();
         }
@@ -416,7 +415,7 @@ public class SysRoleController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.role.user")
+    @SaCheckPermission("sys.manager.role.user")
     @SLog(tag = "添加用户到角色", msg = "角色名称:${args[2].getAttribute('name')},用户ID:${args[0]}")
     public Object usersAdd(@Param("users") String users, @Param("roleId") String roleId, HttpServletRequest req) {
         try {
@@ -437,7 +436,7 @@ public class SysRoleController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.role.user")
+    @SaCheckPermission("sys.manager.role.user")
     @SLog(tag = "从角色中移除用户", msg = "角色名称:${args[2].getAttribute('name')},用户ID:${args[0]}")
     public Object usersDel(@Param("users") String users, @Param("roleId") String roleId, HttpServletRequest req) {
         try {

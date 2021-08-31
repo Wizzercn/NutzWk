@@ -1,0 +1,157 @@
+nutz:
+  application:
+    name: budwk-v5-mini-plus
+  mvc:
+    ignore: ^(.+[.])(jsp|png|gif|jpg|js|css|jspx|jpeg|html|mp3|mp4|ico|svg)$
+    exclusions: /favicon/*,/assets/*,/druid/*,/upload/*
+server:
+  port: 8080
+  host: 0.0.0.0
+
+jetty:
+  contextPath: /
+  threadpool:
+    idleTimeout: 60000
+    minThreads: 10
+    maxThreads: 200
+  page:
+    403: /error/403.html
+    404: /error/404.html
+    500: /error/500.html
+    #结合ftp使用,或用nginx代理ftp路径
+  staticPath: /Users/wizzer/temp/files
+  #开发模式静态资源
+  #staticPathLocal: /Users/wizzer/work/java/nutzwk-v5.x-mini-plus/src/main/resources/static
+
+security:
+  tokenName: token
+  timeout: 3600
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  # 允许同一账号并发登录，则系统参数 SessionOnlyOne 有效，亦可踢人下线并多了弹框提示功能
+  isConcurrent: true
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  isShare: false
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  timeout: 2000
+  max_redir: 10
+  database: 0
+  maxTotal: 150
+  pool:
+    maxTotal: 150
+    maxIdle: 50
+    minIdle: 10
+  #password: test123
+  mode:
+     normal
+     #cluster
+  #nodes=192.168.6.31:6377,192.168.6.31:6378,192.168.6.28:6377,192.168.6.28:6378,192.168.6.34:6377,192.168.6.34:6378
+
+jdbc:
+  url: jdbc:mysql://127.0.0.1:3306/budwk_v5_mini?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+  # jdbc:oracle:thin:@//localhost:1521/orcl
+  username: root
+  password: root
+  validationQuery: select 1
+  maxActive: 150
+  testWhileIdle: true
+  connectionProperties: druid.stat.slowSqlMillis=2000
+  defaultAutoCommit: true
+
+
+xsssql:
+  ignore:
+    urls: /platform/cms/content/article/addDo,/platform/sys/app/conf/addDo,/platform/sys/app/conf/editDo
+
+beetl:
+  RESOURCE:
+    #本地路径,开发时设置本地路径,便于调试
+    rootLocal: /Users/wizzer/work/java/nutzwk-v5.x-mini-plus/src/main/resources/views/
+    root: views/
+  DELIMITER_STATEMENT_START: '<!--#'
+  DELIMITER_STATEMENT_END: '#-->'
+  FT:
+    #用法: ${"wizzer",escape}
+    escape: com.budwk.app.web.commons.ext.beetl.HtmlEscapeFormat
+    #用法: ${10241024,filesize}
+    filesize: com.budwk.app.web.commons.ext.beetl.FileSizeFormat
+    #用法: ${"",html2txt="100"} 截取100字符
+    html2txt: com.budwk.app.web.commons.ext.beetl.Html2TxtFormat
+    #用法: ${"",strlen="100"} 截取100字符
+    strlen: com.budwk.app.web.commons.ext.beetl.StrlenFormat
+
+#==============================================================
+#Configure Main Scheduler Properties
+#==============================================================
+#quartz延迟启动秒数
+quartz:
+  startupDelay: 10
+  scheduler:
+    instanceName: defaultScheduler
+    instanceId: AUTO
+    #==============================================================
+    #Skip Check Update
+    #update:true
+    #not update:false
+    #==============================================================
+    skipUpdateCheck: true
+    #==============================================================
+    #Configure JobStore     isClustered=启用集群模式
+    #==============================================================
+  jobStore:
+    class: org.quartz.impl.jdbcjobstore.JobStoreTX
+    driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+    #driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+    #driverDelegateClass: org.quartz.impl.jdbcjobstore.oracle.OracleDelegate
+    #Other delegates can see: http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-09.html
+    dataSource: myDS
+    tablePrefix: SYS_QRTZ_
+    isClustered: true
+    clusterCheckinInterval: 20000
+    maxMisfiresToHandleAtATime: 120
+    misfireThreshold: 120000
+    txIsolationLevelSerializable: false
+
+    #==============================================================
+    #Configure ThreadPool
+    #==============================================================
+  threadPool:
+    class: org.quartz.simpl.SimpleThreadPool
+    threadCount: 2
+    threadPriority: 5
+    threadsInheritContextClassLoaderOfInitializingThread: true
+
+    #============================================================================
+    # Configure Plugins
+    #============================================================================
+  plugin:
+    triggHistory:
+      class: org.quartz.plugins.history.LoggingJobHistoryPlugin
+    shutdownhook:
+      class: org.quartz.plugins.management.ShutdownHookPlugin
+      cleanShutdown: true
+    #============================================================================
+    # NutDao dataSource
+    #============================================================================
+  dataSource:
+    myDS:
+      connectionProvider:
+        class: com.budwk.app.task.conn.NutConnectionProvider
+
+
+sms:
+  enabled: false
+  #腾讯云短信配置
+  tencent:
+    secret-id: 1
+    secret-key: 2
+    appid: 1 #应用ID
+    sign: '萌发开源' #短信签名
+    tpl:
+      #验证码模板ID
+      code: 1
+      #短信通知模板ID
+      msg: 2
+

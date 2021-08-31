@@ -1,5 +1,6 @@
 package com.budwk.app.web.controllers.platform.wx;
 
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.wx.models.Wx_config;
 import com.budwk.app.wx.models.Wx_reply_news;
 import com.budwk.app.wx.services.WxConfigService;
@@ -12,9 +13,8 @@ import com.budwk.app.cms.services.CmsChannelService;
 import com.budwk.app.web.commons.base.Globals;
 import com.budwk.app.web.commons.ext.wx.WxService;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.nutz.boot.starter.ftp.FtpService;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.impl.PropertiesProxy;
@@ -64,7 +64,7 @@ public class WxReplyNewsController {
 
     @At({"/", "/index/?"})
     @Ok("beetl:/platform/wx/reply/news/index.html")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public void index(String wxid, HttpServletRequest req) {
         Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
@@ -80,13 +80,13 @@ public class WxReplyNewsController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("wx.reply.news.add")
+    @SaCheckPermission("wx.reply.news.add")
     @SLog(tag = "添加回复图文", msg = "图文标题:${args[0].title}")
     @AdaptBy(type = WhaleAdaptor.class)
     //uploadifive上传文件后contentTypy改变,需要用WhaleAdaptor接收参数
     public Object addDo(@Param("..") Wx_reply_news news, HttpServletRequest req) {
         try {
-            news.setCreatedBy(ShiroUtil.getPlatformUid());
+            news.setCreatedBy(SecurityUtil.getUserId());
             wxReplyNewsService.insert(news);
             return Result.success();
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class WxReplyNewsController {
 
     @At("/edit/?")
     @Ok("json")
-    @RequiresPermissions("wx.reply.news.edit")
+    @SaCheckPermission("wx.reply.news.edit")
     public Object edit(String id) {
         try {
             return Result.success().addData(wxReplyNewsService.fetch(id));
@@ -107,7 +107,7 @@ public class WxReplyNewsController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("wx.reply.news.edit")
+    @SaCheckPermission("wx.reply.news.edit")
     @SLog(tag = "修改回复图文", msg = "图文标题:${args[0].title}")
     @AdaptBy(type = WhaleAdaptor.class)
     //uploadifive上传文件后contentTypy改变,需要用WhaleAdaptor接收参数
@@ -122,7 +122,7 @@ public class WxReplyNewsController {
 
     @At("/delete/?")
     @Ok("json")
-    @RequiresPermissions("wx.reply.news.delete")
+    @SaCheckPermission("wx.reply.news.delete")
     @SLog(tag = "删除回复图文", msg = "图文标题:${args[1].getAttribute('title')}}")
     public Object delete(String id, HttpServletRequest req) {
         try {
@@ -136,7 +136,7 @@ public class WxReplyNewsController {
 
     @At("/delete")
     @Ok("json")
-    @RequiresPermissions("wx.reply.news.delete")
+    @SaCheckPermission("wx.reply.news.delete")
     @SLog(tag = "删除回复图文", msg = "ID:${args[0]}")
     public Object deletes(@Param("ids") String id, HttpServletRequest req) {
         try {
@@ -149,7 +149,7 @@ public class WxReplyNewsController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public Object data(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (Strings.isNotBlank(wxid)) {
@@ -168,7 +168,7 @@ public class WxReplyNewsController {
     @POST
     @At("/uploadImage/?")
     @Ok("json")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     @SuppressWarnings("deprecation")
     //AdaptorErrorContext必须是最后一个参数
     public Object uploadImage(String wxid, @Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
@@ -214,7 +214,7 @@ public class WxReplyNewsController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public Object channel_data(@Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(searchName) && !Strings.isBlank(searchKeyword)) {
@@ -228,7 +228,7 @@ public class WxReplyNewsController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public Object article_data(@Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(searchName) && !Strings.isBlank(searchKeyword)) {

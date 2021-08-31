@@ -1,11 +1,11 @@
 package com.budwk.app.web.controllers.platform.sys;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.budwk.app.base.result.Result;
 import com.budwk.app.base.utils.PageUtil;
 import com.budwk.app.sys.services.SysApiService;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.base.result.Result;;
-import com.budwk.app.web.commons.utils.ShiroUtil;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -17,6 +17,8 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
+
+;
 
 /**
  * Created by wizzer on 2016/6/24.
@@ -30,17 +32,17 @@ public class SysApiController {
 
     @At("")
     @Ok("beetl:/platform/sys/api/index.html")
-    @RequiresPermissions("sys.manager.api")
+    @SaCheckPermission("sys.manager.api")
     public void index() {
     }
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.api.add")
+    @SaCheckPermission("sys.manager.api.add")
     @SLog(tag = "新建密钥", msg = "应用名称:${name}")
     public Object addDo(@Param("name") String name, HttpServletRequest req) {
         try {
-            sysApiService.createAppkey(name, ShiroUtil.getPlatformUid());
+            sysApiService.createAppkey(name, SecurityUtil.getUserId());
             return Result.success();
         } catch (Exception e) {
             return Result.error();
@@ -49,7 +51,7 @@ public class SysApiController {
 
     @At("/delete/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.api.delete")
+    @SaCheckPermission("sys.manager.api.delete")
     @SLog(tag = "删除密钥", msg = "Appid:${appid}")
     public Object delete(String appid, HttpServletRequest req) {
         try {
@@ -62,7 +64,7 @@ public class SysApiController {
 
     @At("/enable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.api.edit")
+    @SaCheckPermission("sys.manager.api.edit")
     @SLog(tag = "启用密钥", msg = "Appid:${appid}")
     public Object enable(String appid, HttpServletRequest req) {
         try {
@@ -75,7 +77,7 @@ public class SysApiController {
 
     @At("/disable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.api.edit")
+    @SaCheckPermission("sys.manager.api.edit")
     @SLog(tag = "禁用密钥", msg = "Appid:${appid}")
     public Object disable(String appid, HttpServletRequest req) {
         try {
@@ -88,7 +90,7 @@ public class SysApiController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("sys.manager.api")
+    @SaCheckPermission("sys.manager.api")
     public Object data(@Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();

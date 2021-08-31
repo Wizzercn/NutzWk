@@ -2,7 +2,7 @@ package com.budwk.app.web.controllers.open.ueditor;
 
 import com.budwk.app.wx.services.WxConfigService;
 import com.budwk.app.web.commons.ext.wx.WxService;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
@@ -35,7 +35,7 @@ public class WxController {
     @POST
     @At
     @Ok("raw")
-    @RequiresAuthentication
+    @SaCheckLogin
     @SuppressWarnings("deprecation")
     public Object uploadimage(@Param("Filedata") TempFile tf, @Param("callback") String callback, HttpServletRequest req, AdaptorErrorContext err) {
         String wxid = Strings.sBlank(req.getSession().getAttribute("wxid"));

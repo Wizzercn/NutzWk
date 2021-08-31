@@ -1,5 +1,6 @@
 package com.budwk.app.web.controllers.platform.wx;
 
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.wx.models.Wx_config;
 import com.budwk.app.wx.models.Wx_tpl_id;
 import com.budwk.app.wx.services.WxConfigService;
@@ -7,8 +8,7 @@ import com.budwk.app.wx.services.WxTplIdService;
 import com.budwk.app.base.result.Result;
 import com.budwk.app.web.commons.ext.wx.WxService;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.web.commons.utils.ShiroUtil;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -22,6 +22,7 @@ import org.nutz.weixin.spi.WxApi2;
 import org.nutz.weixin.spi.WxResp;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 
 ;
@@ -39,7 +40,7 @@ public class WxTplIdController {
 
     @At({"", "/index/?"})
     @Ok("beetl:/platform/wx/tpl/id/index.html")
-    @RequiresPermissions("wx.tpl.id")
+    @SaCheckPermission("wx.tpl.id")
     public void index(String wxid, HttpServletRequest req) {
         Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
@@ -55,7 +56,7 @@ public class WxTplIdController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("wx.tpl.id")
+    @SaCheckPermission("wx.tpl.id")
     public Object data(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
@@ -68,13 +69,13 @@ public class WxTplIdController {
     @At
     @Ok("json")
     @SLog(tag = "添加模板", msg = "")
-    @RequiresPermissions("wx.tpl.id.add")
+    @SaCheckPermission("wx.tpl.id.add")
     public Object addDo(@Param("..") Wx_tpl_id wxTplId, HttpServletRequest req) {
         try {
             WxApi2 wxApi2 = wxService.getWxApi2(wxTplId.getWxid());
             WxResp wxResp = wxApi2.template_api_add_template(wxTplId.getId());
             if (wxResp.errcode() == 0) {
-                wxTplId.setCreatedBy(ShiroUtil.getPlatformUid());
+                wxTplId.setCreatedBy(SecurityUtil.getUserId());
                 wxTplId.setTemplate_id(wxResp.template_id());
                 wxTplIdService.insert(wxTplId);
                 return Result.success();
@@ -89,7 +90,7 @@ public class WxTplIdController {
     @At({"/delete", "/delete/?"})
     @Ok("json")
     @SLog(tag = "删除模板", msg = "ID:${args[3].getAttribute('id')}")
-    @RequiresPermissions("wx.tpl.id.delete")
+    @SaCheckPermission("wx.tpl.id.delete")
     public Object delete(String id, @Param("wxid") String wxid, @Param("ids") String[] ids, HttpServletRequest req) {
         try {
             WxApi2 wxApi2 = wxService.getWxApi2(wxid);
@@ -103,7 +104,7 @@ public class WxTplIdController {
                     }
                 }
                 wxTplIdService.delete(ids);
-                req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
+                req.setAttribute("id", Arrays.toString(ids));
             } else {
                 Wx_tpl_id wxTplId = wxTplIdService.fetch(Cnd.where("id", "=", id).and("wxid", "=", wxid));
                 WxResp wxResp = wxApi2.template_api_del_template(wxTplId.getTemplate_id());

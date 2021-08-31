@@ -150,9 +150,14 @@ public class Sys_user extends BaseModel implements Serializable {
     @Column
     @J4EIgnore
     @ColDefine(type = ColType.VARCHAR, width = 32)
-    private String unitid;
+    private String unitId;
 
-    @One(field = "unitid")
+    @Column
+    @J4EIgnore
+    @ColDefine(type = ColType.VARCHAR, width = 100)
+    private String unitPath;
+
+    @One(field = "unitId")
     @J4EIgnore
     private Sys_unit unit;
 

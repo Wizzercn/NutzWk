@@ -38,6 +38,18 @@ public class SysRoleServiceImpl extends BaseServiceImpl<Sys_role> implements Sys
     @Inject
     private SysUserService sysUserService;
 
+    @Override
+    public List<String> getPermissionList(Sys_role role) {
+        this.fetchLinks(role, "menus", Cnd.where("disabled", "=", false));
+        List<String> list = new ArrayList<String>();
+        for (Sys_menu menu : role.getMenus()) {
+            if (!Strings.isEmpty(menu.getPermission())) {
+                list.add(menu.getPermission());
+            }
+        }
+        return list;
+    }
+
     @CacheResult
     public List<Sys_menu> getMenusAndButtons(String roleId) {
         Sql sql = Sqls.create("select distinct a.* from sys_menu a,sys_role_menu b where a.id=b.menuId and" +

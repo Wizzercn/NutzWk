@@ -5,7 +5,7 @@ import com.budwk.app.base.utils.DateUtil;
 import com.budwk.app.base.utils.PageUtil;
 import com.budwk.app.base.result.Result;;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
@@ -28,14 +28,14 @@ public class SysLogController {
 
     @At("")
     @Ok("beetl:/platform/sys/log/index.html")
-    @RequiresPermissions("sys.manager.log")
+    @SaCheckPermission("sys.manager.log")
     public void index(HttpServletRequest req) {
         req.setAttribute("today", DateUtil.getDate());
     }
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("sys.manager.log")
+    @SaCheckPermission("sys.manager.log")
     public Object data(@Param("searchDate") String searchDate, @Param("searchType") String searchType, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             String[] date = StringUtils.split(searchDate, ",");

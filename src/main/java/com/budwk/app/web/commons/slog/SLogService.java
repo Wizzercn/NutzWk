@@ -2,7 +2,7 @@ package com.budwk.app.web.commons.slog;
 
 import com.budwk.app.sys.models.Sys_log;
 import com.budwk.app.sys.services.SysLogService;
-import com.budwk.app.web.commons.utils.ShiroUtil;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import org.nutz.Nutz;
 import org.nutz.el.El;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -221,10 +221,10 @@ public class SLogService implements Runnable {
         if (Mvcs.getReq() != null) {
             sysLog.setIp(Lang.getIP(Mvcs.getReq()));
         }
-        sysLog.setCreatedBy(ShiroUtil.getPlatformUid());
+        sysLog.setCreatedBy(SecurityUtil.getUserId());
         sysLog.setDelFlag(false);
-        sysLog.setUsername(ShiroUtil.getPlatformUsername());
-        sysLog.setLoginname(ShiroUtil.getPlatformLoginname());
+        sysLog.setUsername(SecurityUtil.getUserUsername());
+        sysLog.setLoginname(SecurityUtil.getUserLoginname());
         return sysLog;
     }
 }

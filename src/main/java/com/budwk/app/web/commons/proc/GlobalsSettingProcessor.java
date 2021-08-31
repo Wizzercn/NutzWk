@@ -1,8 +1,8 @@
 package com.budwk.app.web.commons.proc;
 
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import com.budwk.app.base.utils.DateUtil;
 import com.budwk.app.base.utils.StringUtil;
+import com.budwk.app.web.commons.auth.service.AuthService;
 import com.budwk.app.web.commons.base.Globals;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.ActionContext;
@@ -15,19 +15,19 @@ import org.nutz.mvc.impl.processor.AbstractProcessor;
  * Created by wizzer on 2016/6/22.
  */
 public class GlobalsSettingProcessor extends AbstractProcessor {
-    private static ShiroUtil shiroUtil;
     private static DateUtil dateUtil;
     private static StringUtil stringUtil;
+    private static AuthService authService;
 
     public void init(NutConfig config, ActionInfo ai) throws Throwable {
-        if (shiroUtil == null) {
-            shiroUtil = new ShiroUtil();
-        }
         if (dateUtil == null) {
             dateUtil = new DateUtil();
         }
         if (stringUtil == null) {
             stringUtil = new StringUtil();
+        }
+        if (authService == null) {
+            authService = config.getIoc().get(AuthService.class);
         }
     }
 
@@ -40,7 +40,7 @@ public class GlobalsSettingProcessor extends AbstractProcessor {
         ac.getRequest().setAttribute("AppShrotName", Globals.AppShrotName);
         ac.getRequest().setAttribute("AppFileDomain", Globals.AppFileDomain);
         ac.getRequest().setAttribute("config", Globals.MyConfig);
-        ac.getRequest().setAttribute("shiro", shiroUtil);
+        ac.getRequest().setAttribute("auth", authService);
         ac.getRequest().setAttribute("date", dateUtil);
         ac.getRequest().setAttribute("string", stringUtil);
         // 如果url中有语言属性则设置

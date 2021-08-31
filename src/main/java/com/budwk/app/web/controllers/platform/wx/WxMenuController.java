@@ -1,5 +1,6 @@
 package com.budwk.app.web.controllers.platform.wx;
 
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.wx.models.Wx_config;
 import com.budwk.app.wx.models.Wx_menu;
 import com.budwk.app.wx.services.WxConfigService;
@@ -9,11 +10,10 @@ import com.budwk.app.cms.services.CmsArticleService;
 import com.budwk.app.cms.services.CmsChannelService;
 import com.budwk.app.web.commons.ext.wx.WxService;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import com.budwk.app.base.result.Result;;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
@@ -59,7 +59,7 @@ public class WxMenuController {
 
     @At({"", "/index/?"})
     @Ok("beetl:/platform/wx/menu/index.html")
-    @RequiresPermissions("wx.conf.menu")
+    @SaCheckPermission("wx.conf.menu")
     public void index(String wxid, HttpServletRequest req) {
         Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
@@ -75,7 +75,7 @@ public class WxMenuController {
 
     @At("/child")
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object child(@Param("pid") String pid, @Param("wxid") String wxid, HttpServletRequest req) {
         List<Wx_menu> list = new ArrayList<>();
         List<NutMap> treeList = new ArrayList<>();
@@ -102,7 +102,7 @@ public class WxMenuController {
 
     @At("/tree")
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object tree(@Param("pid") String pid, @Param("wxid") String wxid, HttpServletRequest req) {
         try {
             List<NutMap> treeList = new ArrayList<>();
@@ -138,7 +138,7 @@ public class WxMenuController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("wx.conf.menu.add")
+    @SaCheckPermission("wx.conf.menu.add")
     @SLog(tag = "添加菜单", msg = "菜单名称:${args[0].menuName}")
     public Object addDo(@Param("..") Wx_menu menu, @Param(value = "parentId", df = "") String parentId, HttpServletRequest req) {
         try {
@@ -155,7 +155,7 @@ public class WxMenuController {
             if (!Strings.isBlank(parentId) && count > 4) {
                 return Result.error("只可设置五个二级菜单");
             }
-            menu.setCreatedBy(ShiroUtil.getPlatformUid());
+            menu.setCreatedBy(SecurityUtil.getUserId());
             wxMenuService.save(menu, parentId);
             return Result.success();
         } catch (Exception e) {
@@ -165,7 +165,7 @@ public class WxMenuController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("wx.conf.menu.sort")
+    @SaCheckPermission("wx.conf.menu.sort")
     public Object sortDo(@Param("ids") String ids, HttpServletRequest req) {
         try {
             String[] menuIds = StringUtils.split(ids, ",");
@@ -185,7 +185,7 @@ public class WxMenuController {
 
     @At("/edit/?")
     @Ok("json")
-    @RequiresPermissions("wx.conf.menu")
+    @SaCheckPermission("wx.conf.menu")
     public Object edit(String id, HttpServletRequest req) {
         try {
             Wx_menu menu = wxMenuService.fetch(id);
@@ -197,7 +197,7 @@ public class WxMenuController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("wx.conf.menu.edit")
+    @SaCheckPermission("wx.conf.menu.edit")
     @SLog(tag = "修改菜单", msg = "菜单名称:${args[0].menuName}")
     public Object editDo(@Param("..") Wx_menu menu, HttpServletRequest req) {
         try {
@@ -210,7 +210,7 @@ public class WxMenuController {
 
     @At("/delete/?")
     @Ok("json")
-    @RequiresPermissions("wx.conf.menu.delete")
+    @SaCheckPermission("wx.conf.menu.delete")
     @SLog(tag = "删除菜单", msg = "菜单名称:${args[1].getAttribute('menuName')}")
     public Object delete(String id, HttpServletRequest req) {
         try {
@@ -225,7 +225,7 @@ public class WxMenuController {
 
     @At("/pushMenu")
     @Ok("json")
-    @RequiresPermissions("wx.conf.menu.push")
+    @SaCheckPermission("wx.conf.menu.push")
     @SLog(tag = "推送菜单", msg = "公众号名称:${args[1].getAttribute('name')}")
     public Object pushMenu(@Param("wxid") String wxid, HttpServletRequest req) {
         try {
@@ -314,7 +314,7 @@ public class WxMenuController {
 
     @At("/keywordData")
     @Ok("json:full")
-    @RequiresPermissions("wx.conf.menu")
+    @SaCheckPermission("wx.conf.menu")
     public Object data(@Param("wxid") String wxid) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
@@ -326,7 +326,7 @@ public class WxMenuController {
 
     @At("/sort")
     @Ok("json")
-    @RequiresPermissions("wx.conf.menu")
+    @SaCheckPermission("wx.conf.menu")
     public Object sort(@Param("wxid") String wxid, HttpServletRequest req) {
         try {
             List<Wx_menu> list = wxMenuService.query(Cnd.where("wxid", "=", wxid).asc("location").asc("path"));
@@ -361,7 +361,7 @@ public class WxMenuController {
 
     @At("/sortDo")
     @Ok("json")
-    @RequiresPermissions("wx.conf.menu")
+    @SaCheckPermission("wx.conf.menu")
     public Object sortDo(@Param("wxid") String wxid, @Param("ids") String ids, HttpServletRequest req) {
         try {
             String[] menuIds = StringUtils.split(ids, ",");

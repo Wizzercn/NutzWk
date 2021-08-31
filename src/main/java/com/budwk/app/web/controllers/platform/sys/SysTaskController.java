@@ -1,13 +1,13 @@
 package com.budwk.app.web.controllers.platform.sys;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.budwk.app.base.result.Result;
+import com.budwk.app.base.utils.PageUtil;
 import com.budwk.app.sys.models.Sys_task;
 import com.budwk.app.sys.services.SysTaskService;
 import com.budwk.app.task.services.TaskPlatformService;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.base.utils.PageUtil;
-import com.budwk.app.base.result.Result;;
-import com.budwk.app.web.commons.utils.ShiroUtil;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -20,6 +20,8 @@ import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
 
+;
+
 @IocBean
 @At("/platform/sys/task")
 public class SysTaskController {
@@ -31,21 +33,21 @@ public class SysTaskController {
 
     @At("")
     @Ok("beetl:/platform/sys/task/index.html")
-    @RequiresPermissions("sys.manager.task")
+    @SaCheckPermission("sys.manager.task")
     public void index() {
 
     }
 
     @At
     @Ok("beetl:/platform/sys/task/cron.html")
-    @RequiresPermissions("sys.manager.task")
+    @SaCheckPermission("sys.manager.task")
     public void cron() {
 
     }
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.task")
+    @SaCheckPermission("sys.manager.task")
     public Object cronExp(@Param("cron") String cron) {
         try {
             return Result.success().addData(taskPlatformService.getCronExeTimes(cron));
@@ -56,7 +58,7 @@ public class SysTaskController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("sys.manager.task")
+    @SaCheckPermission("sys.manager.task")
     public Object data(@Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();
@@ -72,10 +74,10 @@ public class SysTaskController {
     @At
     @Ok("json")
     @SLog(tag = "新建任务", msg = "任务名称:${args[0].name}")
-    @RequiresPermissions("sys.manager.task.add")
+    @SaCheckPermission("sys.manager.task.add")
     public Object addDo(@Param("..") Sys_task task, HttpServletRequest req) {
         try {
-            task.setCreatedBy(ShiroUtil.getPlatformUid());
+            task.setCreatedBy(SecurityUtil.getUserId());
             Sys_task sysTask = sysTaskService.insert(task);
             taskPlatformService.add(sysTask.getId(), sysTask.getId(), sysTask.getJobClass(), sysTask.getCron(),
                     sysTask.getNote(), sysTask.getData());
@@ -87,7 +89,7 @@ public class SysTaskController {
 
     @At("/edit/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.task")
+    @SaCheckPermission("sys.manager.task")
     public Object edit(String id) {
         try {
             return Result.success().addData(sysTaskService.fetch(id));
@@ -99,10 +101,10 @@ public class SysTaskController {
     @At
     @Ok("json")
     @SLog(tag = "修改任务", msg = "任务名称:${args[0].name}")
-    @RequiresPermissions("sys.manager.task.edit")
+    @SaCheckPermission("sys.manager.task.edit")
     public Object editDo(@Param("..") Sys_task task, HttpServletRequest req) {
         try {
-            task.setUpdatedBy(ShiroUtil.getPlatformUid());
+            task.setUpdatedBy(SecurityUtil.getUserId());
             sysTaskService.updateIgnoreNull(task);
             if (taskPlatformService.isExist(task.getId(), task.getId())) {
                 taskPlatformService.delete(task.getId(), task.getId());
@@ -121,7 +123,7 @@ public class SysTaskController {
     @At("/delete/?")
     @Ok("json")
     @SLog(tag = "删除任务", msg = "任务名称:${args[1].getAttribute('name')}")
-    @RequiresPermissions("sys.manager.task.delete")
+    @SaCheckPermission("sys.manager.task.delete")
     public Object delete(String id, HttpServletRequest req) {
         try {
             Sys_task sysTask = sysTaskService.fetch(id);
@@ -142,7 +144,7 @@ public class SysTaskController {
 
     @At("/enable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.task.edit")
+    @SaCheckPermission("sys.manager.task.edit")
     @SLog(tag = "启用任务", msg = "任务名:${args[1].getAttribute('name')}")
     public Object enable(String id, HttpServletRequest req) {
         try {
@@ -161,7 +163,7 @@ public class SysTaskController {
 
     @At("/disable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.task.edit")
+    @SaCheckPermission("sys.manager.task.edit")
     @SLog(tag = "禁用任务", msg = "任务名:${args[1].getAttribute('name')}")
     public Object disable(String id, HttpServletRequest req) {
         try {

@@ -6,7 +6,7 @@ import com.budwk.app.wx.services.WxTplLogService;
 import com.budwk.app.web.commons.slog.annotation.SLog;
 import com.budwk.app.base.utils.PageUtil;
 import com.budwk.app.base.result.Result;;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -18,6 +18,7 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 
 @IocBean
@@ -31,7 +32,7 @@ public class WxTplLogController {
 
     @At({"", "/index/?"})
     @Ok("beetl:/platform/wx/tpl/log/index.html")
-    @RequiresPermissions("wx.tpl.log")
+    @SaCheckPermission("wx.tpl.log")
     public void index(String wxid, HttpServletRequest req) {
         Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
@@ -47,7 +48,7 @@ public class WxTplLogController {
 
     @At
     @Ok("json:full")
-    @RequiresPermissions("wx.tpl.log")
+    @SaCheckPermission("wx.tpl.log")
     public Object data(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         Cnd cnd = Cnd.NEW();
         if (!Strings.isBlank(wxid)) {
@@ -64,13 +65,13 @@ public class WxTplLogController {
 
     @At({"/delete/?", "/delete"})
     @Ok("json")
-    @RequiresPermissions("wx.tpl.log")
+    @SaCheckPermission("wx.tpl.log")
     @SLog(tag = "删除模板发送日志", msg = "ID:${args[2].getAttribute('id')}")
     public Object delete(String oneId, @Param("ids") String[] ids, HttpServletRequest req) {
         try {
             if (ids != null && ids.length > 0) {
                 wxTplLogService.delete(ids);
-                req.setAttribute("id", org.apache.shiro.util.StringUtils.toString(ids));
+                req.setAttribute("id", Arrays.toString(ids));
             } else {
                 wxTplLogService.delete(oneId);
                 req.setAttribute("id", oneId);

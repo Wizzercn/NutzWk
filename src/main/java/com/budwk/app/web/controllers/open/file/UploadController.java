@@ -3,7 +3,7 @@ package com.budwk.app.web.controllers.open.file;
 import com.budwk.app.base.result.Result;
 import com.budwk.app.base.utils.DateUtil;
 import com.budwk.app.web.commons.base.Globals;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -36,7 +36,7 @@ public class UploadController {
     @POST
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     //AdaptorErrorContext必须是最后一个参数
     public Object file(@Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
         try {
@@ -68,7 +68,7 @@ public class UploadController {
     @POST
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     //AdaptorErrorContext必须是最后一个参数
     public Object video(@Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
         try {
@@ -100,7 +100,7 @@ public class UploadController {
     @POST
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     //AdaptorErrorContext必须是最后一个参数
     public Object image(@Param("Filedata") TempFile tf, HttpServletRequest req, AdaptorErrorContext err) {
         try {
@@ -133,7 +133,7 @@ public class UploadController {
     @POST
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     //AdaptorErrorContext必须是最后一个参数
     public Object cmsfile(@Param("Filedata") TempFile tf, @Param("site") String site, HttpServletRequest req, AdaptorErrorContext err) {
         try {
@@ -164,7 +164,7 @@ public class UploadController {
     @POST
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     //AdaptorErrorContext必须是最后一个参数
     public Object cmsvideo(@Param("Filedata") TempFile tf, @Param("site") String site, HttpServletRequest req, AdaptorErrorContext err) {
         try {
@@ -196,7 +196,7 @@ public class UploadController {
     @POST
     @At
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     //AdaptorErrorContext必须是最后一个参数
     public Object cmsimage(@Param("Filedata") TempFile tf, @Param("site") String site, HttpServletRequest req, AdaptorErrorContext err) {
         try {

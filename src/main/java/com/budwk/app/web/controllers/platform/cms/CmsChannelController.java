@@ -1,15 +1,15 @@
 package com.budwk.app.web.controllers.platform.cms;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.budwk.app.base.result.Result;
 import com.budwk.app.cms.models.Cms_channel;
 import com.budwk.app.cms.models.Cms_site;
 import com.budwk.app.cms.services.CmsChannelService;
 import com.budwk.app.cms.services.CmsSiteService;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.base.result.Result;;
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+;
+
 /**
  * Created by wizzer on 2016/6/28.
  */
@@ -41,7 +43,7 @@ public class CmsChannelController {
 
     @At(value = {"", "/?"})
     @Ok("beetl:/platform/cms/channel/index.html")
-    @RequiresPermissions("cms.content.channel")
+    @SaCheckPermission("cms.content.channel")
     public void index(String siteId, HttpServletRequest req) {
         Cms_site site = null;
         List<Cms_site> siteList = cmsSiteService.query();
@@ -57,7 +59,7 @@ public class CmsChannelController {
 
     @At("/child/?")
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object child(String siteId, @Param("pid") String pid, HttpServletRequest req) {
         List<Cms_channel> list = new ArrayList<>();
         List<NutMap> treeList = new ArrayList<>();
@@ -84,12 +86,12 @@ public class CmsChannelController {
 
     @At("/tree/?")
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object tree(String siteId, @Param("pid") String pid, HttpServletRequest req) {
         try {
             List<NutMap> treeList = new ArrayList<>();
             if (Strings.isBlank(pid)) {
-                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单").addv("leaf",true);
+                NutMap root = NutMap.NEW().addv("value", "root").addv("label", "不选择菜单").addv("leaf", true);
                 treeList.add(root);
             }
             Cnd cnd = Cnd.NEW();
@@ -105,9 +107,9 @@ public class CmsChannelController {
                 NutMap map = NutMap.NEW().addv("value", menu.getId()).addv("label", menu.getName());
                 if (menu.isHasChildren()) {
                     map.addv("children", new ArrayList<>());
-                    map.addv("leaf",false);
-                }else {
-                    map.addv("leaf",true);
+                    map.addv("leaf", false);
+                } else {
+                    map.addv("leaf", true);
                 }
                 treeList.add(map);
             }
@@ -119,14 +121,14 @@ public class CmsChannelController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("cms.content.channel.add")
+    @SaCheckPermission("cms.content.channel.add")
     @SLog(tag = "新建栏目", msg = "栏目名称:${args[0].name}")
-    public Object addDo(@Param("..") Cms_channel channel, @Param(value = "parentId",df = "") String parentId, HttpServletRequest req) {
+    public Object addDo(@Param("..") Cms_channel channel, @Param(value = "parentId", df = "") String parentId, HttpServletRequest req) {
         try {
-            if("root".equals(parentId)){
-                parentId="";
+            if ("root".equals(parentId)) {
+                parentId = "";
             }
-            channel.setCreatedBy(ShiroUtil.getPlatformUid());
+            channel.setCreatedBy(SecurityUtil.getUserId());
             cmsChannelService.save(channel, parentId);
             cmsChannelService.clearCache();
             return Result.success();
@@ -137,7 +139,7 @@ public class CmsChannelController {
 
     @At("/edit/?")
     @Ok("json")
-    @RequiresPermissions("cms.content.channel")
+    @SaCheckPermission("cms.content.channel")
     public Object edit(String id, HttpServletRequest req) {
         try {
             Cms_channel channel = cmsChannelService.fetch(id);
@@ -158,11 +160,11 @@ public class CmsChannelController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("cms.content.channel.edit")
+    @SaCheckPermission("cms.content.channel.edit")
     @SLog(tag = "编辑栏目", msg = "栏目名称:${args[0].name}")
     public Object editDo(@Param("..") Cms_channel channel, HttpServletRequest req) {
         try {
-            channel.setUpdatedBy(ShiroUtil.getPlatformUid());
+            channel.setUpdatedBy(SecurityUtil.getUserId());
             cmsChannelService.updateIgnoreNull(channel);
             cmsChannelService.clearCache();
             return Result.success();
@@ -173,7 +175,7 @@ public class CmsChannelController {
 
     @At("/delete/?")
     @Ok("json")
-    @RequiresPermissions("cms.content.channel.delete")
+    @SaCheckPermission("cms.content.channel.delete")
     @SLog(tag = "删除栏目", msg = "栏目名称:${args[1].getAttribute('name')}")
     public Object delete(String id, HttpServletRequest req) {
         try {
@@ -189,7 +191,7 @@ public class CmsChannelController {
 
     @At("/enable/?")
     @Ok("json")
-    @RequiresPermissions("cms.content.channel.edit")
+    @SaCheckPermission("cms.content.channel.edit")
     @SLog(tag = "启用栏目", msg = "栏目名称:${args[1].getAttribute('name')}")
     public Object enable(String menuId, HttpServletRequest req) {
         try {
@@ -204,7 +206,7 @@ public class CmsChannelController {
 
     @At("/disable/?")
     @Ok("json")
-    @RequiresPermissions("cms.content.channel.edit")
+    @SaCheckPermission("cms.content.channel.edit")
     @SLog(tag = "禁用栏目", msg = "栏目名称:${args[1].getAttribute('name')}")
     public Object disable(String menuId, HttpServletRequest req) {
         try {
@@ -219,7 +221,7 @@ public class CmsChannelController {
 
     @At("/sort/?")
     @Ok("json")
-    @RequiresPermissions("cms.content.channel")
+    @SaCheckPermission("cms.content.channel")
     public Object sort(String siteid, HttpServletRequest req) {
         try {
             List<Cms_channel> list = cmsChannelService.query(Cnd.where("siteid", "=", siteid).asc("location").asc("path"));
@@ -254,7 +256,7 @@ public class CmsChannelController {
 
     @At("/sortDo/?")
     @Ok("json")
-    @RequiresPermissions("cms.content.channel.sort")
+    @SaCheckPermission("cms.content.channel.sort")
     public Object sortDo(String siteid, @Param("ids") String ids, HttpServletRequest req) {
         try {
             String[] menuIds = StringUtils.split(ids, ",");

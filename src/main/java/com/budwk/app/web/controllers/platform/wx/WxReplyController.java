@@ -1,16 +1,15 @@
 package com.budwk.app.web.controllers.platform.wx;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaMode;
 import com.budwk.app.base.result.Result;
 import com.budwk.app.base.utils.PageUtil;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import com.budwk.app.wx.models.Wx_config;
 import com.budwk.app.wx.models.Wx_reply;
 import com.budwk.app.wx.services.*;
-import com.budwk.app.wx.services.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -46,7 +45,7 @@ public class WxReplyController {
 
     @At({"/?", "/?/index/?"})
     @Ok("beetl:/platform/wx/reply/conf/index.html")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public void index(String type, String wxid, HttpServletRequest req) {
         Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
@@ -63,7 +62,7 @@ public class WxReplyController {
 
     @At("/?/addDo")
     @Ok("json")
-    @RequiresPermissions(value = {"wx.reply.follow.add", "wx.reply.keyword.add"}, logical = Logical.OR)
+    @SaCheckPermission(value = {"wx.reply.follow.add", "wx.reply.keyword.add"}, mode = SaMode.OR)
     @SLog(tag = "添加绑定", msg = "绑定类型:${args[0]}")
     public Object addDo(String type, @Param("..") Wx_reply reply, HttpServletRequest req) {
         try {
@@ -79,7 +78,7 @@ public class WxReplyController {
                     return Result.error("关键词已存在");
                 }
             }
-            reply.setCreatedBy(ShiroUtil.getPlatformUid());
+            reply.setCreatedBy(SecurityUtil.getUserId());
             wxReplyService.insert(reply);
             return Result.success();
         } catch (Exception e) {
@@ -89,7 +88,7 @@ public class WxReplyController {
 
     @At("/?/edit/?")
     @Ok("json")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public Object edit(String type, String id, HttpServletRequest req) {
         try {
             Wx_reply reply = wxReplyService.fetch(id);
@@ -108,7 +107,7 @@ public class WxReplyController {
 
     @At("/?/editDo")
     @Ok("json")
-    @RequiresPermissions(value = {"wx.reply.follow.edit", "wx.reply.keyword.edit"}, logical = Logical.OR)
+    @SaCheckPermission(value = {"wx.reply.follow.edit", "wx.reply.keyword.edit"}, mode = SaMode.OR)
     @SLog(tag = "修改绑定", msg = "绑定类型:${args[0]}")
     public Object editDo(String type, @Param("..") Wx_reply reply, HttpServletRequest req) {
         try {
@@ -129,7 +128,7 @@ public class WxReplyController {
 
     @At("/?/delete/?")
     @Ok("json")
-    @RequiresPermissions(value = {"wx.reply.follow.delete", "wx.reply.keyword.delete"}, logical = Logical.OR)
+    @SaCheckPermission(value = {"wx.reply.follow.delete", "wx.reply.keyword.delete"}, mode = SaMode.OR)
     @SLog(tag = "删除绑定", msg = "绑定类型:${args[0]}")
     public Object delete(String type, String id, HttpServletRequest req) {
         try {
@@ -142,7 +141,7 @@ public class WxReplyController {
 
     @At("/?/delete")
     @Ok("json")
-    @RequiresPermissions(value = {"wx.reply.follow.delete", "wx.reply.keyword.delete"}, logical = Logical.OR)
+    @SaCheckPermission(value = {"wx.reply.follow.delete", "wx.reply.keyword.delete"}, mode = SaMode.OR)
     @SLog(tag = "删除绑定", msg = "绑定类型:${args[0]}")
     public Object deletes(String type, @Param("ids") String id, HttpServletRequest req) {
         try {
@@ -155,7 +154,7 @@ public class WxReplyController {
 
     @At("/?/data")
     @Ok("json:full")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public Object data(String type, @Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();
@@ -179,7 +178,7 @@ public class WxReplyController {
 
     @At("/?/selectData")
     @Ok("json:full")
-    @RequiresPermissions("wx.reply")
+    @SaCheckPermission("wx.reply")
     public Object selectData(String type, @Param("wxid") String wxid, @Param("msgType") String msgType) {
         try {
             if ("txt".equals(msgType)) {

@@ -1,15 +1,15 @@
 package com.budwk.app.web.controllers.platform.sys;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.budwk.app.base.result.Result;
 import com.budwk.app.sys.models.Sys_menu;
 import com.budwk.app.sys.services.SysMenuService;
 import com.budwk.app.sys.services.SysRoleService;
 import com.budwk.app.sys.services.SysUserService;
+import com.budwk.app.web.commons.auth.utils.SecurityUtil;
 import com.budwk.app.web.commons.slog.annotation.SLog;
-import com.budwk.app.web.commons.utils.ShiroUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Sqls;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -46,13 +46,13 @@ public class SysMenuController {
 
     @At("")
     @Ok("beetl:/platform/sys/menu/index.html")
-    @RequiresPermissions("sys.manager.menu")
+    @SaCheckPermission("sys.manager.menu")
     public void index(HttpServletRequest req) {
     }
 
     @At("/child")
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object child(@Param("pid") String pid, HttpServletRequest req) {
         List<Sys_menu> list = new ArrayList<>();
         List<NutMap> treeList = new ArrayList<>();
@@ -78,7 +78,7 @@ public class SysMenuController {
 
     @At("/tree")
     @Ok("json")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object tree(@Param("pid") String pid, HttpServletRequest req) {
         try {
             List<NutMap> treeList = new ArrayList<>();
@@ -113,7 +113,7 @@ public class SysMenuController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.menu.add")
+    @SaCheckPermission("sys.manager.menu.add")
     @SLog(tag = "新建菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
     public Object addDo(@Param("..") NutMap nutMap, HttpServletRequest req) {
         try {
@@ -135,7 +135,7 @@ public class SysMenuController {
             }
             sysMenu.setHasChildren(false);
             sysMenu.setShowit(true);
-            sysMenu.setCreatedBy(ShiroUtil.getPlatformUid());
+            sysMenu.setCreatedBy(SecurityUtil.getUserId());
             sysMenuService.save(sysMenu, Strings.sNull(parentId), buttons);
             req.setAttribute("name", sysMenu.getName());
             sysMenuService.clearCache();
@@ -150,7 +150,7 @@ public class SysMenuController {
     //编辑菜单,组装一下js表单数据
     @At("/editMenu/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.menu")
+    @SaCheckPermission("sys.manager.menu")
     public Object editMenu(String id, HttpServletRequest req) {
         try {
             Sys_menu menu = sysMenuService.fetch(id);
@@ -177,7 +177,7 @@ public class SysMenuController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.menu.edit")
+    @SaCheckPermission("sys.manager.menu.edit")
     @SLog(tag = "修改菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
     public Object editMenuDo(@Param("..") NutMap nutMap, HttpServletRequest req) {
         try {
@@ -196,7 +196,7 @@ public class SysMenuController {
             }
             sysMenu.setHasChildren(false);
             sysMenu.setShowit(true);
-            sysMenu.setUpdatedBy(ShiroUtil.getPlatformUid());
+            sysMenu.setUpdatedBy(SecurityUtil.getUserId());
             sysMenuService.edit(sysMenu, sysMenu.getParentId(), buttons);
             req.setAttribute("name", sysMenu.getName());
             sysMenuService.clearCache();
@@ -210,7 +210,7 @@ public class SysMenuController {
 
     @At("/editData/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.menu")
+    @SaCheckPermission("sys.manager.menu")
     public Object editData(String id, HttpServletRequest req) {
         try {
             return Result.success().addData(sysMenuService.fetch(id));
@@ -221,7 +221,7 @@ public class SysMenuController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.menu.edit")
+    @SaCheckPermission("sys.manager.menu.edit")
     @SLog(tag = "修改权限", msg = "权限名称:${args[0].name}")
     public Object editDataDo(@Param("..") Sys_menu menu, HttpServletRequest req) {
         try {
@@ -241,7 +241,7 @@ public class SysMenuController {
 
     @At("/delete/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.menu.delete")
+    @SaCheckPermission("sys.manager.menu.delete")
     @SLog(tag = "删除菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
     public Object delete(String id, HttpServletRequest req) {
         try {
@@ -262,7 +262,7 @@ public class SysMenuController {
 
     @At("/enable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.menu.edit")
+    @SaCheckPermission("sys.manager.menu.edit")
     @SLog(tag = "启用菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
     public Object enable(String menuId, HttpServletRequest req) {
         try {
@@ -279,7 +279,7 @@ public class SysMenuController {
 
     @At("/disable/?")
     @Ok("json")
-    @RequiresPermissions("sys.manager.menu.edit")
+    @SaCheckPermission("sys.manager.menu.edit")
     @SLog(tag = "禁用菜单", msg = "菜单名称:${args[1].getAttribute('name')}")
     public Object disable(String menuId, HttpServletRequest req) {
         try {
@@ -296,7 +296,7 @@ public class SysMenuController {
 
     @At("/menuAll")
     @Ok("json")
-    @RequiresPermissions("sys.manager.menu")
+    @SaCheckPermission("sys.manager.menu")
     public Object menuAll(HttpServletRequest req) {
         try {
             List<Sys_menu> list = sysMenuService.query(Cnd.where("type", "=", "menu").asc("location").asc("path"));
@@ -331,7 +331,7 @@ public class SysMenuController {
 
     @At
     @Ok("json")
-    @RequiresPermissions("sys.manager.menu.edit")
+    @SaCheckPermission("sys.manager.menu.edit")
     public Object sortDo(@Param("ids") String ids, HttpServletRequest req) {
         try {
             String[] menuIds = StringUtils.split(ids, ",");

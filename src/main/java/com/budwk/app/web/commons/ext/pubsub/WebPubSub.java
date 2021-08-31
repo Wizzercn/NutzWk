@@ -1,5 +1,6 @@
 package com.budwk.app.web.commons.ext.pubsub;
 
+import com.budwk.app.base.constant.RedisConstant;
 import com.budwk.app.web.commons.base.Globals;
 import com.budwk.app.sys.services.SysConfigService;
 import com.budwk.app.sys.services.SysRouteService;
@@ -33,7 +34,7 @@ public class WebPubSub implements PubSub {
     protected PropertiesProxy conf;
 
     public void init() {
-        pubSubService.reg("nutzwk:web:platform", this);
+        pubSubService.reg(RedisConstant.PLATFORM_REDIS_PREFIX+"web:platform", this);
     }
 
     @Override

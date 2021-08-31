@@ -6,15 +6,16 @@
     <packaging>jar</packaging>
     <groupId>com.budwk</groupId>
     <artifactId>mini</artifactId>
-    <version>5.3.0</version>
+    <version>5.5.0-plus</version>
 
     <properties>
-        <nutzboot.version>2.4.2-SNAPSHOT</nutzboot.version>
-        <nutz.version>1.r.68-SNAPSHOT</nutz.version>
+        <nutzboot.version>2.5.0-SNAPSHOT</nutzboot.version>
+        <nutz.version>1.r.69-SNAPSHOT</nutz.version>
         <mysql-connector-java.version>8.0.16</mysql-connector-java.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
+        <sa-token.version>1.25.0</sa-token.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
         <emoji-java.veision>4.0.0</emoji-java.veision>
@@ -98,16 +99,6 @@
         </dependency>
         <dependency>
             <groupId>org.nutz</groupId>
-            <artifactId>nutzboot-starter-logback-exts</artifactId>
-            <version>${nutzboot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.nutz</groupId>
-            <artifactId>nutzboot-starter-shiro</artifactId>
-            <version>${nutzboot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.nutz</groupId>
             <artifactId>nutzboot-starter-weixin</artifactId>
             <version>${nutzboot.version}</version>
         </dependency>
@@ -136,6 +127,17 @@
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
+        </dependency>
+        <!-- sa-token -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-core</artifactId>
+            <version>${sa-token.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-servlet</artifactId>
+            <version>${sa-token.version}</version>
         </dependency>
         <!-- html -->
         <dependency>
@@ -246,6 +248,7 @@
         </dependencies>
     </dependencyManagement>
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

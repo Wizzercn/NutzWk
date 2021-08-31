@@ -9,8 +9,8 @@ import com.budwk.app.web.commons.slog.annotation.SLog;
 import com.budwk.app.base.utils.PageUtil;
 import com.budwk.app.base.result.Result;;
 import com.vdurmont.emoji.EmojiParser;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -43,7 +43,7 @@ public class WxUserController {
 
     @At({"/index", "/index/?"})
     @Ok("beetl:/platform/wx/user/index.html")
-    @RequiresPermissions("wx.user.list")
+    @SaCheckPermission("wx.user.list")
     public void index(String wxid, HttpServletRequest req) {
         Wx_config wxConfig = null;
         List<Wx_config> list = wxConfigService.query(Cnd.NEW());
@@ -59,7 +59,7 @@ public class WxUserController {
 
     @At
     @Ok("json:full")
-    @RequiresAuthentication
+    @SaCheckLogin
     public Object data(@Param("wxid") String wxid, @Param("searchName") String searchName, @Param("searchKeyword") String searchKeyword, @Param("pageNumber") int pageNumber, @Param("pageSize") int pageSize, @Param("pageOrderName") String pageOrderName, @Param("pageOrderBy") String pageOrderBy) {
         try {
             Cnd cnd = Cnd.NEW();
@@ -80,7 +80,7 @@ public class WxUserController {
 
     @At("/down/?")
     @Ok("json")
-    @RequiresPermissions("wx.user.list.sync")
+    @SaCheckPermission("wx.user.list.sync")
     @SLog(tag = "同步微信会员", msg = "公众号唯一标识:${args[0]}")
     public Object down(String wxid, HttpServletRequest req) {
         try {
