@@ -1,4 +1,4 @@
-NutzWk 开源企业级Java Web开发框架
+BudWk(原名NutzWk) 开源企业级Java Web开发框架
 ======
 
 [![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
@@ -24,7 +24,9 @@ https://budwk.com                官网
 
 # 版本说明
 
-NutzWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管理后台 Vue.js + ElementUI，非常适合项目快速开发
+BudWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管理后台 jQuery + Vue.js + ElementUI，非常适合个人项目快速开发
+
+* 如果是团队开发或大型项目，推荐使用 BudWk-V7 [https://gitee.com/budwk/budwk](https://gitee.com/budwk/budwk)
 
 * 系统自带多级权限体系、日志系统、缓存系统、定时任务、微信管理、CMS管理、beetl模板语言等基础功能
 
@@ -32,10 +34,9 @@ NutzWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管�
 
 ### 项目启动
 
-* 创建数据库 `budwk_v5_mini` 直接运行 MainLauncher 即可，启动会自动建表初始化数据
+* 创建数据库 `budwk_v5_mini` 项目启动时会自动建表初始化数据
 
-
-* `mvn compile nutzboot:run`   mvn运行
+* `mvn compile nutzboot:run`  mvn运行 或 IDEA 中右击 MainLauncher 运行
 
 * `mvn package nutzboot:shade -Dmaven.javadoc.skip=true -Dmaven.test.skip=true` 生成可执行jar包
 
@@ -58,9 +59,8 @@ NutzWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管�
 
 ## 项目部署
 
-* 内置配置文件启动  `nohup java -jar mini.jar &` 带参数 `-Dnutz.profiles.active=prod` 可加载 application-prod.properties 文件
-* 外置配置文件启动  `nohup java -Dnutz.boot.configure.properties.dir=/data/budwk/ -jar mini.jar &` 此时加载文件夹所有 *.properties 配置文件
-* 生产环境可以使用 [PythonWk](https://github.com/Wizzercn/PythonWk) 进行部署,登陆后台运维中心可在线更新jar包及配置文件等
+* 内置配置文件启动  `nohup java -jar mini.jar &` 带参数 `-Dnutz.profiles.active=prod`(IDEA 运行时填 `--nutz.profiles.active=prod`) 可加载 application-prod.yaml 文件
+* 外置配置文件启动  `nohup java -Dnutz.boot.configure.properties.dir=/data/budwk/ -jar mini.jar &` 此时加载文件夹所有 *.yaml 配置文件
 
 # 鸣谢
 
