@@ -19,7 +19,7 @@
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
         <emoji-java.veision>4.0.0</emoji-java.veision>
-        <jsoup.veision>1.11.2</jsoup.veision>
+        <jsoup.veision>1.14.2</jsoup.veision>
         <pinyin4j.veision>2.5.1</pinyin4j.veision>
         <poi.version>4.0.0</poi.version>
         <tencentcloud-sdk-java.version>4.0.11</tencentcloud-sdk-java.version>
