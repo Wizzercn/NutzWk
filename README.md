@@ -22,9 +22,9 @@ https://budwk.com                官网
 *  1群: 24457628
 *  2群: 68428921
 
-# 版本说明
+# 本版说明
 
-BudWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管理后台 jQuery + Vue.js + ElementUI，非常适合个人项目快速开发
+* BudWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管理后台 jQuery + Vue.js + ElementUI，非常适合个人项目快速开发
 
 * 如果是团队开发或大型项目，推荐使用 BudWk-V7 [https://gitee.com/budwk/budwk](https://gitee.com/budwk/budwk)
 
@@ -44,8 +44,13 @@ BudWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管理
 
 * 正常启动后访问 http://127.0.0.1:8080/sysadmin 用户名 superadmin 密码 1
 
+### 项目部署
 
-# 版本说明
+* 内置配置文件启动  `nohup java -jar mini.jar &` 带参数 `-Dnutz.profiles.active=prod`(IDEA 运行时填 `--nutz.profiles.active=prod`) 可加载 application-prod.yaml 文件
+* 外置配置文件启动  `nohup java -Dnutz.boot.configure.properties.dir=/data/budwk/ -jar mini.jar &` 此时加载文件夹所有 *.yaml 配置文件
+
+
+# 历史版本
 
 *   v7.x - nacos 微服务网关+组件化+API化版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - nacos 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```
@@ -56,12 +61,6 @@ BudWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管理
 *   v4.x - 单应用版本（war 包） ```前端 jQuery + bootsrtap```
 *   v3.x - 单应用版本（war 包） ```前端 jQuery + bootsrtap```
 *   v1.x - 单应用版本（war 包）  ```前端 jQuery + easyUI```
-
-## 项目部署
-
-* 内置配置文件启动  `nohup java -jar mini.jar &` 带参数 `-Dnutz.profiles.active=prod`(IDEA 运行时填 `--nutz.profiles.active=prod`) 可加载 application-prod.yaml 文件
-* 外置配置文件启动  `nohup java -Dnutz.boot.configure.properties.dir=/data/budwk/ -jar mini.jar &` 此时加载文件夹所有 *.yaml 配置文件
-
 # 鸣谢
 
 * [@wendal](https://github.com/wendal)
