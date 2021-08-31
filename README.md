@@ -32,7 +32,7 @@ NutzWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管�
 
 ### 项目启动
 
-* 创建数据库 `budwk-v5-mini` 直接运行 MainLauncher 即可，启动会自动建表初始化数据
+* 创建数据库 `budwk_v5_mini` 直接运行 MainLauncher 即可，启动会自动建表初始化数据
 
 
 * `mvn compile nutzboot:run`   mvn运行
@@ -55,21 +55,6 @@ NutzWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管�
 *   v4.x - 单应用版本（war 包） ```前端 jQuery + bootsrtap```
 *   v3.x - 单应用版本（war 包） ```前端 jQuery + bootsrtap```
 *   v1.x - 单应用版本（war 包）  ```前端 jQuery + easyUI```
-
-
-| 版本名称 | 版本特点 | 版本地址 | 运行方式 | 后端主要技术| 前端主要技术 | 浏览器兼容性 |
-| ---------|---------| ----------| ----------| ----------|----------|----------|
-| BudWk v7.x | 微服务网关+组件化+API化 + 前后端分离 |[v7.x](https://github.com/budwk/budwk/tree/v7.x)| jar,war | nutzboot + dubbo + nacos  | nuxt + vue + elementUI | Chrome,Edge,IE12+ |
-| BudWk v6.x-nacos | 微服务分布式 + 前后端分离 |[v6.x-nacos](https://github.com/budwk/budwk/tree/v6.x-nacos)| jar,war | nutzboot + dubbo + nacos + shiro | nuxt + vue + elementUI | Chrome,Edge,IE12+ |
-| BudWk v6.x-zookeeper | 微服务分布式 + 前后端分离 |[v6.x-zookeeper](https://github.com/budwk/budwk/tree/v6.x-zookeeper)| jar,war | nutzboot + dubbo + zookeeper + shiro | nuxt + vue + elementUI | Chrome,Edge,IE12+ |
-| BudWk v6.x-mini | 微服务单应用 + 前后端分离 |[v6.x-mini](https://github.com/budwk/budwk/tree/v6.x-mini)| jar,war | nutzboot + shiro | nuxt + vue + elementUI | Chrome,Edge,IE12+ |
-| NutzWk v5.x| 微服务分布式 + 前端混合模式 |[v5.x](https://github.com/Wizzercn/NutzWk/tree/v5.x)| jar,war | nutzboot + dubbo + shiro + beetl | vue + elementUI + jquery 或 jquery + bootstrap 两个版本 | Chrome,IE9+ |
-| NutzWk v5.x-mini| 微服务单应用 + 前端混合模式 |[v5.x-mini](https://github.com/Wizzercn/NutzWk/tree/v5.x-mini)| jar,war | nutzboot + shiro + beetl | vue + elementUI + jquery | Chrome,IE9+ |
-| NutzWk v4.x| 模块化单应用 |[v4.x](https://github.com/Wizzercn/NutzWk/tree/v4.x)| war | nutz + shiro + beetl | jquery + bootstrap | Chrome,IE7 + |
-| NutzWk v3.x| 单应用 |[v3.x](https://github.com/Wizzercn/NutzWk/tree/v3.x)| war | nutz + shiro + beetl 或 velocity 两个版本 | jquery + bootstrap | Chrome,IE7 + |
-| NutzWk v1.x| 单应用 |[v1.x](https://github.com/Wizzercn/NutzWk/tree/v1.x)| war | nutz + shiro + velocity | jquery + easyUI | IE6 + |
-
-
 
 ## 项目部署
 
