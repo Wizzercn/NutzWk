@@ -47,7 +47,7 @@ https://budwk.com                官网
 ### 项目部署
 
 * 内置配置文件启动  `nohup java -jar mini.jar &` 带参数 `-Dnutz.profiles.active=prod`(IDEA 运行时填 `--nutz.profiles.active=prod`) 可加载 application-prod.yaml 文件
-* 外置配置文件启动  `nohup java -Dnutz.boot.configure.properties.dir=/data/budwk/ -jar mini.jar &` 此时加载文件夹所有 *.yaml 配置文件
+* 外置配置文件启动  `nohup java -Dnutz.boot.configure.yaml.dir=/data/budwk/ -jar mini.jar &` 此时加载文件夹所有 *.yaml 配置文件
 
 
 # 历史版本
