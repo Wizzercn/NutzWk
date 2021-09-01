@@ -49,6 +49,16 @@ https://budwk.com                官网
 * 内置配置文件启动  `nohup java -jar mini.jar &` 带参数 `-Dnutz.profiles.active=prod`(IDEA 运行时填 `--nutz.profiles.active=prod`) 可加载 application-prod.yaml 文件
 * 外置配置文件启动  `nohup java -Dnutz.boot.configure.yaml.dir=/data/budwk/ -jar mini.jar &` 此时加载文件夹所有 *.yaml 配置文件
 
+## 运行环境
+
+*   JDK 11 + 或 OpenJDK 11 +
+*   Redis 4.0.8 +
+*   MariaDB 10+、MySql 5.7+、Oracle、SqlServer、达梦等
+
+## 开发工具
+*   IntelliJ IDEA
+*   Maven 3.5.3 +
+*   Git
 
 ## 技术选型
 
