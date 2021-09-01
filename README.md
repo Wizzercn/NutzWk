@@ -32,7 +32,7 @@ https://budwk.com                官网
 
 * 安装必要条件： redis + mysql（支持 MariaDB、Oracle、SqlServer、达梦等）
 
-### 项目启动
+## 项目启动
 
 * 创建数据库 `budwk_v5_mini` 项目启动时会自动建表初始化数据
 
@@ -44,11 +44,31 @@ https://budwk.com                官网
 
 * 正常启动后访问 http://127.0.0.1:8080/sysadmin 用户名 superadmin 密码 1
 
-### 项目部署
+## 项目部署
 
 * 内置配置文件启动  `nohup java -jar mini.jar &` 带参数 `-Dnutz.profiles.active=prod`(IDEA 运行时填 `--nutz.profiles.active=prod`) 可加载 application-prod.yaml 文件
 * 外置配置文件启动  `nohup java -Dnutz.boot.configure.yaml.dir=/data/budwk/ -jar mini.jar &` 此时加载文件夹所有 *.yaml 配置文件
 
+
+## 技术选型
+
+### 后端技术
+技术 | 名称 | 官网
+----|------|----
+Nutz | JavaEE应用框架  | [https://nutzam.com](https://nutzam.com)
+NutzBoot | 微服务框架  | [https://github.com/nutzam/nutzboot](https://github.com/nutzam/nutzboot)
+SaToken | 权限框架  | [http://sa-token.dev33.cn](http://sa-token.dev33.cn)
+Druid | 数据库连接池  | [https://github.com/alibaba/druid](https://github.com/alibaba/druid)
+Redis | 分布式缓存数据库  | [https://redis.io](https://redis.io)
+Quartz | 作业调度框架  | [https://www.quartz-scheduler.org](https://www.quartz-scheduler.org)
+
+### 前端技术
+技术 | 名称 | 官网
+----|------|----
+Vue.js | MVVM框架 | [https://vuejs.org](https://vuejs.org)
+jQuery.js | jQuery | [https://jquery.com](https://jquery.com)
+ElementUI | 基于Vue的UI框架 | [https://element.eleme.io](https://element.eleme.io)
+Font-awesome | 字体图标  | [https://fontawesome.com](https://fontawesome.com)
 
 # 历史版本
 
@@ -57,10 +77,11 @@ https://budwk.com                官网
 *   v6.x - zookeeper 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - mini 微服务单应用版本（一个 jar 或 war 包） ```前后端分离,前端 nuxt + vue + elementUI```
 *   v5.x - zookeeper 微服务分布式版本 ```前端 jQuery + bootsrtap 或 jQuery + vue.js + elementUI```
-*   v5.x - mini 微服务单应用版本（一个 jar 或 war 包） ```前端 jQuery + bootsrtap 或 jQuery + vue.js + elementUI```
+*   v5.x - mini 微服务单应用版本（一个 jar 或 war 包） ```前端 jQuery + vue.js + elementUI```
 *   v4.x - 单应用版本（war 包） ```前端 jQuery + bootsrtap```
 *   v3.x - 单应用版本（war 包） ```前端 jQuery + bootsrtap```
 *   v1.x - 单应用版本（war 包）  ```前端 jQuery + easyUI```
+
 # 鸣谢
 
 * [@wendal](https://github.com/wendal)
