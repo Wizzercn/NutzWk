@@ -10,9 +10,9 @@ https://nutzwk.wizzer.cn                 V5演示地址
 
 https://demo.budwk.com                 V7演示地址
 
-https://budwk.com/docs                V7开发指南
-
 https://budwk.com                官网
+
+本项目新地址，欢迎Star： [https://gitee.com/budwk/budwk](https://gitee.com/budwk/budwk)  [https://github.com/budwk/budwk](https://github.com/budwk/budwk)
 
 # 前言
 
