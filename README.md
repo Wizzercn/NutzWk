@@ -1,16 +1,32 @@
-BudWk(原名NutzWk) 开源企业级Java Web开发框架
-======
+<div align="center">
+    <br/>
+    <h1>BudWk(原名NutzWk) 开源企业级Java Web开发框架</h1>
 
-[![Build Status](https://travis-ci.org/Wizzercn/NutzWk.png?branch=bootstrap)](https://travis-ci.org/Wizzercn/NutzWk)
-[![GitHub release](https://img.shields.io/github/release/Wizzercn/NutzWk.svg)](https://github.com/Wizzercn/NutzWk/releases)
+[![Gitee GVP](https://gitee.com/wizzer/NutzWk/badge/star.svg?theme=gvp)](https://gitee.com/wizzer/NutzWk)
+[![GitHub release](https://img.shields.io/github/release/Wizzercn/NutzWk.svg)](https://github.com/budwk/budwk/releases)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![PowerByNutz](https://img.shields.io/badge/PowerBy-Nutz-green.svg)](https://github.com/nutzam/nutz)
+</div>
 
-https://nutzwk.wizzer.cn                 V5演示地址
+<div align="center">
 
-https://demo.budwk.com                 V7演示地址
+**[官网](https://budwk.com)** |
+**[V7演示地址](https://demo.budwk.com)** |
+**[V7开发指南](https://budwk.com/docs)** |
+**[V5演示地址](https://nutzwk.wizzer.cn)** |
+**[捐赠清单](https://budwk.com/donation)** |
 
-本项目新地址，欢迎Star： [https://gitee.com/budwk/budwk](https://gitee.com/budwk/budwk)  &  [https://github.com/budwk/budwk](https://github.com/budwk/budwk)
+</div>
+
+> 在力所能及的情况下，最大限度的提高Web开发人员的生产力
+
+本项目新版已更名，迁移至： 
+
+
+[https://gitee.com/budwk/budwk](https://gitee.com/budwk/budwk)
+
+[https://github.com/budwk/budwk](https://github.com/budwk/budwk)
+
 
 # 前言
 
