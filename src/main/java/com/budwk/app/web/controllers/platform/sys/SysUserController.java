@@ -88,7 +88,7 @@ public class SysUserController {
             user.setPassword(PwdUtil.getPassword(user.getPassword(), salt));
             user.setLoginPjax(true);
             user.setLoginCount(0);
-            user.setUnitPath(sysUnitService.fetch(user.getId()).getPath());
+            user.setUnitPath(sysUnitService.fetch(user.getUnitId()).getPath());
             sysUserService.insert(user);
             sysUserService.clearCache();
             return Result.success();

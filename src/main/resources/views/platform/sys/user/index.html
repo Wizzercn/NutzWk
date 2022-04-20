@@ -353,7 +353,7 @@ layout("/layouts/platform.html"){
                 },
                 formData: {
                     id: "",
-                    unitid: "",
+                    unitId: "",
                     disabled: false
                 },
                 formRules: {
@@ -472,7 +472,7 @@ layout("/layouts/platform.html"){
                 var self = this;
                 self.$refs["addForm"].validate(function (valid) {
                     if (valid) {
-                        self.formData.unitid = self.parentUnit[self.parentUnit.length - 1]||"";
+                        self.formData.unitId = self.parentUnit[self.parentUnit.length - 1]||"";
                         $.post(base + "/platform/sys/user/addDo", self.formData, function (data) {
                             if (data.code == 0) {
                                 self.$message({
