@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table("wx_tpl_id")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 @TableIndexes({@Index(name = "INDEX_WX_TPL_ID", fields = {"id", "wxid"}, unique = true)})
 public class Wx_tpl_id extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;

@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table("sys_msg")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 public class Sys_msg extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column

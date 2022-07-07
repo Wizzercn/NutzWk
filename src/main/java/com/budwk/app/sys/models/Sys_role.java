@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table("sys_role")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 @TableIndexes({@Index(name = "INDEX_SYS_ROLE_CODE", fields = {"code"}, unique = true)})
 public class Sys_role extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;

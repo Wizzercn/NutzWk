@@ -12,6 +12,7 @@ import java.util.List;
  */
 @Data
 @Table("cms_link_class")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 @TableIndexes({@Index(name = "INDEX_CMS_LINK_CLASS", fields = {"code"}, unique = true)})
 public class Cms_link_class extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;

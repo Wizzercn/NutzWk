@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table("wx_msg_reply")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 public class Wx_msg_reply extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column

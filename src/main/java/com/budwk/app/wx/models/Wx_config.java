@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table("wx_config")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 public class Wx_config extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column

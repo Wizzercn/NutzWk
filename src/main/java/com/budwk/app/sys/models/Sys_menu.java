@@ -16,6 +16,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table("sys_menu")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 @TableIndexes({@Index(name = "INDEX_SYS_MENU_PATH", fields = {"path"}, unique = true), @Index(name = "INDEX_SYS_MENU_PREM", fields = {"permission"}, unique = true)})
 public class Sys_menu extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;

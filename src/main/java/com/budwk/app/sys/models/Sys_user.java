@@ -18,6 +18,7 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table("sys_user")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 @J4EName("用户数据")
 @TableIndexes({@Index(name = "INDEX_SYS_USER_LOGINNAMAE", fields = {"loginname"}, unique = true)})
 public class Sys_user extends BaseModel implements Serializable {

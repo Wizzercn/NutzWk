@@ -108,7 +108,7 @@ quartz:
     #Other delegates can see: http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-09.html
     dataSource: myDS
     tablePrefix: SYS_QRTZ_
-    isClustered: true
+    isClustered: false
     clusterCheckinInterval: 20000
     maxMisfiresToHandleAtATime: 120
     misfireThreshold: 120000

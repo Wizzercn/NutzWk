@@ -10,6 +10,7 @@ import java.io.Serializable;
  * Created by wizzer on 2019/2/27.
  */
 @Table("sys_app_conf")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 public class Sys_app_conf extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

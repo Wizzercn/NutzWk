@@ -12,6 +12,7 @@ import java.io.Serializable;
  */
 @Data
 @Table("sys_app_list")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 public class Sys_app_list extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

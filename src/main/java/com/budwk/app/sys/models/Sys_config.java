@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table("sys_config")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 public class Sys_config extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Name

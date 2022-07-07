@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table("sys_api")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 public class Sys_api extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

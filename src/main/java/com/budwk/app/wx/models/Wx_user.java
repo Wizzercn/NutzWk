@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Table("wx_user")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 @TableIndexes({@Index(name = "INDEX_WX_USER_OPENID", fields = {"openid"}, unique = true)})
 public class Wx_user extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;

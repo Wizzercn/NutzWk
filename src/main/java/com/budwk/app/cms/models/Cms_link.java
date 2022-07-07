@@ -11,6 +11,7 @@ import java.io.Serializable;
  */
 @Data
 @Table("cms_link")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 public class Cms_link extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column
