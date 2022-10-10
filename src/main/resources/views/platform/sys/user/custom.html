@@ -7,9 +7,9 @@
     <div class="list-group" style="text-align: center;">
         <table width="88%" id="menuTable">
             <!--#
-            var firstMenus=@shiro.getPrincipalProperty('firstMenus');
-            var secondMenus=@shiro.getPrincipalProperty('secondMenus');
-            var customMenu=@shiro.getPrincipalProperty('customMenu');
+            var firstMenus=@auth.getPrincipalProperty('firstMenus');
+            var secondMenus=@auth.getPrincipalProperty('secondMenus');
+            var customMenu=@auth.getPrincipalProperty('customMenu');
             #-->
             <!--#for(firstMenu in firstMenus){#-->
             <tr>

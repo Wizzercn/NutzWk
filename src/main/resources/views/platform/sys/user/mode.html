@@ -10,7 +10,7 @@
                 <div class="form">
                     <div class="col-sm-8">
                         <input name="mode" value="true" type="radio"
-                        <!--#if(@shiro.getPrincipalProperty('loginPjax')){#-->checked<!--#}#--> > PJAX加载方式<br>优点：占用带宽少，加载速度快；<br>缺点：不能使用前进、后退功能。
+                        <!--#if(@auth.getPrincipalProperty('loginPjax')){#-->checked<!--#}#--> > PJAX加载方式<br>优点：占用带宽少，加载速度快；<br>缺点：不能使用前进、后退功能。
                     </div>
                 </div>
             </div>
@@ -20,7 +20,7 @@
                 <div class="form">
                     <div class="col-sm-8">
                         <input name="mode" value="false" type="radio"
-                        <!--#if(!@shiro.getPrincipalProperty('loginPjax')){#-->checked<!--#}#--> > 传统加载方式<br>优点：可以使用前进、后退功能；<br>缺点：页面会重载、刷新，占用带宽大。
+                        <!--#if(!@auth.getPrincipalProperty('loginPjax')){#-->checked<!--#}#--> > 传统加载方式<br>优点：可以使用前进、后退功能；<br>缺点：页面会重载、刷新，占用带宽大。
                     </div>
                 </div>
             </div>

@@ -347,7 +347,7 @@ layout("/layouts/platform.html"){
                 self.action = "add";
                 self.formData = {
                     id: "",
-                    author: "${@shiro.getPrincipalProperty('username')}",
+                    author: "${@auth.getPrincipalProperty('username')}",
                     time: [
                         moment().format("x"),
                         moment("2099-12-31 23:59:59").format("x")
