@@ -1,6 +1,6 @@
 <div align="center">
     <br/>
-    <h1>BudWk(原名NutzWk) 开源企业级Java Web开发框架</h1>
+    <h1>NutzWk(新名BudWk) 开源企业级Java Web开发框架</h1>
 
 [![Gitee GVP](https://gitee.com/wizzer/NutzWk/badge/star.svg?theme=gvp)](https://gitee.com/wizzer/NutzWk)
 [![GitHub release](https://img.shields.io/github/release/Wizzercn/NutzWk.svg)](https://github.com/budwk/budwk/releases)
@@ -11,8 +11,8 @@
 <div align="center">
 
 **[官网](https://budwk.com)** |
-**[V7演示地址](https://demo.budwk.com)** |
-**[V7开发指南](https://budwk.com/docs)** |
+**[V8演示地址](https://demo.budwk.com)** |
+**[V8开发指南](https://budwk.com/docs)** |
 **[V5演示地址](https://nutzwk.wizzer.cn)** |
 **[捐赠清单](https://budwk.com/donation)** |
 
@@ -20,7 +20,7 @@
 
 > 在力所能及的情况下，最大限度的提高Web开发人员的生产力
 
-本项目新版已更名，迁移至： 
+本项目新版V6-V8，迁移至： 
 
 
 [https://gitee.com/budwk/budwk](https://gitee.com/budwk/budwk)
@@ -42,7 +42,7 @@
 
 * BudWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管理后台 jQuery + Vue.js + ElementUI，非常适合个人项目快速开发
 
-* 如果是团队开发或大型项目，推荐使用 BudWk-V7 [https://gitee.com/budwk/budwk](https://gitee.com/budwk/budwk)
+* 如果是团队开发或大型项目，推荐使用 BudWk-V8 [https://gitee.com/budwk/budwk](https://gitee.com/budwk/budwk)
 
 * 系统自带多级权限体系、日志系统、缓存系统、定时任务、微信管理、CMS管理、beetl模板语言等基础功能
 
@@ -98,6 +98,7 @@ Font-awesome | 字体图标  | [https://fontawesome.com](https://fontawesome.com
 
 # 历史版本
 
+*   v8.x - nacos 微服务网关+组件化+API化版本 ```前后端分离,前端 vite + vue3 + Element-Plus + TypeScript```
 *   v7.x - nacos 微服务网关+组件化+API化版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - nacos 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - zookeeper 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```

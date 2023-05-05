@@ -6,11 +6,11 @@
     <packaging>jar</packaging>
     <groupId>com.budwk</groupId>
     <artifactId>mini</artifactId>
-    <version>5.5.0-plus</version>
+    <version>5.6.0-plus</version>
 
     <properties>
-        <nutzboot.version>2.5.0-SNAPSHOT</nutzboot.version>
-        <nutz.version>1.r.69-SNAPSHOT</nutz.version>
+        <nutzboot.version>2.6.0-SNAPSHOT</nutzboot.version>
+        <nutz.version>1.r.70-SNAPSHOT</nutz.version>
         <mysql-connector-java.version>8.0.28</mysql-connector-java.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <slf4j.version>1.7.25</slf4j.version>
@@ -23,7 +23,7 @@
         <pinyin4j.veision>2.5.1</pinyin4j.veision>
         <poi.version>4.1.1</poi.version>
         <tencentcloud-sdk-java.version>4.0.11</tencentcloud-sdk-java.version>
-        <lombok.version>1.18.10</lombok.version>
+        <lombok.version>1.18.18</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
