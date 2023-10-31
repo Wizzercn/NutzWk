@@ -43,7 +43,7 @@ redis:
     maxTotal: 150
     maxIdle: 50
     minIdle: 10
-  password: pass123
+  #password: pass123
   mode:
      normal
      #cluster

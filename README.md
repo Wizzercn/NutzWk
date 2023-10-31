@@ -42,7 +42,7 @@
 
 * BudWk-V5 Mini 微服务单应用版本（一个jar或打成war运行），管理后台 jQuery + Vue.js + ElementUI，非常适合个人项目快速开发
 
-* 如果是团队开发或大型项目，推荐使用 BudWk-V8 [https://gitee.com/budwk/budwk](https://gitee.com/budwk/budwk)
+* 如果是团队开发或大型项目，推荐使用 BudWk-V8 [https://github.com/budwk/budwk](https://github.com/budwk/budwk)
 
 * 系统自带多级权限体系、日志系统、缓存系统、定时任务、微信管理、CMS管理、beetl模板语言等基础功能
 
@@ -99,6 +99,7 @@ Font-awesome | 字体图标  | [https://fontawesome.com](https://fontawesome.com
 # 历史版本
 
 *   v8.x - nacos 微服务网关+组件化+API化版本 ```前后端分离,前端 vite + vue3 + Element-Plus + TypeScript```
+*   v8.x - mini 微服务单应用版本（一个 jar 或 war 包） ```前后端分离,前端 vite + vue3 + Element-Plus + TypeScript```
 *   v7.x - nacos 微服务网关+组件化+API化版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - nacos 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```
 *   v6.x - zookeeper 微服务分布式版本 ```前后端分离,前端 nuxt + vue + elementUI```
