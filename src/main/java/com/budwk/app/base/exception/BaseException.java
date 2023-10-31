@@ -5,7 +5,7 @@ package com.budwk.app.base.exception;
  */
 public class BaseException extends RuntimeException{
 
-    private static final long serialVersionUID = -3148500348308095226L;
+    private static final long serialVersionUID = 7192152812384031563L;
 
     public BaseException(String message) {
         super(message);

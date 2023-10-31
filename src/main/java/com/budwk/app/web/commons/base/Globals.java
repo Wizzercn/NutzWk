@@ -25,9 +25,9 @@ public class Globals {
     //项目目录
     public static String AppBase = "";
     //项目名称
-    public static String AppName = "BudCMS内容管理系统";
+    public static String AppName = "BudWk-Mini管理系统";
     //项目短名称
-    public static String AppShrotName = "BUDCMS";
+    public static String AppShrotName = "BUDWK-Mini";
     //项目域名
     public static String AppDomain = "http://127.0.0.1";
     //文件访问域名
